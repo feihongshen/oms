@@ -759,7 +759,7 @@ public class JobUtil {
 		try {
 
 			this.weisudaService.selectWeisudaCwb();
-			this.weisudaService.getUnVerifyOrders();
+			this.weisudaService.getUnVerifyOrdersOfCount();
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达定时器异常!", e);
 		}
