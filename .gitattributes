@@ -206,6 +206,12 @@ src/main/java/cn/explink/b2c/lechong/LechongXmlNote.java -text
 src/main/java/cn/explink/b2c/lechong/xml/UpdateInfo.java -text
 src/main/java/cn/explink/b2c/lechong/xml/UpdateInfoResponse.java -text
 src/main/java/cn/explink/b2c/lechong/xml/UpdateInfoResponseUnMarchal.java -text
+src/main/java/cn/explink/b2c/lefeng/BuildLefengB2cData.java -text
+src/main/java/cn/explink/b2c/lefeng/Lefeng.java -text
+src/main/java/cn/explink/b2c/lefeng/LefengFlowEnum.java -text
+src/main/java/cn/explink/b2c/lefeng/LefengService.java -text
+src/main/java/cn/explink/b2c/lefeng/LefengXmlNote.java -text
+src/main/java/cn/explink/b2c/lefeng/ReturnData.java -text
 src/main/java/cn/explink/b2c/letv/BuildLetvB2cData.java -text
 src/main/java/cn/explink/b2c/letv/Letv.java -text
 src/main/java/cn/explink/b2c/letv/LetvFlowEnum.java -text
