@@ -29,6 +29,7 @@ public class WarehouseCommenDAO {
 			warehtoCommen.setEmaildateid(rs.getLong("emaildateid"));
 			warehtoCommen.setNextbranchid(rs.getLong("nextbranchid"));
 			warehtoCommen.setRemark(rs.getString("remark"));
+			warehtoCommen.setCustomerid(rs.getLong("customerid"));
 			return warehtoCommen;
 		}
 	}

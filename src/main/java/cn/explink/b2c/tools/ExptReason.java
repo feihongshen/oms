@@ -11,6 +11,18 @@ public class ExptReason {
 	private String expt_code; // 异常编码
 	private String expt_msg; // 异常原因
 	private int expt_type; // 异常类型 （常用语设置枚举）
+	private String reasonid;//广州通路对应本系统中的原因id
+	
+
+	
+
+	public String getReasonid() {
+		return reasonid;
+	}
+
+	public void setReasonid(String reasonid) {
+		this.reasonid = reasonid;
+	}
 
 	public String getExpt_code() {
 		return expt_code;

@@ -156,6 +156,10 @@ public class BulidVipShopB2cData {
 					}
 				} catch (Exception e) {
 				}
+				if (cwbOrder.getRemark5().contains("信息：") && cwbOrder.getRemark5().contains("_")) {
+					delivername = cwbOrder.getRemark5().substring(3, cwbOrder.getRemark5().indexOf("_"));
+					usermobile = cwbOrder.getRemark5().substring(cwbOrder.getRemark5().indexOf("_") + 1);
+				}
 
 				String message = "您的订单:" + cwbOrder.getCwb() + "已到配送站点。详情请联系配送员：" + delivername + "，电话：" + usermobile + "。请留意收件";
 				vipshopXMLNote.setOrder_status_info(message);

@@ -65,7 +65,10 @@ public class CommonSendDataDAO {
 	}
 
 	public long isExistsCwbFlag(String cwb, String commoncode, String statetime, String flowordertype) {
-		return jdbcTemplate.queryForLong("select count(1) from commen_send_data where cwb=? and commoncode=? and statetime=? and flowordertype=?", cwb, commoncode, statetime, flowordertype);
+		return jdbcTemplate.queryForLong("select count(1) from commen_send_data where cwb=? and commoncode=? and statetime=? and flowordertype=? ", cwb, commoncode, statetime, flowordertype);
+	}
+	public long isExistsCwbFlag1(String cwb, String commoncode, String statetime, String flowordertype,long deliverystate) {
+		return jdbcTemplate.queryForLong("select count(1) from commen_send_data where cwb=? and commoncode=? and statetime=? and flowordertype=?  and deliverystate=?", cwb, commoncode, statetime, flowordertype,deliverystate);
 	}
 
 }

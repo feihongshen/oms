@@ -23,11 +23,14 @@ import cn.explink.b2c.gztl.returnData.TmsFeedback;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.ExptReason;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
+import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
+import cn.explink.domain.Branch;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.DmpCwbOrder;
@@ -50,16 +53,53 @@ public class GztlService {
 	private B2cTools b2ctools;
 	@Autowired
 	B2CDataDAO b2cDataDAO;
+	@Autowired
+	CacheBaseListener cacheBaseListener;
+	//getNowBrancheId
+	
+	
 	private static final String FIRSTPEISONGSUCESS = "第一次配送成功";
 	private static final String QITAYUANYIN = "其他原因";
+	private static final String GONGYINGSAHNGJUSHOUFANKU="供应商拒收返库";
+	private static final String TuiGonghuoshangChengGong="退供应商成功";
 	private Logger logger = LoggerFactory.getLogger(GztlService.class);
 
 	/**
 	 * 获取反库状态
 	 */
 	public GztlEnum filterFlowState(long delivery_state, DmpCwbOrder cwbOrder, long flowordertype, long deliverystate, int cwbordertype) {
+		
+		if (flowordertype==FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue()) {
+			GztlEnum.GongYingShangJuShouFanKu.setReturnMsg(GztlService.GONGYINGSAHNGJUSHOUFANKU);
+			return GztlEnum.GongYingShangJuShouFanKu;
+		}
+		if (flowordertype==FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue()) {
+			GztlEnum.TuiGonghuoshangChengGong.setReturnMsg(GztlService.TuiGonghuoshangChengGong);
+			return GztlEnum.TuiGonghuoshangChengGong;
+		}
+		
+		if(36 == flowordertype){
+			System.out.println("------------");
+		}
 		for (GztlEnum e : GztlEnum.values()) {
+		
+			
 			if ((flowordertype != FlowOrderTypeEnum.YiShenHe.getValue()) && (e.getFlowtype() == flowordertype)) {
+				if ((flowordertype==6&&cwbOrder.getCwbstate()==6)) {
+					GztlEnum.ZhongZhuanChuZhan.setReturnMsg("到错货");
+					return GztlEnum.ZhongZhuanChuZhan;
+				}
+				if (flowordertype==4&&cwbOrder.getCwbstate()==6) {
+					return GztlEnum.ZhongzhuanZhanRuKu;
+				}
+				System.out.println("++++++++++++");
+				if (flowordertype==9) {
+					long flowType=this.b2cDataDAO.getNearFlowOrdertypeByCwb(cwbOrder.getCwb());
+					System.out.println(flowordertype+"===");
+					if (flowType==36) {
+						return null;
+					}
+				}
 				return e;
 			}
 		}
@@ -79,27 +119,37 @@ public class GztlService {
 			}
 
 			if ((deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenJuTui.getValue())) {
-				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-				GztlEnum.Peisongshibai.setReturnMsg(exptReason.getExpt_msg());
+				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(0, cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+				
+				String reasonString = exptReason.getExpt_code();
+				
+					System.out.println(reasonString);
+					String[] reason = reasonString.split("_");
+					System.out.println(exptReason.getExpt_msg());
+					GztlEnum.Peisongshibai.setReturnMsg(reason[reason.length - 1]);
+				
 				return GztlEnum.Peisongshibai;
 			}
 
 			if (deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
 
 				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-				String reasonString = exptReason.getExpt_msg();
-				System.out.println(reasonString);
-				String[] reason = reasonString.split("_");
-				if (reason[0].equals(GztlEnum.KehuYanqi.getState())) {
-					GztlEnum.KehuYanqi.setReturnMsg(reason[reason.length - 1]);
-					System.out.println("第一个参数：" + reason[0]);
-					System.out.println("第二个参数：" + reason[1]);
-					return GztlEnum.KehuYanqi;
-				} else {
-					GztlEnum.Peisongyanchi.setReturnMsg(reason[reason.length - 1]);
-					return GztlEnum.Peisongyanchi;
-				}
+				String reasonString = exptReason.getExpt_code();
+				
+					System.out.println(reasonString);
+					String[] reason = reasonString.split("_");
+					if (reason[0].equals(GztlEnum.KehuYanqi.getState())) {
+						GztlEnum.KehuYanqi.setReturnMsg(reason[reason.length - 1]);
+						System.out.println("第一个参数：" + reason[0]);
+						System.out.println("第二个参数：" + reason[1]);
+						return GztlEnum.KehuYanqi;
+					} else {
+						GztlEnum.Peisongyanchi.setReturnMsg(reason[reason.length - 1]);
+						return GztlEnum.Peisongyanchi;
+					}
 
+				
+				
 			}
 
 		}
@@ -149,15 +199,20 @@ public class GztlService {
 			this.logger.info("未开0广州通路0的对接!");
 			return;
 		}
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.DaoRuShuJu.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.RuKu.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.ZhongZhuanZhanRuKu.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.FenZhanLingHuo.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.YiShenHe.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiHuoChuZhan.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue());
-
+		
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue());
 	}
 
@@ -202,13 +257,16 @@ public class GztlService {
 	 * @throws Exception
 	 */
 	private void DealWithBuildXMLAndSending(Gztl gztl, List<B2CData> datalist) throws Exception {
+		
 		String b2cidsString = "";
 		StringBuffer subBuffer = new StringBuffer();
 		subBuffer.append("<TMS>");
 		subBuffer.append("<TMSFeedbacks>");
 		for (B2CData b2cData : datalist) {
+			
 			String jsoncontent = b2cData.getJsoncontent();
 			GztlXmlNote note = this.getXMLNoteMethod(jsoncontent);
+			
 			b2cidsString += b2cData.getB2cid() + ",";
 			subBuffer.append("<TMSFeedback>");
 			subBuffer.append("<id>" + note.getId() + "</id>");// 序列号，用于接收成功后返回标识
@@ -219,7 +277,7 @@ public class GztlService {
 			subBuffer.append("<state>" + note.getState() + "</state>");// 订单状态(由飞远提供)
 			subBuffer.append("<returnState>" + note.getReturnState() + "</returnState>");// 网点反馈状态(由飞远提供)
 			subBuffer.append("<returnCause>" + note.getReturnCause() + "</returnCause>");// 网点反馈原因(由飞远提供)
-			subBuffer.append("<returnRemark>" + "" + "</returnRemark>");// 网点反馈备注(由飞远提供)
+			subBuffer.append("<returnRemark>" + note.getReturnRemark() + "</returnRemark>");// 网点反馈备注(由飞远提供)
 			subBuffer.append("<signname>" + note.getSignname() + "</signname>");// 签收人
 			subBuffer.append("<opDt>" + note.getOpDt() + "</opDt>");// 网点反馈时间/签收时间/导入时间/出入库时间
 			subBuffer.append("<emp>" + note.getEmp() + "</emp>");// 网点反馈用户??d
@@ -294,6 +352,7 @@ public class GztlService {
 		traceArgs.setCode(gztl.getCode());
 		traceArgs.setInvokeMethod(gztl.getInvokeMethod());
 		String sign = MD5Util.md5(subBuffer.toString() + gztl.getSign());
+		System.out.println(gztl.getSign());
 		System.out.println(sign);
 		traceArgs.setSign(sign);
 		traceArgs.setXml(subBuffer.toString());

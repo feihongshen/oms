@@ -7,6 +7,7 @@ import cn.explink.enumutil.FlowOrderTypeEnum;
  *
  */
 public enum GztlEnum {
+	DaoRuShuJu(FlowOrderTypeEnum.DaoRuShuJu.getValue(),"出入库","收件","",""),
 	Ruku(FlowOrderTypeEnum.RuKu.getValue(), "出入库", "到件确认", "", ""), 
 	ChukuSaomiao(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(), "出入库", "发件", "",""),
 	FenZhanDaoHuo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(), "出入库", "到件", "",""),
@@ -14,14 +15,18 @@ public enum GztlEnum {
 	TuiGongYingShangChuKu(FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue(), "出入库","退供应商", "",""), 
 	TuiHuoZhanRuKu(FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue(), "出入库", "退件到件", "",""),
 	TuiHuoChuZhan(FlowOrderTypeEnum.TuiHuoChuZhan.getValue(), "出入库", "退件发件", "",""),
-	GongYingShangJuShouFanKu(FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue(), "出入库", "退件失败", "",""), 
+	ZhongZhuanChuZhan(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(),"出入库","转件","",""),
+	ZhongzhuanZhanRuKu(FlowOrderTypeEnum.ZhongZhuanZhanRuKu.getValue(),"出入库","转件到件","",""),
+	ZhuangZhuanZhanChuKuSaoMiao(FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue(),"出入库","发件","",""),
+	FenZhandaoCuohuoRuku(FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue(),"出入库","到件","",""),
+	GongYingShangJuShouFanKu(FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue(), "出入库", "退件失败", "退件失败",""), 
 	ShouGongdiushi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "包裹丢失", "包裹丢失",""),
 	BufenJushou(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "部分拒收", "部分拒收",""), 
 	KehuYanqi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "客户延期", "客户延期",""), 
 	Peisongchenggong(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送成功", "配送成功",""), 
 	Peisongshibai(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送失败", "配送失败",""), 
-	Peisongyanchi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送延迟", "配送延迟","")
-
+	Peisongyanchi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送延迟", "配送延迟",""),
+	TuiGonghuoshangChengGong(FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue(),"出入库","退件确认","","")
 	;
 	private long flowtype;//本系统中的订单流程状态
 	private String optype;//反馈类型

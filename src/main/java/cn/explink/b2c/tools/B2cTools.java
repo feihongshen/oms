@@ -79,5 +79,12 @@ public class B2cTools {
 		exptreason = getdmpDAO.getExptCodeJointByB2c(weishuakareasonid, ReasonTypeEnum.WeiShuaKa.getValue(), customerids);
 		return exptreason == null ? new ExptReason() : exptreason;
 	}
-
+	/**
+	 * 广州通路对接查询对应的异常码
+	 */
+	public ExptReason getGztlExptReason(long customerid,String expt_code){
+		ExptReason exptReason=null;
+		exptReason=getdmpDAO.getExptCodeJointByB2cGztl(customerid, expt_code);
+		return exptReason == null ? new ExptReason() : exptReason;
+	}
 }

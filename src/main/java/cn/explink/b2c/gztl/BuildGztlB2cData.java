@@ -59,7 +59,9 @@ public class BuildGztlB2cData {
 	 */
 	public String buildGztlMethod(DmpOrderFlow orderFlow, long flowOrdertype, DmpCwbOrder cwbOrder, long delivery_state, DmpDeliveryState dmpDeliveryState, ObjectMapper objectMapper)
 			throws IOException, JsonGenerationException, JsonMappingException {
-
+		if (cwbOrder.getCwb().equals("U1249103976")) {
+			System.out.println("----"+cwbOrder.getCwb());
+		}
 		GztlEnum cmstate = this.gztlService.filterFlowState(delivery_state, cwbOrder, flowOrdertype, delivery_state, Integer.parseInt(cwbOrder.getCwbordertypeid())) == null ? null : this.gztlService
 				.filterFlowState(delivery_state, cwbOrder, flowOrdertype, delivery_state, Integer.parseInt(cwbOrder.getCwbordertypeid()));
 
@@ -70,6 +72,7 @@ public class BuildGztlB2cData {
 		this.logger.info("订单号：{}封装成0广州通路0所需要的json----开始,状态：{}", cwbOrder.getCwb(), flowOrdertype);
 
 		GztlXmlNote gztlXmlNote = new GztlXmlNote();
+		
 		gztlXmlNote.setId(cwbOrder.getOpscwbid() + "");// ??序列号，用于接收成功后返回标识
 		gztlXmlNote.setLogisticid(cwbOrder.getCwb());// 订单号
 		gztlXmlNote.setMyNo(cwbOrder.getCwb());// 运单编号
@@ -81,7 +84,7 @@ public class BuildGztlB2cData {
 		// gztlXmlNote.setReturnState(cmstate.getText());// ??网点反馈状态(由飞远提供)
 		gztlXmlNote.setReturnState(cmstate.getReturnState());
 		gztlXmlNote.setReturnCause(cmstate.getReturnMsg());// ??网点反馈原因(由飞远提供)?????????
-		gztlXmlNote.setReturnRemark(this.orderFlowDetail.getDetail(orderFlow));// ??网点反馈备注(由飞远提供)????????
+		gztlXmlNote.setReturnRemark(cmstate.getReturnMsg());// ??网点反馈备注(由飞远提供)????????
 
 		String sign_man = "";
 		if (dmpDeliveryState != null) {
@@ -107,7 +110,7 @@ public class BuildGztlB2cData {
 		String cuscode = "";
 		for (CuscodeAndCustomerNameEnum element : CuscodeAndCustomerNameEnum.values()) {
 			if (element.getCustomerName().equals(cwbOrder.getRemark4())) {
-				cuscode = element.getCustomerName();
+				cuscode = element.getCuscode();
 				break;
 			}
 
@@ -119,10 +122,16 @@ public class BuildGztlB2cData {
 		gztlXmlNote.setCustomername(cwbOrder.getRemark4());// 供货商
 		gztlXmlNote.setSenderName("");// 可以为空，寄件人
 		gztlXmlNote.setSenderMobile("");// 可以为空，寄件人手机
-		gztlXmlNote.setPayinamount(String.valueOf(cwbOrder.getReceivablefee().doubleValue()));// 代收货款
+		String receiveable="";
+		if (cwbOrder.getReceivablefee().toString().equals("0.00")) {
+			receiveable=cwbOrder.getPaybackfee().toString();
+		}else {
+			receiveable=cwbOrder.getReceivablefee().toString();
+		}
+		gztlXmlNote.setPayinamount(receiveable);// 代收货款
 		gztlXmlNote.setArrivedate(cwbOrder.getEmaildate());// ??最初扫描时间
 		gztlXmlNote.setLspabbr("");// 可以为空,配送区域
-		gztlXmlNote.setPcs(String.valueOf(cwbOrder.getSendcarnum()));
+		gztlXmlNote.setPcs(String.valueOf(cwbOrder.getSendcarnum()==0?cwbOrder.getBackcarnum():cwbOrder.getScannum()));
 		String cwbOrderType = "";
 		if (cwbOrder.getCwbordertypeid().equals("1")) {
 			cwbOrderType = BuildGztlB2cData.PEISONG;

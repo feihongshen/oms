@@ -50,15 +50,17 @@ public class GztlController {
 		}
 		GztlFeedback gztl = this.gztlServiceFeedback.getGztlFeedback(key);
 		xml = request.getParameter("XML");
+		System.out.println(xml);
 		String MD5 = request.getParameter("MD5");
 		xml = URLDecoder.decode(xml, "UTF-8");
+		System.out.println(xml);
 		this.logger.info("外发单订单反馈推送接口推送参数xml={},MD5={}", xml, MD5);
 		String localSignString = MD5Util.md5(xml + gztl.getPrivate_key());
 		System.out.println(localSignString);
 
 		if (!MD5.equalsIgnoreCase(localSignString)) {
 			this.logger.info("签名验证失败,xml={},MD5={}", xml, MD5);
-			return this.gztlServiceFeedback.errorReturnData("F", "签名验证失败--xml:" + xml + ",MD5:" + MD5);
+			return this.gztlServiceFeedback.errorReturnData("F", "签名验证失败" );
 
 		}
 
@@ -97,6 +99,6 @@ public class GztlController {
 
 	@RequestMapping("/testinsert")
 	public String testFeedbackInsert() {
-		return "111111/test";
+		return "test11111111111111111";
 	}
 }

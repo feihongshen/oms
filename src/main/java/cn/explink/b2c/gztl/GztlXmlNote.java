@@ -30,6 +30,9 @@ public class GztlXmlNote {
 	private String lspabbr;// 配送区域
 	private String pcs;// 件数
 	private String business;// 订单类型（正常配送，委托取件，换货
+	//private String iszhuangzhuan;//判断是从站点到中转站与到库房（0）还是出库（1）
+	
+	
 
 	public String getPcs() {
 		return this.pcs;

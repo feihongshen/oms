@@ -6,7 +6,11 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,7 @@ import javax.xml.bind.Unmarshaller;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.util.NewBeanInstanceStrategy;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
@@ -30,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.explink.xmldto.OrderDto;
 import cn.explink.b2c.explink.xmldto.OrderFlowDto;
+import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.gztl.sendFeedbackData.SendFeedbackData;
 import cn.explink.b2c.gztl.sendFeedbackData.SendFeedbackDatas;
 import cn.explink.b2c.gztlfeedback.feedbackreturndata.TMSSendOrder;
@@ -41,6 +47,7 @@ import cn.explink.b2c.maisike.MaisikeService_Send2LvBranch;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.ExptReason;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.dao.CommonSendDataDAO;
@@ -122,13 +129,14 @@ public class GztlServiceFeedback {
 
 		long maxCount = gztl.getSearch_number();
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 1; i++) {
 			try {
 				long loopcount = gztl.getLoopCount() == 0 ? 5 : gztl.getLoopCount(); // 重发次数5
 
 				for (ShipperIdAndShipperCode temp : ShipperIdAndShipperCode.values()) {
+					String shippercode=temp.getShipped_code();
 					String logisticproviderid = String.valueOf(temp.getLogisticproviderid());
-					List<WarehouseToCommen> datalist01 = this.WarehouseCommenDAO.getCommenCwbListByCommon(logisticproviderid, maxCount, loopcount); // 查询所有未推送数据
+					List<WarehouseToCommen> datalist01 = this.WarehouseCommenDAO.getCommenCwbListByCommon(shippercode, maxCount, loopcount); // 查询所有未推送数据
 					datalist.addAll(datalist01);
 				}
 				if ((datalist == null) || (datalist.size() == 0)) {
@@ -197,18 +205,25 @@ public class GztlServiceFeedback {
 			SendFeedbackDatas sendFeedbackDatas = new SendFeedbackDatas();
 			sendFeedbackDatas.setTmsSendOrders(orders);
 			String xmlString = this.beanToXml(sendFeedbackDatas);
+			
+			System.out.println(xmlString);
 			// kk
-			String url = "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
+			//String url = "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
+			String url = gztl.getSearch_url();
 
 			EcisServiceHttpBindingStub ce = new EcisServiceHttpBindingStub(new URL(url), new org.apache.axis.client.Service());
 			TraceArgs traceArgs = new TraceArgs();
 			traceArgs.setCode(gztl.getCode());
+			System.out.println(gztl.getCode());
 			traceArgs.setInvokeMethod(gztl.getInvokeMethod());
-			String sign = MD5Util.md5(xmlString + gztl.getSign());
+			System.out.println(gztl.getInvokeMethod());
+			System.out.println(gztl.getPrivate_key());
+			String sign = MD5Util.md5(xmlString + gztl.getPrivate_key());
 			System.out.println(sign);
 			traceArgs.setSign(sign);
-			traceArgs.setXml(xmlString);
+			traceArgs.setXml(URLEncoder.encode(xmlString,"utf-8"));
 			String responseData = URLDecoder.decode(ce.orderAndFeedbackApi(traceArgs), "UTF-8");
+			System.out.println(responseData);
 			/**
 			 * 在下面利用webservice实现参数的传递????还没实现
 			 */
@@ -241,30 +256,33 @@ public class GztlServiceFeedback {
 
 	private List<SendFeedbackData> buildOutLv2BranchList_forward(List<OrderDto> respOrders, List<WarehouseToCommen> commondataList, Map<String, WarehouseToCommen> comenMap)
 			throws UnsupportedEncodingException {
-		String customerName = "";
+		String customerCode = "";
 		List<SendFeedbackData> orderList = new ArrayList<SendFeedbackData>();
 		// List<Branch> branchlist = this.getDmpDAO.getAllBranchs();这个有什么作用
 		for (OrderDto orderDto : respOrders) {
 			String cwb = orderDto.getCwb();
 			WarehouseToCommen wCommen = comenMap.get(cwb);
-			if (orderDto.getCwbordertypeid() == CwbOrderTypeIdEnum.Peisong.getValue()) { // 只限于操作正向配送的订单数据
+			if (orderDto.getCwbordertypeid() == CwbOrderTypeIdEnum.Peisong.getValue()||orderDto.getCwbordertypeid()==CwbOrderTypeIdEnum.Shangmenhuan.getValue()||orderDto.getCwbordertypeid()==CwbOrderTypeIdEnum.Shangmentui.getValue()) { // 只限于操作正向配送的订单数据
 				try {
 					SendFeedbackData sData = new SendFeedbackData();
 					sData.setWaybillNo(orderDto.getCwb());// 运单号
 					String subWaybillNo = "";
-					if (!orderDto.getRemark1().equals(orderDto.getTranscwb())) {
-						subWaybillNo = orderDto.getRemark1();
+					if ((!orderDto.getRemark1().equals(orderDto.getTranscwb()))&&!(orderDto.getTranscwb().isEmpty())) {
+						subWaybillNo = orderDto.getTranscwb();
 					}
 					sData.setSubWaybillNo(subWaybillNo);// 子运单号？？
 					sData.setOrderNo(orderDto.getCwb());// 订单号
-					sData.setCustCode(orderDto.getRemark4());
+					sData.setCustName(orderDto.getRemark4());// 客户名称???
 					for (CuscodeAndCustomerNameEnum customerNameEnum : CuscodeAndCustomerNameEnum.values()) {
-						if (customerNameEnum.getCuscode().equals(orderDto.getRemark4())) {
-							customerName = customerNameEnum.getCustomerName();
+						if (customerNameEnum.getCustomerName().contains(orderDto.getRemark4())) {
+							customerCode = customerNameEnum.getCuscode();
 							break;
 						}
 					}
-					sData.setCustName(customerName);// 客户名称???
+					sData.setCustCode(customerCode);
+					
+				
+					
 					sData.setOrderType(orderDto.getCwbordertypeid() + "");
 					sData.setOrderDate(comenMap.get(orderDto.getCwb()).getCredate());// 订单日期
 					sData.setDeliveryman("");// 配送人
@@ -272,31 +290,47 @@ public class GztlServiceFeedback {
 					sData.setDeliverymanAddress("");// 配送人地址
 					sData.setReceiverName(orderDto.getConsigneename());
 					String receiverPhone = "";
-					if (orderDto.getConsigneemobile() != null) {
-						receiverPhone = orderDto.getConsigneemobile();
-					} else {
+					if (orderDto.getConsigneephone() != null) {
 						receiverPhone = orderDto.getConsigneephone();
+					} else {
+						receiverPhone = orderDto.getConsigneemobile();
 					}
 					sData.setReceiverPhone(receiverPhone);// 收件人电话
 					sData.setReceiverAddress(orderDto.getConsigneeaddress());
 					sData.setGoodsDetail(orderDto.getSendcargoname());
-					sData.setGoodsNum(orderDto.getSendcargonum() + "");// 配送件数
+					String goodsNumString="";
+					if (orderDto.getSendcargonum()==0) {
+						goodsNumString=orderDto.getBackcargonum()+"";
+					}else {
+						goodsNumString=orderDto.getSendcargonum()+"";
+					}
+					sData.setGoodsNum(goodsNumString);// 配送件数
 					sData.setDeliveryAmount("");// 配送合计
 					sData.setWeight(orderDto.getCargorealweight() + "");
-					sData.setReceivable("");// 应收款
-					sData.setShippedDate(orderDto.getSendtime());
+					String receiveable="";
+					if (orderDto.getReceivablefee().toString().equals("0.00")) {
+						receiveable=orderDto.getPaybackfee().toString();
+					}else {
+						receiveable=orderDto.getReceivablefee().toString();
+					}
+					sData.setReceivable(receiveable);// 应收款
+					
+					sData.setShippedDate(GztlServiceFeedback.parseDate(orderDto.getRemark2()));//发货时间
 					sData.setInsurAmount("");
-					sData.setShippedCode(wCommen.getCommencode());// 承运商代码？？？
 					String logisticproviderid = "";
+					String shippedcode="";
 					for (ShipperIdAndShipperCode shipperCode : ShipperIdAndShipperCode.values()) {
-						if (shipperCode.getShipped_code().equals(wCommen.getCommencode())) {
+						if (shipperCode.getShipped_code().equalsIgnoreCase(wCommen.getCommencode())) {
 							logisticproviderid = String.valueOf(shipperCode.getLogisticproviderid());
+							shippedcode=shipperCode.getShipped_code();
 							break;
 						}
 					}
+					sData.setShippedCode(shippedcode);// 承运商代码？？？
 					sData.setLogisticproviderid(logisticproviderid);// 承运商ID
 					orderList.add(sData);
 				} catch (Exception e) {
+					e.printStackTrace();
 					this.logger.error("构建单个对象异常cwb=" + orderDto.getCwb(), e);
 				}
 			}
@@ -327,7 +361,7 @@ public class GztlServiceFeedback {
 
 			// continue;
 		}
-		TMSSendOrder tmSendOrder = (TMSSendOrder) this.xmlToObj(responseData, TMSSendOrder.class);
+		TMSSendOrder tmSendOrder = (TMSSendOrder) this.xmlToObj(responseData, new TMSSendOrder());
 		String cwbs = tmSendOrder.getWaybillNo();
 		for (WarehouseToCommen warehouseToCommen : datalist) {
 			cwbsList.add(warehouseToCommen.getCwb());
@@ -356,7 +390,7 @@ public class GztlServiceFeedback {
 		try {
 			JAXBContext context = JAXBContext.newInstance(object.getClass());
 			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
 			marshaller.marshal(object, strWriter);
 			xmlString = strWriter.toString();
 		} catch (Exception e) {
@@ -395,6 +429,7 @@ public class GztlServiceFeedback {
 	 * @throws JsonGenerationException
 	 */
 	public String receivedOrderFeedback(String xml, GztlFeedback gztl) throws Exception {
+		
 		List<SendOrder> sendOrders = new ArrayList<SendOrder>();
 		String returnXml = "";
 		StringBuffer noCwbs = new StringBuffer();
@@ -411,15 +446,16 @@ public class GztlServiceFeedback {
 		List<OrderFeedback> feedbacks = inOrderData.getFeedbacks();
 		if ((feedbacks != null) && (feedbacks.size() > 0)) {
 			for (OrderFeedback orderFeedback : feedbacks) {
-				String cwb = orderFeedback.getWaybillNo();
+				String cwb = orderFeedback.getId();//cwb为对方发来的id
+				String willOrder=orderFeedback.getWaybillNo();
 				// 在commen_cwb_order表中验证是否存在该订单的信息，在出库到广西飞远的站点时，会在里面生成信息
-				long isexistscwbflag = this.warehouseCommenDAO.getCountByCwb(cwb);
+				long isexistscwbflag = this.warehouseCommenDAO.getCountByCwb(willOrder);
 				if (isexistscwbflag > 0) {
 
 					int flowordertype = this.getFlowordertype(orderFeedback.getStatus());// 流程状态
 					long deliverystate = this.getDeliveryState(orderFeedback.getStatus());// 接收状态
 					// 验证是否有重发订单插入
-					long isrepeatFlag = this.commonSendDataDAO.isExistsCwbFlag(cwb, orderFeedback.getLogisticProviderId(), orderFeedback.getOperatorTime(), String.valueOf(flowordertype));
+					long isrepeatFlag = this.commonSendDataDAO.isExistsCwbFlag1(willOrder, orderFeedback.getLogisticProviderId(), orderFeedback.getOperatorTime(), String.valueOf(flowordertype),deliverystate);
 					if (isrepeatFlag > 0) {
 						repeatCwbs.append("," + cwb);
 						continue;
@@ -428,13 +464,15 @@ public class GztlServiceFeedback {
 					OrderFlowDto orderFlowDto = this.buildOrderFlowDto(orderFeedback, flowordertype, deliverystate);
 					String jsonContent = JacksonMapper.getInstance().writeValueAsString(orderFlowDto);
 					// 插入上游OMS临时表
-					this.commonSendDataDAO.creCommenSendData(cwb, 0, orderFeedback.getLogisticProviderId(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), jsonContent, flowordertype,
-							deliverystate, "0");// 倒数第一个与倒数第二个分别为deliverystate与flowordertype不知道
+					this.commonSendDataDAO.creCommenSendData(willOrder, 0, orderFeedback.getLogisticProviderId().toUpperCase(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), jsonContent, deliverystate,flowordertype,
+							 "0");// 倒数第一个与倒数第二个分别为deliverystate与flowordertype不知道
 					// 自动补审核
 					if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue()) {
 						flowordertype = FlowOrderTypeEnum.YiShenHe.getValue();
+						orderFlowDto.setFlowordertype("36");
+						String content = JacksonMapper.getInstance().writeValueAsString(orderFlowDto);
 						// 插入上游OMS临时表
-						this.commonSendDataDAO.creCommenSendData(cwb, 0, orderFeedback.getLogisticProviderId(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), jsonContent, deliverystate,
+						this.commonSendDataDAO.creCommenSendData(willOrder, 0, orderFeedback.getLogisticProviderId().toUpperCase(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), content, deliverystate,
 								flowordertype, "0");
 
 					}
@@ -449,8 +487,8 @@ public class GztlServiceFeedback {
 				for (String temp : yesStrings) {
 					SendOrder sendOrder = new SendOrder();
 					sendOrder.setId(temp);
-					sendOrder.setRemark("T");
-					sendOrder.setResult("接收反馈状态成功");
+					sendOrder.setRemark("接收反馈状态成功");
+					sendOrder.setResult("T");
 					sendOrders.add(sendOrder);
 				}
 				// String yesString = this.feedBackResponseXml(yesCwbString,
@@ -463,8 +501,8 @@ public class GztlServiceFeedback {
 				for (String temp : noString) {
 					SendOrder sendOrder = new SendOrder();
 					sendOrder.setId(temp);
-					sendOrder.setRemark("F");
-					sendOrder.setResult("数据库中无此订单");
+					sendOrder.setRemark("数据库中无此订单");
+					sendOrder.setResult("F");
 					sendOrders.add(sendOrder);
 				}
 
@@ -475,8 +513,8 @@ public class GztlServiceFeedback {
 				for (String temp : reStrings) {
 					SendOrder sendOrder = new SendOrder();
 					sendOrder.setId(temp);
-					sendOrder.setRemark("F");
-					sendOrder.setResult("重发订单不允许插入");
+					sendOrder.setRemark("重发订单不允许插入");
+					sendOrder.setResult("F");
 					sendOrders.add(sendOrder);
 				}
 			}
@@ -506,13 +544,30 @@ public class GztlServiceFeedback {
 	 * @throws UnsupportedEncodingException
 	 */
 	private OrderFlowDto buildOrderFlowDto(OrderFeedback orderFeedback, int flowordertype, long deliverystate) throws UnsupportedEncodingException {
+		//ExptReason reason = this.getDmpDAO.getReasonidJointByB2c(Long.valueOf(orderFeedback.getReason()), orderFeedback.get,orderFeedback.getWaybillNo());
 		OrderFlowDto orderFlowDto = new OrderFlowDto();
 		orderFlowDto.setCustid("0");
 		orderFlowDto.setCwb(orderFeedback.getWaybillNo());
-		orderFlowDto.setDeliverystate(String.valueOf(deliverystate));// ??
-		orderFlowDto.setFloworderdetail(orderFeedback.getRemark());// ??备注
-		orderFlowDto.setFlowordertype(String.valueOf(flowordertype));// ??
+		orderFlowDto.setDeliverystate(String.valueOf(deliverystate));// 接收状态
+		orderFlowDto.setFloworderdetail(orderFeedback.getRemark());// 备注
+		orderFlowDto.setFlowordertype(String.valueOf(flowordertype));//流程
 		orderFlowDto.setOperatortime(orderFeedback.getOperatorTime());
+		orderFlowDto.setDeliveryname(orderFeedback.getDeliveryman());//小件员姓名
+		orderFlowDto.setDeliverymobile(orderFeedback.getDeliverymanMobile());//小件员电话
+		long customerid=this.WarehouseCommenDAO.getCommenCwbBycwb(orderFeedback.getWaybillNo()).getCustomerid();
+		if (flowordertype==35||flowordertype==36) {
+			String except_code=orderFeedback.getStatus()+"_"+orderFeedback.getReason();
+			ExptReason exptReason=this.b2ctools.getGztlExptReason(customerid,except_code);
+			String content="";
+			if (exptReason!=null) {
+				content=exptReason.getExpt_code();//我们系统里面的信息异常原因
+				orderFlowDto.setExptcode(exptReason.getReasonid());//异常编码
+				
+		}
+		}
+		
+		//orderFlowDto.setExptmsg("");//异常原因
+		
 		if (orderFeedback.getPayMethod() == null) {
 			orderFlowDto.setPaytype(1); // 支付方式 待定义??
 		} else if (orderFeedback.getPayMethod().equals("现金") || orderFeedback.getPayMethod().equals("0")) {
@@ -527,6 +582,16 @@ public class GztlServiceFeedback {
 	}
 
 	private int getFlowordertype(String order_status) {
+		//中转
+		if (order_status.equals(GztlFeedbackEnum.ZhongZhuanChuZhan)) {
+			return FlowOrderTypeEnum.ChuKuSaoMiao.getValue();
+		}
+		if (order_status.equals(GztlFeedbackEnum.ZhongzhuanZhanRuKu)) {
+			return FlowOrderTypeEnum.ZhongZhuanZhanRuKu.getValue();
+		}
+		if (order_status.equals(GztlFeedbackEnum.ZhuangZhuanZhanChuKuSaoMiao)) {
+			return FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue();
+		}
 		// 分站到货
 		if (order_status.equals(GztlFeedbackEnum.FenZhanDaoHuo.getState())) {
 			return FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue();
@@ -609,6 +674,9 @@ public class GztlServiceFeedback {
 	 * @param flag
 	 * @param remark
 	 * @return
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonGenerationException 
 	 */
 	/*
 	 * private String feedBackResponseXml(String cwb, String flag, String
@@ -623,7 +691,7 @@ public class GztlServiceFeedback {
 	 * 
 	 * return xml; }
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException {
 		// GztlServiceFeedback gFeedback = new GztlServiceFeedback();
 		// InsertFeedbackOrderData insertFeedbackOrderData = new
 		// InsertFeedbackOrderData();
@@ -641,11 +709,37 @@ public class GztlServiceFeedback {
 		 * GztlServiceFeedback(); String xmlString =
 		 * gFeedback.beanToXml(sendMSD); System.out.println(xmlString);
 		 */
-		StringBuffer logisticproviderids = new StringBuffer();
+		/*StringBuffer logisticproviderids = new StringBuffer();
 		for (ShipperIdAndShipperCode temp : ShipperIdAndShipperCode.values()) {
 			logisticproviderids.append(",\"" + temp.getLogisticproviderid() + "\"");
 		}
 		String ccString = logisticproviderids.substring(1, logisticproviderids.length()).toString();
-		System.out.println(ccString);
+		System.out.println(ccString);*/
+		/*GztlServiceFeedback gztlServiceFeedback=new GztlServiceFeedback();
+		OrderFlowDto orderFlowDto=new OrderFlowDto();
+		orderFlowDto.setFlowordertype("35");
+		
+		String content = JacksonMapper.getInstance().writeValueAsString(orderFlowDto);
+		System.out.println(content);
+		orderFlowDto.setFlowordertype("36");
+		String content1 = JacksonMapper.getInstance().writeValueAsString(orderFlowDto);
+		System.out.println(content1);*/
+		
+
 	}
+	public static String  parseDate(String date){
+		String date5="";
+		try {
+			SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			Date date2=dateFormat.parse(date);
+			SimpleDateFormat dateFormat2=new SimpleDateFormat("yyyy-MM-dd");
+			date5=dateFormat2.format(date2);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return date5;
+	}
+	
 }
