@@ -61,7 +61,7 @@ public enum B2cEnum {
 
 	HomegoBJ(20084, "家有购物（北京）", "homegoubj"), LeChong(20085, "乐宠（科捷）", "lechong"),
 
-	Smiled(20086, "思迈下游", "smiled"), SFexpressXHM(20087, "顺丰快递(小红帽)", "sfexpressxhm"), Zhongliang(20088, "顺丰快递(小红帽)", "Zhongliang")
+	Smiled(20086, "思迈下游", "smiled"), SFexpressXHM(20087, "顺丰快递(小红帽)", "sfexpressxhm"), Zhongliang(20088, "顺丰快递(小红帽)", "Zhongliang"), Lefeng(20093, "乐蜂网-回传", "lefeng")
 
 	;
 	private int key;
@@ -75,7 +75,7 @@ public enum B2cEnum {
 	}
 
 	public String getMethod() {
-		return method;
+		return this.method;
 	}
 
 	public void setMethod(String method) {
@@ -83,7 +83,7 @@ public enum B2cEnum {
 	}
 
 	public int getKey() {
-		return key;
+		return this.key;
 	}
 
 	public void setKey(int key) {
@@ -91,7 +91,7 @@ public enum B2cEnum {
 	}
 
 	public String getText() {
-		return text;
+		return this.text;
 	}
 
 	public void setText(String text) {

@@ -20,6 +20,7 @@ import cn.explink.b2c.hxgdms.BulidHxgdmsB2cData;
 import cn.explink.b2c.hzabc.BuildHangZhouABCB2cData;
 import cn.explink.b2c.jumeiyoupin.BulidJuMeiB2cData;
 import cn.explink.b2c.lechong.BuildLeChongB2cData;
+import cn.explink.b2c.lefeng.BuildLefengB2cData;
 import cn.explink.b2c.letv.BuildLetvB2cData;
 import cn.explink.b2c.liantong.BulidLiantongB2cData;
 import cn.explink.b2c.mmb.BuildmmbB2cData;
@@ -116,13 +117,23 @@ public class BuildB2cDataMaster {
 	BuildHomegobjB2cData buildHomegobjB2cData;
 
 	public BuildSfxhmB2cData getBuildSfxhmB2cData() {
-		return buildSfxhmB2cData;
+		return this.buildSfxhmB2cData;
 	}
 
 	@Autowired
 	BuildLeChongB2cData buildLeChongB2cData;
 	@Autowired
 	BuildZhongliangB2cData buildZhongliangB2cData;
+	@Autowired
+	BuildLefengB2cData buildLefengB2cData;
+
+	public BuildLefengB2cData getBuildLefengB2cData() {
+		return this.buildLefengB2cData;
+	}
+
+	public void setBuildLefengB2cData(BuildLefengB2cData buildLefengB2cData) {
+		this.buildLefengB2cData = buildLefengB2cData;
+	}
 
 	public void setBuildSfxhmB2cData(BuildSfxhmB2cData buildSfxhmB2cData) {
 		this.buildSfxhmB2cData = buildSfxhmB2cData;
@@ -132,7 +143,7 @@ public class BuildB2cDataMaster {
 	BuildSfxhmB2cData buildSfxhmB2cData;
 
 	public BuildHomegobjB2cData getBuildHomegobjB2cData() {
-		return buildHomegobjB2cData;
+		return this.buildHomegobjB2cData;
 	}
 
 	public void setBuildHomegobjB2cData(BuildHomegobjB2cData buildHomegobjB2cData) {
@@ -140,7 +151,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildWangjiuB2cData getBuildWangjiuB2cData() {
-		return buildWangjiuB2cData;
+		return this.buildWangjiuB2cData;
 	}
 
 	public void setBuildWangjiuB2cData(BuildWangjiuB2cData buildWangjiuB2cData) {
@@ -148,7 +159,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidHxgdmsB2cData getBulidHxgdmsB2cData() {
-		return bulidHxgdmsB2cData;
+		return this.bulidHxgdmsB2cData;
 	}
 
 	public void setBulidHxgdmsB2cData(BulidHxgdmsB2cData bulidHxgdmsB2cData) {
@@ -156,7 +167,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidYonghuiB2cData getBulidYonghuiB2cData() {
-		return bulidYonghuiB2cData;
+		return this.bulidYonghuiB2cData;
 	}
 
 	public void setBulidYonghuiB2cData(BulidYonghuiB2cData bulidYonghuiB2cData) {
@@ -164,7 +175,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildLetvB2cData getBuildLetvB2cData() {
-		return buildLetvB2cData;
+		return this.buildLetvB2cData;
 	}
 
 	public void setBuildLetvB2cData(BuildLetvB2cData buildLetvB2cData) {
@@ -172,7 +183,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildmmbB2cData getBuildmmbB2cData() {
-		return buildmmbB2cData;
+		return this.buildmmbB2cData;
 	}
 
 	public void setBuildmmbB2cData(BuildmmbB2cData buildmmbB2cData) {
@@ -180,7 +191,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildChinamobileB2cData getBuildChinamobileB2cData() {
-		return buildChinamobileB2cData;
+		return this.buildChinamobileB2cData;
 	}
 
 	public void setBuildChinamobileB2cData(BuildChinamobileB2cData buildChinamobileB2cData) {
@@ -188,7 +199,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildHappyGoMethodForYishenhe getBuildHappyGoMethodForYishenhe() {
-		return buildHappyGoMethodForYishenhe;
+		return this.buildHappyGoMethodForYishenhe;
 	}
 
 	public void setBuildHappyGoMethodForYishenhe(BuildHappyGoMethodForYishenhe buildHappyGoMethodForYishenhe) {
@@ -196,7 +207,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildHappyGoB2cData getBuildHappyGoB2cData() {
-		return buildHappyGoB2cData;
+		return this.buildHappyGoB2cData;
 	}
 
 	public void setBuildHappyGoB2cData(BuildHappyGoB2cData buildHappyGoB2cData) {
@@ -204,11 +215,11 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildSaohuobangB2cData getBuildSaohuobangB2cData() {
-		return buildSaohuobangB2cData;
+		return this.buildSaohuobangB2cData;
 	}
 
 	public BuildTelecomshopB2cData getBuildTelecomshopB2cData() {
-		return buildTelecomshopB2cData;
+		return this.buildTelecomshopB2cData;
 	}
 
 	public void setBuildTelecomshopB2cData(BuildTelecomshopB2cData buildTelecomshopB2cData) {
@@ -220,7 +231,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildWanxiangB2cData getBuildWanxiangB2cData() {
-		return buildWanxiangB2cData;
+		return this.buildWanxiangB2cData;
 	}
 
 	public void setBuildWanxiangB2cData(BuildWanxiangB2cData buildWanxiangB2cData) {
@@ -228,7 +239,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidLiantongB2cData getBulidLiantongB2cData() {
-		return bulidLiantongB2cData;
+		return this.bulidLiantongB2cData;
 	}
 
 	public void setBulidLiantongB2cData(BulidLiantongB2cData bulidLiantongB2cData) {
@@ -236,11 +247,11 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidAmazonB2cData getBulidAmazonB2cData() {
-		return bulidAmazonB2cData;
+		return this.bulidAmazonB2cData;
 	}
 
 	public BuildZhongliangB2cData getBuildZhongliangB2cData() {
-		return buildZhongliangB2cData;
+		return this.buildZhongliangB2cData;
 	}
 
 	public void setBuildZhongliangB2cData(BuildZhongliangB2cData buildZhongliangB2cData) {
@@ -252,7 +263,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidMaikolinB2cData getBulidMaikolinB2cData() {
-		return bulidMaikolinB2cData;
+		return this.bulidMaikolinB2cData;
 	}
 
 	public void setBulidMaikolinB2cData(BulidMaikolinB2cData bulidMaikolinB2cData) {
@@ -260,7 +271,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidHuitongtxB2cData getBulidHuitongtxB2cData() {
-		return bulidHuitongtxB2cData;
+		return this.bulidHuitongtxB2cData;
 	}
 
 	public void setBulidHuitongtxB2cData(BulidHuitongtxB2cData bulidHuitongtxB2cData) {
@@ -268,7 +279,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildHomegouB2cData getBuildHomegouB2cData() {
-		return buildHomegouB2cData;
+		return this.buildHomegouB2cData;
 	}
 
 	public void setBuildHomegouB2cData(BuildHomegouB2cData buildHomegouB2cData) {
@@ -276,7 +287,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildDpfossB2cData getBuildDpfossB2cData() {
-		return buildDpfossB2cData;
+		return this.buildDpfossB2cData;
 	}
 
 	public void setBuildDpfossB2cData(BuildDpfossB2cData buildDpfossB2cData) {
@@ -284,7 +295,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildHaoXiangGouB2cData getBuildHaoXiangGouB2cData() {
-		return buildHaoXiangGouB2cData;
+		return this.buildHaoXiangGouB2cData;
 	}
 
 	public void setBuildHaoXiangGouB2cData(BuildHaoXiangGouB2cData buildHaoXiangGouB2cData) {
@@ -292,7 +303,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildDongFangCJB2cData getBuildDongFangCJB2cData() {
-		return buildDongFangCJB2cData;
+		return this.buildDongFangCJB2cData;
 	}
 
 	public void setBuildDongFangCJB2cData(BuildDongFangCJB2cData buildDongFangCJB2cData) {
@@ -300,7 +311,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildHangZhouABCB2cData getBuildHangZhouABCB2cData() {
-		return buildHangZhouABCB2cData;
+		return this.buildHangZhouABCB2cData;
 	}
 
 	public void setBuildHangZhouABCB2cData(BuildHangZhouABCB2cData buildHangZhouABCB2cData) {
@@ -308,7 +319,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildGuangZhouABCB2cData getBuildGuangZhouABCB2cData() {
-		return buildGuangZhouABCB2cData;
+		return this.buildGuangZhouABCB2cData;
 	}
 
 	public void setBuildGuangZhouABCB2cData(BuildGuangZhouABCB2cData buildGuangZhouABCB2cData) {
@@ -316,7 +327,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildYeMaiJiuB2cData getBuildYeMaiJiuB2cData() {
-		return buildYeMaiJiuB2cData;
+		return this.buildYeMaiJiuB2cData;
 	}
 
 	public void setBuildYeMaiJiuB2cData(BuildYeMaiJiuB2cData buildYeMaiJiuB2cData) {
@@ -324,7 +335,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidYangGuangB2cData getBulidYangGuangB2cData() {
-		return bulidYangGuangB2cData;
+		return this.bulidYangGuangB2cData;
 	}
 
 	public void setBulidYangGuangB2cData(BulidYangGuangB2cData bulidYangGuangB2cData) {
@@ -332,7 +343,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidSmileB2cData getBulidSmileB2cData() {
-		return bulidSmileB2cData;
+		return this.bulidSmileB2cData;
 	}
 
 	public void setBulidSmileB2cData(BulidSmileB2cData bulidSmileB2cData) {
@@ -340,7 +351,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidRufengdaB2cData getBulidRufengdaB2cData() {
-		return bulidRufengdaB2cData;
+		return this.bulidRufengdaB2cData;
 	}
 
 	public void setBulidRufengdaB2cData(BulidRufengdaB2cData bulidRufengdaB2cData) {
@@ -348,7 +359,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidYihaodianB2cData getBulidYihaodianB2cData() {
-		return bulidYihaodianB2cData;
+		return this.bulidYihaodianB2cData;
 	}
 
 	public void setBulidYihaodianB2cData(BulidYihaodianB2cData bulidYihaodianB2cData) {
@@ -356,7 +367,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidVipShopB2cData getBulidVipShopB2cData() {
-		return bulidVipShopB2cData;
+		return this.bulidVipShopB2cData;
 	}
 
 	public void setBulidVipShopB2cData(BulidVipShopB2cData bulidVipShopB2cData) {
@@ -364,7 +375,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidDangDangB2cData getBulidDangDangB2cData() {
-		return bulidDangDangB2cData;
+		return this.bulidDangDangB2cData;
 	}
 
 	public void setBulidDangDangB2cData(BulidDangDangB2cData bulidDangDangB2cData) {
@@ -372,7 +383,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidTmallB2cData getBulidTmallB2cData() {
-		return bulidTmallB2cData;
+		return this.bulidTmallB2cData;
 	}
 
 	public void setBulidTmallB2cData(BulidTmallB2cData bulidTmallB2cData) {
@@ -380,7 +391,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidJuMeiB2cData getBulidJuMeiB2cData() {
-		return bulidJuMeiB2cData;
+		return this.bulidJuMeiB2cData;
 	}
 
 	public void setBulidJuMeiB2cData(BulidJuMeiB2cData bulidJuMeiB2cData) {
@@ -388,7 +399,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidYiXunB2cData getBulidYiXunB2cData() {
-		return bulidYiXunB2cData;
+		return this.bulidYiXunB2cData;
 	}
 
 	public void setBulidYiXunB2cData(BulidYiXunB2cData bulidYiXunB2cData) {
@@ -396,7 +407,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidGomeB2cData getBulidGomeB2cData() {
-		return bulidGomeB2cData;
+		return this.bulidGomeB2cData;
 	}
 
 	public void setBulidGomeB2cData(BulidGomeB2cData bulidGomeB2cData) {
@@ -404,7 +415,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BulidAmazonB2cData getBuildAmazonB2cData() {
-		return bulidAmazonB2cData;
+		return this.bulidAmazonB2cData;
 	}
 
 	public void setBuildAmazonB2cData(BulidAmazonB2cData bulidAmazonB2cData) {
@@ -412,7 +423,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildBenlaiB2cData getBenlaiB2cData() {
-		return benlaiB2cData;
+		return this.benlaiB2cData;
 	}
 
 	public void setBenlaiB2cData(BuildBenlaiB2cData benlaiB2cData) {
@@ -420,7 +431,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildJiuxianWangB2cData getBuildJiuxianWangB2cData() {
-		return buildJiuxianWangB2cData;
+		return this.buildJiuxianWangB2cData;
 	}
 
 	public void setBuildJiuxianWangB2cData(BuildJiuxianWangB2cData buildJiuxianWangB2cData) {
@@ -428,7 +439,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildLeChongB2cData getBuildLeChongB2cData() {
-		return buildLeChongB2cData;
+		return this.buildLeChongB2cData;
 	}
 
 	public void setBuildLeChongB2cData(BuildLeChongB2cData buildLeChongB2cData) {
