@@ -34,6 +34,7 @@ import cn.explink.b2c.jiuxian.JiuxianService;
 import cn.explink.b2c.jumeiyoupin.JumeiService;
 import cn.explink.b2c.jumeiyoupin.JumeiYoupinService;
 import cn.explink.b2c.lechong.LechongService;
+import cn.explink.b2c.lefeng.LefengService;
 import cn.explink.b2c.letv.LetvService;
 import cn.explink.b2c.liantong.LiantongService;
 import cn.explink.b2c.maikolin.MaikolinService;
@@ -182,6 +183,8 @@ public class JobUtil {
 	ZhongliangService zhongliangService;
 	@Autowired
 	ExpressSysMonitorDAO expressSysMonitorDAO;
+	@Autowired
+	LefengService lefengService;
 
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	long time = 2 * 60 * 60 * 1000;
@@ -190,11 +193,11 @@ public class JobUtil {
 
 	/**
 	 * 查询控制总开关。
-	 * 
+	 *
 	 * @return
 	 */
 	private String getOpenValue() {
-		SystemInstall systemInstall = getDmpDAO.getSystemInstallByName("isOpenJobHand");
+		SystemInstall systemInstall = this.getDmpDAO.getSystemInstallByName("isOpenJobHand");
 		return systemInstall == null ? "no" : systemInstall.getValue();
 	}
 
@@ -202,29 +205,29 @@ public class JobUtil {
 	 * 执行当当的定时器
 	 */
 	public void feedBackToDangDang_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能dangdang");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能dangdang");
 			return;
 		}
 
-		dangdangService.feedback_status();
-		telecomshopService.feedback_status();
+		this.dangdangService.feedback_status();
+		this.telecomshopService.feedback_status();
 		long endtime = System.currentTimeMillis();
-		expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.DANGDANG, endtime);
-		logger.info("执行了dangdang推送的定时器!");
+		this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.DANGDANG, endtime);
+		this.logger.info("执行了dangdang推送的定时器!");
 	}
 
 	/**
 	 * 执行聚美优品 状态推送的定时器
 	 */
 	public void feedBackToJumeiYoupin_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能jumei");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能jumei");
 			return;
 		}
 		// jumeiYoupinService.feedback_status();
-		jumeiService.feedback_status();
-		logger.info("执行了[聚美优品]推送的定时器!");
+		this.jumeiService.feedback_status();
+		this.logger.info("执行了[聚美优品]推送的定时器!");
 	}
 
 	// 删除某段时间之前推送B2C成功的数据
@@ -234,104 +237,104 @@ public class JobUtil {
 		// return;
 		// }
 		int day = 60;
-		b2cDataDAO.DeleteSendB2cDataForSuccess(day);
-		logger.info("执行了删除{}天前的推送成功的数据！", day);
+		this.b2cDataDAO.DeleteSendB2cDataForSuccess(day);
+		this.logger.info("执行了删除{}天前的推送成功的数据！", day);
 	}
 
 	/**
 	 * 执行tmall反馈的定时器
 	 */
 	public void feedBackToTmall_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能tmall");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能tmall");
 			return;
 		}
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("tmall")) {
-				tmallService.feedback_status(enums.getKey());
+				this.tmallService.feedback_status(enums.getKey());
 			}
 		}
 		long endtime = System.currentTimeMillis();
-		expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.TMALL, endtime);
-		logger.info("执行了tmall推送的定时器!");
+		this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.TMALL, endtime);
+		this.logger.info("执行了tmall推送的定时器!");
 	}
 
 	/**
 	 * 执行vipshop反馈的定时器
 	 */
 	public void feedBackToVipShop_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能vipshop");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能vipshop");
 			return;
 		}
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("vipshop")) {
-				vipshopService.feedback_status(enums.getKey());
+				this.vipshopService.feedback_status(enums.getKey());
 			}
 
 		}
 
-		logger.info("执行了vipshop推送的定时器!");
+		this.logger.info("执行了vipshop推送的定时器!");
 	}
 
 	/*
 	 * 执行麦考林定时器
 	 */
 	public void maikolin_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能maikolin");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能maikolin");
 			return;
 		}
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("maikaolin")) {
-				maikolinService.feedback_status(enums.getKey());
+				this.maikolinService.feedback_status(enums.getKey());
 			}
 
 		}
 
-		logger.info("执行了[maikolin]推送的定时器!");
+		this.logger.info("执行了[maikolin]推送的定时器!");
 	}
 
 	/*
 	 * 执行本来网定时器
 	 */
 	public void Benlai_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能benlai");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能benlai");
 			return;
 		}
-		benlaishenghuoService.feedback_status(B2cEnum.Benlaishenghuo.getKey());
-		logger.info("执行了[本来网]推送的定时器!");
+		this.benlaishenghuoService.feedback_status(B2cEnum.Benlaishenghuo.getKey());
+		this.logger.info("执行了[本来网]推送的定时器!");
 	}
 
 	/*
 	 * 执行快乐购定时器
 	 */
 	public void getHappyGo_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能happygo");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能happygo");
 			return;
 		}
-		goService.feed_backstate();
-		logger.info("执行了[快乐购oms]推送的定时器!");
+		this.goService.feed_backstate();
+		this.logger.info("执行了[快乐购oms]推送的定时器!");
 	}
 
 	/*
 	 * 执行本来网定时器
 	 */
 	public void Jiuxian_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能Jiuxian");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能Jiuxian");
 			return;
 		}
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("Jiuxian")) {
-				jiuxianService.feedback_status(enums.getKey());
+				this.jiuxianService.feedback_status(enums.getKey());
 			}
 
 		}
 
-		logger.info("执行了[本来网]推送的定时器!");
+		this.logger.info("执行了[本来网]推送的定时器!");
 	}
 
 	/**
@@ -346,87 +349,87 @@ public class JobUtil {
 	 * 执行如风达反馈的定时器
 	 */
 	public void feedBackToRufengda_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能yihaodian");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能yihaodian");
 			return;
 		}
-		rufengdaService_CommitDeliverInfo.CommitDeliverInfo_interface();
-		smileService.feedback_status(); // 思迈对接
+		this.rufengdaService_CommitDeliverInfo.CommitDeliverInfo_interface();
+		this.smileService.feedback_status(); // 思迈对接
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("yihaodian")) {
-				yihaodianService.YiHaoDianInterfaceInvoke(enums.getKey());
+				this.yihaodianService.YiHaoDianInterfaceInvoke(enums.getKey());
 			}
 		}
 		long endtime = System.currentTimeMillis();
-		expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.FANKE, endtime);
-		logger.info("执行了如风达反馈的定时器!");
+		this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.FANKE, endtime);
+		this.logger.info("执行了如风达反馈的定时器!");
 	}
 
 	/**
 	 * 执行一号店重发机制 反馈的定时器 1小时反馈一次
 	 */
 	public void feedBackToYihaodianAgain_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能yihaodian");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能yihaodian");
 			return;
 		}
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("yihaodian")) {
-				yihaodianService.DeliveryResultByYiHaoDianAgain(enums.getKey());
+				this.yihaodianService.DeliveryResultByYiHaoDianAgain(enums.getKey());
 			}
 		}
-		logger.info("执行了一号店重发反馈的定时器!");
+		this.logger.info("执行了一号店重发反馈的定时器!");
 		long endtime = System.currentTimeMillis();
-		expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.YIHAODIAN, endtime);
+		this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.YIHAODIAN, endtime);
 	}
 
 	/**
 	 * 国美定时器
 	 */
 	public void gome_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能gome");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能gome");
 			return;
 		}
 		try {
-			gomeService_CommitDeliverInfo.commitDeliverInfo_interface();
+			this.gomeService_CommitDeliverInfo.commitDeliverInfo_interface();
 			long endtime = System.currentTimeMillis();
-			expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.GOME, endtime);
+			this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.GOME, endtime);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		getDiffB2cTimmer_Task();
+		this.getDiffB2cTimmer_Task();
 
-		logger.info("执行了国美推送的定时器!");
+		this.logger.info("执行了国美推送的定时器!");
 	}
 
 	/**
 	 * 各个电商对接临时表插入主表说明 以后统一不加入定时器了
 	 */
 	public void getDiffB2cTimmer_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能abc,yangguang,yemaijiu");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能abc,yangguang,yemaijiu");
 			return;
 		}
 		long starttime = System.currentTimeMillis();
 
-		guangZhouABCService.feedback_status(B2cEnum.GuangZhouABC.getKey());
-		hangZhouABCService.feedback_status(B2cEnum.HangZhouABC.getKey());
+		this.guangZhouABCService.feedback_status(B2cEnum.GuangZhouABC.getKey());
+		this.hangZhouABCService.feedback_status(B2cEnum.HangZhouABC.getKey());
 
-		yangGuangService_upload.createTxtFile_DeliveryFinishMethod();
-		yeMaiJiuService.feedback_status();
+		this.yangGuangService_upload.createTxtFile_DeliveryFinishMethod();
+		this.yeMaiJiuService.feedback_status();
 
 		String nowHours = DateTimeUtil.getNowTime("HH");
 		if ("06".equals(nowHours) || "07".equals(nowHours)) {
-			dongFangCJService_Delivery.createDongFangCJTxtFile_DeliveryFinish();
-			dongFangCJService_Cod.createDongFangCJTxtFile_Cod();
+			this.dongFangCJService_Delivery.createDongFangCJTxtFile_DeliveryFinish();
+			this.dongFangCJService_Cod.createDongFangCJTxtFile_Cod();
 			long endtime = System.currentTimeMillis();
-			logger.info("执行了0东方CJ0状态反馈定时器,本次耗时:{}秒", ((endtime - starttime) / 1000));
+			this.logger.info("执行了0东方CJ0状态反馈定时器,本次耗时:{}秒", ((endtime - starttime) / 1000));
 		}
 
-		haoXiangGouService.feedback_status();
+		this.haoXiangGouService.feedback_status();
 
 	}
 
@@ -441,15 +444,15 @@ public class JobUtil {
 
 		if ("05".equals(nowHours) || "06".equals(nowHours)) {
 			if (nowMinutes >= 30) {
-				homegouService_Delivery.feedback_state();
-				homegouService_Message.feedback_state();
+				this.homegouService_Delivery.feedback_state();
+				this.homegouService_Message.feedback_state();
 				long endtime = System.currentTimeMillis();
-				logger.info("执行了0家有购物0状态反馈定时器,本次耗时:{}秒", ((endtime - starttime) / 1000));
+				this.logger.info("执行了0家有购物0状态反馈定时器,本次耗时:{}秒", ((endtime - starttime) / 1000));
 			}
 		}
 
-		huitongtxService.feedback_status(B2cEnum.Huitongtx.getKey());
-		logger.info("执行了汇通天下反馈定时器");
+		this.huitongtxService.feedback_status(B2cEnum.Huitongtx.getKey());
+		this.logger.info("执行了汇通天下反馈定时器");
 
 	}
 
@@ -457,146 +460,146 @@ public class JobUtil {
 	 * 亚马逊定时器
 	 */
 	public void amazon_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能amazon");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能amazon");
 			return;
 		}
 		try {
-			amazonService_CommitDeliverInfo.commitDeliverInfo_interface();
+			this.amazonService_CommitDeliverInfo.commitDeliverInfo_interface();
 			long endtime = System.currentTimeMillis();
-			expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.AMAZON, endtime);
+			this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.AMAZON, endtime);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		logger.info("执行了亚马逊推送的定时器!");
+		this.logger.info("执行了亚马逊推送的定时器!");
 	}
 
 	/**
 	 * 亚马逊COD定时器
 	 */
 	public void amazon_Cod_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能amazon_cod");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能amazon_cod");
 			return;
 		}
 		try {
-			amazonService_CommitDeliverInfo.commitDeliver_Cod();
+			this.amazonService_CommitDeliverInfo.commitDeliver_Cod();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		logger.info("执行了亚马逊COD推送的定时器!");
+		this.logger.info("执行了亚马逊COD推送的定时器!");
 	}
 
 	/**
 	 * 离线下载任务
 	 */
 	public void down_Task() {
-		downloadManagerService.down_task();
+		this.downloadManagerService.down_task();
 	}
 
 	public void deleteFile_Task() {
-		downloadManagerService.deleteFile_Task();
-		logger.info("执行删除文件任务!");
+		this.downloadManagerService.deleteFile_Task();
+		this.logger.info("执行删除文件任务!");
 	}
 
 	/**
 	 * 德邦物流定时 反馈任务
 	 */
 	public void dpfoss_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能dpfoss");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能dpfoss");
 			return;
 		}
 		try {
-			dpfossService.feedback_status();
+			this.dpfossService.feedback_status();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.info("执行了0德邦物流0推送的定时器!");
+		this.logger.info("执行了0德邦物流0推送的定时器!");
 	}
 
 	/**
 	 * 易派系统对接定时 反馈任务 上游OMS->DMP
 	 */
 	public void epaiFeedback_up_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能hxdj");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能hxdj");
 			return;
 		}
 		try {
-			coreService.selectOMStemp_feedback();
+			this.coreService.selectOMStemp_feedback();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.info("执行了0上游OMS->DMP0推送的定时器!");
+		this.logger.info("执行了0上游OMS->DMP0推送的定时器!");
 	}
 
 	/**
 	 * 易派系统对接定时 反馈任务下游反馈
 	 */
 	public void epaiFeedback_down_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能hxdj");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能hxdj");
 			return;
 		}
 		try {
-			epaiApiService.feedback_status();
+			this.epaiApiService.feedback_status();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.info("执行了0下游反馈0推送的定时器!");
+		this.logger.info("执行了0下游反馈0推送的定时器!");
 	}
 
 	/**
 	 * 一级站出库迈思可 定时器 OMS
 	 */
 	public void getOuttoBranchMsk_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能maisike");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能maisike");
 			return;
 		}
 		try {
-			maisikeService_Send2LvBranch.sendTwoLeavelBranch();
+			this.maisikeService_Send2LvBranch.sendTwoLeavelBranch();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.info("执行了0一级站出库迈思可0推送的定时器!");
+		this.logger.info("执行了0一级站出库迈思可0推送的定时器!");
 	}
 
 	/*
 	 * 全线快递
 	 */
 	public void wholeLine_Task() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能quanxian");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能quanxian");
 			return;
 		}
 		try {
 			int key = B2cEnum.wholeLine.getKey();
-			WholeLine whole = wholeLineService.getWholeline(B2cEnum.wholeLine.getKey());
-			wholeLineService_search.searchQuanxianRoute(key, whole);
+			WholeLine whole = this.wholeLineService.getWholeline(B2cEnum.wholeLine.getKey());
+			this.wholeLineService_search.searchQuanxianRoute(key, whole);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("执行了全线快递的定时器，报错!", e);
+			this.logger.error("执行了全线快递的定时器，报错!", e);
 		}
-		logger.info("执行了全线快递的定时器!");
+		this.logger.info("执行了全线快递的定时器!");
 	}
 
 	public void Transmigration_wholeline() {
-		if ("yes".equals(getOpenValue())) {
-			logger.warn("未开启本地调用定时器功能");
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能");
 			return;
 		}
 		try {
 			long starttime = System.currentTimeMillis();
-			wholeLineService.getInfoCall();
+			this.wholeLineService.getInfoCall();
 			long endtime = System.currentTimeMillis();
-			logger.info("执行了全线快递info的定时器!------------轮询order表完毕,用时={}", (endtime - starttime) / 1000);
+			this.logger.info("执行了全线快递info的定时器!------------轮询order表完毕,用时={}", (endtime - starttime) / 1000);
 		} catch (Exception e) {
 
-			logger.error("执行了全线快递info的定时器，报错!", e);
+			this.logger.error("执行了全线快递info的定时器，报错!", e);
 		}
 	}
 
@@ -606,12 +609,12 @@ public class JobUtil {
 	public void getLiantong_Task() {
 
 		try {
-			liantongService.feedback_status();
+			this.liantongService.feedback_status();
 		} catch (Exception e) {
 
-			logger.error("执行了联通商城的定时器异常!", e);
+			this.logger.error("执行了联通商城的定时器异常!", e);
 		}
-		logger.info("执行了联通商城定时器!");
+		this.logger.info("执行了联通商城定时器!");
 	}
 
 	/**
@@ -620,23 +623,23 @@ public class JobUtil {
 	public void getMmb_Task() {
 
 		try {
-			mmbService.feedback_status();
+			this.mmbService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了买卖宝的定时器异常!", e);
+			this.logger.error("执行了买卖宝的定时器异常!", e);
 		}
-		logger.info("执行了买卖宝定时器!");
+		this.logger.info("执行了买卖宝定时器!");
 	}
 
 	/**
-	  * 	
+	  *
 	  */
 	public void getChinamobile_Task() {
 		try {
-			chinamobileService.feedback_status();
+			this.chinamobileService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了移动状态反馈的定时器异常!", e);
+			this.logger.error("执行了移动状态反馈的定时器异常!", e);
 		}
-		logger.info("执行了移动状态反馈的定时器!");
+		this.logger.info("执行了移动状态反馈的定时器!");
 	}
 
 	/**
@@ -645,13 +648,13 @@ public class JobUtil {
 	public void getLetv_Task() {
 
 		try {
-			letvService.feedback_status();
-			wanxiangService.feedback_status();
+			this.letvService.feedback_status();
+			this.wanxiangService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了乐视网,万象的定时器异常!", e);
+			this.logger.error("执行了乐视网,万象的定时器异常!", e);
 		}
 
-		logger.info("执行了乐视网定时器!");
+		this.logger.info("执行了乐视网定时器!");
 	}
 
 	/**
@@ -660,12 +663,12 @@ public class JobUtil {
 	public void getYonghui_Task() {
 
 		try {
-			yonghuiService.feedback_status();
+			this.yonghuiService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行永辉超市的定时器异常!", e);
+			this.logger.error("执行永辉超市的定时器异常!", e);
 		}
 
-		logger.info("执行了永辉超市定时器!");
+		this.logger.info("执行了永辉超市定时器!");
 	}
 
 	/**
@@ -674,12 +677,12 @@ public class JobUtil {
 	public void getHxgdms_Task() {
 
 		try {
-			hxgdmsService.feedback_status();
+			this.hxgdmsService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了好享购的定时器异常!", e);
+			this.logger.error("执行了好享购的定时器异常!", e);
 		}
 
-		logger.info("执行了好享购DMS定时器!");
+		this.logger.info("执行了好享购DMS定时器!");
 	}
 
 	/**
@@ -688,14 +691,14 @@ public class JobUtil {
 	public void getSfexpress_Task() {
 
 		try {
-			sfexpressService_sendOrder.sendCwbOrdersToSFexpress();
+			this.sfexpressService_sendOrder.sendCwbOrdersToSFexpress();
 
-			sfexpressService_searchOrderStatus.getWSReturnJson();
+			this.sfexpressService_searchOrderStatus.getWSReturnJson();
 		} catch (Exception e) {
-			logger.error("执行了顺丰的定时器异常!", e);
+			this.logger.error("执行了顺丰的定时器异常!", e);
 		}
 
-		logger.info("执行了推送顺丰快递定时器!");
+		this.logger.info("执行了推送顺丰快递定时器!");
 	}
 
 	/**
@@ -704,12 +707,12 @@ public class JobUtil {
 	public void getWangjiu_Task() {
 		try {
 
-			wangjiuService.feedback_status();
+			this.wangjiuService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了网酒网的定时器异常!", e);
+			this.logger.error("执行了网酒网的定时器异常!", e);
 		}
 
-		logger.info("执行了推送网酒网定时器!");
+		this.logger.info("执行了推送网酒网定时器!");
 	}
 
 	/**
@@ -717,12 +720,12 @@ public class JobUtil {
 	 */
 	public void getLechong_Task() {
 		try {
-			lechongService.feedback_status();
+			this.lechongService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了乐宠的定时器异常!", e);
+			this.logger.error("执行了乐宠的定时器异常!", e);
 		}
 
-		logger.info("执行了推送乐宠网定时器!");
+		this.logger.info("执行了推送乐宠网定时器!");
 	}
 
 	/**
@@ -730,12 +733,12 @@ public class JobUtil {
 	 */
 	public void getZhongliang_Task() {
 		try {
-			zhongliangService.feedback_status();
+			this.zhongliangService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了中粮的定时器异常!", e);
+			this.logger.error("执行了中粮的定时器异常!", e);
 		}
 
-		logger.info("执行了推送中粮我买网定时器!");
+		this.logger.info("执行了推送中粮我买网定时器!");
 	}
 
 	/**
@@ -744,24 +747,24 @@ public class JobUtil {
 	public void getHomegobj_Task() {
 		try {
 
-			homegobjService.feedback_status();
+			this.homegobjService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了家有购物北京的定时器异常!", e);
+			this.logger.error("执行了家有购物北京的定时器异常!", e);
 		}
 
-		logger.info("执行了推送家有购物北京定时器!");
+		this.logger.info("执行了推送家有购物北京定时器!");
 	}
 
 	public void getWeisuda_Task() {
 		try {
 
-			weisudaService.selectWeisudaCwb();
-			weisudaService.getUnVerifyOrders();
+			this.weisudaService.selectWeisudaCwb();
+			this.weisudaService.getUnVerifyOrders();
 		} catch (Exception e) {
-			logger.error("执行了唯速达定时器异常!", e);
+			this.logger.error("执行了唯速达定时器异常!", e);
 		}
 
-		logger.info("执行了推送唯速达定时器!");
+		this.logger.info("执行了推送唯速达定时器!");
 	}
 
 	/**
@@ -770,12 +773,12 @@ public class JobUtil {
 	public void getSmiled_Task() {
 		try {
 
-			smiledService_SendBranch.sendNextBranch();
+			this.smiledService_SendBranch.sendNextBranch();
 		} catch (Exception e) {
-			logger.error("执行了思迈下游的定时器异常!", e);
+			this.logger.error("执行了思迈下游的定时器异常!", e);
 		}
 
-		logger.info("执行了推送思迈下游定时器!");
+		this.logger.info("执行了推送思迈下游定时器!");
 	}
 
 	/**
@@ -784,12 +787,26 @@ public class JobUtil {
 	public void getSfxhm_Task() {
 		try {
 
-			sfxhmService.feedback_status();
+			this.sfxhmService.feedback_status();
 		} catch (Exception e) {
-			logger.error("执行了顺丰小红帽的定时器异常!", e);
+			this.logger.error("执行了顺丰小红帽的定时器异常!", e);
 		}
 
-		logger.info("执行了推送顺丰小红帽定时器!");
+		this.logger.info("执行了推送顺丰小红帽定时器!");
+	}
+
+	/**
+	 * 乐蜂网
+	 */
+	public void getLefeng_Task() {
+		try {
+
+			this.lefengService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了乐蜂网的定时器异常!", e);
+		}
+
+		this.logger.info("执行了乐蜂网定时器!");
 	}
 
 }
