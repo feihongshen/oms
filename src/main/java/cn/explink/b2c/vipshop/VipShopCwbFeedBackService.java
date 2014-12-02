@@ -92,7 +92,7 @@ public class VipShopCwbFeedBackService {
 
 		// 揽退单
 
-		this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.RuKu.getValue());
+		this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.DaoRuShuJu.getValue());
 		this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.FenZhanLingHuo.getValue());
 		this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.YiShenHe.getValue());
 
@@ -412,7 +412,7 @@ public class VipShopCwbFeedBackService {
 			if (note.getOrder_status().equals(String.valueOf(VipShopFlowEnum.ShangMenTuiChengGong_t.getVipshop_state()))
 					|| note.getOrder_status().equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))) { // 如果是34状态
 																															// 则自动创建虚拟
-																															// 上门揽退状态
+				String order_status_time = ((note.getShangmenlanshoutime() == null) || note.getShangmenlanshoutime().isEmpty() ? note.getOrder_status_time() : note.getShangmenlanshoutime()); // 上门揽退状态
 
 				String order_status_infos = "上门揽件";
 				sub1.append("<trace>");
@@ -421,7 +421,7 @@ public class VipShopCwbFeedBackService {
 				sub1.append("<order_status>" + VipShopFlowEnum.ShangMenLanJian_t.getVipshop_state() + "</order_status>");
 				sub1.append("<order_status_info>" + order_status_infos + "</order_status_info>");
 				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
-				sub1.append("<order_status_time>" + (note.getShangmenlanshoutime() == null ? note.getOrder_status_time() : note.getShangmenlanshoutime()) + "</order_status_time>");
+				sub1.append("<order_status_time>" + order_status_time + "</order_status_time>");
 				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
 				sub1.append("</trace>");
 			}
@@ -558,7 +558,7 @@ public class VipShopCwbFeedBackService {
 			}
 		} else if (cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue()) { // 上门退类型
 
-			if (flowordertype == FlowOrderTypeEnum.RuKu.getValue()) {
+			if (flowordertype == FlowOrderTypeEnum.DaoRuShuJu.getValue()) {
 				return VipShopFlowEnum.Ruku_t.getVipshop_state() + "";
 			}
 			if (flowordertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
@@ -720,14 +720,16 @@ public class VipShopCwbFeedBackService {
 			if (note.getOrder_status().equals(String.valueOf(VipShopFlowEnum.ShangMenTuiChengGong_t.getVipshop_state()))
 					|| note.getOrder_status().equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))) { // 如果是34状态
 																															// 则自动创建虚拟
-																															// 上门揽退状态
+				String order_status_time = ((note.getShangmenlanshoutime() == null) || note.getShangmenlanshoutime().isEmpty() ? note.getOrder_status_time() : note.getShangmenlanshoutime()); // 上门揽退状态
+																																																// //
+																																																// 上门揽退状态
 				String order_status_infos = "上门揽件";
 				sub1.append((VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")));
 				sub1.append(note.getOrder_sn());
 				sub1.append(VipShopFlowEnum.ShangMenLanJian_t.getVipshop_state());
 				sub1.append(order_status_infos);
 				sub1.append(note.getCurrent_city_name());
-				sub1.append((note.getShangmenlanshoutime() == null ? note.getOrder_status_time() : note.getShangmenlanshoutime()));
+				sub1.append(order_status_time);
 				sub1.append(note.getSign_man());
 			}
 			sub1.append((VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")));

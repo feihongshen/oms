@@ -27,13 +27,13 @@ public class SOAPHandler {
 		try {
 			String soapActionString = nameSpace + "/" + methodName;
 			StringBuffer paramXml = new StringBuffer();
-			paramXml.append("<content>" + readXML.parse(requestXML) + "</content>");
+			paramXml.append("<content>" + ReaderXMLHandler.parse(requestXML) + "</content>");
 			paramXml.append("<sign>" + sign + "</sign>");
 			paramXml.append("<serviceCode>" + serviceCode + "</serviceCode>");
 
 			String soap = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body><" + methodName + " xmlns=\"" + nameSpace + "\">" + paramXml + "</" + methodName
 					+ "></soapenv:Body></soapenv:Envelope>";
-			logger.info("soap方式请求格式：" + soap);
+			// logger.info("soap方式请求格式：" + soap);
 
 			URL url = new URL(endpointUrl);
 			HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
