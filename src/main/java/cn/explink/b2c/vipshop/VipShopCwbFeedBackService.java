@@ -527,7 +527,7 @@ public class VipShopCwbFeedBackService {
 
 			if (flowordertype != FlowOrderTypeEnum.YiShenHe.getValue()) {
 				for (VipShopFlowEnum TEnum : VipShopFlowEnum.values()) {
-					if (flowordertype == TEnum.getFlowordertype()) {
+					if ((flowordertype == TEnum.getFlowordertype()) && (flowordertype != VipShopFlowEnum.Ruku_t.getFlowordertype())) {
 						return TEnum.getVipshop_state() + "";
 					}
 				}
