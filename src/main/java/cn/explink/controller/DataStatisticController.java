@@ -20,7 +20,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
@@ -166,7 +165,7 @@ public class DataStatisticController {
 
 	/**
 	 * 妥投订单汇总
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -199,35 +198,35 @@ public class DataStatisticController {
 		Page pageparm = new Page();
 		DeliverySuccessful sum = new DeliverySuccessful();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
 		List<Branch> branchnameList = new ArrayList<Branch>();
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 					BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 			if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 				if (branchnameList.size() == 0) {
 					branchnameList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 						branchnameList.add(branch);
 					}
 				}
 			}
 		}
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 		// 保存订单配送结果的选择
 		if (operationOrderResultTypes.length == 0) {
 			operationOrderResultTypes = new String[] { DeliveryStateEnum.PeiSongChengGong.getValue() + "", DeliveryStateEnum.ShangMenHuanChengGong.getValue() + "",
 					DeliveryStateEnum.ShangMenTuiChengGong.getValue() + "" };
 		}
-		List<String> operationOrderResultTypeslist = dataStatisticService.getList(operationOrderResultTypes);
+		List<String> operationOrderResultTypeslist = this.dataStatisticService.getList(operationOrderResultTypes);
 		// 保存供货商的选择
 		List<String> customeridList = new ArrayList<String>();
 		// 保存站点的选择
@@ -237,56 +236,56 @@ public class DataStatisticController {
 		// 保存小件员的选择
 		List<User> deliverlist = new ArrayList<User>();
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
-			logger.info("妥投订单汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",isaudit:" + isaudit + ",customerid:" + dataStatisticService.getStrings(customerids)
-					+ ",cwbordertypeid:" + dataStatisticService.getStrings(cwbordertypeids) + ",paywayid:" + paywayid + ",isauditTime:" + isauditTime + ",deliverid:" + deliverid
-					+ ",dispatchbranchids:" + dataStatisticService.getStrings(dispatchbranchids) + ",operationOrderResultTypes:" + dataStatisticService.getStrings(operationOrderResultTypes)
+			this.logger.info("妥投订单汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",isaudit:" + isaudit + ",customerid:" + this.dataStatisticService.getStrings(customerids)
+					+ ",cwbordertypeid:" + this.dataStatisticService.getStrings(cwbordertypeids) + ",paywayid:" + paywayid + ",isauditTime:" + isauditTime + ",deliverid:" + deliverid
+					+ ",dispatchbranchids:" + this.dataStatisticService.getStrings(dispatchbranchids) + ",operationOrderResultTypes:" + this.dataStatisticService.getStrings(operationOrderResultTypes)
 					+ ",isshow:" + isshow + ",page:" + page, user.getRealname());
 			// 保存供货商的选择
-			customeridList = dataStatisticService.getList(customerids);
+			customeridList = this.dataStatisticService.getList(customerids);
 			// 保存站点的选择
-			if (dispatchbranchids.length == 0 & branchnameList.size() > 0) {
+			if ((dispatchbranchids.length == 0) & (branchnameList.size() > 0)) {
 				dispatchbranchids = new String[branchnameList.size()];
 				for (Branch bc : branchnameList) {
 					dispatchbranchids[branchnameList.indexOf(bc)] = bc.getBranchid() + "";
 
 				}
 			}
-			dispatchbranchidList = dataStatisticService.getList(dispatchbranchids);
+			dispatchbranchidList = this.dataStatisticService.getList(dispatchbranchids);
 			// 保存订单类型的选择
-			cwbordertypeidList = dataStatisticService.getList(cwbordertypeids);
+			cwbordertypeidList = this.dataStatisticService.getList(cwbordertypeids);
 			// 保存小件员的选择
-			deliverlist = getDmpDAO.getAllUserByBranchIds(dataStatisticService.getStrings(dispatchbranchids));
-			String customeridStr = dataStatisticService.getStrings(customerids);
-			String cwbordertypeidStr = dataStatisticService.getStrings(cwbordertypeids);
-			String dispatchbranchidStr = dataStatisticService.getStrings(dispatchbranchids);
-			String operationOrderResultTypeStr = dataStatisticService.getStrings(operationOrderResultTypes);
+			deliverlist = this.getDmpDAO.getAllUserByBranchIds(this.dataStatisticService.getStrings(dispatchbranchids));
+			String customeridStr = this.dataStatisticService.getStrings(customerids);
+			String cwbordertypeidStr = this.dataStatisticService.getStrings(cwbordertypeids);
+			String dispatchbranchidStr = this.dataStatisticService.getStrings(dispatchbranchids);
+			String operationOrderResultTypeStr = this.dataStatisticService.getStrings(operationOrderResultTypes);
 
-			List<DeliverySuccessful> delList = deliverySuccessfulDAO.getDeliverySuccessfulList(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, paywayid,
+			List<DeliverySuccessful> delList = this.deliverySuccessfulDAO.getDeliverySuccessfulList(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, paywayid,
 					dispatchbranchidStr, deliverid, operationOrderResultTypeStr, page, paybackfeeIsZero);
 
-			sum = deliverySuccessfulDAO.getDeliverySuccessfulSum(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, paywayid, dispatchbranchidStr, deliverid,
+			sum = this.deliverySuccessfulDAO.getDeliverySuccessfulSum(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, paywayid, dispatchbranchidStr, deliverid,
 					operationOrderResultTypeStr, page, paybackfeeIsZero);
 			count = sum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (delList != null && delList.size() > 0) {
+			if ((delList != null) && (delList.size() > 0)) {
 				String cwbs = "";
 				for (DeliverySuccessful deliverySuccessful : delList) {
 					cwbs += "'" + deliverySuccessful.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					List<Branch> branchList = getDmpDAO.getAllBranchs();
-					List<User> userList = getDmpDAO.getUserForALL();
-					orderlist = dataStatisticService.getCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+					List<User> userList = this.getDmpDAO.getUserForALL();
+					orderlist = this.dataStatisticService.getCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("妥投订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("妥投订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 
 		}
 		model.addAttribute("deliverlist", deliverlist);
@@ -306,14 +305,14 @@ public class DataStatisticController {
 		model.addAttribute("dispatchbranchidStr", dispatchbranchidList);
 		model.addAttribute("cwbordertypeidStr", cwbordertypeidList);
 		model.addAttribute("customeridStr", customeridList);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TuoTOuDingDanHuiZong.getValue()).getLastupdatetime());
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TuoTOuDingDanHuiZong.getValue()).getLastupdatetime());
 		return "datastatistics/tuotoulist";
 
 	}
 
 	/**
 	 * 库房出库统计(云)
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -339,9 +338,9 @@ public class DataStatisticController {
 		Page pageparm = new Page();
 		DeliveryChuku deliveryChukusum = new DeliveryChuku();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
@@ -349,23 +348,24 @@ public class DataStatisticController {
 		List<Branch> branchAllList = new ArrayList<Branch>();
 		// 管退货的中转站库房
 		List<Branch> kufangList = new ArrayList<Branch>();
-		if (user != null && user.getUserid() > 0) {
+		if ((user != null) && (user.getUserid() > 0)) {
 
 			// 按beanchid 查询站点
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
 			// 按用户ID和站点(2)+退货(3)+中转(4) 按照站点类型和用户ID查找 2,3,4:代表 处理退货的中转站
-			branchAllList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+			branchAllList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 					BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 			// 按用户ID和库房(1)+退货(3)+中转(4) 按照站点类型和用户ID查找 2,3,4:代表 处理退货的中转站
-			kufangList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
+			kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+					BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 			// 如果说站点的类型是库房或退货或中转站的时候进入判断
-			if (branch.getSitetype() == BranchEnum.KuFang.getValue() || branch.getSitetype() == BranchEnum.TuiHuo.getValue() || branch.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {
+			if ((branch.getSitetype() == BranchEnum.KuFang.getValue()) || (branch.getSitetype() == BranchEnum.TuiHuo.getValue()) || (branch.getSitetype() == BranchEnum.ZhongZhuan.getValue())) {
 				// 库房的集合为0的时候,添加符合以上条件的站点到库房集合中(这..........,因为退货业务中退步到合适的库房,所以由站点直接退?)
 				if (kufangList.size() == 0) {
 					kufangList.add(branch);
 				} else {
 					// 如果集合不为0,判断集合中是否存在这个,如果不存在就添加
-					if (!dataStatisticService.checkBranchRepeat(kufangList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(kufangList, branch)) {
 						kufangList.add(branch);
 					}
 				}
@@ -375,14 +375,14 @@ public class DataStatisticController {
 				if (branchAllList.size() == 0) {
 					branchAllList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(branchAllList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(branchAllList, branch)) {
 						branchAllList.add(branch);
 					}
 				}
 			}
 		}
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 
 		// 保存供货商的选择
 		List<String> customeridList = new ArrayList<String>();
@@ -392,57 +392,57 @@ public class DataStatisticController {
 		List<String> cwbordertypeidList = new ArrayList<String>();
 		// 保存发货仓库
 		List<String> kufangidList = new ArrayList<String>();
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
-			logger.info(
-					"库房出库统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + dataStatisticService.getStrings(kufangid) + ",customerid:"
-							+ dataStatisticService.getStrings(customerid) + ",cwbordertypeid:" + dataStatisticService.getStrings(cwbordertypeid) + ",nextbranchid:"
-							+ dataStatisticService.getStrings(nextbranchid) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+			this.logger.info(
+					"库房出库统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + this.dataStatisticService.getStrings(kufangid) + ",customerid:"
+							+ this.dataStatisticService.getStrings(customerid) + ",cwbordertypeid:" + this.dataStatisticService.getStrings(cwbordertypeid) + ",nextbranchid:"
+							+ this.dataStatisticService.getStrings(nextbranchid) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 			begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 			enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 			// 保存供货商的选择 数组转List
-			customeridList = dataStatisticService.getList(customerid);
+			customeridList = this.dataStatisticService.getList(customerid);
 			// 保存发货仓库 数组转List
-			kufangidList = dataStatisticService.getList(kufangid);
+			kufangidList = this.dataStatisticService.getList(kufangid);
 
 			// 保存站点的选择 数组转List
-			nextbranchidList = dataStatisticService.getList(nextbranchid);
+			nextbranchidList = this.dataStatisticService.getList(nextbranchid);
 			// 保存订单类型的选择 数组转List
-			cwbordertypeidList = dataStatisticService.getList(cwbordertypeid);
+			cwbordertypeidList = this.dataStatisticService.getList(cwbordertypeid);
 			// 数组转逗号分割字符串,最后把多个供应商，订单类型ID，下一站ID，库房ID的集用逗号分开，使用这种数据方便做数据库操作
-			String customerids = dataStatisticService.getStrings(customerid);
-			String cwbordertypeids = dataStatisticService.getStrings(cwbordertypeid);
-			String nextbranchids = dataStatisticService.getStrings(nextbranchid);
-			String kufangids = dataStatisticService.getStrings(kufangid);
+			String customerids = this.dataStatisticService.getStrings(customerid);
+			String cwbordertypeids = this.dataStatisticService.getStrings(cwbordertypeid);
+			String nextbranchids = this.dataStatisticService.getStrings(nextbranchid);
+			String kufangids = this.dataStatisticService.getStrings(kufangid);
 
 			// 查询出库表 ops_delivery_chuku,按条件查询数据
 			// 除汇总数据
-			List<DeliveryChuku> delList = deliveryChukuDAO.getDeliveryChukuList(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
+			List<DeliveryChuku> delList = this.deliveryChukuDAO.getDeliveryChukuList(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
 
 			// 查询出库表 ops_delivery_chuku,整合汇总数据
 			// private BigDecimal receivablefee;//代收货款应收金额
 			// private BigDecimal paybackfee;//上门退货应退金额
-			deliveryChukusum = deliveryChukuDAO.getDeliveryChukuSum(begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
+			deliveryChukusum = this.deliveryChukuDAO.getDeliveryChukuSum(begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
 
 			count = deliveryChukusum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (delList != null && delList.size() > 0) {
+			if ((delList != null) && (delList.size() > 0)) {
 				String cwbs = "";
 				for (DeliveryChuku deliveryChuku : delList) {
 					cwbs += "'" + deliveryChuku.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					List<Branch> branchList = getDmpDAO.getAllBranchs();
-					List<User> userList = getDmpDAO.getUserForALL();
-					orderlist = dataStatisticService.getChukuCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+					List<User> userList = this.getDmpDAO.getUserForALL();
+					orderlist = this.dataStatisticService.getChukuCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("库房出库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("库房出库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 
 		model.addAttribute("count", count);
@@ -462,13 +462,13 @@ public class DataStatisticController {
 		model.addAttribute("kufangidStr", kufangidList);
 		model.addAttribute("kufangid", kufangid);
 		model.addAttribute("nextbranchidStr", nextbranchidList);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangChuKuTongJi.getValue()).getLastupdatetime());
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangChuKuTongJi.getValue()).getLastupdatetime());
 		return "datastatistics/outwarehousedatalist";
 	}
 
 	/**
 	 * 库对库出库统计功能
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -494,28 +494,28 @@ public class DataStatisticController {
 		Page pageparm = new Page();
 		KDKDeliveryChuku kdkdeliveryChukusum = new KDKDeliveryChuku();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
 		List<Branch> kufangList = new ArrayList<Branch>();
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			kufangList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "");
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "");
 			if (branch.getSitetype() == BranchEnum.KuFang.getValue()) {
 				if (kufangList.size() == 0) {
 					kufangList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(kufangList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(kufangList, branch)) {
 						kufangList.add(branch);
 					}
 				}
 			}
 		}
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 
 		// 保存供货商的选择
 		List<String> customeridList = new ArrayList<String>();
@@ -526,50 +526,50 @@ public class DataStatisticController {
 		// 保存发货库房
 		List<String> kufangidList = new ArrayList<String>();
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
-			logger.info(
-					"库对库出库统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + dataStatisticService.getStrings(kufangid) + ",customerid:"
-							+ dataStatisticService.getStrings(customerid) + ",cwbordertypeid:" + dataStatisticService.getStrings(cwbordertypeid) + ",nextbranchid:"
-							+ dataStatisticService.getStrings(nextbranchid) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+			this.logger.info(
+					"库对库出库统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + this.dataStatisticService.getStrings(kufangid) + ",customerid:"
+							+ this.dataStatisticService.getStrings(customerid) + ",cwbordertypeid:" + this.dataStatisticService.getStrings(cwbordertypeid) + ",nextbranchid:"
+							+ this.dataStatisticService.getStrings(nextbranchid) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 			begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 			enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 			// 保存供货商的选择
-			customeridList = dataStatisticService.getList(customerid);
+			customeridList = this.dataStatisticService.getList(customerid);
 			// 保存站点的选择
-			nextbranchidList = dataStatisticService.getList(nextbranchid);
+			nextbranchidList = this.dataStatisticService.getList(nextbranchid);
 			// 保存订单类型的选择
-			cwbordertypeidList = dataStatisticService.getList(cwbordertypeid);
+			cwbordertypeidList = this.dataStatisticService.getList(cwbordertypeid);
 			// 保存发货库房
-			kufangidList = dataStatisticService.getList(kufangid);
+			kufangidList = this.dataStatisticService.getList(kufangid);
 
-			String customerids = dataStatisticService.getStrings(customerid);
-			String cwbordertypeids = dataStatisticService.getStrings(cwbordertypeid);
-			String nextbranchids = dataStatisticService.getStrings(nextbranchid);
-			String kufangids = dataStatisticService.getStrings(kufangid);
+			String customerids = this.dataStatisticService.getStrings(customerid);
+			String cwbordertypeids = this.dataStatisticService.getStrings(cwbordertypeid);
+			String nextbranchids = this.dataStatisticService.getStrings(nextbranchid);
+			String kufangids = this.dataStatisticService.getStrings(kufangid);
 
-			List<KDKDeliveryChuku> delList = kdkDeliveryChukuDAO.getKDKDeliveryChukuList(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
+			List<KDKDeliveryChuku> delList = this.kdkDeliveryChukuDAO.getKDKDeliveryChukuList(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
 
-			kdkdeliveryChukusum = kdkDeliveryChukuDAO.getKDKDeliveryChukuSum(begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
+			kdkdeliveryChukusum = this.kdkDeliveryChukuDAO.getKDKDeliveryChukuSum(begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
 			count = kdkdeliveryChukusum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (delList != null && delList.size() > 0) {
+			if ((delList != null) && (delList.size() > 0)) {
 				String cwbs = "";
 				for (KDKDeliveryChuku kdkdeliveryChuku : delList) {
 					cwbs += "'" + kdkdeliveryChuku.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					List<Branch> branchList = getDmpDAO.getAllBranchs();
-					List<User> userList = getDmpDAO.getUserForALL();
-					orderlist = dataStatisticService.getKDKChukuCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+					List<User> userList = this.getDmpDAO.getUserForALL();
+					orderlist = this.dataStatisticService.getKDKChukuCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("库对库出库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("库对库出库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 
 		model.addAttribute("count", count);
@@ -588,13 +588,13 @@ public class DataStatisticController {
 		model.addAttribute("kufangidStr", kufangidList);
 		model.addAttribute("kufangid", kufangid);
 		model.addAttribute("nextbranchidStr", nextbranchidList);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KDKKuFangChuKuTongJi.getValue()).getLastupdatetime());
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KDKKuFangChuKuTongJi.getValue()).getLastupdatetime());
 		return "datastatistics/kdkoutwarehousedatalist";
 	}
 
 	/**
 	 * 退货出站统计 （云）
-	 * 
+	 *
 	 * @param model
 	 * @param page
 	 * @param begindate
@@ -617,60 +617,60 @@ public class DataStatisticController {
 			long count = 0;
 			Page pageparm = new Page();
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			User user = getDmpDAO.getLogUser(dmpid);
+			User user = this.getDmpDAO.getLogUser(dmpid);
 			// 加载供货商
-			List<Customer> customerlist = getDmpDAO.getAllCustomers();
+			List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 			// 加载导出模板
-			List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+			List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 			// 需要返回页面的前10条订单List
 			List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 
 			// 加载站点区域权限
 			List<Branch> branchnameList = new ArrayList<Branch>();
-			if (user != null && user.getUserid() > 0) {
-				Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-				branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
+			if ((user != null) && (user.getUserid() > 0)) {
+				Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+				branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
 				if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 					if (branchnameList.size() == 0) {
 						branchnameList.add(branch);
 					} else {
-						if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+						if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 							branchnameList.add(branch);
 						}
 					}
 				}
 			}
-			if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+			if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 				model.addAttribute("nouser", "nouser");
 			} else if (isshow == 1) {
-				logger.info("退货出站统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",branchids:" + dataStatisticService.getStrings(branchids) + ",istuihuozhanruku:"
-						+ istuihuozhanruku + ",customerids:" + dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+				this.logger.info("退货出站统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",branchids:" + this.dataStatisticService.getStrings(branchids) + ",istuihuozhanruku:"
+						+ istuihuozhanruku + ",customerids:" + this.dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 				begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 				enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
-				String branchstr = dataStatisticService.getStrings(branchids);
-				String customerstr = dataStatisticService.getStrings(customerids);
-				List<TuiHuoChuZhanOrder> tlist = tuiHuoChuZhanDao.getTuiHuoChuZhanList(begindate, enddate, branchstr, customerstr, istuihuozhanruku, page);
-				count = tuiHuoChuZhanDao.getCountTuihuoChuZhan(begindate, enddate, branchstr, customerstr, istuihuozhanruku, 0);
+				String branchstr = this.dataStatisticService.getStrings(branchids);
+				String customerstr = this.dataStatisticService.getStrings(customerids);
+				List<TuiHuoChuZhanOrder> tlist = this.tuiHuoChuZhanDao.getTuiHuoChuZhanList(begindate, enddate, branchstr, customerstr, istuihuozhanruku, page);
+				count = this.tuiHuoChuZhanDao.getCountTuihuoChuZhan(begindate, enddate, branchstr, customerstr, istuihuozhanruku, 0);
 				pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-				if (tlist != null && tlist.size() > 0) {
+				if ((tlist != null) && (tlist.size() > 0)) {
 					String cwbs = "";
 					for (TuiHuoChuZhanOrder to : tlist) {
 						cwbs += "'" + to.getCwb() + "',";
 					}
 					cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 					if (cwbs.length() > 0) {
-						List<Branch> branchList = getDmpDAO.getAllBranchs();
-						orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-						orderlist = dataStatisticService.getTuiHuoChuZhanCwbOrderViewCount10(orderlist, tlist, customerlist, branchList);
+						List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+						orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+						orderlist = this.dataStatisticService.getTuiHuoChuZhanCwbOrderViewCount10(orderlist, tlist, customerlist, branchList);
 					}
 				}
-				logger.info("退货出站统计(云)，当前操作人{},条数{}", user.getRealname(), count);
-				String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+				this.logger.info("退货出站统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+				String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 				model.addAttribute("dmpUrl", dmpURl);
 			}
 
-			List<String> branchidlist = dataStatisticService.getList(branchids);
-			List<String> customeridList = dataStatisticService.getList(customerids);
+			List<String> branchidlist = this.dataStatisticService.getList(branchids);
+			List<String> customeridList = this.dataStatisticService.getList(customerids);
 			model.addAttribute("branchnameList", branchnameList);
 			model.addAttribute("customerList", customerlist);
 			model.addAttribute("exportmouldlist", exportmouldlist);
@@ -682,7 +682,7 @@ public class DataStatisticController {
 			model.addAttribute("page", page);
 
 		} catch (Exception e) {
-			logger.error("退货出站统计出错(云)", e);
+			this.logger.error("退货出站统计出错(云)", e);
 		}
 		return "datastatistics/tuihuochuzhanlist";
 
@@ -699,18 +699,18 @@ public class DataStatisticController {
 			long count = 0;
 			Page pageparm = new Page();
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			User user = getDmpDAO.getLogUser(dmpid);
+			User user = this.getDmpDAO.getLogUser(dmpid);
 			List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 			// 加载站点区域权限
 			List<Branch> branchnameList = new ArrayList<Branch>();
-			if (user != null && user.getUserid() > 0) {
-				Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-				branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
+			if ((user != null) && (user.getUserid() > 0)) {
+				Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+				branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
 				if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 					if (branchnameList.size() == 0) {
 						branchnameList.add(branch);
 					} else {
-						if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+						if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 							branchnameList.add(branch);
 						}
 					}
@@ -718,40 +718,41 @@ public class DataStatisticController {
 			}
 			model.addAttribute("branchnameList", branchnameList);
 			// 加载供货商
-			List<Customer> customerList = getDmpDAO.getAllCustomers();
-			if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+			List<Customer> customerList = this.getDmpDAO.getAllCustomers();
+			if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 				model.addAttribute("nouser", "nouser");
 			} else if (isshow != 0) {
-				logger.info("退货站入库统计（云），操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",branchids:" + dataStatisticService.getStrings(branchids) + ",cwbordertypeids:"
-						+ dataStatisticService.getStrings(cwbordertypeids) + ",customerids:" + dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+				this.logger.info("退货站入库统计（云），操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",branchids:" + this.dataStatisticService.getStrings(branchids) + ",cwbordertypeids:"
+						+ this.dataStatisticService.getStrings(cwbordertypeids) + ",customerids:" + this.dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page,
+						user.getRealname());
 
 				begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 				enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 				// 定义参数
-				List<TuiHuoZhanRuKuOrder> tuihuoRecordList = tuiHuoZhanRuKuDao.getTuiHuoRecordByTuihuozhanruku(begindate, enddate, dataStatisticService.getStrings(branchids),
-						dataStatisticService.getStrings(customerids), dataStatisticService.getStrings(cwbordertypeids), page);
-				count = tuiHuoZhanRuKuDao.getTuiHuoRecordByTuihuozhanrukuCount(begindate, enddate, dataStatisticService.getStrings(branchids), dataStatisticService.getStrings(customerids),
-						dataStatisticService.getStrings(cwbordertypeids));
+				List<TuiHuoZhanRuKuOrder> tuihuoRecordList = this.tuiHuoZhanRuKuDao.getTuiHuoRecordByTuihuozhanruku(begindate, enddate, this.dataStatisticService.getStrings(branchids),
+						this.dataStatisticService.getStrings(customerids), this.dataStatisticService.getStrings(cwbordertypeids), page);
+				count = this.tuiHuoZhanRuKuDao.getTuiHuoRecordByTuihuozhanrukuCount(begindate, enddate, this.dataStatisticService.getStrings(branchids),
+						this.dataStatisticService.getStrings(customerids), this.dataStatisticService.getStrings(cwbordertypeids));
 				pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-				if (tuihuoRecordList != null && tuihuoRecordList.size() > 0) {
+				if ((tuihuoRecordList != null) && (tuihuoRecordList.size() > 0)) {
 					String cwbs = "";
 					for (TuiHuoZhanRuKuOrder to : tuihuoRecordList) {
 						cwbs += "'" + to.getCwb() + "',";
 					}
 					cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 					if (cwbs.length() > 0) {
-						List<Branch> branchList = getDmpDAO.getAllBranchs();
-						orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-						orderlist = dataStatisticService.getTuiHuoZhanRuKuIndex(orderlist, tuihuoRecordList, customerList, branchList);
+						List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+						orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+						orderlist = this.dataStatisticService.getTuiHuoZhanRuKuIndex(orderlist, tuihuoRecordList, customerList, branchList);
 					}
 				}
 			}
 
-			List<String> branchidlist = dataStatisticService.getList(branchids);
-			List<String> customeridList = dataStatisticService.getList(customerids);
-			List<String> cwbordertypeidList = dataStatisticService.getList(cwbordertypeids);
+			List<String> branchidlist = this.dataStatisticService.getList(branchids);
+			List<String> customeridList = this.dataStatisticService.getList(customerids);
+			List<String> cwbordertypeidList = this.dataStatisticService.getList(cwbordertypeids);
 			model.addAttribute("customerList", customerList);
-			model.addAttribute("exportmouldlist", getDmpDAO.getExportmoulds(user, dmpid));
+			model.addAttribute("exportmouldlist", this.getDmpDAO.getExportmoulds(user, dmpid));
 			model.addAttribute("branchidStr", branchidlist);
 			model.addAttribute("customeridStr", customeridList);
 			model.addAttribute("cwbordertypeidStr", cwbordertypeidList);
@@ -759,12 +760,12 @@ public class DataStatisticController {
 			model.addAttribute("orderlist", orderlist);
 			model.addAttribute("page_obj", pageparm);
 			model.addAttribute("page", page);
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TuiHuoZhanRuKuTongJi.getValue()).getLastupdatetime());
-			logger.info("退货站入库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TuiHuoZhanRuKuTongJi.getValue()).getLastupdatetime());
+			this.logger.info("退货站入库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		} catch (Exception e) {
-			logger.error("退货站入库统计出错", e);
+			this.logger.error("退货站入库统计出错", e);
 		}
 		return "datastatistics/tuihuozhanrukulist";
 	}
@@ -781,72 +782,72 @@ public class DataStatisticController {
 			long count = 0;
 			Page pageparm = new Page();
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			User user = getDmpDAO.getLogUser(dmpid);
-			List<Branch> branchList = getDmpDAO.getAllBranchs();
+			User user = this.getDmpDAO.getLogUser(dmpid);
+			List<Branch> branchList = this.getDmpDAO.getAllBranchs();
 			List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 			KuFangZaiTuOrder sum = new KuFangZaiTuOrder();
 
-			List<String> nextbranchidlist = dataStatisticService.getList(nextbranchid);
-			List<String> kufanglist = dataStatisticService.getList(kufangid);
-			List<String> cwbordertypelist = dataStatisticService.getList(cwbordertypeid);
-			List<Branch> kufangList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
-					BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
+			List<String> nextbranchidlist = this.dataStatisticService.getList(nextbranchid);
+			List<String> kufanglist = this.dataStatisticService.getList(kufangid);
+			List<String> cwbordertypelist = this.dataStatisticService.getList(cwbordertypeid);
+			List<Branch> kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + ","
+					+ BranchEnum.ZhongZhuan.getValue());
 
-			model.addAttribute("exportmouldlist", getDmpDAO.getExportmoulds(user, dmpid));
+			model.addAttribute("exportmouldlist", this.getDmpDAO.getExportmoulds(user, dmpid));
 			model.addAttribute("nextbranchidStr", nextbranchidlist);
 			model.addAttribute("kufangidStr", kufanglist);
 			model.addAttribute("cwbordertypeidStr", cwbordertypelist);
 			model.addAttribute("kufangList", kufangList);
-			if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+			if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 				model.addAttribute("nouser", "nouser");
-			} else if (isshow != 0 && kufangid.length > 0 && nextbranchid.length > 0) {
-				logger.info("库房在途订单汇总(云)，操作人{}，选择条件datetype:" + datetype + "begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + dataStatisticService.getStrings(kufangid)
-						+ ",nextbranchid:" + dataStatisticService.getStrings(nextbranchid) + ",cwbordertypeid:" + dataStatisticService.getStrings(cwbordertypeid) + ",orderbyName:" + orderbyName
-						+ ",orderbyId:" + orderbyId + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+			} else if ((isshow != 0) && (kufangid.length > 0) && (nextbranchid.length > 0)) {
+				this.logger.info("库房在途订单汇总(云)，操作人{}，选择条件datetype:" + datetype + "begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + this.dataStatisticService.getStrings(kufangid)
+						+ ",nextbranchid:" + this.dataStatisticService.getStrings(nextbranchid) + ",cwbordertypeid:" + this.dataStatisticService.getStrings(cwbordertypeid) + ",orderbyName:"
+						+ orderbyName + ",orderbyId:" + orderbyId + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 				begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 				enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 				// 定义参数
 				String orderName = " " + orderbyName + " " + orderbyId;
-				String cwbordertypeids = dataStatisticService.getStrings(cwbordertypeid);
-				String nextbranchids = dataStatisticService.getStrings(nextbranchid);
-				String kufangids = dataStatisticService.getStrings(kufangid);
+				String cwbordertypeids = this.dataStatisticService.getStrings(cwbordertypeid);
+				String nextbranchids = this.dataStatisticService.getStrings(nextbranchid);
+				String kufangids = this.dataStatisticService.getStrings(kufangid);
 
 				// 获取值
-				List<KuFangZaiTuOrder> zaiTuOrders = kufangZaiTuDao.getKuFangZaiTu(page, begindate, enddate, kufangids, nextbranchids, cwbordertypeids, datetype, orderName);
-				sum = kufangZaiTuDao.getKuFangZaiTuCount(begindate, enddate, kufangids, nextbranchids, cwbordertypeids, datetype);
+				List<KuFangZaiTuOrder> zaiTuOrders = this.kufangZaiTuDao.getKuFangZaiTu(page, begindate, enddate, kufangids, nextbranchids, cwbordertypeids, datetype, orderName);
+				sum = this.kufangZaiTuDao.getKuFangZaiTuCount(begindate, enddate, kufangids, nextbranchids, cwbordertypeids, datetype);
 				count = sum.getId();
-				List<Customer> customerList = getDmpDAO.getAllCustomers();
-				List<CustomWareHouse> customerWareHouseList = getDmpDAO.getCustomWareHouse();
-				List<User> userList = getDmpDAO.getUserForALL();
-				List<Reason> reasonList = getDmpDAO.getAllReason();
-				List<Remark> remarkList = getDmpDAO.getAllRemark();
+				List<Customer> customerList = this.getDmpDAO.getAllCustomers();
+				List<CustomWareHouse> customerWareHouseList = this.getDmpDAO.getCustomWareHouse();
+				List<User> userList = this.getDmpDAO.getUserForALL();
+				List<Reason> reasonList = this.getDmpDAO.getAllReason();
+				List<Remark> remarkList = this.getDmpDAO.getAllRemark();
 
 				pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-				if (zaiTuOrders != null && zaiTuOrders.size() > 0) {
+				if ((zaiTuOrders != null) && (zaiTuOrders.size() > 0)) {
 					String cwbs = "";
 					for (KuFangZaiTuOrder to : zaiTuOrders) {
 						cwbs += "'" + to.getCwb() + "',";
 					}
 					cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 					if (cwbs.length() > 0) {
-						orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-						orderlist = dataStatisticService.getKuFangZaiTuHuiZongViewIndex(zaiTuOrders, orderlist, customerList, customerWareHouseList, branchList, userList, reasonList, remarkList);
+						orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+						orderlist = this.dataStatisticService.getKuFangZaiTuHuiZongViewIndex(zaiTuOrders, orderlist, customerList, customerWareHouseList, branchList, userList, reasonList, remarkList);
 					}
 				}
 			}
-			model.addAttribute("branchAllList", getDmpDAO.getBranchListByUser(user.getUserid()));
+			model.addAttribute("branchAllList", this.getDmpDAO.getBranchListByUser(user.getUserid()));
 			model.addAttribute("count", count);
 			model.addAttribute("sum", sum.getReceivablefee());
 			model.addAttribute("paybackfeesum", sum.getPaybackfee());
 			model.addAttribute("orderlist", orderlist);
 			model.addAttribute("page_obj", pageparm);
 			model.addAttribute("page", page);
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangZaiTuTongJi.getValue()).getLastupdatetime());
-			logger.info("库房在途订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
+			model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangZaiTuTongJi.getValue()).getLastupdatetime());
+			this.logger.info("库房在途订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 		} catch (Exception e) {
-			logger.error("库房在途订单汇总(云)", e);
+			this.logger.error("库房在途订单汇总(云)", e);
 		}
 
 		return "datastatistics/zaitulist";
@@ -854,7 +855,7 @@ public class DataStatisticController {
 
 	/**
 	 * 库房入库统计(云)
-	 * 
+	 *
 	 * @param model
 	 * @param page
 	 * @param emaildateids
@@ -884,7 +885,7 @@ public class DataStatisticController {
 			long count = 0;
 			Page pageparm = new Page();
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			User user = getDmpDAO.getLogUser(dmpid);
+			User user = this.getDmpDAO.getLogUser(dmpid);
 			/*
 			 * String starttime=""; String endtime="";
 			 */
@@ -898,77 +899,77 @@ public class DataStatisticController {
 				enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 			}
 			List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());// 注意
-			List<Branch> kufangList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
-					BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
-			if (branch.getSitetype() == BranchEnum.KuFang.getValue() || branch.getSitetype() == BranchEnum.TuiHuo.getValue() || branch.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());// 注意
+			List<Branch> kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + ","
+					+ BranchEnum.ZhongZhuan.getValue());
+			if ((branch.getSitetype() == BranchEnum.KuFang.getValue()) || (branch.getSitetype() == BranchEnum.TuiHuo.getValue()) || (branch.getSitetype() == BranchEnum.ZhongZhuan.getValue())) {
 				if (kufangList.size() == 0) {
 					kufangList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(kufangList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(kufangList, branch)) {
 						kufangList.add(branch);
 					}
 				}
 			}
-			List<User> userList = getDmpDAO.getAllUsers();
-			List<Customer> customerList = getDmpDAO.getAllCustomers();
+			List<User> userList = this.getDmpDAO.getAllUsers();
+			List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 			model.addAttribute("customerlist", customerList);
-			model.addAttribute("exportmouldlist", getDmpDAO.getExportmoulds(user, dmpid));
+			model.addAttribute("exportmouldlist", this.getDmpDAO.getExportmoulds(user, dmpid));
 			model.addAttribute("kufangList", kufangList);
-			List<String> customeridList = dataStatisticService.getList(customerids);
+			List<String> customeridList = this.dataStatisticService.getList(customerids);
 			model.addAttribute("customeridStr", customeridList);
-			if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+			if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 				model.addAttribute("nouser", "nouser");
 			} else if (isshow != 0) {
-				logger.info("库房入库统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + kufangid + ",cwbordertypeid:" + cwbordertypeid + ",isruku:" + isruku
-						+ ",customerids:" + dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+				this.logger.info("库房入库统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + kufangid + ",cwbordertypeid:" + cwbordertypeid + ",isruku:" + isruku
+						+ ",customerids:" + this.dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 
 				String customers = "";
 				if (customerids.length > 0) {
-					customers = dataStatisticService.getStrings(customerids);
+					customers = this.dataStatisticService.getStrings(customerids);
 				}
 
-				List<KuFangRuKuOrder> kuFangRuKuOrders = kuFangRuKuDao.getKuKangRuKuOrders(page, begindate, enddate, emaildatebegin, emaildateend, kufangid, customers, cwbordertypeid, isruku);
-				count = kuFangRuKuDao.getKuKangRuKuOrdersCount(begindate, enddate, emaildatebegin, emaildateend, kufangid, customers, cwbordertypeid, isruku);
+				List<KuFangRuKuOrder> kuFangRuKuOrders = this.kuFangRuKuDao.getKuKangRuKuOrders(page, begindate, enddate, emaildatebegin, emaildateend, kufangid, customers, cwbordertypeid, isruku);
+				count = this.kuFangRuKuDao.getKuKangRuKuOrdersCount(begindate, enddate, emaildatebegin, emaildateend, kufangid, customers, cwbordertypeid, isruku);
 				// 查询数据
 				pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
 
-				if (kuFangRuKuOrders != null && kuFangRuKuOrders.size() > 0) {
+				if ((kuFangRuKuOrders != null) && (kuFangRuKuOrders.size() > 0)) {
 					String cwbs = "";
 					for (KuFangRuKuOrder kf : kuFangRuKuOrders) {
 						cwbs += "'" + kf.getCwb() + "',";
 					}
 					cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 					if (cwbs.length() > 0) {
-						orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-						List<Branch> branchs = getDmpDAO.getAllBranchs();
-						orderlist = dataStatisticService.getKuFangRuKuHuiZongViewIndex(kuFangRuKuOrders, orderlist, customerList, branchs, userList);
+						orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+						List<Branch> branchs = this.getDmpDAO.getAllBranchs();
+						orderlist = this.dataStatisticService.getKuFangRuKuHuiZongViewIndex(kuFangRuKuOrders, orderlist, customerList, branchs, userList);
 					}
 				}
 
 			}
 			List<Customer> customerMarkList = new ArrayList<Customer>();
 			if (customerids.length > 0) {
-				customerMarkList = getDmpDAO.getCustomerByIds(dataStatisticService.getStrings(customerids));
+				customerMarkList = this.getDmpDAO.getCustomerByIds(this.dataStatisticService.getStrings(customerids));
 			}
 			model.addAttribute("customerMarkList", customerMarkList);
 			model.addAttribute("count", count);
 			model.addAttribute("orderlist", orderlist);
 			model.addAttribute("page_obj", pageparm);
 			model.addAttribute("page", page);
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangRuKuTongJi.getValue()).getLastupdatetime());
-			logger.info("库房入库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangRuKuTongJi.getValue()).getLastupdatetime());
+			this.logger.info("库房入库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		} catch (Exception e) {
-			logger.error("库房入库统计(云)出错", e);
+			this.logger.error("库房入库统计(云)出错", e);
 		}
 		return "datastatistics/intowarehousedatalist";
 	}
 
 	/**
 	 * 库房出库汇总（云）
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -981,19 +982,19 @@ public class DataStatisticController {
 	/*
 	 * @RequestMapping("/outwarehousecollectdata") public String
 	 * outwarehousecollectdata(Model model,
-	 * 
+	 *
 	 * @RequestParam(value = "begindate", required = false, defaultValue = "")
 	 * String begindate,
-	 * 
+	 *
 	 * @RequestParam(value = "enddate", required = false, defaultValue = "")
 	 * String enddate,
-	 * 
+	 *
 	 * @RequestParam(value = "kufangid", required = false, defaultValue = "0")
 	 * long kufangid,
-	 * 
+	 *
 	 * @RequestParam(value = "isshow", required = false, defaultValue = "0")
 	 * long isshow, HttpServletResponse response, HttpServletRequest request) {
-	 * 
+	 *
 	 * String dmpid = request.getSession().getAttribute("dmpid") == null ? "" :
 	 * request.getSession().getAttribute("dmpid").toString(); User user =
 	 * getDmpDAO.getLogUser(dmpid); //加载供货商 List<Customer> customerlist =
@@ -1007,9 +1008,9 @@ public class DataStatisticController {
 	 * getDmpDAO.getNowBranch(user.getBranchid()); branchAllList =
 	 * getDmpDAO.getQueryBranchByBranchsiteAndUserid
 	 * (user.getUserid(),BranchEnum.ZhanDian.getValue()+"");
-	 * 
+	 *
 	 * for(Branch b : branchAllList){ nextbranchids += b.getBranchid()+","; }
-	 * 
+	 *
 	 * kufangList =
 	 * getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(
 	 * ),BranchEnum.KuFang.getValue()+"");
@@ -1018,7 +1019,7 @@ public class DataStatisticController {
 	 * if(!dataStatisticService.checkBranchRepeat(kufangList, branch)){
 	 * kufangList.add(branch); } } } } //加载导出模板 List<Exportmould>
 	 * exportmouldlist = getDmpDAO.getExportmoulds(user,dmpid);
-	 * 
+	 *
 	 * if(user == null || user.getUserid()==0 ){//如果登录失效，提示登录失败
 	 * model.addAttribute("nouser", "nouser"); }else
 	 * if(isshow==1){//如果是点击查询按钮，封装查询数据
@@ -1035,16 +1036,16 @@ public class DataStatisticController {
 	 * enddate,nextbranchids); branchAllMap =
 	 * dataStatisticService.getbranchAllMap(branchAllList, kufangid, begindate,
 	 * enddate); }
-	 * 
+	 *
 	 * model.addAttribute("customerMap", customerMap);
 	 * model.addAttribute("customerAllMap", customerAllMap);
 	 * model.addAttribute("branchAllMap", branchAllMap);
-	 * 
+	 *
 	 * model.addAttribute("branchList", branchAllList);
 	 * model.addAttribute("customerlist", customerlist);
 	 * model.addAttribute("exportmouldlist", exportmouldlist);
 	 * model.addAttribute("kufangList", kufangList);
-	 * 
+	 *
 	 * model.addAttribute("lastupdatetime",
 	 * updateMessageDAO.getUpdateMessageByMenunvalue
 	 * (UpdateMessageMenuNameEnum.KuFangChuKuTongJi
@@ -1054,7 +1055,7 @@ public class DataStatisticController {
 
 	/**
 	 * 库房出库汇总详情功能
-	 * 
+	 *
 	 * @param model
 	 * @param page
 	 * @param customerid
@@ -1072,21 +1073,21 @@ public class DataStatisticController {
 			@RequestParam(value = "kufangid", required = false, defaultValue = "0") long kufangid, @RequestParam(value = "nextbranchid", required = false, defaultValue = "0") long nextbranchid,
 			HttpServletResponse response, HttpServletRequest request) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
-		List<Branch> branchList = getDmpDAO.getAllBranchs();
-		List<CustomWareHouse> customerWareHouseList = getDmpDAO.getCustomWareHouse();
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
+		List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+		List<CustomWareHouse> customerWareHouseList = this.getDmpDAO.getCustomWareHouse();
 
-		List<DeliveryChuku> delList = deliveryChukuDAO.getDeliveryChukuCollectList(page, customerid, kufangid, nextbranchid, begindate, enddate);
+		List<DeliveryChuku> delList = this.deliveryChukuDAO.getDeliveryChukuCollectList(page, customerid, kufangid, nextbranchid, begindate, enddate);
 
-		DeliveryChuku deliveryChukusum = deliveryChukuDAO.getDeliveryChukuCollectSum(customerid, kufangid, nextbranchid, begindate, enddate);
+		DeliveryChuku deliveryChukusum = this.deliveryChukuDAO.getDeliveryChukuCollectSum(customerid, kufangid, nextbranchid, begindate, enddate);
 		long count = deliveryChukusum.getId();
 		Page pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-		if (delList != null && delList.size() > 0) {
+		if ((delList != null) && (delList.size() > 0)) {
 			String cwbs = "";
 			for (DeliveryChuku deliveryChuku : delList) {
 				cwbs += "'" + deliveryChuku.getCwb() + "',";
@@ -1094,10 +1095,10 @@ public class DataStatisticController {
 
 			cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 			if (cwbs.length() > 0) {
-				orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-				orderlist = dataStatisticService.getChukuCollectDataCwbOrderViewCount10(orderlist, delList, customerList, branchList, customerWareHouseList);
+				orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+				orderlist = this.dataStatisticService.getChukuCollectDataCwbOrderViewCount10(orderlist, delList, customerList, branchList, customerWareHouseList);
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
 		}
 
@@ -1121,13 +1122,13 @@ public class DataStatisticController {
 		long count = 0;
 		Page pageparm = new Page();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 应收费 滞留
 		DeliveryZhiLiu sum = new DeliveryZhiLiu();
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
@@ -1146,64 +1147,64 @@ public class DataStatisticController {
 		// 保存小件员
 		List<User> deliverlist = new ArrayList<User>();
 
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 					BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 			if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 				if (branchnameList.size() == 0) {
 					branchnameList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 						branchnameList.add(branch);
 					}
 				}
 			}
 		}
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {
-			logger.info("滞留订单汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",customerid:" + dataStatisticService.getStrings(customerid) + ",cwbordertypeid:"
-					+ dataStatisticService.getStrings(cwbordertypeid) + ",isaudit" + isaudit + ",isauditTime" + isauditTime + ",dispatchbranchid" + dispatchbranchid + ",deliverid" + deliverid
+			this.logger.info("滞留订单汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",customerid:" + this.dataStatisticService.getStrings(customerid) + ",cwbordertypeid:"
+					+ this.dataStatisticService.getStrings(cwbordertypeid) + ",isaudit" + isaudit + ",isauditTime" + isauditTime + ",dispatchbranchid" + dispatchbranchid + ",deliverid" + deliverid
 					+ ",isshow:" + isshow + ",page:" + page, user.getRealname());
 			// 保存供货商的选择
-			customeridList = dataStatisticService.getList(customerid);
+			customeridList = this.dataStatisticService.getList(customerid);
 			// 保存站点的选择
-			if (dispatchbranchid.length == 0 & branchnameList.size() > 0) {
+			if ((dispatchbranchid.length == 0) & (branchnameList.size() > 0)) {
 				dispatchbranchid = new String[branchnameList.size()];
 				for (Branch bc : branchnameList) {
 					dispatchbranchid[branchnameList.indexOf(bc)] = bc.getBranchid() + "";
 				}
 			}
-			dispatchbranchidList = dataStatisticService.getList(dispatchbranchid);
+			dispatchbranchidList = this.dataStatisticService.getList(dispatchbranchid);
 			// 保存订单类型的选择
-			cwbordertypeidList = dataStatisticService.getList(cwbordertypeid);
+			cwbordertypeidList = this.dataStatisticService.getList(cwbordertypeid);
 			// 保存小件员的选择
-			deliverlist = getDmpDAO.getAllUserByBranchIds(dataStatisticService.getStrings(dispatchbranchid));
-			String customeridStr = dataStatisticService.getStrings(customerid);
-			String cwbordertypeidStr = dataStatisticService.getStrings(cwbordertypeid);
-			String dispatchbranchidStr = dataStatisticService.getStrings(dispatchbranchid);
-			List<DeliveryZhiLiu> dzlList = deliveryZhiLiuDAO.getZhiliuList(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid, page);
+			deliverlist = this.getDmpDAO.getAllUserByBranchIds(this.dataStatisticService.getStrings(dispatchbranchid));
+			String customeridStr = this.dataStatisticService.getStrings(customerid);
+			String cwbordertypeidStr = this.dataStatisticService.getStrings(cwbordertypeid);
+			String dispatchbranchidStr = this.dataStatisticService.getStrings(dispatchbranchid);
+			List<DeliveryZhiLiu> dzlList = this.deliveryZhiLiuDAO.getZhiliuList(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid, page);
 
-			sum = deliveryZhiLiuDAO.getDeliveryZhiLiuSum(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid);
+			sum = this.deliveryZhiLiuDAO.getDeliveryZhiLiuSum(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid);
 			count = sum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (dzlList != null && dzlList.size() > 0) {
+			if ((dzlList != null) && (dzlList.size() > 0)) {
 				String cwbs = "";
 				for (DeliveryZhiLiu deliveryZhiLiu : dzlList) {
 					cwbs += "'" + deliveryZhiLiu.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					List<Branch> branchList = getDmpDAO.getAllBranchs();
-					List<Reason> reasonList = getDmpDAO.getAllReason();
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					orderlist = dataStatisticService.getZhiLiuCwbOrderViewCount10(orderlist, dzlList, customerlist, branchList, reasonList);
+					List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+					List<Reason> reasonList = this.getDmpDAO.getAllReason();
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					orderlist = this.dataStatisticService.getZhiLiuCwbOrderViewCount10(orderlist, dzlList, customerlist, branchList, reasonList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("滞留订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("滞留订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 		model.addAttribute("branchList", branchnameList);
 		model.addAttribute("customerlist", customerlist);
@@ -1220,7 +1221,7 @@ public class DataStatisticController {
 		model.addAttribute("page", page);
 		model.addAttribute("check", 1);
 		model.addAttribute("deliverid", deliverid);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.ZhiLiuDingDanHuiZong.getValue()).getLastupdatetime());
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.ZhiLiuDingDanHuiZong.getValue()).getLastupdatetime());
 
 		return "datastatistics/zhiliulist";
 	}
@@ -1240,19 +1241,19 @@ public class DataStatisticController {
 		long count = 0;
 		Page pageparm = new Page();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 应收费 deliveryjushou 拒收
 		DeliveryJuShou sum = new DeliveryJuShou();
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
 		List<Branch> branchnameList = new ArrayList<Branch>();
 		// 保存操作结果
-		List<String> operationOrderResultTypeslist = dataStatisticService.getList(operationOrderResultTypes);
+		List<String> operationOrderResultTypeslist = this.dataStatisticService.getList(operationOrderResultTypes);
 		// 保存供货商的选择
 		List<String> customeridList = new ArrayList<String>();
 		// 保存站点的选择
@@ -1262,29 +1263,29 @@ public class DataStatisticController {
 		// 保存小件员
 		List<User> deliverlist = new ArrayList<User>();
 
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
 			if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 				if (branchnameList.size() == 0) {
 					branchnameList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 						branchnameList.add(branch);
 					}
 				}
 			}
 		}
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {
-			logger.info("拒收订单汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",customerid:" + dataStatisticService.getStrings(customerid) + ",cwbordertypeid:"
-					+ dataStatisticService.getStrings(cwbordertypeid) + ",isaudit" + isaudit + ",isauditTime" + isauditTime + ",dispatchbranchid" + dispatchbranchid + ",deliverid" + deliverid
+			this.logger.info("拒收订单汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",customerid:" + this.dataStatisticService.getStrings(customerid) + ",cwbordertypeid:"
+					+ this.dataStatisticService.getStrings(cwbordertypeid) + ",isaudit" + isaudit + ",isauditTime" + isauditTime + ",dispatchbranchid" + dispatchbranchid + ",deliverid" + deliverid
 					+ ",operationOrderResultTypes" + operationOrderResultTypes + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 			// 保存供货商的选择
-			customeridList = dataStatisticService.getList(customerid);
+			customeridList = this.dataStatisticService.getList(customerid);
 			// 保存站点的选择
-			if (dispatchbranchid.length == 0 & branchnameList.size() > 0) {
+			if ((dispatchbranchid.length == 0) & (branchnameList.size() > 0)) {
 				dispatchbranchid = new String[branchnameList.size()];
 				for (Branch bc : branchnameList) {
 					dispatchbranchid[branchnameList.indexOf(bc)] = bc.getBranchid() + "";
@@ -1298,38 +1299,38 @@ public class DataStatisticController {
 				operationOrderResultTypes[3] = DeliveryStateEnum.ShangMenTuiChengGong.getValue() + "";
 			}
 
-			operationOrderResultTypeslist = dataStatisticService.getList(operationOrderResultTypes);
-			dispatchbranchidList = dataStatisticService.getList(dispatchbranchid);
+			operationOrderResultTypeslist = this.dataStatisticService.getList(operationOrderResultTypes);
+			dispatchbranchidList = this.dataStatisticService.getList(dispatchbranchid);
 			// 保存订单类型的选择
-			cwbordertypeidList = dataStatisticService.getList(cwbordertypeid);
+			cwbordertypeidList = this.dataStatisticService.getList(cwbordertypeid);
 			// 保存小件员的选择
-			deliverlist = getDmpDAO.getAllUserByBranchIds(dataStatisticService.getStrings(dispatchbranchid));
-			String customeridStr = dataStatisticService.getStrings(customerid);
-			String cwbordertypeidStr = dataStatisticService.getStrings(cwbordertypeid);
-			String dispatchbranchidStr = dataStatisticService.getStrings(dispatchbranchid);
+			deliverlist = this.getDmpDAO.getAllUserByBranchIds(this.dataStatisticService.getStrings(dispatchbranchid));
+			String customeridStr = this.dataStatisticService.getStrings(customerid);
+			String cwbordertypeidStr = this.dataStatisticService.getStrings(cwbordertypeid);
+			String dispatchbranchidStr = this.dataStatisticService.getStrings(dispatchbranchid);
 
-			String operationOrderResultTypeStr = dataStatisticService.getStrings(operationOrderResultTypes);
-			List<DeliveryJuShou> djList = deliveryJuShouDAO.getJuShouList(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid,
+			String operationOrderResultTypeStr = this.dataStatisticService.getStrings(operationOrderResultTypes);
+			List<DeliveryJuShou> djList = this.deliveryJuShouDAO.getJuShouList(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid,
 					operationOrderResultTypeStr, page);
-			sum = deliveryJuShouDAO.getDeliveryJuShouSum(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid, operationOrderResultTypeStr);
+			sum = this.deliveryJuShouDAO.getDeliveryJuShouSum(begindate, enddate, isaudit, isauditTime, customeridStr, cwbordertypeidStr, dispatchbranchidStr, deliverid, operationOrderResultTypeStr);
 			count = sum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (djList != null && djList.size() > 0) {
+			if ((djList != null) && (djList.size() > 0)) {
 				String cwbs = "";
 				for (DeliveryJuShou deliveryJuShou : djList) {
 					cwbs += "'" + deliveryJuShou.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					List<Branch> branchList = getDmpDAO.getAllBranchs();
-					List<Reason> reasonList = getDmpDAO.getAllReason();
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					orderlist = dataStatisticService.getJuShouCwbOrderViewCount10(orderlist, djList, customerlist, branchList, reasonList);
+					List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+					List<Reason> reasonList = this.getDmpDAO.getAllReason();
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					orderlist = this.dataStatisticService.getJuShouCwbOrderViewCount10(orderlist, djList, customerlist, branchList, reasonList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("拒收订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("拒收订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 		model.addAttribute("branchList", branchnameList);
 		model.addAttribute("customerlist", customerlist);
@@ -1351,7 +1352,7 @@ public class DataStatisticController {
 
 	/**
 	 * 分站到货统计
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -1377,23 +1378,24 @@ public class DataStatisticController {
 		Page pageparm = new Page();
 		DeliveryDaohuo deliveryDaohuosum = new DeliveryDaohuo();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
 		List<Branch> branchList = new ArrayList<Branch>();
 		List<Branch> kufangList = new ArrayList<Branch>();
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			branchList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
-			kufangList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
-			if (branch.getSitetype() == BranchEnum.KuFang.getValue() || branch.getSitetype() == BranchEnum.TuiHuo.getValue() || branch.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			branchList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhanDian.getValue() + "");
+			kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+					BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
+			if ((branch.getSitetype() == BranchEnum.KuFang.getValue()) || (branch.getSitetype() == BranchEnum.TuiHuo.getValue()) || (branch.getSitetype() == BranchEnum.ZhongZhuan.getValue())) {
 				if (kufangList.size() == 0) {
 					kufangList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(kufangList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(kufangList, branch)) {
 						kufangList.add(branch);
 					}
 				}
@@ -1401,14 +1403,14 @@ public class DataStatisticController {
 				if (branchList.size() == 0) {
 					branchList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(branchList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(branchList, branch)) {
 						branchList.add(branch);
 					}
 				}
 			}
 		}
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 
 		// 保存库房的选择
 		List<String> kufangidStr = new ArrayList<String>();
@@ -1417,47 +1419,48 @@ public class DataStatisticController {
 		// 保存订单类型的选择
 		List<String> cwbordertypeidStr = new ArrayList<String>();
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
-			logger.info("分站到货统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + dataStatisticService.getStrings(kufangid) + ",cwbordertypeid:" + cwbordertypeid
-					+ ",customerid:" + customerid + ",currentBranchid:" + dataStatisticService.getStrings(currentBranchid) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
+			this.logger.info("分站到货统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + this.dataStatisticService.getStrings(kufangid) + ",cwbordertypeid:"
+					+ cwbordertypeid + ",customerid:" + customerid + ",currentBranchid:" + this.dataStatisticService.getStrings(currentBranchid) + ",isshow:" + isshow + ",page:" + page,
+					user.getRealname());
 
 			begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 			enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 
 			// 保存供货商的选择
-			kufangidStr = dataStatisticService.getList(kufangid);
+			kufangidStr = this.dataStatisticService.getList(kufangid);
 			// 保存站点的选择
-			currentBranchidStr = dataStatisticService.getList(currentBranchid);
+			currentBranchidStr = this.dataStatisticService.getList(currentBranchid);
 			// 保存订单类型的选择
-			cwbordertypeidStr = dataStatisticService.getList(cwbordertypeid);
+			cwbordertypeidStr = this.dataStatisticService.getList(cwbordertypeid);
 
-			String cwbordertypeids = dataStatisticService.getStrings(cwbordertypeid);
-			String kufangids = dataStatisticService.getStrings(kufangid);
-			String currentBranchids = dataStatisticService.getStrings(currentBranchid);
+			String cwbordertypeids = this.dataStatisticService.getStrings(cwbordertypeid);
+			String kufangids = this.dataStatisticService.getStrings(kufangid);
+			String currentBranchids = this.dataStatisticService.getStrings(currentBranchid);
 
-			List<DeliveryDaohuo> delList = deliveryDaohuoDAO.getDeliveryDaohuoList(begindate, enddate, customerid, kufangids, cwbordertypeids, currentBranchids, isnowdata, page);
+			List<DeliveryDaohuo> delList = this.deliveryDaohuoDAO.getDeliveryDaohuoList(begindate, enddate, customerid, kufangids, cwbordertypeids, currentBranchids, isnowdata, page);
 
-			deliveryDaohuosum = deliveryDaohuoDAO.getDeliveryDaohuoSum(begindate, enddate, customerid, kufangids, cwbordertypeids, currentBranchids, isnowdata);
+			deliveryDaohuosum = this.deliveryDaohuoDAO.getDeliveryDaohuoSum(begindate, enddate, customerid, kufangids, cwbordertypeids, currentBranchids, isnowdata);
 			count = deliveryDaohuosum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (delList != null && delList.size() > 0) {
+			if ((delList != null) && (delList.size() > 0)) {
 				String cwbs = "";
 				for (DeliveryDaohuo deliveryDaohuo : delList) {
 					cwbs += "'" + deliveryDaohuo.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					List<Branch> branchAllList = getDmpDAO.getAllBranchs();
-					List<User> userList = getDmpDAO.getUserForALL();
-					orderlist = dataStatisticService.getDaohuoCwbOrderViewCount10(orderlist, delList, customerlist, branchAllList, userList);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					List<Branch> branchAllList = this.getDmpDAO.getAllBranchs();
+					List<User> userList = this.getDmpDAO.getUserForALL();
+					orderlist = this.dataStatisticService.getDaohuoCwbOrderViewCount10(orderlist, delList, customerlist, branchAllList, userList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("分站到货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("分站到货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 		model.addAttribute("customerlist", customerlist);
 		model.addAttribute("exportmouldlist", exportmouldlist);
@@ -1473,7 +1476,7 @@ public class DataStatisticController {
 		model.addAttribute("orderlist", orderlist);
 		model.addAttribute("page_obj", pageparm);
 		model.addAttribute("page", page);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.FenZhanDaoHuoTongJi.getValue()).getLastupdatetime());
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.FenZhanDaoHuoTongJi.getValue()).getLastupdatetime());
 		return "datastatistics/daohuodata";
 	}
 
@@ -1487,71 +1490,72 @@ public class DataStatisticController {
 		Page pageparm = new Page();
 		ZhongZhuan zhongZhuansum = new ZhongZhuan();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载站点区域权限
 		List<Branch> notuihuobranchList = new ArrayList<Branch>();
 		List<Branch> zhongzhuanbranchList = new ArrayList<Branch>();
 		long iskufang = 0;
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
 			if (branch.getSitetype() == BranchEnum.KuFang.getValue()) {
 				iskufang = 1;
 			}
 
-			notuihuobranchList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.ZhanDian.getValue());
-			zhongzhuanbranchList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhongZhuan.getValue() + "");
+			notuihuobranchList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.ZhanDian.getValue());
+			zhongzhuanbranchList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.ZhongZhuan.getValue() + "");
 		}
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 
 		// 保存站点的选择
 		List<String> branchid2list = new ArrayList<String>();
 		String nextbranchids = "";
 		String startbranchids = "";
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
-			logger.info("中转订单统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",branchid:" + branchid + ",type:" + type + ",branchid2:" + dataStatisticService.getStrings(branchid2)
-					+ ",isshow:" + isshow + ",page:" + page, user.getRealname());
+			this.logger.info(
+					"中转订单统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",branchid:" + branchid + ",type:" + type + ",branchid2:" + this.dataStatisticService.getStrings(branchid2)
+							+ ",isshow:" + isshow + ",page:" + page, user.getRealname());
 			begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 			enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 			// 保存站点的选择
-			branchid2list = dataStatisticService.getList(branchid2);
+			branchid2list = this.dataStatisticService.getList(branchid2);
 
 			if (type.equals("startbranchid")) {
-				nextbranchids = dataStatisticService.getStrings(branchid2);
+				nextbranchids = this.dataStatisticService.getStrings(branchid2);
 				startbranchids = branchid + "";
 			} else if (type.equals("nextbranchid")) {
 				nextbranchids = branchid + "";
-				startbranchids = dataStatisticService.getStrings(branchid2);
+				startbranchids = this.dataStatisticService.getStrings(branchid2);
 			}
 
-			List<ZhongZhuan> zhongzhuanList = zhongzhuanDAO.getZhongZhuanList(begindate, enddate, nextbranchids, startbranchids, page);
+			List<ZhongZhuan> zhongzhuanList = this.zhongzhuanDAO.getZhongZhuanList(begindate, enddate, nextbranchids, startbranchids, page);
 
-			zhongZhuansum = zhongzhuanDAO.getZhongZhuanSum(begindate, enddate, nextbranchids, startbranchids);
+			zhongZhuansum = this.zhongzhuanDAO.getZhongZhuanSum(begindate, enddate, nextbranchids, startbranchids);
 			count = zhongZhuansum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (zhongzhuanList != null && zhongzhuanList.size() > 0) {
+			if ((zhongzhuanList != null) && (zhongzhuanList.size() > 0)) {
 				String cwbs = "";
 				for (ZhongZhuan zhongZhuan : zhongzhuanList) {
 					cwbs += "'" + zhongZhuan.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					List<Branch> branchList = getDmpDAO.getAllBranchs();
-					List<User> userList = getDmpDAO.getUserForALL();
-					orderlist = dataStatisticService.getZhongzhuanCwbOrderViewCount10(orderlist, zhongzhuanList, customerlist, branchList, userList);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					List<Branch> branchList = this.getDmpDAO.getAllBranchs();
+					List<User> userList = this.getDmpDAO.getUserForALL();
+					orderlist = this.dataStatisticService.getZhongzhuanCwbOrderViewCount10(orderlist, zhongzhuanList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("中转订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("中转订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 
 		model.addAttribute("iskufang", iskufang);
@@ -1564,14 +1568,14 @@ public class DataStatisticController {
 		model.addAttribute("page", page);
 
 		model.addAttribute("exportmouldlist", exportmouldlist);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangChuKuTongJi.getValue()).getLastupdatetime());
-		logger.info("中转订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangChuKuTongJi.getValue()).getLastupdatetime());
+		this.logger.info("中转订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		return "datastatistics/zhongzhuandata";
 	}
 
 	/**
 	 * 站点到货汇总
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -1582,18 +1586,18 @@ public class DataStatisticController {
 	public String zhandiandaohuodata(Model model, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "begindate", required = false, defaultValue = "") String begindate,
 			@RequestParam(value = "enddate", required = false, defaultValue = "") String enddate, @RequestParam(value = "isshow", required = false, defaultValue = "0") long isshow) {
 
-		List<Branch> zhandianlist = getDmpDAO.getBranchByAllEffectZhanDian();
+		List<Branch> zhandianlist = this.getDmpDAO.getBranchByAllEffectZhanDian();
 		Map<Long, Long> branchMap = new HashMap<Long, Long>();
 
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {
-			logger.info("站点到货汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",isshow:" + isshow, user.getRealname());
+			this.logger.info("站点到货汇总(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",isshow:" + isshow, user.getRealname());
 			if (zhandianlist.size() > 0) {
 				for (Branch b : zhandianlist) {
-					List<String> ordercwblist = deliveryDaohuoDAO.getDaohuoDataByCurrentbranchidAndInSitetime(begindate, enddate, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue() + ","
+					List<String> ordercwblist = this.deliveryDaohuoDAO.getDaohuoDataByCurrentbranchidAndInSitetime(begindate, enddate, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue() + ","
 							+ FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue(), b.getBranchid());
 					branchMap.put(b.getBranchid(), (long) ordercwblist.size());
 				}
@@ -1601,15 +1605,15 @@ public class DataStatisticController {
 		}
 		model.addAttribute("branchMap", branchMap);
 		model.addAttribute("zhandianlist", zhandianlist);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.FenZhanDaoHuoTongJi.getValue()).getLastupdatetime());
-		logger.info("站点到货汇总(云)，当前操作人{},参数{}", user.getRealname(), begindate + "--" + enddate);
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.FenZhanDaoHuoTongJi.getValue()).getLastupdatetime());
+		this.logger.info("站点到货汇总(云)，当前操作人{},参数{}", user.getRealname(), begindate + "--" + enddate);
 
 		return "datastatistics/zhandiandaohuodatalist";
 	}
 
 	/**
 	 * 站点到货汇总详情
-	 * 
+	 *
 	 * @param model
 	 * @param page
 	 * @param customerid
@@ -1625,42 +1629,42 @@ public class DataStatisticController {
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 		Page pageparm = new Page();
 		long count = 0;
 
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else {
 
-			List<DeliveryDaohuo> delList = deliveryDaohuoDAO.getDaohuoDataByCurrentbranchidAndInSitetimePage(page, begindate, enddate, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue() + ","
+			List<DeliveryDaohuo> delList = this.deliveryDaohuoDAO.getDaohuoDataByCurrentbranchidAndInSitetimePage(page, begindate, enddate, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue() + ","
 					+ FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue(), branchid);
-			count = deliveryDaohuoDAO.getDaohuoDataByCurrentbranchidAndInSitetimeCount(begindate, enddate, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue() + ","
+			count = this.deliveryDaohuoDAO.getDaohuoDataByCurrentbranchidAndInSitetimeCount(begindate, enddate, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue() + ","
 					+ FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue(), branchid);
 
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (delList != null && delList.size() > 0) {
+			if ((delList != null) && (delList.size() > 0)) {
 				String cwbs = "";
 				for (DeliveryDaohuo delidaohuo : delList) {
 					cwbs += "'" + delidaohuo.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					List<Branch> branchAllList = getDmpDAO.getAllBranchs();
-					List<User> userList = getDmpDAO.getUserForALL();
-					orderlist = dataStatisticService.getDaohuoCwbOrderViewCount10(orderlist, delList, customerlist, branchAllList, userList);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					List<Branch> branchAllList = this.getDmpDAO.getAllBranchs();
+					List<User> userList = this.getDmpDAO.getUserForALL();
+					orderlist = this.dataStatisticService.getDaohuoCwbOrderViewCount10(orderlist, delList, customerlist, branchAllList, userList);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
 		}
 		model.addAttribute("orderlist", orderlist);
@@ -1682,9 +1686,9 @@ public class DataStatisticController {
 		Page pageparm = new Page();
 		CwbTiHuo cwbTiHuoSum = new CwbTiHuo();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 需要返回页面的前10条订单List
 		List<CwbOrder> orderlist = new ArrayList<CwbOrder>();
 		// 加载导出模板
@@ -1694,37 +1698,37 @@ public class DataStatisticController {
 		// 保存供货商的选择
 		List<String> customeridList = new ArrayList<String>();
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
 			// 保存供货商的选择
-			customeridList = dataStatisticService.getList(customerids);
+			customeridList = this.dataStatisticService.getList(customerids);
 
-			logger.info(" 提货订单统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",customerid:" + dataStatisticService.getStrings(customerids) + ",isshow:" + isshow + ",page:" + page,
-					user.getRealname());
+			this.logger.info(" 提货订单统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",customerid:" + this.dataStatisticService.getStrings(customerids) + ",isshow:" + isshow
+					+ ",page:" + page, user.getRealname());
 			begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 			enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 
-			String customeridStr = dataStatisticService.getStrings(customerids);
-			List<CwbTiHuo> tihuoList = cwbTiHuoDAO.getCwbTiHuoList(page, begindate, enddate, customeridStr);
-			cwbTiHuoSum = cwbTiHuoDAO.getCwbTiHuoSum(begindate, enddate, customeridStr);
+			String customeridStr = this.dataStatisticService.getStrings(customerids);
+			List<CwbTiHuo> tihuoList = this.cwbTiHuoDAO.getCwbTiHuoList(page, begindate, enddate, customeridStr);
+			cwbTiHuoSum = this.cwbTiHuoDAO.getCwbTiHuoSum(begindate, enddate, customeridStr);
 			count = cwbTiHuoSum.getId();
 
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
-			if (tihuoList != null && tihuoList.size() > 0) {
+			if ((tihuoList != null) && (tihuoList.size() > 0)) {
 				String cwbs = "";
 				for (CwbTiHuo cwbTiHuo : tihuoList) {
 					cwbs += "'" + cwbTiHuo.getCwb() + "',";
 				}
 				cwbs = cwbs.length() > 0 ? cwbs.substring(0, cwbs.length() - 1) : "";
 				if (cwbs.length() > 0) {
-					orderlist = cwbDAO.getCwbOrderByCwbs(cwbs);
-					orderlist = dataStatisticService.getTiHuoCwbOrderViewCount10(orderlist, tihuoList, customerlist);
+					orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
+					orderlist = this.dataStatisticService.getTiHuoCwbOrderViewCount10(orderlist, tihuoList, customerlist);
 				}
 			}
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("提货订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("提货订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
 
 		model.addAttribute("customerlist", customerlist);
@@ -1735,14 +1739,14 @@ public class DataStatisticController {
 		model.addAttribute("page", page);
 
 		// model.addAttribute("exportmouldlist", exportmouldlist);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TiHuoDingDanTongJi.getValue()).getLastupdatetime());
-		logger.info("提货订单统计，当前操作人{},条数{}", user.getRealname(), count);
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TiHuoDingDanTongJi.getValue()).getLastupdatetime());
+		this.logger.info("提货订单统计，当前操作人{},条数{}", user.getRealname(), count);
 		return "datastatistics/tihuolist";
 	}
 
 	/**
 	 * 客户发货统计
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -1773,61 +1777,61 @@ public class DataStatisticController {
 		long count = 0;
 		Page pageparm = new Page();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		CwbOrder sum = new CwbOrder();
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 
 		List<CwbOrder> cwbOrderView = new ArrayList<CwbOrder>();
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		}
 		if (isshow != 0) {
-			logger.info("客户发货统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + dataStatisticService.getStrings(kufangid) + ",cwbordertypeid:" + cwbordertypeid
-					+ ",customerid:" + dataStatisticService.getStrings(customerid) + ",orderbyName:" + orderbyName + ",orderbyId:" + orderbyId + ",isshow:" + isshow + ",page:" + page,
-					user.getRealname());
+			this.logger.info("客户发货统计(云)，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",kufangid:" + this.dataStatisticService.getStrings(kufangid) + ",cwbordertypeid:"
+					+ cwbordertypeid + ",customerid:" + this.dataStatisticService.getStrings(customerid) + ",orderbyName:" + orderbyName + ",orderbyId:" + orderbyId + ",isshow:" + isshow + ",page:"
+					+ page, user.getRealname());
 
 			begindate = begindate.length() == 0 ? DateTimeUtil.getNowTime() : begindate;
 			enddate = enddate.length() == 0 ? DateTimeUtil.getNowTime() : enddate;
 			// 定义参数
 			List<CwbOrder> clist = new ArrayList<CwbOrder>();
-			String customerids = dataStatisticService.getStrings(customerid);
-			String cwbordertypeids = dataStatisticService.getStrings(cwbordertypeid);
-			String kufangids = dataStatisticService.getStrings(kufangid);
+			String customerids = this.dataStatisticService.getStrings(customerid);
+			String cwbordertypeids = this.dataStatisticService.getStrings(cwbordertypeid);
+			String kufangids = this.dataStatisticService.getStrings(kufangid);
 			// 获取值
-			count = cwbDAO.getKeHuFaHuoTongJiCount(begindate, enddate, customerids, cwbordertypeids, kufangids, flowordertype, servicetype);
+			count = this.cwbDAO.getKeHuFaHuoTongJiCount(begindate, enddate, customerids, cwbordertypeids, kufangids, flowordertype, servicetype);
 
-			sum = cwbDAO.getKeHuFaHuoTongJiSum(begindate, enddate, customerids, cwbordertypeids, kufangids, flowordertype, servicetype);
+			sum = this.cwbDAO.getKeHuFaHuoTongJiSum(begindate, enddate, customerids, cwbordertypeids, kufangids, flowordertype, servicetype);
 
-			clist = cwbDAO.getKeHuFaHuoTongJi(page, begindate, enddate, customerids, cwbordertypeids, kufangids, flowordertype, servicetype);
+			clist = this.cwbDAO.getKeHuFaHuoTongJi(page, begindate, enddate, customerids, cwbordertypeids, kufangids, flowordertype, servicetype);
 
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
 
 			// 赋值显示对象
-			List<Branch> branchs = getDmpDAO.getAllBranchs();
-			cwbOrderView = dataStatisticService.getKeHuFaHuoTongJiCwbOrderView(clist, customerList, branchs);
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			List<Branch> branchs = this.getDmpDAO.getAllBranchs();
+			cwbOrderView = this.dataStatisticService.getKeHuFaHuoTongJiCwbOrderView(clist, customerList, branchs);
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("客户发货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("客户发货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
-		Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-		List<Branch> kufangList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+		Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+		List<Branch> kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 				BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 
-		if (branch.getSitetype() == BranchEnum.KuFang.getValue() || branch.getSitetype() == BranchEnum.TuiHuo.getValue() || branch.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {
+		if ((branch.getSitetype() == BranchEnum.KuFang.getValue()) || (branch.getSitetype() == BranchEnum.TuiHuo.getValue()) || (branch.getSitetype() == BranchEnum.ZhongZhuan.getValue())) {
 			if (kufangList.size() == 0) {
 				kufangList.add(branch);
 			} else {
-				if (!dataStatisticService.checkBranchRepeat(kufangList, branch)) {
+				if (!this.dataStatisticService.checkBranchRepeat(kufangList, branch)) {
 					kufangList.add(branch);
 				}
 			}
 		}
-		List<String> kufangidlist = dataStatisticService.getList(kufangid);
-		List<String> cwbordertypeidlist = dataStatisticService.getList(cwbordertypeid);
-		List<String> customeridList = dataStatisticService.getList(customerid);
+		List<String> kufangidlist = this.dataStatisticService.getList(kufangid);
+		List<String> cwbordertypeidlist = this.dataStatisticService.getList(cwbordertypeid);
+		List<String> customeridList = this.dataStatisticService.getList(customerid);
 		model.addAttribute("customerlist", customerList);
 		model.addAttribute("kufangList", kufangList);
-		model.addAttribute("exportmouldlist", getDmpDAO.getExportmoulds(user, dmpid));
+		model.addAttribute("exportmouldlist", this.getDmpDAO.getExportmoulds(user, dmpid));
 		model.addAttribute("customeridStr", customeridList);
 		model.addAttribute("cwbordertypeidStr", cwbordertypeidlist);
 		model.addAttribute("kufangidStr", kufangidlist);
@@ -1838,13 +1842,13 @@ public class DataStatisticController {
 		model.addAttribute("page_obj", pageparm);
 		model.addAttribute("page", page);
 		model.addAttribute("servicetype", servicetype);
-		logger.info("客户发货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
+		this.logger.info("客户发货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		return "datastatistics/fahuolist";
 	}
 
 	/**
 	 * 综合查询
-	 * 
+	 *
 	 * @param model
 	 * @param begindate
 	 * @param enddate
@@ -1875,55 +1879,58 @@ public class DataStatisticController {
 			@RequestParam(value = "curdispatchbranchid", required = false, defaultValue = "") String[] curdispatchbranchid,
 			@RequestParam(value = "nextdispatchbranchid", required = false, defaultValue = "") String[] nextdispatchbranchid,
 			@RequestParam(value = "operationOrderResultType", required = false, defaultValue = "") String[] operationOrderResultTypes,
-			@RequestParam(value = "isshow", required = false, defaultValue = "0") long isshow, @PathVariable(value = "page") long page, HttpServletResponse response, HttpServletRequest request) {
+			@RequestParam(value = "financeAuditStatus", required = false, defaultValue = "-1") int financeAuditStatus,
+			@RequestParam(value = "goodsType", required = false, defaultValue = "-1") int goodsType, HttpServletResponse response,
+			@RequestParam(value = "isshow", required = false, defaultValue = "0") long isshow, @PathVariable(value = "page") long page, HttpServletRequest request) {
 
 		long count = 0;
 		Page pageparm = new Page();
 		CwbOrderTail sum = new CwbOrderTail();
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 加载供货商
-		List<Customer> customerlist = getDmpDAO.getAllCustomers();
+		List<Customer> customerlist = this.getDmpDAO.getAllCustomers();
 		// 查询列表
 		List<CwbOrderTail> orderlist = null;
 		// 加载站点区域权限
 		List<Branch> branchnameList = new ArrayList<Branch>();
-		if (user != null && user.getUserid() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+		if ((user != null) && (user.getUserid() > 0)) {
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 					BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 			if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 				if (branchnameList.size() == 0) {
 					branchnameList.add(branch);
 				} else {
-					if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+					if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 						branchnameList.add(branch);
 					}
 				}
 			}
 		}
 
-		List<String> operationOrderResultTypeslist = dataStatisticService.getList(operationOrderResultTypes);
+		List<String> operationOrderResultTypeslist = this.dataStatisticService.getList(operationOrderResultTypes);
 		// 加载导出模板
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 
 		Map<Long, String> brachmap = new HashMap<Long, String>();
 		Map<Long, String> customermap = new HashMap<Long, String>();
 
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
-			List<Branch> branchs = getDmpDAO.getAllBranchs();
+			List<Branch> branchs = this.getDmpDAO.getAllBranchs();
 			for (Branch branch : branchs) {
 				brachmap.put(branch.getBranchid(), branch.getBranchname());
 			}
 			for (Customer customer : customerlist) {
 				customermap.put(customer.getCustomerid(), customer.getCustomername());
 			}
-			logger.info("综合查询，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",isaudit:" + isaudit + ",customerid:" + dataStatisticService.getStrings(customerids) + ",cwbordertypeid:"
-					+ dataStatisticService.getStrings(cwbordertypeids) + ",paywayid:" + paywayid + ",dispatchbranchids:" + dataStatisticService.getStrings(dispatchbranchids) + ",curdispatchbranchid:"
-					+ dataStatisticService.getStrings(curdispatchbranchid) + ",nextdispatchbranchid:" + dataStatisticService.getStrings(nextdispatchbranchid) + ",isshow:" + isshow + ",page:" + page,
-					user.getRealname());
+			this.logger.info(
+					"综合查询，操作人{}，选择条件 begindate:" + begindate + ",enddate:" + enddate + ",isaudit:" + isaudit + ",customerid:" + this.dataStatisticService.getStrings(customerids) + ",cwbordertypeid:"
+							+ this.dataStatisticService.getStrings(cwbordertypeids) + ",paywayid:" + paywayid + ",dispatchbranchids:" + this.dataStatisticService.getStrings(dispatchbranchids)
+							+ ",curdispatchbranchid:" + this.dataStatisticService.getStrings(curdispatchbranchid) + ",nextdispatchbranchid:"
+							+ this.dataStatisticService.getStrings(nextdispatchbranchid) + ",isshow:" + isshow + ",page:" + page, user.getRealname());
 
 			CwbOrderTail tail = new CwbOrderTail();
 
@@ -1955,14 +1962,17 @@ public class DataStatisticController {
 
 			tail.setCurquerytimecolumn(FlowOrderColumnMap.ORDER_FLOW_TAIL_MAP.get(curquerytimetype).replaceAll("credate_", ""));
 
-			orderlist = cwbOrderTaildao.getTailList(tail, page);
-			sum = cwbOrderTaildao.getTailSum(tail);
+			tail.setFinanceAuditStatus(financeAuditStatus);
+			tail.setGoodsType(goodsType);
+
+			orderlist = this.cwbOrderTaildao.getTailList(tail, page);
+			sum = this.cwbOrderTaildao.getTailSum(tail);
 			count = sum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
 
-			String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
 			model.addAttribute("dmpUrl", dmpURl);
-			logger.info("综合查询，当前操作人{},条数{}", user.getRealname(), count);
+			this.logger.info("综合查询，当前操作人{},条数{}", user.getRealname(), count);
 
 		}
 		model.addAttribute("sum", sum.getReceivablefee());
@@ -1990,13 +2000,15 @@ public class DataStatisticController {
 		model.addAttribute("customermap", customermap);
 		model.addAttribute("check", 1);
 		model.addAttribute("exportmouldlist", exportmouldlist);
-		model.addAttribute("lastupdatetime", updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.ZongHeChaXun.getValue()).getLastupdatetime());
+		model.addAttribute("goodsType", goodsType);
+		model.addAttribute("financeAuditStatus", financeAuditStatus);
+		model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.ZongHeChaXun.getValue()).getLastupdatetime());
 		return "datastatistics/zonghelist";
 	}
 
 	/**
 	 * 验证离线导出状况
-	 * 
+	 *
 	 * @param model
 	 * @param response
 	 * @param request
@@ -2009,20 +2021,20 @@ public class DataStatisticController {
 	public @ResponseBody String exportExcle(Model model, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "begin", required = false, defaultValue = "0") long page,
 			@RequestParam(value = "sign", required = false, defaultValue = "0") long sign) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		JSONObject json = new JSONObject();
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			json.put("errorCode", 1);
 			json.put("remark", "登录失效");
 			return json.toString();
 		}
-		return dataStatisticService.DataStatisticsExportExcelCheck(response, request, page, sign, user.getUserid());
+		return this.dataStatisticService.DataStatisticsExportExcelCheck(response, request, page, sign, user.getUserid());
 
 	}
 
 	/**
 	 * 执行离线导出
-	 * 
+	 *
 	 * @param model
 	 * @param response
 	 * @param request
@@ -2033,16 +2045,16 @@ public class DataStatisticController {
 	public void commitExportExcle(Model model, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "begin", required = false, defaultValue = "0") long page,
 			@RequestParam(value = "sign", required = false, defaultValue = "0") long sign) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {// 如果登录失效，提示登录失败
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			return;
 		}
-		downloadManagerService.down_task();
+		this.downloadManagerService.down_task();
 	}
 
 	/**
 	 * 按站点查询小件员
-	 * 
+	 *
 	 * @param model
 	 * @param branchids
 	 * @return
@@ -2051,7 +2063,7 @@ public class DataStatisticController {
 	public @ResponseBody String updateDeliverByBranchids(Model model, @RequestParam("branchid") String branchids) {
 		if (branchids.length() > 0) {
 			branchids = branchids.substring(0, branchids.length() - 1);
-			List<User> list = getDmpDAO.getAllUserByBranchIds(branchids);
+			List<User> list = this.getDmpDAO.getAllUserByBranchIds(branchids);
 			return JSONArray.fromObject(list).toString();
 		} else {
 			return "[]";
@@ -2060,7 +2072,7 @@ public class DataStatisticController {
 
 	/**
 	 * 按输入站点名称查询多选下拉框站点
-	 * 
+	 *
 	 * @param branchname
 	 * @param response
 	 * @param request
@@ -2072,26 +2084,26 @@ public class DataStatisticController {
 			HttpServletRequest request) {
 
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		List<Branch> branchnameList = new ArrayList<Branch>();
 		if (branchname.length() > 0) {
-			if (user != null && user.getUserid() > 0) {
-				Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-				branchnameList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
+			if ((user != null) && (user.getUserid() > 0)) {
+				Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+				branchnameList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 						BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 				if (branch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 					if (branchnameList.size() == 0) {
 						branchnameList.add(branch);
 					} else {
-						if (!dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
+						if (!this.dataStatisticService.checkBranchRepeat(branchnameList, branch)) {
 							branchnameList.add(branch);
 						}
 					}
 				}
 			}
-			List<Branch> dispatchbranchidStr = getDmpDAO.getBranchByName(branchname);
+			List<Branch> dispatchbranchidStr = this.getDmpDAO.getBranchByName(branchname);
 			List<Branch> dispatchbranchidnewStr = new ArrayList<Branch>();
-			if (dispatchbranchidStr.size() > 0 && branchnameList.size() > 0) {
+			if ((dispatchbranchidStr.size() > 0) && (branchnameList.size() > 0)) {
 				for (Branch b : branchnameList) {
 					for (Branch branchStr : dispatchbranchidStr) {
 						if (branchStr.getBranchid() == b.getBranchid()) {
@@ -2108,7 +2120,7 @@ public class DataStatisticController {
 
 	/**
 	 * 根据站点名称精确查询到匹配的站点名称
-	 * 
+	 *
 	 * @param branchname
 	 * @return
 	 */
@@ -2116,21 +2128,21 @@ public class DataStatisticController {
 	public @ResponseBody String selectnexusbranchbybranchname(@RequestParam(value = "branchname", required = false, defaultValue = "") String branchname, HttpServletResponse response,
 			HttpServletRequest request) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		if (branchname.length() > 0) {
-			Branch branch = getDmpDAO.getNowBranch(user.getBranchid());
-			List<Branch> branchList = getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
-					BranchEnum.KuFang.getValue() + "," + BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+			List<Branch> branchList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "," + BranchEnum.ZhanDian.getValue() + ","
+					+ BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 
 			if (branchList.size() == 0) {
 				branchList.add(branch);
 			} else {
-				if (!dataStatisticService.checkBranchRepeat(branchList, branch)) {
+				if (!this.dataStatisticService.checkBranchRepeat(branchList, branch)) {
 					branchList.add(branch);
 				}
 			}
 
-			Branch deliverybranch = getDmpDAO.getBranchByBranchName(branchname);
+			Branch deliverybranch = this.getDmpDAO.getBranchByBranchName(branchname);
 			Branch newdispatchbranch = new Branch();
 			for (Branch b : branchList) {
 				if (deliverybranch.getBranchid() == b.getBranchid()) {
@@ -2145,7 +2157,7 @@ public class DataStatisticController {
 
 	@RequestMapping("/test1")
 	public void saveFlowcreCwbOrder1() {
-		logger.info("save orderDetail----------");
+		this.logger.info("save orderDetail----------");
 		for (int i = 0; i < 2000000; i++) {
 			CwbOrder cwborder = new CwbOrder();
 			cwborder.setCwb("HHH" + i);
@@ -2163,7 +2175,7 @@ public class DataStatisticController {
 			cwborder.setNextbranchid(198);
 			cwborder.setStartbranchid(198);
 			cwborder.setState(1l);
-			cwbDAO.creCwbOrder(cwborder);
+			this.cwbDAO.creCwbOrder(cwborder);
 			DeliverySuccessful del = new DeliverySuccessful();
 			del.setBranchid(1);
 			del.setCreatetime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
@@ -2177,14 +2189,14 @@ public class DataStatisticController {
 			del.setPaywayid(5);
 			del.setReceivablefee(BigDecimal.ZERO);
 			del.setPaybackfee(BigDecimal.ZERO);
-			deliverySuccessfulDAO.creDeliverySuccessful(del);
-			logger.info(i + "H");
+			this.deliverySuccessfulDAO.creDeliverySuccessful(del);
+			this.logger.info(i + "H");
 		}
 	}
 
 	@RequestMapping("/test")
 	public void saveFlowcreCwbOrder() {
-		logger.info("save orderDetail----------");
+		this.logger.info("save orderDetail----------");
 		for (int i = 0; i < 2000000; i++) {
 			CwbOrder cwborder = new CwbOrder();
 			cwborder.setCwb("LLL" + i);
@@ -2202,7 +2214,7 @@ public class DataStatisticController {
 			cwborder.setNextbranchid(198);
 			cwborder.setStartbranchid(198);
 			cwborder.setState(1l);
-			cwbDAO.creCwbOrder(cwborder);
+			this.cwbDAO.creCwbOrder(cwborder);
 			DeliverySuccessful del = new DeliverySuccessful();
 			del.setBranchid(1);
 			del.setCreatetime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
@@ -2216,8 +2228,8 @@ public class DataStatisticController {
 			del.setPaywayid(5);
 			del.setReceivablefee(BigDecimal.ZERO);
 			del.setPaybackfee(BigDecimal.ZERO);
-			deliverySuccessfulDAO.creDeliverySuccessful(del);
-			logger.info(i + "L");
+			this.deliverySuccessfulDAO.creDeliverySuccessful(del);
+			this.logger.info(i + "L");
 		}
 	}
 
@@ -2227,13 +2239,13 @@ public class DataStatisticController {
 			@RequestParam(value = "kufangid", required = false, defaultValue = "0") long kufangid,// 库房id
 			@RequestParam(value = "select", required = false, defaultValue = "0") long type,// 查询的时间模式：1.客户发货时间2.库房入库时间3.库房出库时间
 			HttpServletRequest request, @RequestParam(value = "isshow", required = false, defaultValue = "0") long isshow) {
-		List<Customer> customerList = getDmpDAO.getAllCustomers();// 查询所有供货商
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();// 查询所有供货商
 
-		List<Branch> kufanglist = getDmpDAO.getBranchByKufang();// 查询所有库房
-		logger.info("查询时间范围{}-{}", begindate, enddate + "库房" + kufangid + "type" + type);
+		List<Branch> kufanglist = this.getDmpDAO.getBranchByKufang();// 查询所有库房
+		this.logger.info("查询时间范围{}-{}", begindate, enddate + "库房" + kufangid + "type" + type);
 		// 得到查询的当前客户
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
 		// 定义一个map用来存储
 		Map<Long, Map<String, Long>> customMap = new HashMap<Long, Map<String, Long>>();
 		if (isshow != 0) {
@@ -2245,45 +2257,45 @@ public class DataStatisticController {
 			boolean flag = true;
 
 			if (type == 1) {
-				customMap = getfahuoListForDianshang(df, begindate, flag, endTimmer, kufangid, customerList, customMap);
+				customMap = this.getfahuoListForDianshang(df, begindate, flag, endTimmer, kufangid, customerList, customMap);
 				model.addAttribute("customMap", customMap);
 				model.addAttribute("type", type);
 				model.addAttribute("customerList", customerList);
 				model.addAttribute("kufanglist", kufanglist);
-				List<String> dateList = getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
+				List<String> dateList = this.getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
 						"".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : enddate + " 23:59:59");
 				model.addAttribute("startdate", "".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : begindate);
 				model.addAttribute("enddate", "".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : enddate);
 				model.addAttribute("dateList", dateList);
-				logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
+				this.logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
 				return "datastatistics/dianshangdanliang";
 			}
 			if (type == 2) {
-				KuFangRuKuMap = getrukuListForDianshang(df, begindate, flag, endTimmer, kufangid, customerList, KuFangRuKuMap);
+				KuFangRuKuMap = this.getrukuListForDianshang(df, begindate, flag, endTimmer, kufangid, customerList, KuFangRuKuMap);
 				model.addAttribute("customMap", KuFangRuKuMap);
 				model.addAttribute("type", type);
 				model.addAttribute("customerList", customerList);
 				model.addAttribute("kufanglist", kufanglist);
-				List<String> dateList = getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
+				List<String> dateList = this.getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
 						"".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : enddate + " 23:59:59");
 				model.addAttribute("startdate", "".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : begindate);
 				model.addAttribute("enddate", "".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : enddate);
 				model.addAttribute("dateList", dateList);
-				logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
+				this.logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
 				return "datastatistics/dianshangRuku";
 			}
 			if (type == 3) {
-				KuFangChukuMap = getchukuListForDianshang(df, begindate, flag, endTimmer, kufangid, customerList, KuFangChukuMap);
+				KuFangChukuMap = this.getchukuListForDianshang(df, begindate, flag, endTimmer, kufangid, customerList, KuFangChukuMap);
 				model.addAttribute("customMap", KuFangChukuMap);
 				model.addAttribute("type", type);
 				model.addAttribute("customerList", customerList);
 				model.addAttribute("kufanglist", kufanglist);
-				List<String> dateList = getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
+				List<String> dateList = this.getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
 						"".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : enddate + " 23:59:59");
 				model.addAttribute("startdate", "".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : begindate);
 				model.addAttribute("enddate", "".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : enddate);
 				model.addAttribute("dateList", dateList);
-				logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
+				this.logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
 				return "datastatistics/dianshangChuku";
 			}
 
@@ -2292,12 +2304,12 @@ public class DataStatisticController {
 		model.addAttribute("type", type);
 		model.addAttribute("customerList", customerList);
 		model.addAttribute("kufanglist", kufanglist);
-		List<String> dateList = getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
+		List<String> dateList = this.getDateLsit("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
 				"".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : enddate + " 23:59:59");
 		model.addAttribute("startdate", "".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : begindate);
 		model.addAttribute("enddate", "".equals(enddate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) : enddate);
 		model.addAttribute("dateList", dateList);
-		logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
+		this.logger.info("电商单量查询，当前操作人{},参数{}", user.getRealname(), kufangid + "--" + begindate + "--" + enddate);
 		return "datastatistics/dianshangdanliang";
 
 	}
@@ -2311,15 +2323,15 @@ public class DataStatisticController {
 			@RequestParam(value = "searchcustid", required = false, defaultValue = "0") long searchcustid// 查询的供货商id
 	) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		List<Customer> customerList = getDmpDAO.getAllCustomers();// 查询所有供货商
-		List<Branch> kufanglist = getDmpDAO.getBranchByKufang();// 查询所有库房
-		List<Exportmould> exportmouldlist = getDmpDAO.getExportmoulds(user, dmpid);
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();// 查询所有供货商
+		List<Branch> kufanglist = this.getDmpDAO.getBranchByKufang();// 查询所有库房
+		List<Exportmould> exportmouldlist = this.getDmpDAO.getExportmoulds(user, dmpid);
 		model.addAttribute("exportmouldlist", exportmouldlist);
 		if (type == 1) {
-			List<CwbOrder> clist = cwbDAO.getEditByCustomeridAndEmaildate(timer, kufangid, searchcustid, page);
+			List<CwbOrder> clist = this.cwbDAO.getEditByCustomeridAndEmaildate(timer, kufangid, searchcustid, page);
 			model.addAttribute("page", page);
-			model.addAttribute("page_obj", new Page(cwbDAO.getCountByCustomeridAndEmaildate(timer, kufangid, searchcustid), page, Page.ONE_PAGE_NUMBER));
+			model.addAttribute("page_obj", new Page(this.cwbDAO.getCountByCustomeridAndEmaildate(timer, kufangid, searchcustid), page, Page.ONE_PAGE_NUMBER));
 			model.addAttribute("type", type);
 			model.addAttribute("showlist", clist);
 			model.addAttribute("timer", timer);
@@ -2330,11 +2342,11 @@ public class DataStatisticController {
 			return "datastatistics/showfahuo";
 		}
 		if (type == 2) {
-			List<KuFangRuKuOrder> rukulist = kuFangRuKuDao.getEditByCustomeridAndEmaildate(timer, kufangid, searchcustid, page);
+			List<KuFangRuKuOrder> rukulist = this.kuFangRuKuDao.getEditByCustomeridAndEmaildate(timer, kufangid, searchcustid, page);
 			model.addAttribute("type", type);
 			model.addAttribute("showlist", rukulist);
 			model.addAttribute("page", page);
-			model.addAttribute("page_obj", new Page(kuFangRuKuDao.getCountByCustomeridAndEmaildate(timer, kufangid, searchcustid), page, Page.ONE_PAGE_NUMBER));
+			model.addAttribute("page_obj", new Page(this.kuFangRuKuDao.getCountByCustomeridAndEmaildate(timer, kufangid, searchcustid), page, Page.ONE_PAGE_NUMBER));
 			model.addAttribute("kufanglist", kufanglist);
 			model.addAttribute("customerList", customerList);
 			model.addAttribute("timer", timer);
@@ -2343,11 +2355,11 @@ public class DataStatisticController {
 			return "datastatistics/showfahuo";
 		}
 		if (type == 3) {
-			List<DeliveryChuku> chukulist = deliveryChukuDAO.getEditByCustomeridAndEmaildate(timer, kufangid, searchcustid, page);
+			List<DeliveryChuku> chukulist = this.deliveryChukuDAO.getEditByCustomeridAndEmaildate(timer, kufangid, searchcustid, page);
 			model.addAttribute("type", type);
 			model.addAttribute("showlist", chukulist);
 			model.addAttribute("page", page);
-			model.addAttribute("page_obj", new Page(deliveryChukuDAO.getCountByCustomeridAndEmaildate(timer, kufangid, searchcustid), page, Page.ONE_PAGE_NUMBER));
+			model.addAttribute("page_obj", new Page(this.deliveryChukuDAO.getCountByCustomeridAndEmaildate(timer, kufangid, searchcustid), page, Page.ONE_PAGE_NUMBER));
 			model.addAttribute("kufanglist", kufanglist);
 			model.addAttribute("timer", timer);
 			model.addAttribute("customerid", searchcustid);
@@ -2361,14 +2373,14 @@ public class DataStatisticController {
 	private Map<Long, Map<String, Long>> getfahuoListForDianshang(DateFormat df, String begindate, boolean flag, String endTimmer, long kufangid, List<Customer> customerList,
 			Map<Long, Map<String, Long>> customMap) {
 
-		List<CwbOrder> todayLogList = cwbDAO.getCwbByCustomeridAndEmaildate("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
+		List<CwbOrder> todayLogList = this.cwbDAO.getCwbByCustomeridAndEmaildate("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate + " 00:00:00",
 				"".equals(endTimmer) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : endTimmer + " 23:59:59", kufangid);
-		if (customerList != null && customerList.size() > 0) {
+		if ((customerList != null) && (customerList.size() > 0)) {
 
 			for (Customer cus : customerList) {
 				long i = 0;
 				Map<String, Long> logMap = new HashMap<String, Long>();
-				if (todayLogList != null && todayLogList.size() > 0) {
+				if ((todayLogList != null) && (todayLogList.size() > 0)) {
 					for (CwbOrder branchTodayLog : todayLogList) {
 						if (branchTodayLog.getCustomerid() == cus.getCustomerid()) {
 							i = i + 1;
@@ -2391,14 +2403,14 @@ public class DataStatisticController {
 	private Map<Long, Map<String, Long>> getrukuListForDianshang(DateFormat df, String begindate, boolean flag, String endTimmer, long kufangid, List<Customer> customerList,
 			Map<Long, Map<String, Long>> kuFangRuKuMap) {
 
-		List<KuFangRuKuOrder> todayLogList = kuFangRuKuDao.getCwbByCustomeridAndEmaildate("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate
+		List<KuFangRuKuOrder> todayLogList = this.kuFangRuKuDao.getCwbByCustomeridAndEmaildate("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate
 				+ " 00:00:00", "".equals(endTimmer) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : endTimmer + " 23:59:59", kufangid);
-		if (customerList != null && customerList.size() > 0) {
+		if ((customerList != null) && (customerList.size() > 0)) {
 
 			for (Customer cus : customerList) {
 				long i = 0;
 				Map<String, Long> logMap = new HashMap<String, Long>();
-				if (todayLogList != null && todayLogList.size() > 0) {
+				if ((todayLogList != null) && (todayLogList.size() > 0)) {
 					for (KuFangRuKuOrder branchTodayLog : todayLogList) {
 						if (branchTodayLog.getCustomerid() == cus.getCustomerid()) {
 							i = i + 1;
@@ -2420,14 +2432,14 @@ public class DataStatisticController {
 	private Map<Long, Map<String, Long>> getchukuListForDianshang(DateFormat df, String begindate, boolean flag, String endTimmer, long kufangid, List<Customer> customerList,
 			Map<Long, Map<String, Long>> kuFangChukuMap) {
 
-		List<DeliveryChuku> todayLogList = deliveryChukuDAO.getCwbByCustomeridAndEmaildate("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate
+		List<DeliveryChuku> todayLogList = this.deliveryChukuDAO.getCwbByCustomeridAndEmaildate("".equals(begindate) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 00:00:00" : begindate
 				+ " 00:00:00", "".equals(endTimmer) ? new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " 23:59:59" : endTimmer + " 23:59:59", kufangid);
-		if (customerList != null && customerList.size() > 0) {
+		if ((customerList != null) && (customerList.size() > 0)) {
 
 			for (Customer cus : customerList) {
 				long i = 0;
 				Map<String, Long> logMap = new HashMap<String, Long>();
-				if (todayLogList != null && todayLogList.size() > 0) {
+				if ((todayLogList != null) && (todayLogList.size() > 0)) {
 					for (DeliveryChuku branchTodayLog : todayLogList) {
 						if (branchTodayLog.getCustomerid() == cus.getCustomerid()) {
 							i++;
@@ -2448,7 +2460,7 @@ public class DataStatisticController {
 
 	/**
 	 * 获取两个时间之间的日期list
-	 * 
+	 *
 	 * @param startdate
 	 * @param enddate
 	 * @return
@@ -2460,7 +2472,7 @@ public class DataStatisticController {
 		List<String> list = new ArrayList<String>();
 		long dayCha = DateDayUtil.getDaycha(startdate, enddate);// 获取两个时间的时间差（天数）
 		if (dayCha > -1) {
-			for (int i = 0; i < dayCha + 1; i++) {
+			for (int i = 0; i < (dayCha + 1); i++) {
 				list.add(DateDayUtil.getDayCum(startdate, i));
 			}
 		}
@@ -2470,7 +2482,7 @@ public class DataStatisticController {
 
 	/**
 	 * 投递率查询 主页面
-	 * 
+	 *
 	 * @param model
 	 * @param cdDateType
 	 * @param startTime
@@ -2482,20 +2494,20 @@ public class DataStatisticController {
 
 		// user
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
 
 		// 所有站点
-		List<Branch> branchList = getDmpDAO.getBranchByAllZhanDian();
-		branchList = getDmpDAO.getAccessableBranch(user.getUserid());
+		List<Branch> branchList = this.getDmpDAO.getBranchByAllZhanDian();
+		branchList = this.getDmpDAO.getAccessableBranch(user.getUserid());
 		model.addAttribute("branchList", branchList);
 
 		// 所有供应商
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 		model.addAttribute("customerList", customerList);
 
 		DeliveryRateTimeType[] allTimeTypes = DeliveryRateTimeType.values;
@@ -2508,7 +2520,7 @@ public class DataStatisticController {
 
 	/**
 	 * 投递率查询 主页面
-	 * 
+	 *
 	 * @param model
 	 * @param cdDateType
 	 * @param startTime
@@ -2530,16 +2542,16 @@ public class DataStatisticController {
 
 		// user
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
 
 		// 用户站点权限
 		if ("delete".equals(action)) {
-			downloadManagerService.deleteDownloadManager(user.getUserid(), downloadRequestId);
+			this.downloadManagerService.deleteDownloadManager(user.getUserid(), downloadRequestId);
 		}
 
 		if (tabId == null) {
@@ -2547,12 +2559,12 @@ public class DataStatisticController {
 		}
 		model.addAttribute("tabId", tabId);
 		// 所有站点
-		List<Branch> branchList = getDmpDAO.getBranchByAllZhanDian();
-		branchList = getDmpDAO.getAccessableBranch(user.getUserid());
+		List<Branch> branchList = this.getDmpDAO.getBranchByAllZhanDian();
+		branchList = this.getDmpDAO.getAccessableBranch(user.getUserid());
 		model.addAttribute("branchList", branchList);
 
 		// 所有供应商
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 		model.addAttribute("customerList", customerList);
 
 		DeliveryRateTimeType[] allTimeTypes = DeliveryRateTimeType.values;
@@ -2578,7 +2590,7 @@ public class DataStatisticController {
 
 			// 是否自行指定时效
 			drRequest.setCustomization(customization);
-			if (customization != null && customization) {
+			if ((customization != null) && customization) {
 				DeliveryRateTimeType cdTimeType = new DeliveryRateTimeType();
 				cdTimeType.setCustomization(true);
 				cdTimeType.setCdTime(cdTime);
@@ -2602,14 +2614,14 @@ public class DataStatisticController {
 			try {
 				drRequest.setStartDate(DateTimeUtil.parse(startDate, "yyyy-MM-dd"));
 				drRequest.setEndDate(DateTimeUtil.nextDate(DateTimeUtil.parse(endDate, "yyyy-MM-dd")));
-				downloadManagerService.createDeliveryRateRequest(drRequest, user.getUserid());
+				this.downloadManagerService.createDeliveryRateRequest(drRequest, user.getUserid());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 		}
 
 		// 列表已存在的查询
-		List<DownloadManager> downloadRequestList = downloadManagerService.listDownloadRequest(user.getUserid(), ModelEnum.deliveryRate);
+		List<DownloadManager> downloadRequestList = this.downloadManagerService.listDownloadRequest(user.getUserid(), ModelEnum.deliveryRate);
 		List<DownloadManagerWrapper> downloadRequestWrapperList = new ArrayList<DownloadManagerWrapper>();
 		for (DownloadManager download : downloadRequestList) {
 			downloadRequestWrapperList.add(new DownloadManagerWrapper(download, branchList, customerList));
@@ -2621,7 +2633,7 @@ public class DataStatisticController {
 
 	/**
 	 * 投递率查询结果页
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -2631,40 +2643,40 @@ public class DataStatisticController {
 
 		// user
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
 
-		DeliveryRateAggregation drAgg = downloadManagerService.getDeliveryRateResult(downloadRequestId);
+		DeliveryRateAggregation drAgg = this.downloadManagerService.getDeliveryRateResult(downloadRequestId);
 		model.addAttribute("drAgg", drAgg);
 		System.out.println(drAgg);
 
 		Map<Integer, String> bocNameMap = new HashMap<Integer, String>();
-		if (tabID == 1 || tabID == 2) {
-			if (DeliveryRateQueryType.byBranch == drAgg.getQueryType() || DeliveryRateQueryType.byUser == drAgg.getQueryType()) {
+		if ((tabID == 1) || (tabID == 2)) {
+			if ((DeliveryRateQueryType.byBranch == drAgg.getQueryType()) || (DeliveryRateQueryType.byUser == drAgg.getQueryType())) {
 				// 所有站点
-				List<Branch> branchList = getDmpDAO.getBranchByAllZhanDian();
+				List<Branch> branchList = this.getDmpDAO.getBranchByAllZhanDian();
 				for (Branch branch : branchList) {
 					bocNameMap.put((int) branch.getBranchid(), branch.getBranchname());
 				}
 			} else {
 				// 所有供应商
-				List<Customer> customerList = getDmpDAO.getAllCustomers();
+				List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 				for (Customer customer : customerList) {
 					bocNameMap.put((int) customer.getCustomerid(), customer.getCustomername());
 				}
 			}
 		}
 		if (tabID == 3) {
-			List<Branch> branchList = getDmpDAO.getBranchByAllZhanDian();
+			List<Branch> branchList = this.getDmpDAO.getBranchByAllZhanDian();
 			for (Branch branch : branchList) {
 				bocNameMap.put((int) branch.getBranchid(), branch.getBranchname());
 			}
 			// 所有供应商
-			List<Customer> customerList = getDmpDAO.getAllCustomers();
+			List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 			for (Customer customer : customerList) {
 				bocNameMap.put((int) customer.getCustomerid(), customer.getCustomername());
 			}
@@ -2679,7 +2691,7 @@ public class DataStatisticController {
 
 	/**
 	 * 下载投递率查询 结果
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -2688,14 +2700,14 @@ public class DataStatisticController {
 			@RequestParam(value = "downloadRequestId", required = true) Integer downloadRequestId) {
 		// user
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
 		Integer tabId = 0;
-		SXSSFWorkbook wb = deliveryRateService.download(user.getUserid(), downloadRequestId, tabId);
+		SXSSFWorkbook wb = this.deliveryRateService.download(user.getUserid(), downloadRequestId, tabId);
 		response.setContentType("application/x-msdownload");
 		try {
 			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("deliveryRate.xlsx", "UTF-8"));
@@ -2715,19 +2727,19 @@ public class DataStatisticController {
 		model.addAttribute("bocId", bocId);
 		model.addAttribute("type", type);
 		model.addAttribute("downloadRequestId", downloadRequestId);
-		DeliveryRateAggregation drAgg = deliveryRateService.getDeliveryRateResult(downloadRequestId);
+		DeliveryRateAggregation drAgg = this.deliveryRateService.getDeliveryRateResult(downloadRequestId);
 		DeliveryRateQueryType queryType = drAgg.getQueryType();
 
 		Map<Integer, String> bocNameMap = new HashMap<Integer, String>();
-		if (DeliveryRateQueryType.byBranch == drAgg.getQueryType() || DeliveryRateQueryType.byUser == drAgg.getQueryType()) {
+		if ((DeliveryRateQueryType.byBranch == drAgg.getQueryType()) || (DeliveryRateQueryType.byUser == drAgg.getQueryType())) {
 			// 所有站点
-			List<Branch> branchList = getDmpDAO.getBranchByAllZhanDian();
+			List<Branch> branchList = this.getDmpDAO.getBranchByAllZhanDian();
 			for (Branch branch : branchList) {
 				bocNameMap.put((int) branch.getBranchid(), branch.getBranchname());
 			}
 		} else {
 			// 所有供应商
-			List<Customer> customerList = getDmpDAO.getAllCustomers();
+			List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 			for (Customer customer : customerList) {
 				bocNameMap.put((int) customer.getCustomerid(), customer.getCustomername());
 			}
@@ -2787,7 +2799,7 @@ public class DataStatisticController {
 
 	/**
 	 * 系统设置 > 信息维护 > 微信平台设置 妥投率条件设置
-	 * 
+	 *
 	 * @param model
 	 * @param request
 	 * @param response
@@ -2796,9 +2808,9 @@ public class DataStatisticController {
 	@RequestMapping("/mobileDeliveryRateSetup")
 	public String mobileDeliveryRateSetup(Model model, HttpServletRequest request, HttpServletResponse response) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2810,9 +2822,9 @@ public class DataStatisticController {
 	public String listDeliveryRateCondition(Model model, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "selectType", required = false) Integer selectType) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2820,14 +2832,14 @@ public class DataStatisticController {
 			selectType = null;
 		}
 
-		List<Branch> branchList = getDmpDAO.getAccessableBranch(user.getUserid());
+		List<Branch> branchList = this.getDmpDAO.getAccessableBranch(user.getUserid());
 		model.addAttribute("branchList", branchList);
 
 		// 所有供应商
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 		model.addAttribute("customerList", customerList);
 
-		List<DeliveryRateCondition> deliveryRateConditionList = deliveryRateService.listMobileDeliveryRate(user.getUserid(), name, selectType);
+		List<DeliveryRateCondition> deliveryRateConditionList = this.deliveryRateService.listMobileDeliveryRate(user.getUserid(), name, selectType);
 		List<DeliveryRateConditionWrapper> deliveryRateConditionWrapperList = new ArrayList<DeliveryRateConditionWrapper>();
 		for (DeliveryRateCondition deliveryRateCondition : deliveryRateConditionList) {
 			deliveryRateConditionWrapperList.add(new DeliveryRateConditionWrapper(deliveryRateCondition, branchList, customerList));
@@ -2840,21 +2852,21 @@ public class DataStatisticController {
 	@RequestMapping("/preSaveDeliveryRateCondition")
 	public String preSaveDeliveryRateCondition(Model model, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "id", required = false) Long id) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
 
 		// 用户站点权限
 		// 所有站点
-		List<Branch> branchList = getDmpDAO.getBranchByAllZhanDian();
-		branchList = getDmpDAO.getAccessableBranch(user.getUserid());
+		List<Branch> branchList = this.getDmpDAO.getBranchByAllZhanDian();
+		branchList = this.getDmpDAO.getAccessableBranch(user.getUserid());
 		model.addAttribute("branchList", branchList);
 
 		// 所有供应商
-		List<Customer> customerList = getDmpDAO.getAllCustomers();
+		List<Customer> customerList = this.getDmpDAO.getAllCustomers();
 		model.addAttribute("customerList", customerList);
 
 		DeliveryRateTimeType[] allTimeTypes = DeliveryRateTimeType.values;
@@ -2865,7 +2877,7 @@ public class DataStatisticController {
 		DeliveryRateComputeType.values();
 		if (id != null) {
 			// 修改
-			DeliveryRateCondition deliveryRateCondition = deliveryRateService.getDeliveryRateCondition(id);
+			DeliveryRateCondition deliveryRateCondition = this.deliveryRateService.getDeliveryRateCondition(id);
 			model.addAttribute("deliveryRateCondition", deliveryRateCondition);
 
 			try {
@@ -2887,9 +2899,9 @@ public class DataStatisticController {
 			@RequestParam(value = "cdTime", required = false) String cdTime, @RequestParam(value = "cdDateType", required = false) String cdDateType,
 			@RequestParam(value = "startTime", required = false) String startTime, @RequestParam(value = "endTime", required = false) String endTime) {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-		User user = getDmpDAO.getLogUser(dmpid);
-		if (user == null || user.getUserid() == 0) {
-			String dmpUrl = getDmpDAO.getDmpurl();
+		User user = this.getDmpDAO.getLogUser(dmpid);
+		if ((user == null) || (user.getUserid() == 0)) {
+			String dmpUrl = this.getDmpDAO.getDmpurl();
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2907,7 +2919,7 @@ public class DataStatisticController {
 
 		// 是否自行指定时效
 		deliveryRateRequest.setCustomization(customization);
-		if (customization != null && customization) {
+		if ((customization != null) && customization) {
 			DeliveryRateTimeType cdTimeType = new DeliveryRateTimeType();
 			cdTimeType.setCustomization(true);
 			cdTimeType.setCdTime(cdTime);
@@ -2927,26 +2939,26 @@ public class DataStatisticController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		deliveryRateService.saveDeliveryRateCondition(deliveryRateCondition);
+		this.deliveryRateService.saveDeliveryRateCondition(deliveryRateCondition);
 
 		return "/deliveryRate/saveMobileDeliveryRate";
 	}
 
 	@RequestMapping("/deactiveDeliveryRateCondition")
 	public String deactiveDeliveryRateCondition(Model model, HttpServletRequest request, @RequestParam(value = "id", required = true) Long id) {
-		deliveryRateService.deactiveDeliveryRateCondition(id);
+		this.deliveryRateService.deactiveDeliveryRateCondition(id);
 		return "/common/httpCommunicationResult";
 	}
 
 	@RequestMapping("/activeDeliveryRateCondition")
 	public String activeDeliveryRateCondition(Model model, HttpServletRequest request, @RequestParam(value = "id", required = true) Long id) {
-		deliveryRateService.activeDeliveryRateCondition(id);
+		this.deliveryRateService.activeDeliveryRateCondition(id);
 		return "/common/httpCommunicationResult";
 	}
 
 	/**
 	 * 微信平台接口 根据用户id查询
-	 * 
+	 *
 	 * @param model
 	 * @param request
 	 * @param response
@@ -2955,19 +2967,19 @@ public class DataStatisticController {
 	 */
 	@RequestMapping("/listMobileDeliveryRateCondition")
 	public @ResponseBody String listMobileDeliveryRateCondition(Model model, HttpServletRequest request, HttpServletResponse response) {
-		List<DeliveryRateCondition> deliveryRateConditionList = deliveryRateService.listMobileDeliveryRate(null, null, null);
+		List<DeliveryRateCondition> deliveryRateConditionList = this.deliveryRateService.listMobileDeliveryRate(null, null, null);
 		String json = null;
 		try {
 			json = JsonUtil.translateToJson(deliveryRateConditionList);
 		} catch (Exception e) {
-			logger.error("translate to json failed for {}", deliveryRateConditionList, e);
+			this.logger.error("translate to json failed for {}", deliveryRateConditionList, e);
 		}
 		return json;
 	}
 
 	/**
 	 * 微信平台接口，查询妥投率查询执行结果
-	 * 
+	 *
 	 * @param model
 	 * @param request
 	 * @param response
@@ -2981,9 +2993,9 @@ public class DataStatisticController {
 	public @ResponseBody String queryMobileDeliveryRate(Model model, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "ruleId", required = true) Long ruleId) {
 		String deliveryRateAgg = null;
 		try {
-			deliveryRateAgg = deliveryRateService.getMobileDeliveryRate(ruleId);
+			deliveryRateAgg = this.deliveryRateService.getMobileDeliveryRate(ruleId);
 		} catch (Exception e) {
-			logger.error("queryMobileDeliveryRate failed ", e);
+			this.logger.error("queryMobileDeliveryRate failed ", e);
 		}
 		return deliveryRateAgg;
 	}
