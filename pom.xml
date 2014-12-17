@@ -594,8 +594,8 @@
 				<expressurl.password>root</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase>false</expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8086/dmp_pxwl_smt</dmpUrl>
-				<label>version-smt</label>
+				<dmpUrl>http://127.0.0.1:8087/dmp_pxwl_50101</dmpUrl>
+				<label>version-50101</label>
 			</properties>
 		</profile>
 		
