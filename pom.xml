@@ -559,9 +559,9 @@
 				<tomcat.manager.url></tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
 				<expressurl.maxconn>20</expressurl.maxconn>
-				<expressurl.url>jdbc:mysql://localhost:3306/peisongdata_oms_test?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
-				<expressurl.user>root</expressurl.user>
-				<expressurl.password>root</expressurl.password>
+				<expressurl.url>jdbc:mysql://192.168.0.217:3306/oms_pxwl_smt?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>dmp</expressurl.user>
+				<expressurl.password>dmp</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
 				<dmpUrl>http://127.0.0.1:8080/dmp</dmpUrl>
@@ -574,12 +574,12 @@
 				<tomcat.manager.url>http://192.168.180.2:9080/manager</tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
 				<expressurl.maxconn>20</expressurl.maxconn>
-				<expressurl.url>jdbc:mysql://localhost:3306/peisongdata_oms_test?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
-				<expressurl.user>root</expressurl.user>
-				<expressurl.password>123456</expressurl.password>
+				<expressurl.url>jdbc:mysql://192.168.0.217:3306/oms_pxwl_smt?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>dmp</expressurl.user>
+				<expressurl.password>dmp</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://127.0.0.1:61611</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1/dmp</dmpUrl>
+				<jms.brokerURL>tcp://192.168.0.217:61611</jms.brokerURL>
+				<dmpUrl>http://192.168.0.222:9528/dmp_pxwl_smt</dmpUrl>
 				<label>test</label>
 			</properties>
 		</profile>
