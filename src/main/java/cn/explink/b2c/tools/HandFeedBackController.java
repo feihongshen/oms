@@ -15,7 +15,6 @@ import cn.explink.b2c.Wholeline.WholeLineService;
 import cn.explink.b2c.Wholeline.WholeLineService_search;
 import cn.explink.b2c.chinamobile.ChinamobileService;
 import cn.explink.b2c.dangdang.DangDangService;
-import cn.explink.b2c.dongfangcj.DongFangCJService;
 import cn.explink.b2c.dongfangcj.DongFangCJService_Cod;
 import cn.explink.b2c.dongfangcj.DongFangCJService_Delivery;
 import cn.explink.b2c.dongfangcj.DongFangCJService_goback;
@@ -33,12 +32,12 @@ import cn.explink.b2c.hzabc.HangZhouABCService;
 import cn.explink.b2c.jumeiyoupin.JumeiService;
 import cn.explink.b2c.jumeiyoupin.JumeiYoupinService;
 import cn.explink.b2c.lechong.LechongService;
+import cn.explink.b2c.lefeng.LefengService;
 import cn.explink.b2c.letv.LetvService;
 import cn.explink.b2c.liantong.LiantongService;
 import cn.explink.b2c.maikolin.MaikolinService;
 import cn.explink.b2c.mmb.MmbService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
-import cn.explink.b2c.sfxhm.SfxhmNote;
 import cn.explink.b2c.sfxhm.SfxhmService;
 import cn.explink.b2c.smile.SmileService;
 import cn.explink.b2c.telecomsc.TelecomshopService;
@@ -55,7 +54,7 @@ import cn.explink.dao.GetDmpDAO;
 
 /**
  * 提供一个手动反馈给各个已对接的供货商订单状态，相当于定时器调用。 如果不想等待定时器自动反馈，可以使用此功能
- * 
+ *
  * @author Administrator
  *
  */
@@ -149,20 +148,21 @@ public class HandFeedBackController {
 	SfxhmService sfxhmService;
 	@Autowired
 	CacheBaseListener cacheBaseListener;
-
+	@Autowired
+	LefengService lefengService;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * 初始化 customer
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping("/init_customerlist")
 	public @ResponseBody String init_customer() {
 
 		// b2cJsonService.initCustomerList();
-		cacheBaseListener.initAll();
-		logger.info("dmp供货商设置表发生改变，重新加载成功");
+		this.cacheBaseListener.initAll();
+		this.logger.info("dmp供货商设置表发生改变，重新加载成功");
 
 		return "SUCCESS";
 
@@ -171,7 +171,7 @@ public class HandFeedBackController {
 	@RequestMapping("/dangdang_test")
 	public @ResponseBody String dangdangtest(HttpServletResponse response, HttpServletRequest request) {
 
-		dangdangService.feedback_status();
+		this.dangdangService.feedback_status();
 		return "";
 
 	}
@@ -180,7 +180,7 @@ public class HandFeedBackController {
 	public @ResponseBody String tmalltest(HttpServletResponse response, HttpServletRequest request) {
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("tmall")) {
-				tmallService.feedback_status(enums.getKey());
+				this.tmallService.feedback_status(enums.getKey());
 			}
 		}
 		return "success";
@@ -191,7 +191,7 @@ public class HandFeedBackController {
 	public @ResponseBody String vipshoptest(HttpServletResponse response, HttpServletRequest request) {
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("vipshop")) {
-				vipshopService.feedback_status(enums.getKey());
+				this.vipshopService.feedback_status(enums.getKey());
 			}
 		}
 		return "";
@@ -200,33 +200,33 @@ public class HandFeedBackController {
 
 	@RequestMapping("/jumei_test")
 	public @ResponseBody String jumietest(HttpServletResponse response, HttpServletRequest request) {
-		jumeiYoupinService.feedback_status();
+		this.jumeiYoupinService.feedback_status();
 		return "success";
 
 	}
 
 	@RequestMapping("/jumei_test1")
 	public @ResponseBody String jumietest1(HttpServletResponse response, HttpServletRequest request) {
-		jumeiService.feedback_status();
+		this.jumeiService.feedback_status();
 		return "success";
 
 	}
 
 	@RequestMapping("/dmp_test")
 	public void DMP_test(HttpServletResponse response, HttpServletRequest request) {
-		b2cSendMointorService.parseB2cMonitorData_timmer();
+		this.b2cSendMointorService.parseB2cMonitorData_timmer();
 
 	}
 
 	@RequestMapping("/rufengda_test")
 	public void CommitDeliverInfo_interface(HttpServletResponse response, HttpServletRequest request) {
-		rufengdaService_CommitDeliverInfo.CommitDeliverInfo_interface();
+		this.rufengdaService_CommitDeliverInfo.CommitDeliverInfo_interface();
 
 	}
 
 	@RequestMapping("/smile_test")
 	public void feedbackto_smile(HttpServletResponse response, HttpServletRequest request) {
-		smileService.feedback_status();
+		this.smileService.feedback_status();
 
 	}
 
@@ -235,158 +235,158 @@ public class HandFeedBackController {
 
 		for (B2cEnum enums : B2cEnum.values()) { // 遍历唯品会enum，可能有多个枚举
 			if (enums.getMethod().contains("yihaodian")) {
-				yihaodianService.YiHaoDianInterfaceInvoke(enums.getKey());
-				yihaodianService.DeliveryResultByYiHaoDianAgain(enums.getKey());
+				this.yihaodianService.YiHaoDianInterfaceInvoke(enums.getKey());
+				this.yihaodianService.DeliveryResultByYiHaoDianAgain(enums.getKey());
 			}
 		}
 	}
 
 	@RequestMapping("/yangguang_test")
 	public void feedbackto_yangguang(HttpServletResponse response, HttpServletRequest request) {
-		yangGuangService_upload.createTxtFile_DeliveryFinishMethod();
+		this.yangGuangService_upload.createTxtFile_DeliveryFinishMethod();
 
 	}
 
 	@RequestMapping("/yemaijiu_test")
 	public void feedbackto_yemaijiu(HttpServletResponse response, HttpServletRequest request) {
-		yeMaiJiuService.feedback_status();
+		this.yeMaiJiuService.feedback_status();
 
 	}
 
 	@RequestMapping("/gzabc_test")
 	public void feedbackto_gzabc(HttpServletResponse response, HttpServletRequest request) {
-		guangZhouABCService.feedback_status(B2cEnum.GuangZhouABC.getKey());
+		this.guangZhouABCService.feedback_status(B2cEnum.GuangZhouABC.getKey());
 	}
 
 	@RequestMapping("/hzabc_test")
 	public void feedbackto_hzabc(HttpServletResponse response, HttpServletRequest request) {
-		hangZhouABCService.feedback_status(B2cEnum.HangZhouABC.getKey());
+		this.hangZhouABCService.feedback_status(B2cEnum.HangZhouABC.getKey());
 	}
 
 	@RequestMapping("/dongfangcj_test")
 	public void dongfangcj_test(HttpServletResponse response, HttpServletRequest request) {
-		dongFangCJService_Delivery.createDongFangCJTxtFile_DeliveryFinish();
-		dongFangCJService_Cod.createDongFangCJTxtFile_Cod();
-		dongFangCJService_goback.createDongFangCJTxtFile_goback(); // /回收单推送标识
+		this.dongFangCJService_Delivery.createDongFangCJTxtFile_DeliveryFinish();
+		this.dongFangCJService_Cod.createDongFangCJTxtFile_Cod();
+		this.dongFangCJService_goback.createDongFangCJTxtFile_goback(); // /回收单推送标识
 	}
 
 	@RequestMapping("/hxg_test")
 	public void feedbackto_hxg(HttpServletResponse response, HttpServletRequest request) {
-		haoXiangGouService.feedback_status();
+		this.haoXiangGouService.feedback_status();
 	}
 
 	@RequestMapping("/tmall_test_insert")
 	public @ResponseBody String tmall_test_insert(HttpServletResponse response, HttpServletRequest request) {
 
-		tmallService.test_insert();
+		this.tmallService.test_insert();
 		return "success";
 	}
 
 	@RequestMapping("/yixun_test")
 	public void feedbackto_yixun(HttpServletResponse response, HttpServletRequest request) {
-		yiXunService.feedback_status();
+		this.yiXunService.feedback_status();
 	}
 
 	// 配送结果
 	@RequestMapping("/homegou_test")
 	public void feedbackto_homegou1(HttpServletResponse response, HttpServletRequest request) {
-		homegouService_Delivery.feedback_state();
+		this.homegouService_Delivery.feedback_state();
 	}
 
 	// 发送短信通知
 	@RequestMapping("/homegou_test1")
 	public void feedbackto_homegou2(HttpServletResponse response, HttpServletRequest request) {
-		homegouService_Message.feedback_state();
+		this.homegouService_Message.feedback_state();
 	}
 
 	// 配送结果
 	@RequestMapping("/dpfoss_test")
 	public void dpfoss_test(HttpServletResponse response, HttpServletRequest request) {
-		dpfossService.feedback_status();
+		this.dpfossService.feedback_status();
 	}
 
 	// 配送结果
 	@RequestMapping("/httx_test")
 	public void httx_test(HttpServletResponse response, HttpServletRequest request) {
-		huitongtxService.feedback_status(B2cEnum.Huitongtx.getKey());
+		this.huitongtxService.feedback_status(B2cEnum.Huitongtx.getKey());
 	}
 
 	// 配送结果
 	@RequestMapping("/epai_test")
 	public void epai_test(HttpServletResponse response, HttpServletRequest request) {
-		epaiApiService.feedback_status();
+		this.epaiApiService.feedback_status();
 	}
 
 	/**
 	 * 环形oms请求dmp
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping("/hx_hander")
 	public @ResponseBody String hx_hander(HttpServletRequest request) {
 
-		coreService.selectOMStemp_feedback();
+		this.coreService.selectOMStemp_feedback();
 		return "OMS环形对接手动反馈成功";
 	}
 
 	@RequestMapping("/liantong")
 	public @ResponseBody String liantong_hander(HttpServletRequest request) {
 
-		liantongService.feedback_status();
+		this.liantongService.feedback_status();
 		return "SUCCESS";
 	}
 
 	// 配送结果
 	@RequestMapping("/telecom_test")
 	public void telecom_test(HttpServletResponse response, HttpServletRequest request) {
-		telecomshopService.feedback_status();
+		this.telecomshopService.feedback_status();
 	}
 
 	// maimaibao
 	@RequestMapping("/mmb_test")
 	public void mmb_test(HttpServletResponse response, HttpServletRequest request) {
-		mmbService.feedback_status();
+		this.mmbService.feedback_status();
 	}
 
 	// 配送结果
 	@RequestMapping("/wx_test")
 	public void wx_test(HttpServletResponse response, HttpServletRequest request) {
-		wanxiangService.feedback_status();
+		this.wanxiangService.feedback_status();
 	}
 
 	// 配送结果
 	@RequestMapping("/letv_test")
 	public void letv_test(HttpServletResponse response, HttpServletRequest request) {
-		letvService.feedback_status();
+		this.letvService.feedback_status();
 	}
 
 	// 配送结果
 	@RequestMapping("/yonghui_test")
 	public void yonghui_test(HttpServletResponse response, HttpServletRequest request) {
-		yonghuiService.feedback_status();
+		this.yonghuiService.feedback_status();
 	}
 
 	// 配送结果
 	@RequestMapping("/hxgdms_test")
 	public void hxgdms_test(HttpServletResponse response, HttpServletRequest request) {
-		hxgdmsService.feedback_status();
+		this.hxgdmsService.feedback_status();
 	}
 
 	/**
 	 * 轮偱order表
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping("/wl_insert")
 	public @ResponseBody String getInfoWholeline(HttpServletRequest request) {
-		wholeLineService.getInfoCall();
+		this.wholeLineService.getInfoCall();
 		return "查询已出库数据插入到轮询表完成";
 	}
 
 	/**
 	 * webservice请求
-	 * 
+	 *
 	 * @param request
 	 *            方法名：queryWaybillRoute， 参数：comeCode[XA0300],waybillNos[订单号]
 	 * @return
@@ -394,31 +394,31 @@ public class HandFeedBackController {
 	@RequestMapping("/wl_search")
 	public @ResponseBody String getOrderForWholeline(HttpServletRequest request) {
 		int key = B2cEnum.wholeLine.getKey();
-		WholeLine whole = wholeLineService.getWholeline(key);
-		wholeLineService_search.searchQuanxianRoute(key, whole);
+		WholeLine whole = this.wholeLineService.getWholeline(key);
+		this.wholeLineService_search.searchQuanxianRoute(key, whole);
 		return "手动执行请求全线快递完成";
 	}
 
 	/**
 	 * 乐宠test
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping("/lechong_test")
 	public @ResponseBody String lechong_test(HttpServletRequest request) {
-		lechongService.feedback_status();
+		this.lechongService.feedback_status();
 		return "SUCCESS";
 	}
 
 	/**
 	 * 家有购物test
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping("/homegobj_test")
 	public @ResponseBody String homegobj_test(HttpServletRequest request) {
-		homegobjService.feedback_status();
+		this.homegobjService.feedback_status();
 		return "手动执行反馈家有购物北京完成";
 	}
 
@@ -434,8 +434,13 @@ public class HandFeedBackController {
 		// note.setShipper("张派送");
 		// note.setUpload_time("2014-08-21 09:50:00");
 
-		sfxhmService.feedback_status();
+		this.sfxhmService.feedback_status();
 		return "SUCCESS";
 	}
 
+	@RequestMapping("/lefeng_test")
+	public @ResponseBody String lefeng_test(HttpServletRequest request) {
+		this.lefengService.feedback_status();
+		return "手动执行反馈乐峰网成功";
+	}
 }

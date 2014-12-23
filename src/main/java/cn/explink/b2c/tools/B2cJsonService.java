@@ -58,7 +58,7 @@ public class B2cJsonService {
 
 	/**
 	 * 封装为Json格式的字符串，用于B2C对接。
-	 * 
+	 *
 	 * @param cwbOrder
 	 * @param flowOrdertype
 	 * @return
@@ -273,14 +273,17 @@ public class B2cJsonService {
 			return this.buildB2cDataMaster.getBuildSfxhmB2cData().buildHomegobjMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
-
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Lefeng.getKey()))) {
+			return this.buildB2cDataMaster.getBuildLefengB2cData().buildLefengMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
+					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
+		}
 		return null;
 
 	}
 
 	/**
 	 * 获取对接电商 的配置 支持同一类客户不同枚举的设置 如：唯品会，天猫，一号店等。
-	 * 
+	 *
 	 * @param customer
 	 * @return
 	 */
