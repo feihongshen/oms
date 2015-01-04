@@ -22,6 +22,7 @@ import cn.explink.b2c.dpfoss.DpfossService;
 import cn.explink.b2c.explink.code_down.EpaiApiService;
 import cn.explink.b2c.explink.core.CoreService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
+import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
 import cn.explink.b2c.homegobj.HomegobjService;
 import cn.explink.b2c.homegou.HomegouService_Delivery;
@@ -150,6 +151,8 @@ public class HandFeedBackController {
 	CacheBaseListener cacheBaseListener;
 	@Autowired
 	LefengService lefengService;
+	@Autowired
+	GztlService gztlService;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -442,5 +445,11 @@ public class HandFeedBackController {
 	public @ResponseBody String lefeng_test(HttpServletRequest request) {
 		this.lefengService.feedback_status();
 		return "手动执行反馈乐峰网成功";
+	}
+
+	@RequestMapping("/gztl_test")
+	public @ResponseBody String gztl_test(HttpServletRequest request) {
+		this.gztlService.feedback_status();
+		return "手动执行反馈广州通路成功";
 	}
 }

@@ -1,48 +1,79 @@
 package cn.explink.b2c.gztl;
 
 import cn.explink.enumutil.FlowOrderTypeEnum;
-
+/**
+ * 
+ * 广州通路订单状态与本系统状态对应的枚举
+ *
+ */
 public enum GztlEnum {
-	// 入库 出库到货，领货 N10
-	// 成功 S00
-	// 拒收 E30
-	// 滞留E31 E32
-	Ruku(FlowOrderTypeEnum.RuKu.getValue(), "N10", "订单入库"), ChukuSaomiao(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(), "N10", "库房出库扫描"), FenZhanDaoHuo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(),
-			"N10", "分站到货扫描"), Deliverying(FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "N10", "订单派送中"), Received(FlowOrderTypeEnum.YiShenHe.getValue(), "S00", "配送成功签收"), DeliveryFailed(
-			FlowOrderTypeEnum.YiShenHe.getValue(), "E30", "配送失败-客户拒收"), DeliveryException(FlowOrderTypeEnum.YiShenHe.getValue(), "E31", "配送异常-无人签收"), DeliveryAddressError(FlowOrderTypeEnum.YiShenHe
-			.getValue(), "E32", "配送异常-地址错误,未能送达");
-	private long flowtype;
-	private String cmcode;
-	private String text;
+	Ruku(FlowOrderTypeEnum.RuKu.getValue(), "出入库", "到件确认", "", ""), 
+	ChukuSaomiao(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(), "出入库", "发件", "",""),
+	FenZhanDaoHuo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(), "出入库", "到件", "",""),
+	Deliverying(FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "出入库", "派件", "",""), 
+	TuiGongYingShangChuKu(FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue(), "出入库","退供应商", "",""), 
+	TuiHuoZhanRuKu(FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue(), "出入库", "退件到件", "",""),
+	TuiHuoChuZhan(FlowOrderTypeEnum.TuiHuoChuZhan.getValue(), "出入库", "退件发件", "",""),
+	GongYingShangJuShouFanKu(FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue(), "出入库", "退件失败", "",""), 
+	ShouGongdiushi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "包裹丢失", "包裹丢失",""),
+	BufenJushou(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "部分拒收", "部分拒收",""), 
+	KehuYanqi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "客户延期", "客户延期",""), 
+	Peisongchenggong(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送成功", "配送成功",""), 
+	Peisongshibai(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送失败", "配送失败",""), 
+	Peisongyanchi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送延迟", "配送延迟","")
+
+	;
+	private long flowtype;//本系统中的订单流程状态
+	private String optype;//反馈类型
+	private String state;//订单状态
+	private String returnState;//网点反馈状态
+	private String returnMsg; // 原因
 
 	public long getFlowtype() {
 		return this.flowtype;
+	}
+
+	public String getReturnMsg() {
+		return this.returnMsg;
+	}
+
+	public void setReturnMsg(String returnMsg) {
+		this.returnMsg = returnMsg;
 	}
 
 	public void setFlowtype(long flowtype) {
 		this.flowtype = flowtype;
 	}
 
-	public String getCmcode() {
-		return this.cmcode;
+	public String getOptype() {
+		return this.optype;
 	}
 
-	public void setCmcode(String cmcode) {
-		this.cmcode = cmcode;
+	public void setOptype(String optype) {
+		this.optype = optype;
 	}
 
-	public String getText() {
-		return this.text;
+	public String getState() {
+		return this.state;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setState(String state) {
+		this.state = state;
 	}
 
-	private GztlEnum(long flowtype, String cmcode, String text) {
+	public String getReturnState() {
+		return this.returnState;
+	}
+
+	public void setReturnState(String returnState) {
+		this.returnState = returnState;
+	}
+
+	private GztlEnum(long flowtype, String optype, String state, String returnState,String returnMsg) {
 		this.flowtype = flowtype;
-		this.cmcode = cmcode;
-		this.text = text;
+		this.optype = optype;
+		this.state = state;
+		this.returnState = returnState;
+		this.returnMsg=returnMsg;
 	}
-
 }

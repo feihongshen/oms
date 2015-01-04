@@ -10,6 +10,7 @@ import cn.explink.b2c.dongfangcj.BuildDongFangCJB2cData;
 import cn.explink.b2c.dpfoss.BuildDpfossB2cData;
 import cn.explink.b2c.gome.BulidGomeB2cData;
 import cn.explink.b2c.gzabc.BuildGuangZhouABCB2cData;
+import cn.explink.b2c.gztl.BuildGztlB2cData;
 import cn.explink.b2c.haoxgou.BuildHaoXiangGouB2cData;
 import cn.explink.b2c.happygo.BuildHappyGoB2cData;
 import cn.explink.b2c.happygo.BuildHappyGoMethodForYishenhe;
@@ -141,6 +142,16 @@ public class BuildB2cDataMaster {
 
 	@Autowired
 	BuildSfxhmB2cData buildSfxhmB2cData;
+	@Autowired
+	BuildGztlB2cData buildGztlB2cData;
+
+	public BuildGztlB2cData getBuildGztlB2cData() {
+		return this.buildGztlB2cData;
+	}
+
+	public void setBuildGztlB2cData(BuildGztlB2cData buildGztlB2cData) {
+		this.buildGztlB2cData = buildGztlB2cData;
+	}
 
 	public BuildHomegobjB2cData getBuildHomegobjB2cData() {
 		return this.buildHomegobjB2cData;

@@ -1,8 +1,6 @@
 package cn.explink.b2c.lefeng;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -70,21 +68,6 @@ public class BuildLefengB2cData {
 		this.logger.info("订单号：{}封装成0乐峰网0所需要的json----结束,状态：{}", cwbOrder.getCwb(), cwbOrder.getFlowordertype());
 		return objectMapper.writeValueAsString(lefengXmlNote);
 
-	}
-
-	public String getDateType(Date date) {
-
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm:ss");
-		String date1 = dateFormat.format(date);
-		String date2 = dateFormat2.format(date);
-		String dateString = date1 + "T" + date2 + ".000+08:00";
-		return dateString;
-	}
-
-	public static void main(String[] args) {
-		Date date = new Date();
-		System.out.println(DateTimeUtil.getNowTime("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 	}
 
 }

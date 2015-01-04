@@ -127,13 +127,13 @@ src/main/java/cn/explink/b2c/gzabc/GuangZhouABCService.java -text
 src/main/java/cn/explink/b2c/gzabc/GuangZhouFlowEnum.java -text
 src/main/java/cn/explink/b2c/gzabc/GuangZhouXMLNote.java -text
 src/main/java/cn/explink/b2c/gztl/BuildGztlB2cData.java -text
+src/main/java/cn/explink/b2c/gztl/CuscodeAndCustomerNameEnum.java -text
 src/main/java/cn/explink/b2c/gztl/Gztl.java -text
 src/main/java/cn/explink/b2c/gztl/GztlEnum.java -text
 src/main/java/cn/explink/b2c/gztl/GztlService.java -text
 src/main/java/cn/explink/b2c/gztl/GztlXmlNote.java -text
-src/main/java/cn/explink/b2c/gztl/returnData/GztlOrderReturnData.java -text
-src/main/java/cn/explink/b2c/gztl/returnData/MsdReturn.java -text
 src/main/java/cn/explink/b2c/gztl/returnData/TmsFeedback.java -text
+src/main/java/cn/explink/b2c/gztl/webservice/GztlWebService.java -text
 src/main/java/cn/explink/b2c/haoxgou/BuildHaoXiangGouB2cData.java -text
 src/main/java/cn/explink/b2c/haoxgou/DESUtil.java -text
 src/main/java/cn/explink/b2c/haoxgou/HXGFlowEnum.java -text

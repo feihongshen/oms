@@ -11,9 +11,12 @@ public class TmsFeedback {
 	 * <TMSFeedback> <id>275994899,275994898</id> <success>true</success>
 	 * <remark/> </TMSFeedback>
 	 */
-	private String id;
-	private String success;
-	private String remark;
+	/**
+	 * 给广州通路返回订单状态时，广州通路那边返回的xml格式的字段
+	 */
+	private String id;// 请求报文中的id，多条记录用“，”分隔
+	private String success;// 成功为：true；失败为：false
+	private String remark;// 失败原因
 
 	public String getId() {
 		return this.id;

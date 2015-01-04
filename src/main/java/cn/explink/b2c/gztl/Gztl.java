@@ -1,6 +1,9 @@
 package cn.explink.b2c.gztl;
 
 public class Gztl {
+	/**
+	 * 广州通路基础设置字段
+	 */
 	private String customerids; // 在系统中的ids
 
 	private String search_url; // 提供给乐峰查询的URL
@@ -19,20 +22,30 @@ public class Gztl {
 
 	private String private_key;// 私匙
 
-	private String exportbranchid;// 订单导入库房id
-
 	private String sign;// MD5加密（详细见7.1MD5数字验签）
 
 	private String invokeMethod;// 接口名称（FBI）
 
 	private String code;// 客户编码（由飞远提供）
 
-	public String getExportbranchid() {
-		return this.exportbranchid;
+	private String receive_url;// 推送接收url
+
+	private long warehouseid; // 订单入库库房
+
+	public long getWarehouseid() {
+		return this.warehouseid;
 	}
 
-	public void setExportbranchid(String exportbranchid) {
-		this.exportbranchid = exportbranchid;
+	public void setWarehouseid(long warehouseid) {
+		this.warehouseid = warehouseid;
+	}
+
+	public String getReceive_url() {
+		return this.receive_url;
+	}
+
+	public void setReceive_url(String receive_url) {
+		this.receive_url = receive_url;
 	}
 
 	public String getPassword() {

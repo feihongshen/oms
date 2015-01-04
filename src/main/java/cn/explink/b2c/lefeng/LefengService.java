@@ -183,14 +183,14 @@ public class LefengService {
 		}
 		sub.append("</orders>");
 		sub.append("</lefeng>");
-		System.out.println(sub.toString());
+
 		this.logger.info("生成符合乐蜂网的xml数据：{}", sub.toString());
 		b2cidsString = b2cidsString.length() > 0 ? b2cidsString.substring(0, b2cidsString.length() - 1) : b2cidsString;
 
 		String responseString = RestHttpServiceHanlder.sendHttptoServer(sub.toString(), lefeng.getSearch_url());
 		if (responseString.isEmpty()) {
 			this.logger.warn("请求0乐蜂网0返回xml为空，跳出循环,throw Exception,xml={}", responseString);
-			System.out.println("返回信息为：" + responseString);
+
 			return;
 		}
 		this.logger.info("状态反馈0乐峰网0[返回信息]-XML={}", responseString);
@@ -203,12 +203,12 @@ public class LefengService {
 		}
 		if (returnData.getCode().equals("1")) {
 			this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cidsString);
-			System.out.println(returnData.getMessage());
+
 			this.logger.info("返回失败消息：xml={}" + returnData.getMessage());
 
 		} else if (returnData.getCode().equals("0")) {
 			this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllFaild(b2cidsString);
-			System.out.println(returnData.getMessage());
+
 			this.logger.info("返回成功消息：xml={}" + returnData.getMessage());
 
 		}

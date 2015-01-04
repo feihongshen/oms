@@ -22,6 +22,7 @@ import cn.explink.b2c.explink.core.CoreService;
 import cn.explink.b2c.explink.core_up.EpaiCoreService_Receiver;
 import cn.explink.b2c.gome.GomeService_CommitDeliverInfo;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
+import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
 import cn.explink.b2c.happygo.HappyGoService;
 import cn.explink.b2c.homegobj.HomegobjService;
@@ -185,6 +186,8 @@ public class JobUtil {
 	ExpressSysMonitorDAO expressSysMonitorDAO;
 	@Autowired
 	LefengService lefengService;
+	@Autowired
+	GztlService gztlService;
 
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	long time = 2 * 60 * 60 * 1000;
@@ -807,6 +810,20 @@ public class JobUtil {
 		}
 
 		this.logger.info("执行了乐蜂网定时器!");
+	}
+
+	/**
+	 * 广州通路
+	 */
+	public void getGztl_Task() {
+		try {
+
+			this.gztlService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了广州通路的定时器异常!", e);
+		}
+
+		this.logger.info("执行了广州通路定时器!");
 	}
 
 }
