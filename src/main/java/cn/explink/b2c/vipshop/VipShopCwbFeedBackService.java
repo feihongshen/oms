@@ -469,12 +469,12 @@ public class VipShopCwbFeedBackService {
 
 					for (OrderGoods orderGoods : orderGoodslist) {
 						sub_detail.append("<detail>");
-						sub_detail.append("<goods_code>" + orderGoods.getGoods_code() + "</goods_code>");
-						sub_detail.append("<goods_name>" + orderGoods.getGoods_name() + "</goods_name>");
+						sub_detail.append("<goods_code><![CDATA[" + orderGoods.getGoods_code() + "]]></goods_code>");
+						sub_detail.append("<goods_name><![CDATA[" + orderGoods.getGoods_name() + "]]></goods_name>");
 						sub_detail.append("<goods_num>" + orderGoods.getGoods_num() + "</goods_num>");
 						sub_detail.append("<fetch_goods_num>" + orderGoods.getShituicount() + "</fetch_goods_num>");
 						sub_detail.append("<special_goods_num>" + orderGoods.getTepituicount() + "</special_goods_num>");
-						sub_detail.append("<remark>" + orderGoods.getReturn_reason() + "</remark>");
+						sub_detail.append("<remark><![CDATA[" + orderGoods.getReturn_reason() + "]]></remark>");
 						sub_detail.append("</detail>");
 
 					}
