@@ -64,12 +64,15 @@ public class GztlService {
 		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) {
 			if ((deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenHuanChengGong.getValue())
 					|| (deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue())) {
+				GztlEnum.Peisongchenggong.setReturnMsg("第一次配送成功");
 				return GztlEnum.Peisongchenggong;
 			}
 			if ((deliverystate == DeliveryStateEnum.BuFenTuiHuo.getValue())) {
+				GztlEnum.BufenJushou.setReturnMsg("其他原因");
 				return GztlEnum.BufenJushou;
 			}
 			if (deliverystate == DeliveryStateEnum.HuoWuDiuShi.getValue()) {
+				GztlEnum.ShouGongdiushi.setReturnMsg("其他原因");
 				return GztlEnum.ShouGongdiushi;
 			}
 
@@ -235,8 +238,8 @@ public class GztlService {
 		JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 		factory.getInInterceptors().add(new LoggingInInterceptor());
 		factory.getOutInterceptors().add(new LoggingOutInterceptor());
-		factory.setAddress(gztl.getSearch_url());
-		factory.setWsdlURL("http://model.web.fyps.com");
+		factory.setAddress("http://model.web.fyps.com");
+		factory.setWsdlURL(gztl.getSearch_url());
 		factory.setServiceClass(GztlWebService.class);
 		GztlWebService service = (GztlWebService) factory.create();
 

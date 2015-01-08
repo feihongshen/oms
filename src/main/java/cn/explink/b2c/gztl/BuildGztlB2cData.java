@@ -61,10 +61,10 @@ public class BuildGztlB2cData {
 				.filterFlowState(delivery_state, cwbOrder, flowOrdertype, delivery_state, Integer.parseInt(cwbOrder.getCwbordertypeid()));
 
 		if (cmstate == null) {
-			this.logger.warn("该流程不属于乐峰网推送流程cwb={},deliverystate={}", cwbOrder.getCwb(), delivery_state);
+			this.logger.warn("该流程不属于广州通路推送流程cwb={},deliverystate={}", cwbOrder.getCwb(), delivery_state);
 			return null;
 		}
-		this.logger.info("订单号：{}封装成0乐峰网0所需要的json----开始,状态：{}", cwbOrder.getCwb(), flowOrdertype);
+		this.logger.info("订单号：{}封装成0广州通路0所需要的json----开始,状态：{}", cwbOrder.getCwb(), flowOrdertype);
 
 		GztlXmlNote gztlXmlNote = new GztlXmlNote();
 		gztlXmlNote.setId(cwbOrder.getOpscwbid() + "");// ??序列号，用于接收成功后返回标识
@@ -78,9 +78,13 @@ public class BuildGztlB2cData {
 		// gztlXmlNote.setReturnState(cmstate.getText());// ??网点反馈状态(由飞远提供)
 		gztlXmlNote.setReturnState(cmstate.getReturnState());
 		gztlXmlNote.setReturnCause(cmstate.getReturnMsg());// ??网点反馈原因(由飞远提供)?????????
-		gztlXmlNote.setReturnRemark("");// ??网点反馈备注(由飞远提供)????????
+		gztlXmlNote.setReturnRemark(this.orderFlowDetail.getDetail(orderFlow));// ??网点反馈备注(由飞远提供)????????
 
-		String sign_man = (dmpDeliveryState.getSign_man() == null) || dmpDeliveryState.getSign_man().isEmpty() ? cwbOrder.getConsigneename() : dmpDeliveryState.getSign_man();
+		String sign_man = "";
+		if (dmpDeliveryState != null) {
+			sign_man = (dmpDeliveryState.getSign_man() == null) || dmpDeliveryState.getSign_man().isEmpty() ? cwbOrder.getConsigneename() : dmpDeliveryState.getSign_man();
+		}
+
 		gztlXmlNote.setSignname(sign_man);// 签收人
 		gztlXmlNote.setOpDt(DateTimeUtil.formatDateLong(orderFlow.getCredate(), "yyyy-MM-dd HH:mm:ss"));// ??网点反馈时间/签收时间/导入时间/出入库时间
 
@@ -106,6 +110,7 @@ public class BuildGztlB2cData {
 				customerName = element.getCustomerName();
 				break;
 			}
+
 		}
 		gztlXmlNote.setCustomername(customerName);// 供货商
 		gztlXmlNote.setSenderName("");// 可以为空，寄件人
@@ -116,7 +121,7 @@ public class BuildGztlB2cData {
 		// DateTimeUtil.formatDate(orderFlow.getCredate())
 		// lefengXmlNote.setTime(DateTimeUtil.formatDate(orderFlow.getCredate(),
 		// "yyyy-MM-dd'T'HH:mm:ss"));
-		this.logger.info("订单号：{}封装成0乐峰网0所需要的json----结束,状态：{}", cwbOrder.getCwb(), cwbOrder.getFlowordertype());
+		this.logger.info("订单号：{}封装成0广州通路0所需要的json----结束,状态：{}", cwbOrder.getCwb(), cwbOrder.getFlowordertype());
 		return objectMapper.writeValueAsString(gztlXmlNote);
 
 	}

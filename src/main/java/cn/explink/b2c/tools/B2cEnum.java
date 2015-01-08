@@ -62,7 +62,7 @@ public enum B2cEnum {
 	HomegoBJ(20084, "家有购物（北京）", "homegoubj"), LeChong(20085, "乐宠（科捷）", "lechong"),
 
 	Smiled(20086, "思迈下游", "smiled"), SFexpressXHM(20087, "顺丰快递(小红帽)", "sfexpressxhm"), Zhongliang(20088, "顺丰快递(小红帽)", "Zhongliang"), Lefeng(20093, "乐蜂网-回传", "lefeng"), Guangzhoutonglu(20095, "广州通路",
-			"guangzhoutonglu")
+			"guangzhoutonglu"), GuangzhoutongluWaifadan(20096, "广州通路对接_外发单", "guangzhoutongluwaifadanduijie")
 
 	;
 	private int key;

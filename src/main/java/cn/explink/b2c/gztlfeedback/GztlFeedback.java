@@ -1,8 +1,8 @@
-package cn.explink.b2c.gztl;
+package cn.explink.b2c.gztlfeedback;
 
-public class Gztl {
+public class GztlFeedback {
 	/**
-	 * 广州通路基础设置字段
+	 * 广州通路外发单订单反馈推送接口需要的基础设置的字段
 	 */
 	private String customerids; // 在系统中的ids
 
@@ -11,14 +11,6 @@ public class Gztl {
 	private long search_number;// 要查询的数量
 
 	private String password;// 密码
-
-	private String agentName;// agent名
-
-	private String agentPhone;// agent电话
-
-	private String agentWebsite;// agent网址
-
-	private String agentId;// 代理id
 
 	private String private_key;// 私匙
 
@@ -32,15 +24,7 @@ public class Gztl {
 
 	private long warehouseid; // 订单入库库房
 
-	private int loopCount = 5;
-
-	public int getLoopCount() {
-		return this.loopCount;
-	}
-
-	public void setLoopCount(int loopCount) {
-		this.loopCount = loopCount;
-	}
+	private int loopCount;// 重发次数
 
 	public long getWarehouseid() {
 		return this.warehouseid;
@@ -90,38 +74,6 @@ public class Gztl {
 		this.search_number = search_number;
 	}
 
-	public String getAgentName() {
-		return this.agentName;
-	}
-
-	public void setAgentName(String agentName) {
-		this.agentName = agentName;
-	}
-
-	public String getAgentPhone() {
-		return this.agentPhone;
-	}
-
-	public void setAgentPhone(String agentPhone) {
-		this.agentPhone = agentPhone;
-	}
-
-	public String getAgentWebsite() {
-		return this.agentWebsite;
-	}
-
-	public void setAgentWebsite(String agentWebsite) {
-		this.agentWebsite = agentWebsite;
-	}
-
-	public String getAgentId() {
-		return this.agentId;
-	}
-
-	public void setAgentId(String agentId) {
-		this.agentId = agentId;
-	}
-
 	public String getPrivate_key() {
 		return this.private_key;
 	}
@@ -152,6 +104,14 @@ public class Gztl {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public int getLoopCount() {
+		return this.loopCount;
+	}
+
+	public void setLoopCount(int loopCount) {
+		this.loopCount = loopCount;
 	}
 
 }

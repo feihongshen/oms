@@ -23,6 +23,7 @@ import cn.explink.b2c.explink.core_up.EpaiCoreService_Receiver;
 import cn.explink.b2c.gome.GomeService_CommitDeliverInfo;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
+import cn.explink.b2c.gztlfeedback.GztlServiceFeedback;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
 import cn.explink.b2c.happygo.HappyGoService;
 import cn.explink.b2c.homegobj.HomegobjService;
@@ -188,6 +189,8 @@ public class JobUtil {
 	LefengService lefengService;
 	@Autowired
 	GztlService gztlService;
+	@Autowired
+	GztlServiceFeedback gztlServiceFeedback;
 
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	long time = 2 * 60 * 60 * 1000;
@@ -824,6 +827,22 @@ public class JobUtil {
 		}
 
 		this.logger.info("执行了广州通路定时器!");
+	}
+
+	/**
+	 * 一级站出库广州通路 外发 定时器 OMS
+	 */
+	public void getOuttoBranchGztl_Task() {
+		if ("yes".equals(this.getOpenValue())) {
+			this.logger.warn("未开启本地调用定时器功能外发广州通路");
+			return;
+		}
+		try {
+			this.gztlServiceFeedback.sendTwoLeavelBranch();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.logger.info("执行了0一级站出库外发广州通路订单0推送的定时器!");
 	}
 
 }
