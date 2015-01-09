@@ -154,7 +154,7 @@ public class GztlServiceFeedback {
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				this.logger.error("处理发送广州通路数据发生未知异常", e);
+				this.logger.error("处理发送外发广州通路数据发生未知异常", e);
 			}
 
 		}
@@ -205,14 +205,12 @@ public class GztlServiceFeedback {
 			factory.setWsdlURL(gztl.getSearch_url());
 			factory.setServiceClass(GztlWebService.class);
 			GztlWebService service = (GztlWebService) factory.create();
-			String responseData = "";
+			String responseData = service.orderAndFeedbackApi(gztl.getCode(), gztl.getInvokeMethod(), gztl.getSign(), xmlString);
 			// String responseData =
 			// RestHttpServiceHanlder.sendHttptoServer(gztl.getCode(),
 			// gztl.getInvokeMethod(), gztl.getSign(), xmlString); // 请求并返回,四个参数
 			String requestJsonString = "{code:\"" + gztl.getCode() + "\"," + "invokeMethod:\"" + gztl.getInvokeMethod() + "\"," + "sign:\"" + gztl.getSign() + "\"," + "xmlString:\"" + xmlString
 					+ "\"}";
-			TMSSendOrder tmSendOrder = (TMSSendOrder) this.xmlToObj(responseData, TMSSendOrder.class);
-			String cwbs = tmSendOrder.getWaybillNo();
 			/**
 			 * 对得到的订单进行表中的发送的标志进行修改cwbs
 			 */
@@ -551,7 +549,7 @@ public class GztlServiceFeedback {
 			return DeliveryStateEnum.PeiSongChengGong.getValue();
 		}
 		if (order_status.equals(GztlFeedbackEnum.Peisongshibai.getState())) {
-			return DeliveryStateEnum.FenZhanZhiLiu.getValue();// ?????????????
+			return DeliveryStateEnum.QuanBuTuiHuo.getValue();// ?????????????
 		}
 		if (order_status.equals(GztlFeedbackEnum.Peisongyanchi.getState())) {
 			return DeliveryStateEnum.FenZhanZhiLiu.getValue();// ??

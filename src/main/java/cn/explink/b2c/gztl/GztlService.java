@@ -77,7 +77,8 @@ public class GztlService {
 			}
 
 			if ((deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenJuTui.getValue())) {
-
+				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+				GztlEnum.Peisongshibai.setReturnMsg(exptReason.getExpt_msg());
 				return GztlEnum.Peisongshibai;
 			}
 
