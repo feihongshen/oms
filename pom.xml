@@ -601,6 +601,23 @@
 		</profile>
 		
 		<profile>
+			<id>versiont</id>
+			<properties>
+				<tomcat.manager.url>http://192.168.0.217:8011/manager</tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://localhost:3306/oms_40818t_test?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>root</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase>false</expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:8011/dmp_pxwl_smt</dmpUrl>
+				<label>versiont-smt</label>
+			</properties>
+		</profile>
+		
+		
+		<profile>
 			<id>oms_pwxl_41030</id>
 			<properties>
 				<tomcat.manager.url></tomcat.manager.url>
