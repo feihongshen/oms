@@ -33,13 +33,14 @@ public class GztlController {
 	}
 
 	/**
+	 * 接收广州通路外发单信息
 	 *
 	 * @param request
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping("/feedback")
-	public @ResponseBody String searchMaisike(HttpServletRequest request) throws Exception {
+	public @ResponseBody String searchGztl(HttpServletRequest request) throws Exception {
 		int key = B2cEnum.GuangzhoutongluWaifadan.getKey();
 		String xml = null;
 		boolean isOpenFlag = this.b2cTools.isB2cOpen(key);
@@ -57,7 +58,7 @@ public class GztlController {
 
 		if (!MD5.equalsIgnoreCase(localSignString)) {
 			this.logger.info("签名验证失败,xml={},MD5={}", xml, MD5);
-			return this.errorReturnData("F", "签名验证失败--xml:" + xml + ",MD5:" + MD5);
+			return this.gztlServiceFeedback.errorReturnData("F", "签名验证失败--xml:" + xml + ",MD5:" + MD5);
 
 		}
 
@@ -92,20 +93,6 @@ public class GztlController {
 		 * JacksonMapper.getInstance().writeValueAsString(respStatus);
 		 * logger.info("状态反馈-返回迈思可信息data={}", respdatas); return respdatas; }
 		 */
-	}
-
-	public String errorReturnData(String flag, String remark) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<MSD>");
-		buffer.append("<Orders>");
-		buffer.append("<Order>");
-		buffer.append("<id></id>");
-		buffer.append("<result>" + flag + "</result>");
-		buffer.append("<remark>" + remark + "</remark>");
-		buffer.append("</Order>");
-		buffer.append("</Orders>");
-		buffer.append("</MSD>");
-		return buffer.toString();
 	}
 
 	@RequestMapping("/testinsert")

@@ -384,17 +384,19 @@ public class GztlServiceFeedback {
 		String yesCwbString = "";
 		InsertFeedbackOrderData inOrderData = (InsertFeedbackOrderData) this.xmlToObj(xml, new InsertFeedbackOrderData());
 		if (inOrderData == null) {
-			return "通过jaxb生成的InsertFeedbackOrderData类为空";
+			this.logger.warn("外发单广州通路订单接收时，在推送出库二级站信息时，{}", "通过jaxb生成的InsertFeedbackOrderData类为空");
+			return this.errorReturnData("F", "外发单信息接收时接收到的信息无feedback订单信息，请核查xml结构！！");
 		}
 		List<OrderFeedback> feedbacks = inOrderData.getFeedbacks();
 		if ((feedbacks != null) && (feedbacks.size() > 0)) {
 			for (OrderFeedback orderFeedback : feedbacks) {
 				String cwb = orderFeedback.getWaybillNo();
+				// 在commen_cwb_order表中验证是否存在该订单的信息，在出库到广西飞远的站点时，会在里面生成信息
 				long isexistscwbflag = this.warehouseCommenDAO.getCountByCwb(cwb);
 				if (isexistscwbflag > 0) {
 
-					int flowordertype = this.getFlowordertype(orderFeedback.getStatus());
-					long deliverystate = this.getDeliveryState(orderFeedback.getStatus());
+					int flowordertype = this.getFlowordertype(orderFeedback.getStatus());// 流程状态
+					long deliverystate = this.getDeliveryState(orderFeedback.getStatus());// 接收状态
 					// 验证是否有重发订单插入
 					long isrepeatFlag = this.commonSendDataDAO.isExistsCwbFlag(cwb, orderFeedback.getLogisticProviderId(), orderFeedback.getOperatorTime(), String.valueOf(flowordertype));
 					if (isrepeatFlag > 0) {
@@ -559,6 +561,27 @@ public class GztlServiceFeedback {
 	}
 
 	/**
+	 * 系统中像签名错误等信息的返回构成的xml形式
+	 *
+	 * @param flag
+	 * @param remark
+	 * @return
+	 */
+	public String errorReturnData(String flag, String remark) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<MSD>");
+		buffer.append("<Orders>");
+		buffer.append("<Order>");
+		buffer.append("<id></id>");
+		buffer.append("<result>" + flag + "</result>");
+		buffer.append("<remark>" + remark + "</remark>");
+		buffer.append("</Order>");
+		buffer.append("</Orders>");
+		buffer.append("</MSD>");
+		return buffer.toString();
+	}
+
+	/**
 	 * 响应给客户的xml格式的信息
 	 *
 	 * @param cwb
@@ -576,7 +599,7 @@ public class GztlServiceFeedback {
 	 * xmlBuffer.append("</Order>"); } xmlBuffer.append("</Orders>");
 	 * xmlBuffer.append("</MSD>"); String xml = xmlBuffer.toString();
 	 * this.logger.info("返回广州通路外发单订单反馈-xml={}", xml);
-	 *
+	 * 
 	 * return xml; }
 	 */
 	public static void main(String[] args) {

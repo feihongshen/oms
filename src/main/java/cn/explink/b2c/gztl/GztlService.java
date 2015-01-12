@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.gztl.returnData.TmsFeedback;
 import cn.explink.b2c.gztl.webservice.GztlWebService;
-import cn.explink.b2c.lefeng.LefengService;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
@@ -50,7 +49,7 @@ public class GztlService {
 	@Autowired
 	B2CDataDAO b2cDataDAO;
 
-	private Logger logger = LoggerFactory.getLogger(LefengService.class);
+	private Logger logger = LoggerFactory.getLogger(GztlService.class);
 
 	/**
 	 * 获取反库状态
@@ -235,7 +234,7 @@ public class GztlService {
 		subBuffer.append("</TMS>");
 		this.logger.info("生成符合广州通路的xml数据：{}", subBuffer.toString());
 		b2cidsString = b2cidsString.length() > 0 ? b2cidsString.substring(0, b2cidsString.length() - 1) : b2cidsString;
-
+		System.out.println(b2cidsString);
 		JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 		factory.getInInterceptors().add(new LoggingInInterceptor());
 		factory.getOutInterceptors().add(new LoggingOutInterceptor());
