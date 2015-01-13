@@ -725,6 +725,22 @@
 		</profile>
 
 		<profile>
+			<id>TXD_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.1.101:3306/txd_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/txddmp_smt</dmpUrl>
+				<label>TXD_SMT</label>
+			</properties>
+		</profile>
+
+		<profile>
 			<id>TO_XHM</id>
 			<properties>
 				<tomcat.manager.url></tomcat.manager.url>
@@ -997,6 +1013,24 @@
 				<label>SXYMJ</label>
 			</properties>
 		</profile>
+		
+		
+		<profile>
+			<id>SXYMJ_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://127.0.0.1:3306/sxymj_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password></expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/sxymjdmp_smt</dmpUrl>
+				<label>SXYMJ_SMT</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>WPH_SHANGHAI</id>
 			<properties>
@@ -1027,6 +1061,23 @@
 				<label>SXFY</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>SXFY_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://127.0.0.1:3306/sxfy_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password></expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/sxfy_smt</dmpUrl>
+				<label>SXFY_SMT</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>LZHB</id>
 			<properties>
@@ -1508,6 +1559,24 @@
 				<label>AHPX</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>AHPX_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.39:3306/awpx_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://192.168.70.21/ahpx_smt</dmpUrl>
+				<label>AHPX_SMT</label>
+			</properties>
+		</profile>
+		
+		
 		<profile>
 			<id>HXDSB</id>
 			<properties>
@@ -1536,6 +1605,21 @@
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
 				<dmpUrl>http://192.168.70.21/scpx</dmpUrl>
 				<label>SCPX</label>
+			</properties>
+		</profile>
+		<profile>
+			<id>SCPJ_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.38:3306/scpj_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://192.168.70.21/scpj_smt</dmpUrl>
+				<label>SCPJ_SMT</label>
 			</properties>
 		</profile>
 		<profile>
@@ -1628,6 +1712,24 @@
 				<label>XJYT</label>
 			</properties>
 		</profile>
+		
+		
+		<profile>
+			<id>XJYT_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.36:3306/xjyt_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://192.168.70.21/xjyt_smt</dmpUrl>
+				<label>XJYT_SMT</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>KMQY</id>
 			<properties>
@@ -1778,6 +1880,24 @@
 				<label>XJPX</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>XJPX_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.38:3306/xjpx_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://192.168.70.21/xjpx_smt</dmpUrl>
+				<label>XJPX_SMT</label>
+			</properties>
+		</profile>
+		
+		
 		<profile>
 			<id>GXPX</id>
 			<properties>
