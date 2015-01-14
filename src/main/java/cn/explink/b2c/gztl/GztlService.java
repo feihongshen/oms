@@ -230,6 +230,7 @@ public class GztlService {
 			subBuffer.append("<payinamount>" + note.getPayinamount() + "</payinamount>");// 代收货款
 			subBuffer.append("<arrivedate>" + note.getArrivedate() + "</arrivedate>");// 最初扫描时间
 			subBuffer.append("<lspabbr>" + "" + "</lspabbr>");// 配送区域
+
 			subBuffer.append("</TMSFeedback>");
 		}
 		subBuffer.append("</TMSFeedbacks>");
