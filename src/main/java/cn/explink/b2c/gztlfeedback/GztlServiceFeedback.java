@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +19,6 @@ import javax.xml.bind.Unmarshaller;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -33,7 +32,6 @@ import cn.explink.b2c.explink.xmldto.OrderDto;
 import cn.explink.b2c.explink.xmldto.OrderFlowDto;
 import cn.explink.b2c.gztl.sendFeedbackData.SendFeedbackData;
 import cn.explink.b2c.gztl.sendFeedbackData.SendFeedbackDatas;
-import cn.explink.b2c.gztl.webservice.GztlWebService;
 import cn.explink.b2c.gztlfeedback.feedbackreturndata.TMSSendOrder;
 import cn.explink.b2c.gztlfeedback.feedbacksenddata.SendMSD;
 import cn.explink.b2c.gztlfeedback.feedbacksenddata.SendOrder;
@@ -53,6 +51,10 @@ import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.util.DateTimeUtil;
+import cn.explink.util.MD5.MD5Util;
+
+import com.fyps.web.webservice.monternet.EcisServiceHttpBindingStub;
+import com.fyps.web.webservice.monternet.TraceArgs;
 
 @Service
 public class GztlServiceFeedback {
@@ -195,20 +197,35 @@ public class GztlServiceFeedback {
 			SendFeedbackDatas sendFeedbackDatas = new SendFeedbackDatas();
 			sendFeedbackDatas.setTmsSendOrders(orders);
 			String xmlString = this.beanToXml(sendFeedbackDatas);
+			// kk
+			String url = "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
+
+			EcisServiceHttpBindingStub ce = new EcisServiceHttpBindingStub(new URL(url), new org.apache.axis.client.Service());
+			TraceArgs traceArgs = new TraceArgs();
+			traceArgs.setCode(gztl.getCode());
+			traceArgs.setInvokeMethod(gztl.getInvokeMethod());
+			String sign = MD5Util.md5(xmlString + gztl.getSign());
+			System.out.println(sign);
+			traceArgs.setSign(sign);
+			traceArgs.setXml(xmlString);
+			String responseData = URLDecoder.decode(ce.orderAndFeedbackApi(traceArgs), "UTF-8");
 			/**
 			 * 在下面利用webservice实现参数的传递????还没实现
 			 */
-			JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-			factory.getInInterceptors().add(new LoggingInInterceptor());
-			factory.getOutInterceptors().add(new LoggingOutInterceptor());
-			factory.setAddress("http://model.web.fyps.com");
-			factory.setWsdlURL(gztl.getSearch_url());
-			factory.setServiceClass(GztlWebService.class);
-			GztlWebService service = (GztlWebService) factory.create();
-			String responseData = service.orderAndFeedbackApi(gztl.getCode(), gztl.getInvokeMethod(), gztl.getSign(), xmlString);
+			// JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+			// factory.getInInterceptors().add(new LoggingInInterceptor());
+			// factory.getOutInterceptors().add(new LoggingOutInterceptor());
+			// factory.setAddress("http://model.web.fyps.com");
+			// factory.setWsdlURL(gztl.getSearch_url());
+			// factory.setServiceClass(GztlFeedbackWebservice.class);
+			// GztlFeedbackWebservice service = (GztlFeedbackWebservice)
+			// factory.create();
+			// String responseData = service.orderAndFeedbackApi(gztl.getCode(),
+			// gztl.getInvokeMethod(), gztl.getSign(), xmlString);
 			// String responseData =
 			// RestHttpServiceHanlder.sendHttptoServer(gztl.getCode(),
 			// gztl.getInvokeMethod(), gztl.getSign(), xmlString); // 请求并返回,四个参数
+			// String responseData = "";
 			String requestJsonString = "{code:\"" + gztl.getCode() + "\"," + "invokeMethod:\"" + gztl.getInvokeMethod() + "\"," + "sign:\"" + gztl.getSign() + "\"," + "xmlString:\"" + xmlString
 					+ "\"}";
 			/**
@@ -599,7 +616,7 @@ public class GztlServiceFeedback {
 	 * xmlBuffer.append("</Order>"); } xmlBuffer.append("</Orders>");
 	 * xmlBuffer.append("</MSD>"); String xml = xmlBuffer.toString();
 	 * this.logger.info("返回广州通路外发单订单反馈-xml={}", xml);
-	 * 
+	 *
 	 * return xml; }
 	 */
 	public static void main(String[] args) {

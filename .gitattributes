@@ -936,6 +936,11 @@ src/main/java/cn/explink/vo/delivery/DeliveryRateTimeType.java -text
 src/main/java/cn/explink/vo/delivery/DeliveryRateTimeTypeDeSerializer.java -text
 src/main/java/cn/explink/vo/delivery/DownloadManagerWrapper.java -text
 src/main/java/cn/explink/vo/delivery/util/DeliveryRateDisplayUtil.java -text
+src/main/java/com/fyps/web/webservice/monternet/EcisService.java -text
+src/main/java/com/fyps/web/webservice/monternet/EcisServiceHttpBindingStub.java -text
+src/main/java/com/fyps/web/webservice/monternet/EcisServiceLocator.java -text
+src/main/java/com/fyps/web/webservice/monternet/EcisServicePortType.java -text
+src/main/java/com/fyps/web/webservice/monternet/TraceArgs.java -text
 src/main/java/org/springframework/http/converter/StringHttpMessageConverter.java -text
 src/main/java/org/springframework/security/web/authentication/Http403ForbiddenEntryPoint.java -text
 src/main/java/org/tempuri/WebService.java -text
