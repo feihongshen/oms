@@ -730,12 +730,12 @@
 				<tomcat.manager.url></tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
 				<expressurl.maxconn>20</expressurl.maxconn>
-				<expressurl.url>jdbc:mysql://192.168.1.101:3306/txd_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.url>jdbc:mysql://127.0.0.1:3306/txd_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1/txddmp_smt</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8081/txddmp_smt</dmpUrl>
 				<label>TXD_SMT</label>
 			</properties>
 		</profile>
@@ -772,6 +772,24 @@
 				<label>YZDSB</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>YZDSB_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.36:3306/yzdsb_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://192.168.70.21/yzdsbdmp_smt</dmpUrl>
+				<label>YZDSB_SMT</label>
+			</properties>
+		</profile>
+		
+		
 		<profile>
 			<id>LZJFH</id>
 			<properties>
