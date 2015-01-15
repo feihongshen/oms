@@ -154,10 +154,10 @@ public class GztlService {
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.FenZhanLingHuo.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.YiShenHe.getValue());
-
-		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue());
-		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue());
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiHuoChuZhan.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue());
+
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue());
 	}
 
