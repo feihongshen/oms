@@ -50,7 +50,8 @@ public class GztlService {
 	private B2cTools b2ctools;
 	@Autowired
 	B2CDataDAO b2cDataDAO;
-
+	private static final String FIRSTPEISONGSUCESS = "第一次配送成功";
+	private static final String QITAYUANYIN = "其他原因";
 	private Logger logger = LoggerFactory.getLogger(GztlService.class);
 
 	/**
@@ -65,15 +66,15 @@ public class GztlService {
 		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) {
 			if ((deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenHuanChengGong.getValue())
 					|| (deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue())) {
-				GztlEnum.Peisongchenggong.setReturnMsg("第一次配送成功");
+				GztlEnum.Peisongchenggong.setReturnMsg(GztlService.FIRSTPEISONGSUCESS);
 				return GztlEnum.Peisongchenggong;
 			}
 			if ((deliverystate == DeliveryStateEnum.BuFenTuiHuo.getValue())) {
-				GztlEnum.BufenJushou.setReturnMsg("其他原因");
+				GztlEnum.BufenJushou.setReturnMsg(GztlService.QITAYUANYIN);
 				return GztlEnum.BufenJushou;
 			}
 			if (deliverystate == DeliveryStateEnum.HuoWuDiuShi.getValue()) {
-				GztlEnum.ShouGongdiushi.setReturnMsg("其他原因");
+				GztlEnum.ShouGongdiushi.setReturnMsg(GztlService.QITAYUANYIN);
 				return GztlEnum.ShouGongdiushi;
 			}
 
@@ -86,12 +87,16 @@ public class GztlService {
 			if (deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
 
 				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-
-				if (exptReason.getExpt_code().equals(GztlEnum.KehuYanqi.getState())) {
-					GztlEnum.KehuYanqi.setReturnMsg(exptReason.getExpt_msg());
+				String reasonString = exptReason.getExpt_msg();
+				System.out.println(reasonString);
+				String[] reason = reasonString.split("_");
+				if (reason[0].equals(GztlEnum.KehuYanqi.getState())) {
+					GztlEnum.KehuYanqi.setReturnMsg(reason[reason.length - 1]);
+					System.out.println("第一个参数：" + reason[0]);
+					System.out.println("第二个参数：" + reason[1]);
 					return GztlEnum.KehuYanqi;
 				} else {
-					GztlEnum.Peisongyanchi.setReturnMsg(exptReason.getExpt_msg());
+					GztlEnum.Peisongyanchi.setReturnMsg(reason[reason.length - 1]);
 					return GztlEnum.Peisongyanchi;
 				}
 
@@ -190,7 +195,7 @@ public class GztlService {
 	}
 
 	/**
-	 * 拼成广州通路所需要的xml格式字符串
+	 * 拼成广州通路所需要的xml格式字符串，并通过webservice发过去，并对返回的信息对数据库中的记录的接收成功与否进行修改
 	 *
 	 * @param gztl
 	 * @param datalist
@@ -230,7 +235,8 @@ public class GztlService {
 			subBuffer.append("<payinamount>" + note.getPayinamount() + "</payinamount>");// 代收货款
 			subBuffer.append("<arrivedate>" + note.getArrivedate() + "</arrivedate>");// 最初扫描时间
 			subBuffer.append("<lspabbr>" + "" + "</lspabbr>");// 配送区域
-
+			subBuffer.append("<pcs>" + note.getPcs() + "</pcs>");
+			subBuffer.append("<business>" + note.getBusiness() + "</business>");
 			subBuffer.append("</TMSFeedback>");
 		}
 		subBuffer.append("</TMSFeedbacks>");
@@ -279,7 +285,9 @@ public class GztlService {
 		// traArgs.setXml(subBuffer.toString());
 		// EcisService ecisService = new EcisService();
 		// EcisServicePortType eci = ecisService.getEcisServiceHttpPort();
-		String url = "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
+		// String url =
+		// "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
+		String url = gztl.getSearch_url();
 
 		EcisServiceHttpBindingStub ce = new EcisServiceHttpBindingStub(new URL(url), new Service());
 		TraceArgs traceArgs = new TraceArgs();
@@ -312,6 +320,13 @@ public class GztlService {
 		}
 	}
 
+	/**
+	 * xml字符串转化为相应的类，可通用
+	 *
+	 * @param xml
+	 * @param object
+	 * @return
+	 */
 	public Object xmlToObject(String xml, Object object) {
 		StringReader stringReader = new StringReader(xml);
 		Object obj = null;
@@ -326,17 +341,33 @@ public class GztlService {
 		return obj;
 	}
 
+	/**
+	 * 将广州通路相关的节点的字段的信息由json转化为GztlXmlNote
+	 *
+	 * @param jsoncontent
+	 * @return
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
 	public GztlXmlNote getXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
 		return JacksonMapper.getInstance().readValue(jsoncontent, GztlXmlNote.class);
 	}
 
 	public static void main(String[] args) {
-		GztlService gztlService = new GztlService();
-		String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><TMSFeedback><id>15974,15979,15980,15981,15982,15985,15986,15987,15988</id><success>true</success><remark></remark></TMSFeedback>";
-		TmsFeedback tmsFeedback = (TmsFeedback) gztlService.xmlToObject(xmlString, new TmsFeedback());
-		System.out.println(tmsFeedback.getId());
-		System.out.println(tmsFeedback.getRemark());
-		System.out.println(tmsFeedback.getSuccess());
+		// GztlService gztlService = new GztlService();
+		// String xmlString =
+		// "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><TMSFeedback><id>15974,15979,15980,15981,15982,15985,15986,15987,15988</id><success>true</success><remark></remark></TMSFeedback>";
+		// TmsFeedback tmsFeedback = (TmsFeedback)
+		// gztlService.xmlToObject(xmlString, new TmsFeedback());//
+		// 注意第二个参数的类型，容易出错
+		// System.out.println(tmsFeedback.getId());
+		// System.out.println(tmsFeedback.getRemark());
+		// System.out.println(tmsFeedback.getSuccess());
+		String string = "配送成功_配送延期";
+		String[] aaStrings = string.split("_");
+		System.out.println(aaStrings[0]);
+		System.out.println(aaStrings[aaStrings.length - 1]);
 
 	}
 }

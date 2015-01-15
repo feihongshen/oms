@@ -39,6 +39,9 @@ public class BuildGztlB2cData {
 	private B2cTools b2ctools;
 	@Autowired
 	CacheBaseListener cacheBaseListener;
+	private static final String PEISONG = "正常配送";
+	private static final String HUANHUO = "换货";
+	private static final String WEITUOQUJIAN = "委托取件";
 
 	/**
 	 * 根据在本系统中的订单状态转化为广州通路所需要的xml字符串对应的GztlXmlNote
@@ -91,7 +94,7 @@ public class BuildGztlB2cData {
 		User user = this.cacheBaseListener.getUser(orderFlow.getUserid());
 
 		gztlXmlNote.setEmp(user.getRealname());// ???网点反馈用户
-		gztlXmlNote.setUnit(orderFlow.getBranchname());// ??反馈网点名称
+		gztlXmlNote.setUnit(this.cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchname());// ??反馈网点名称
 
 		if (flowOrdertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
 			User deliveryUser = this.cacheBaseListener.getUser(dmpDeliveryState.getDeliveryid());
@@ -101,23 +104,34 @@ public class BuildGztlB2cData {
 		}
 
 		gztlXmlNote.setReturnStatedesc(this.orderFlowDetail.getDetail(orderFlow));// 订单状态详情
-		gztlXmlNote.setCuscode(cwbOrder.getRemark4());// ??供货商代码(由飞远提供)
-		gztlXmlNote.setReceiverName(cwbOrder.getConsigneename());// 收件人姓名
-		gztlXmlNote.setReceiverMobile(cwbOrder.getConsigneemobile());// 收件人电话
-		String customerName = "";
+		String cuscode = "";
 		for (CuscodeAndCustomerNameEnum element : CuscodeAndCustomerNameEnum.values()) {
-			if (element.getCuscode().equals(cwbOrder.getRemark4())) {
-				customerName = element.getCustomerName();
+			if (element.getCustomerName().equals(cwbOrder.getRemark4())) {
+				cuscode = element.getCustomerName();
 				break;
 			}
 
 		}
-		gztlXmlNote.setCustomername(customerName);// 供货商
+		gztlXmlNote.setCuscode(cuscode);// ??供货商代码(由飞远提供)
+		gztlXmlNote.setReceiverName(cwbOrder.getConsigneename());// 收件人姓名
+		gztlXmlNote.setReceiverMobile(cwbOrder.getConsigneephone());// 收件人电话
+
+		gztlXmlNote.setCustomername(cwbOrder.getRemark4());// 供货商
 		gztlXmlNote.setSenderName("");// 可以为空，寄件人
 		gztlXmlNote.setSenderMobile("");// 可以为空，寄件人手机
 		gztlXmlNote.setPayinamount(String.valueOf(cwbOrder.getReceivablefee().doubleValue()));// 代收货款
 		gztlXmlNote.setArrivedate(cwbOrder.getEmaildate());// ??最初扫描时间
 		gztlXmlNote.setLspabbr("");// 可以为空,配送区域
+		gztlXmlNote.setPcs(String.valueOf(cwbOrder.getSendcarnum()));
+		String cwbOrderType = "";
+		if (cwbOrder.getCwbordertypeid().equals("1")) {
+			cwbOrderType = BuildGztlB2cData.PEISONG;
+		} else if (cwbOrder.getCwbordertypeid().equals("2")) {
+			cwbOrderType = BuildGztlB2cData.WEITUOQUJIAN;
+		} else {
+			cwbOrderType = BuildGztlB2cData.HUANHUO;
+		}
+		gztlXmlNote.setBusiness(cwbOrderType);
 		// DateTimeUtil.formatDate(orderFlow.getCredate())
 		// lefengXmlNote.setTime(DateTimeUtil.formatDate(orderFlow.getCredate(),
 		// "yyyy-MM-dd'T'HH:mm:ss"));

@@ -28,6 +28,24 @@ public class GztlXmlNote {
 	private String payinamount;// 代收货款
 	private String arrivedate;// 最初扫描时间
 	private String lspabbr;// 配送区域
+	private String pcs;// 件数
+	private String business;// 订单类型（正常配送，委托取件，换货
+
+	public String getPcs() {
+		return this.pcs;
+	}
+
+	public void setPcs(String pcs) {
+		this.pcs = pcs;
+	}
+
+	public String getBusiness() {
+		return this.business;
+	}
+
+	public void setBusiness(String business) {
+		this.business = business;
+	}
 
 	public String getId() {
 		return this.id;
