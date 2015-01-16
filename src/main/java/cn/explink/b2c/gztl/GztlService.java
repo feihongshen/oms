@@ -214,7 +214,7 @@ public class GztlService {
 			subBuffer.append("<id>" + note.getId() + "</id>");// 序列号，用于接收成功后返回标识
 			subBuffer.append("<myNo>" + note.getMyNo() + "</myNo>");// 运单编号
 			subBuffer.append("<logisticid>" + note.getLogisticid() + "</logisticid>");// 订单号
-			subBuffer.append("<custorderno>" + note.getMyNo() + "</custorderno>");// 客户订单号
+			subBuffer.append("<custorderno>" + note.getCustorderno() + "</custorderno>");// 客户订单号
 			subBuffer.append("<opType>" + note.getOpType() + "</opType>");// 反馈类型(由飞远提供)
 			subBuffer.append("<state>" + note.getState() + "</state>");// 订单状态(由飞远提供)
 			subBuffer.append("<returnState>" + note.getReturnState() + "</returnState>");// 网点反馈状态(由飞远提供)

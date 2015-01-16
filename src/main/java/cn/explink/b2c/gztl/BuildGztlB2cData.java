@@ -72,8 +72,8 @@ public class BuildGztlB2cData {
 		GztlXmlNote gztlXmlNote = new GztlXmlNote();
 		gztlXmlNote.setId(cwbOrder.getOpscwbid() + "");// ??序列号，用于接收成功后返回标识
 		gztlXmlNote.setLogisticid(cwbOrder.getCwb());// 订单号
-		gztlXmlNote.setMyNo(cwbOrder.getTranscwb());// 运单编号
-		gztlXmlNote.setCustorderno(cwbOrder.getTranscwb());// 客户订单号
+		gztlXmlNote.setMyNo(cwbOrder.getCwb());// 运单编号
+		gztlXmlNote.setCustorderno(cwbOrder.getRemark1());// 客户订单号
 		// gztlXmlNote.setOpType(cmstate.getText());// ??反馈类型(由飞远提供)
 		gztlXmlNote.setOpType(cmstate.getOptype());
 		// gztlXmlNote.setState(cmstate.getText());// ??订单状态(由飞远提供)

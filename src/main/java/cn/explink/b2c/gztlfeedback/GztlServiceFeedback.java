@@ -250,8 +250,12 @@ public class GztlServiceFeedback {
 			if (orderDto.getCwbordertypeid() == CwbOrderTypeIdEnum.Peisong.getValue()) { // 只限于操作正向配送的订单数据
 				try {
 					SendFeedbackData sData = new SendFeedbackData();
-					sData.setWaybillNo(orderDto.getTranscwb());// 运单号
-					sData.setSubWaybillNo(orderDto.getTranscwb());// 子运单号？？
+					sData.setWaybillNo(orderDto.getCwb());// 运单号
+					String subWaybillNo = "";
+					if (!orderDto.getRemark1().equals(orderDto.getTranscwb())) {
+						subWaybillNo = orderDto.getRemark1();
+					}
+					sData.setSubWaybillNo(subWaybillNo);// 子运单号？？
 					sData.setOrderNo(orderDto.getCwb());// 订单号
 					sData.setCustCode(orderDto.getRemark4());
 					for (CuscodeAndCustomerNameEnum customerNameEnum : CuscodeAndCustomerNameEnum.values()) {
@@ -616,7 +620,7 @@ public class GztlServiceFeedback {
 	 * xmlBuffer.append("</Order>"); } xmlBuffer.append("</Orders>");
 	 * xmlBuffer.append("</MSD>"); String xml = xmlBuffer.toString();
 	 * this.logger.info("返回广州通路外发单订单反馈-xml={}", xml);
-	 *
+	 * 
 	 * return xml; }
 	 */
 	public static void main(String[] args) {
