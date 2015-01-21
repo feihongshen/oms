@@ -39,6 +39,7 @@ import cn.explink.enumutil.UserEmployeestatusEnum;
 public class ExportExcelService {
 	@Autowired
 	GetDmpDAO getDmpDAO;
+	private User user;
 
 	public void SetCompitFields(String[] cloumnName1, String[] cloumnName2) {
 		//
@@ -96,8 +97,9 @@ public class ExportExcelService {
 			} else if ("flowordertypeMethod".equals(cloumname)) {
 				a = rs.getObject("flowordertype") == null ? "0" : rs.getObject("flowordertype");
 				for (FlowOrderTypeEnum fote : FlowOrderTypeEnum.values()) {
-					if (fote.getValue() == Integer.parseInt(a.toString()))
+					if (fote.getValue() == Integer.parseInt(a.toString())) {
 						return fote.getText();
+					}
 				}
 			} else if ("paytypeName".equals(cloumname)) {
 				a = this.getPayWayType(rs.getObject("paytype_old").toString());
@@ -319,7 +321,7 @@ public class ExportExcelService {
 				if (realbranchid == 0) {
 					realbranchid = Long.parseLong(rs.getObject("startbranchid") == null ? "0" : rs.getObject("startbranchid").toString());
 				}
-				a = getRealflowordertype(bList, realbranchid, Long.parseLong(rs.getObject("flowordertype") == null ? "0" : rs.getObject("flowordertype").toString()));
+				a = this.getRealflowordertype(bList, realbranchid, Long.parseLong(rs.getObject("flowordertype") == null ? "0" : rs.getObject("flowordertype").toString()));
 			} else if ("ispayup".equals(cloumname)) {
 				long payupid = Long.parseLong(rs.getObject("payupid") == null ? "0" : rs.getObject("payupid").toString());
 				if (payupid > 0) {
@@ -349,6 +351,7 @@ public class ExportExcelService {
 
 			else {
 				a = rs.getObject(cloumname);
+				a = this.setAbyUser(a, cloumname);
 			}
 		} catch (Exception e) {
 			// System.out.println(cloumname);
@@ -360,7 +363,7 @@ public class ExportExcelService {
 
 	/**
 	 * 承运商 打印 获取 承运商名称
-	 * 
+	 *
 	 * @param cloumnName3
 	 * @param rs
 	 * @param i
@@ -397,8 +400,9 @@ public class ExportExcelService {
 			} else if ("flowordertypeMethod".equals(cloumname)) {
 				a = rs.getObject("flowordertype") == null ? "0" : rs.getObject("flowordertype");
 				for (FlowOrderTypeEnum fote : FlowOrderTypeEnum.values()) {
-					if (fote.getValue() == Integer.parseInt(a.toString()))
+					if (fote.getValue() == Integer.parseInt(a.toString())) {
 						return fote.getText();
+					}
 				}
 			} else if ("paytypeName".equals(cloumname)) {
 				a = this.getPayWayType(rs.getObject("paytype").toString());
@@ -621,7 +625,7 @@ public class ExportExcelService {
 				if (realbranchid == 0) {
 					realbranchid = Long.parseLong(rs.getObject("startbranchid") == null ? "0" : rs.getObject("startbranchid").toString());
 				}
-				a = getRealflowordertype(bList, realbranchid, Long.parseLong(rs.getObject("flowordertype") == null ? "0" : rs.getObject("flowordertype").toString()));
+				a = this.getRealflowordertype(bList, realbranchid, Long.parseLong(rs.getObject("flowordertype") == null ? "0" : rs.getObject("flowordertype").toString()));
 			} else if ("ispayup".equals(cloumname)) {
 				long payupid = Long.parseLong(rs.getObject("payupid") == null ? "0" : rs.getObject("payupid").toString());
 				if (payupid > 0) {
@@ -671,29 +675,29 @@ public class ExportExcelService {
 			return RealFlowOrderTypeEnum.TiHuo.getText();
 		} else if (flowordertype == FlowOrderTypeEnum.TiHuoYouHuoWuDan.getValue()) {
 			return RealFlowOrderTypeEnum.TiHuoYouHuoWuDan.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.RuKu.getValue() && sitetype == BranchEnum.KuFang.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.RuKu.getValue()) && (sitetype == BranchEnum.KuFang.getValue())) {
 			return RealFlowOrderTypeEnum.KuFangRuKu.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.RuKu.getValue() && sitetype == BranchEnum.ZhongZhuan.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.RuKu.getValue()) && (sitetype == BranchEnum.ZhongZhuan.getValue())) {
 			return RealFlowOrderTypeEnum.ZhongZhuanZhanRuKu.getText();
 		} else if (flowordertype == FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()) {
 			return RealFlowOrderTypeEnum.TuiHuoZhanRuKu.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && sitetype == BranchEnum.KuFang.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) && (sitetype == BranchEnum.KuFang.getValue())) {
 			return RealFlowOrderTypeEnum.KuFangChuKuSaoMiao.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && sitetype == BranchEnum.ZhanDian.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) && (sitetype == BranchEnum.ZhanDian.getValue())) {
 			return RealFlowOrderTypeEnum.ZhongZhuanZhanChuZhanSaoMiao.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && sitetype == BranchEnum.ZhongZhuan.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) && (sitetype == BranchEnum.ZhongZhuan.getValue())) {
 			return RealFlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && sitetype == BranchEnum.TuiHuo.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) && (sitetype == BranchEnum.TuiHuo.getValue())) {
 			return RealFlowOrderTypeEnum.TuiHuoZhanChuKuSaoMiao.getText();
 		} else if (flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()) {
 			return RealFlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue() && sitetype == BranchEnum.KuFang.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue()) && (sitetype == BranchEnum.KuFang.getValue())) {
 			return RealFlowOrderTypeEnum.KuFangYouHuoWuDanSaoMiao.getText();
 		} else if (flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue()) {
 			return RealFlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue() && sitetype == BranchEnum.ZhongZhuan.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue()) && (sitetype == BranchEnum.ZhongZhuan.getValue())) {
 			return RealFlowOrderTypeEnum.ZhongZhuanZhanYouHuoWuDanSaoMiao.getText();
-		} else if (flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue() && sitetype == BranchEnum.TuiHuo.getValue()) {
+		} else if ((flowordertype == FlowOrderTypeEnum.FenZhanDaoHuoYouHuoWuDanSaoMiao.getValue()) && (sitetype == BranchEnum.TuiHuo.getValue())) {
 			return RealFlowOrderTypeEnum.TuiHuoZhanYouHuoWuDanSaoMiao.getText();
 		} else if (flowordertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
 			return RealFlowOrderTypeEnum.FenZhanLingHuo.getText();
@@ -733,7 +737,7 @@ public class ExportExcelService {
 
 	public Object setObjectB(String[] cloumnName3, HttpServletRequest request1, List<Complaint> list, Object a, int i, int k) {
 		try {
-			a = ((Complaint) list.get(k)).getClass().getMethod("get" + cloumnName3[i]).invoke((Complaint) list.get(k));
+			a = list.get(k).getClass().getMethod("get" + cloumnName3[i]).invoke(list.get(k));
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -779,7 +783,7 @@ public class ExportExcelService {
 		OutputStreamWriter osw = null;
 
 		try {
-			if (filePathName != null && !"".equals(filePathName)) {
+			if ((filePathName != null) && !"".equals(filePathName)) {
 				osw = new OutputStreamWriter(new FileOutputStream(filePathName));
 			}
 
@@ -793,7 +797,7 @@ public class ExportExcelService {
 
 			try {
 
-				if (content != null && !"".equals(content)) {
+				if ((content != null) && !"".equals(content)) {
 
 					bw.write(content);
 					flag = true;
@@ -862,4 +866,30 @@ public class ExportExcelService {
 		return a;
 	}
 
+	public User getUser() {
+		return this.user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	private Object setAbyUser(Object a, String cloumname) {
+		if (cloumname.equals("consigneename")) {
+			if (this.getUser().getShownameflag() != 1) {
+				a = "******";
+			}
+		}
+		if (cloumname.equals("consigneephone")) {
+			if (this.getUser().getShowphoneflag() != 1) {
+				a = "******";
+			}
+		}
+		if (cloumname.equals("consigneemobile")) {
+			if (this.getUser().getShowmobileflag() != 1) {
+				a = "******";
+			}
+		}
+		return a;
+	}
 }

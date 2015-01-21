@@ -1,11 +1,13 @@
 package cn.explink.service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import cn.explink.dao.UserDAO;
 import cn.explink.domain.User;
 import cn.explink.util.ServiceUtil;
@@ -20,17 +22,17 @@ public class UserService {
 	private UserDAO userDAO;
 
 	public void addUser(User user) {
-		userDAO.creUser(user);
-		logger.info("创建一个用户,username:{},roleid:{}", new Object[] { user.getUsername(), user.getRoleid() });
+		this.userDAO.creUser(user);
+		this.logger.info("创建一个用户,username:{},roleid:{}", new Object[] { user.getUsername(), user.getRoleid() });
 	}
 
 	public void editUser(User user) {
-		userDAO.saveUser(user);
+		this.userDAO.saveUser(user);
 	}
 
 	public User loadFormForUser(HttpServletRequest request, long roleid, long branchid, MultipartFile file) {
-		User user = loadFormForUser(request, roleid, branchid);
-		if (file != null && !file.isEmpty()) {
+		User user = this.loadFormForUser(request, roleid, branchid);
+		if ((file != null) && !file.isEmpty()) {
 			String filePath = request.getSession().getServletContext().getRealPath("/");
 			String name = System.currentTimeMillis() + ".wav";
 			ServiceUtil.uploadWavFile(file, filePath, ServiceUtil.wavPath + name);
@@ -40,8 +42,8 @@ public class UserService {
 	}
 
 	public User loadFormForUserToEdit(HttpServletRequest request, long roleid, long branchid, MultipartFile file) {
-		User user = loadFormForUser(request, roleid, branchid);
-		if (file != null && !file.isEmpty()) {
+		User user = this.loadFormForUser(request, roleid, branchid);
+		if ((file != null) && !file.isEmpty()) {
 			String filePath = request.getSession().getServletContext().getRealPath("/");
 			String name = System.currentTimeMillis() + ".wav";
 			ServiceUtil.uploadWavFile(file, filePath, ServiceUtil.wavPath + name);
@@ -56,7 +58,7 @@ public class UserService {
 
 		User user = new User();
 
-		user.setUserid(request.getParameter("userid") == null || request.getParameter("userid").equals("") ? 0L : (Long.parseLong(request.getParameter("userid"))));
+		user.setUserid((request.getParameter("userid") == null) || request.getParameter("userid").equals("") ? 0L : (Long.parseLong(request.getParameter("userid"))));
 		user.setUsername(StringUtil.nullConvertToEmptyString(request.getParameter("username")));
 		user.setRealname(StringUtil.nullConvertToEmptyString(request.getParameter("realname")));
 		user.setPassword(StringUtil.nullConvertToEmptyString(request.getParameter("password")));
@@ -69,7 +71,7 @@ public class UserService {
 		// user.setUseraddress(StringUtil.nullConvertToEmptyString(request.getParameter("useraddress")));
 		// user.setUserremark(StringUtil.nullConvertToEmptyString(request.getParameter("userremark")));
 		// user.setUsersalary(BigDecimal.valueOf(Double.parseDouble(request.getParameter("usersalary"))));
-		user.setShowphoneflag(StringUtil.nullConvertToEmptyString(request.getParameter("showphoneflag")));
+		user.setShowphoneflag(Long.parseLong(request.getParameter("showphoneflag")));
 		user.setUseremail(StringUtil.nullConvertToEmptyString(request.getParameter("useremail")));
 		user.setUserwavfile(StringUtil.nullConvertToEmptyString(request.getParameter("userwavfile")));
 		user.setRoleid(roleid);
