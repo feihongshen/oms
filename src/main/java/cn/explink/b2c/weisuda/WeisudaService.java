@@ -581,6 +581,8 @@ public class WeisudaService {
 		dto.setFlowordertype(FlowOrderTypeEnum.YiFanKui.getValue() + "");
 		dto.setOperatortime(DateTimeUtil.getNowTime());
 		dto.setCwbremark(item.getMemo());
+		dto.setDeliveryname(item.getCourier_code());
+		
 		int paytype = 0;
 		if ("1".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.Xianjin.getValue();
