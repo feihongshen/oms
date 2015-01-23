@@ -1216,6 +1216,24 @@
 				<label>XJKR</label>
 			</properties>
 		</profile>
+		
+		
+		<profile>
+			<id>XJKR_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://127.0.0.1:3306/xjkr_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:8080/xjkr_smt</dmpUrl>
+				<label>XJKR_SMT</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>SYZRX</id>
 			<properties>
@@ -1823,6 +1841,24 @@
 				<label>YNPX</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>YNPX_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.39:3306/ynpx_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/ynpx_smt</dmpUrl>
+				<label>YNPX_SMT</label>
+			</properties>
+		</profile>
+		
+		
 		<profile>
 			<id>BJXJB</id>
 			<properties>
@@ -2007,6 +2043,23 @@
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
 				<dmpUrl>http://127.0.0.1:8082/smt</dmpUrl>
 				<label>SMT_TEST</label>
+			</properties>
+		</profile>
+		
+		
+		<profile>
+			<id>JXFY</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.39:3306/jxfy_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/jxfy</dmpUrl>
+				<label>JXFY</label>
 			</properties>
 		</profile>
 		
