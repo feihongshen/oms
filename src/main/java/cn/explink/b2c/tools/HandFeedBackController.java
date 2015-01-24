@@ -21,6 +21,7 @@ import cn.explink.b2c.dongfangcj.DongFangCJService_goback;
 import cn.explink.b2c.dpfoss.DpfossService;
 import cn.explink.b2c.explink.code_down.EpaiApiService;
 import cn.explink.b2c.explink.core.CoreService;
+import cn.explink.b2c.explink.core.threadpool.CoreExcutorService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
@@ -153,6 +154,9 @@ public class HandFeedBackController {
 	LefengService lefengService;
 	@Autowired
 	GztlService gztlService;
+	@Autowired
+	CoreExcutorService coreExcutorService;
+	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -331,6 +335,18 @@ public class HandFeedBackController {
 		this.coreService.selectOMStemp_feedback();
 		return "OMS环形对接手动反馈成功";
 	}
+	
+	/**
+	 * 环形oms请求dmp 
+	 *多线程
+	 * @return
+	 */
+	@RequestMapping("/hx_thread_hander")
+	public @ResponseBody String hx_thread_hander(HttpServletRequest request) {
+
+		this.coreExcutorService.selectOMStemp_feedback();
+		return "OMS环形对接手动反馈成功-多线程";
+	}
 
 	@RequestMapping("/liantong")
 	public @ResponseBody String liantong_hander(HttpServletRequest request) {
@@ -452,5 +468,7 @@ public class HandFeedBackController {
 		this.gztlService.feedback_status();
 		return "手动执行反馈广州通路成功";
 	}
+	
+	
 
 }
