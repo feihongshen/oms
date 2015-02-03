@@ -648,6 +648,22 @@
 				<label>HMJ</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>HMJ_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.70.36:3306/sxhmj_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/sx_smt</dmpUrl>
+				<label>HMJ_SMT</label>
+			</properties>
+		</profile>
 		<profile>
 			<id>HMJ_ShenYang</id>
 			<properties>
@@ -678,6 +694,23 @@
 				<label>HMJ_ChangChun</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>HMJ_SMT_ChangChun</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://localhost:3306/cchmj_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password></expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://192.168.65.117:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/cc_smt</dmpUrl>
+				<label>HMJ_SMT_ChangChun</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>HMJ_ChongQing</id>
 			<properties>
@@ -1014,6 +1047,21 @@
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
 				<dmpUrl>http://127.0.0.1/hnjhdmp</dmpUrl>
 				<label>HNJH</label>
+			</properties>
+		</profile>
+		<profile>
+			<id>HNJH_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.1.3:3306/hnjh_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/hnjh_smt</dmpUrl>
+				<label>HNJH_SMT</label>
 			</properties>
 		</profile>
 		<profile>
@@ -1550,6 +1598,23 @@
 				<label>BJFH</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>BJFH_SMT</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://127.0.0.1:3306/bjfh_smt_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1/hebhb_smt</dmpUrl>
+				<label>BJFH_SMT</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>HMJ_HaErBin</id>
 			<properties>
