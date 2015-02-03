@@ -214,6 +214,7 @@ public class GztlService {
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue());
 		
 		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.GongYingShangJuShouFanKu.getValue());
+		this.sendCwbStatus_To_gztl(gztl, FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue());
 	}
 
 	/**
