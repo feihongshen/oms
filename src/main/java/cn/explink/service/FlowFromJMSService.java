@@ -909,14 +909,14 @@ public class FlowFromJMSService {
 	}
 
 	public void saveZhongZhuan(DmpOrderFlow orderFlow, DmpCwbOrder dmpCwbOrder) {
-		if (orderFlow.getFlowordertype() != FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {
+		if (orderFlow.getFlowordertype() != FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && orderFlow.getFlowordertype() != FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) {
 			return;
 		}
 		Map<Long, Branch> branchNewMap = getBranchMap();
 		Branch startBranch = branchNewMap.get(dmpCwbOrder.getStartbranchid());
 		Branch nextBranch = branchNewMap.get(dmpCwbOrder.getNextbranchid());
 
-		if (!(orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && startBranch != null && nextBranch != null && (startBranch.getSitetype() == BranchEnum.ZhongZhuan.getValue() || nextBranch
+		if (!((orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) && startBranch != null && nextBranch != null && (startBranch.getSitetype() == BranchEnum.ZhongZhuan.getValue() || nextBranch
 				.getSitetype() == BranchEnum.ZhongZhuan.getValue()))) {// 中转站
 			// 发出站或者目的站不是中转类型的
 			return;
@@ -1234,7 +1234,7 @@ public class FlowFromJMSService {
 			}
 		}
 
-		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {// 处理中转订单统计迁移
+		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) {// 处理中转订单统计迁移
 			try {
 				this.saveZhongZhuan(orderFlow, dmpCwbOrder);
 			} catch (Exception e) {
@@ -1495,7 +1495,7 @@ public class FlowFromJMSService {
 			}
 		}
 
-		if (functionid == ChangeFunctionidEnum.ZhongZhuanDingDanTongJi.getValue() && (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue())) {// 处理中转订单统计迁移
+		if (functionid == ChangeFunctionidEnum.ZhongZhuanDingDanTongJi.getValue() && (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()|| orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue())) {// 处理中转订单统计迁移
 			try {
 				this.saveZhongZhuan(orderFlow, dmpCwbOrder);
 			} catch (Exception e) {
