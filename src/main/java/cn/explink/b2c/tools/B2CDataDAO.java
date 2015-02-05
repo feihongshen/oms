@@ -89,7 +89,7 @@ public class B2CDataDAO {
 
 	public String selectB2cMonitorDataListSql(String cwb, long customerid, long flowordertypeid, String starttime, String endtime) {
 		String sql = "SELECT * FROM  express_send_b2c_data where  1=1  ";
-		sql += this.creContent(cwb, customerid, flowordertypeid, starttime, endtime, sql);
+		sql = this.creContent(cwb, customerid, flowordertypeid, starttime, endtime, sql);
 		sql += " ORDER BY cwb ASC ,posttime ASC ";
 
 		return sql;
