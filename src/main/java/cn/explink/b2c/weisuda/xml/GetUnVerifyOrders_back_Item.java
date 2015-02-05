@@ -14,6 +14,7 @@ public class GetUnVerifyOrders_back_Item {
 	private String money;
 	private String reject_map;
 	private String pay_status;
+	private String delay_reason;
 
 	@XmlElement(name = "order_id")
 	public String getOrder_id() {
@@ -112,6 +113,14 @@ public class GetUnVerifyOrders_back_Item {
 
 	public void setPay_status(String pay_status) {
 		this.pay_status = pay_status;
+	}
+	@XmlElement(name = "delay_reason")
+	public String getDelay_reason() {
+		return delay_reason;
+	}
+
+	public void setDelay_reason(String delay_reason) {
+		this.delay_reason = delay_reason;
 	}
 
 }

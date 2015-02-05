@@ -568,6 +568,7 @@ public class WeisudaService {
 		OrderFlowDto dto = new OrderFlowDto();
 		dto.setCustid(weisudaCwbs.getId());
 		dto.setCwb(weisudaCwbs.getCwb());
+		dto.setStrandedrReason("");
 		long deliverystate = 0;
 		String status = item.getOrder_status();
 		if ("9".equals(status)) {
@@ -575,8 +576,9 @@ public class WeisudaService {
 
 		} else if ("7".equals(status)) {
 			deliverystate = DeliveryStateEnum.QuanBuTuiHuo.getValue();
-		} else if ("0".equals(status)) {
+		} else if ("4".equals(status)) {
 			deliverystate = DeliveryStateEnum.FenZhanZhiLiu.getValue();
+			dto.setStrandedrReason(item.getDelay_reason());
 		}
 		dto.setDeliverystate(deliverystate + "");
 		dto.setExptmsg(item.getReason());
