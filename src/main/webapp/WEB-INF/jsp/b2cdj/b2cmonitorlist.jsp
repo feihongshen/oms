@@ -263,7 +263,7 @@ alert('<%=msg%>');
 	      <input type ="hidden" name ="cwb"     value ="<%=cwb%>">
 	      <input type ="hidden" name ="customerid"     value ="<%=customerid%>">
 	      <input type ="hidden" name ="flowordertypeid"     value ="<%=flowordertypeid%>">
-	      <input type ="hidden" name ="starttime"     value ="<%="starttime"%>">
+	      <input type ="hidden" name ="starttime"     value ="<%=starttime%>">
 	      <input type ="hidden" name ="endtime"     value ="<%=endtime%>">
 	</form>
 	<form id="dealForm" action="<%=request.getContextPath()%>/b2cjointmonitor/send">
