@@ -892,7 +892,7 @@ public class B2CDataDAO {
 
 	public String creContent(String cwb, long customerid, long flowordertypeid, String starttime, String endtime, String sql) {
 		if (cwb.length() > 0) {
-			sql += " and cwb in('" + cwb + "')";
+			sql += " and cwb in(" + cwb + ")";
 		}
 		if (customerid > 0) {
 			sql += " and customerid=" + customerid;
@@ -901,7 +901,7 @@ public class B2CDataDAO {
 			sql += " and flowordertype=" + flowordertypeid;
 		}
 		if ((starttime.length() > 0) && (endtime.length() > 0)) {
-			sql += " and posttime>='" + starttime + "' posttime<='" + endtime + "'";
+			sql += " and posttime>='" + starttime + "' and  posttime<='" + endtime + "'";
 		}
 		return sql;
 	}
