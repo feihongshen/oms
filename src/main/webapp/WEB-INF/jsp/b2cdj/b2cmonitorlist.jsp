@@ -14,6 +14,9 @@
  
  
  String cwb=request.getParameter("cwb")==null?"":request.getParameter("cwb");
+ String endtime=request.getParameter("endtime")==null?"":request.getParameter("endtime");
+ String starttime=request.getParameter("starttime")==null?"":request.getParameter("starttime");
+ String flowordertypeid=request.getParameter("flowordertypeid")==null?"":request.getParameter("flowordertypeid");
  String customerid=request.getParameter("customerid")==null?"0":request.getParameter("customerid");
  String customername = "";
  %>
@@ -28,7 +31,35 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/css/index.css" type="text/css"  />
 <script src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
 <script language="javascript" src="<%=request.getContextPath()%>/js/js.js"></script>
+<script src="<%=request.getContextPath()%>/js/js.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/js/multiSelcet/jquery.multiSelect.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/js/multiSelcet/jquery.bgiframe.min.js" type="text/javascript"></script>
+<link href="<%=request.getContextPath()%>/js/multiSelcet/jquery.multiSelect.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="<%=request.getContextPath()%>/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" media="all" />
+<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/js/jquery.ui.datepicker-zh-CN.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/js/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/js/jquery.ui.message.min.js" type="text/javascript"></script>
 <script type="text/javascript">
+$(function() {
+	$("#strtime").datetimepicker({
+	    changeMonth: true,
+	    changeYear: true,
+	    hourGrid: 4,
+		minuteGrid: 10,
+	    timeFormat: 'hh:mm:ss',
+	    dateFormat: 'yy-mm-dd'
+	});
+	$("#endtime").datetimepicker({
+	    changeMonth: true,
+	    changeYear: true,
+	    hourGrid: 4,
+		minuteGrid: 10,
+	    timeFormat: 'hh:mm:ss',
+	    dateFormat: 'yy-mm-dd'
+	});
+});
 function check(){
 	if($("#cwb").val().split("\n").length>10000){
 		alert("查询不能多于10000条");
@@ -187,7 +218,6 @@ alert('<%=msg%>');
 			<tr><td>订单号：<textarea cols="24" rows="4"  name ="cwb" id="cwb" ><%if(cwb!=null&&cwb.length()>0){ %><%=cwb %><%} %></textarea>
 				供货商：<select id="customerid" name="customerid" >
 		           <option value="0" >全部</option>
-		           
 		          	<%
 		          	if(customerlist != null && customerlist.size()>0){
 		        	for(Customer cu:customerlist){
@@ -200,8 +230,17 @@ alert('<%=msg%>');
 		            <option value="<%=cu.getCustomerid()%>" <%if(customerid.equals(cu.getCustomerid()+"")){ customername=cu.getCustomername(); %>selected<%} %>><%=cu.getCustomername()%></option>
 		        <%} 	}}%>
 		        
-		        
         	   </select>
+        	   <select name="flowordertypeid" id="flowordertypeid">
+        	   <option value="<%=FlowOrderTypeEnum.YiShenHe.getValue()%>"><%=FlowOrderTypeEnum.YiShenHe.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.RuKu.getValue()%>"><%=FlowOrderTypeEnum.RuKu.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.ChuKuSaoMiao.getValue()%>"><%=FlowOrderTypeEnum.ChuKuSaoMiao.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()%>"><%=FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.FenZhanLingHuo.getValue()%>"><%=FlowOrderTypeEnum.FenZhanLingHuo.getText()%></option>
+        	   </select>
+        	   订单操作时间：<input type ="text" name ="starttime" id="strtime"  value="<%=request.getParameter("starttime")==null?"":request.getParameter("starttime") %>"/>
+        	  			 到
+        	   		  <input type ="text" name ="endtime" id="endtime"  value="<%=request.getParameter("endtime")==null?"":request.getParameter("endtime") %>"/>
 					<input type="button" id="btnval" value="搜索" class="input_button2" />
 					<%if(datalist!=null&&datalist.size()>0&&customername.length()==0){ %>
 						<input type="button" id="reset" value="批量重置" class="input_button2" onclick="batchreset();"/>
@@ -220,7 +259,11 @@ alert('<%=msg%>');
 		</table>
 	</form>	
 	<form id="exportForm" action="<%=request.getContextPath()%>/b2cjointmonitor/export">
+	      <input type ="hidden" name ="cwb"     value ="<%=cwb%>">
 	      <input type ="hidden" name ="customerid"     value ="<%=customerid%>">
+	      <input type ="hidden" name ="flowordertypeid"     value ="<%=flowordertypeid%>">
+	      <input type ="hidden" name ="starttime"     value ="<%="starttime"%>">
+	      <input type ="hidden" name ="endtime"     value ="<%=endtime%>">
 	</form>
 	<form id="dealForm" action="<%=request.getContextPath()%>/b2cjointmonitor/send">
 	      <input type ="hidden" name ="customerid" id="customerid"   value ="<%=customerid%>">

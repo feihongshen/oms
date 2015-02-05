@@ -40,32 +40,47 @@ public class B2cMonitorController {
 
 	@RequestMapping("/list/{page}")
 	public String list(@PathVariable("page") long page, Model model, @RequestParam(value = "cwb", required = false, defaultValue = "") String cwb,
-			@RequestParam(value = "customerid", required = false, defaultValue = "0") String customerid, @RequestParam(value = "showflag", required = false, defaultValue = "0") long showflag) {
+			@RequestParam(value = "customerid", required = false, defaultValue = "0") String customerid, @RequestParam(value = "showflag", required = false, defaultValue = "0") long showflag,
+			@RequestParam(value = "starttime", required = false, defaultValue = "") String starttime, @RequestParam(value = "endtime", required = false, defaultValue = "") String endtime,
+			@RequestParam(value = "flowordertypeid", required = false, defaultValue = "0") long flowordertypeid) {
 		if (showflag == 1) {
 			if (cwb.trim().length() > 0) {
 				StringBuffer str = new StringBuffer();
 				String[] cwbs = cwb.trim().split("\r\n");
 				List<String> cwbList = new ArrayList<String>();
 				for (int i = 0; i < cwbs.length; i++) {
-					if (!cwbList.contains(cwbs[i]) && cwbs[i].trim().length() > 0) {
+					if (!cwbList.contains(cwbs[i]) && (cwbs[i].trim().length() > 0)) {
 						cwbList.add(cwbs[i]);
 						str = str.append("'").append(cwbs[i]).append("',");
 					}
 				}
 				cwb = str.substring(0, str.length() - 1);
-				model.addAttribute("monitorlist", b2cJointMonitorDAO.getB2cMonitorDataListByCwb(cwb, page));
-				model.addAttribute("page_obj", new Page(b2cJointMonitorDAO.getB2cMonitorDataListByCwbCount(cwb), page, Page.ONE_PAGE_NUMBER));
+				/*
+				 * model.addAttribute("monitorlist",
+				 * this.b2cJointMonitorDAO.getB2cMonitorDataListByCwb(cwb,
+				 * page)); model.addAttribute("page_obj", new
+				 * Page(this.b2cJointMonitorDAO
+				 * .getB2cMonitorDataListByCwbCount(cwb), page,
+				 * Page.ONE_PAGE_NUMBER));
+				 */
+				model.addAttribute("monitorlist", this.b2cJointMonitorDAO.getB2cMonitorDataList(cwb, Integer.parseInt(customerid), flowordertypeid, starttime, endtime, page));
+				model.addAttribute("page_obj", new Page(this.b2cJointMonitorDAO.getB2cMonitorDataListCount(cwb, Integer.parseInt(customerid), flowordertypeid, starttime, endtime), page,
+						Page.ONE_PAGE_NUMBER));
 			} else {
-				model.addAttribute("monitorlist", b2cJointMonitorDAO.selectB2cMonitorDataList(customerid, page));
-				model.addAttribute("page_obj", new Page(b2cJointMonitorDAO.selectB2cMonitorDataCount(customerid), page, Page.ONE_PAGE_NUMBER));
+				model.addAttribute("monitorlist", this.b2cJointMonitorDAO.selectB2cMonitorDataList(customerid, page));
+				model.addAttribute("page_obj", new Page(this.b2cJointMonitorDAO.selectB2cMonitorDataCount(customerid), page, Page.ONE_PAGE_NUMBER));
 			}
 		} else {
 			model.addAttribute("monitorlist", new ArrayList<B2CData>());
 			model.addAttribute("page_obj", new Page(0, page, Page.ONE_PAGE_NUMBER));
 		}
-		model.addAttribute("customerlist", getDmpDAO.getAllCustomers());
+		model.addAttribute("customerlist", this.getDmpDAO.getAllCustomers());
 		model.addAttribute("page", page);
-		saveModel(model, customerid);
+		model.addAttribute("flowordertypeid", flowordertypeid);
+		model.addAttribute("cwb", cwb);
+		model.addAttribute("starttime", starttime);
+		model.addAttribute("endtime", endtime);
+		this.saveModel(model, customerid);
 		// 保存查询条件到request
 		return "b2cdj/b2cmonitorlist";
 	}
@@ -74,29 +89,29 @@ public class B2cMonitorController {
 	public String send(Model model, @RequestParam(value = "customerid", required = false, defaultValue = "0") long customerid,
 			@RequestParam(value = "type", required = false, defaultValue = "0") int type, HttpServletRequest request) {
 		if (!"0".equals(customerid)) {
-			Customer customer = getDmpDAO.getCustomer(customerid);
+			Customer customer = this.getDmpDAO.getCustomer(customerid);
 			User user = new User();
 			try {
 				String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-				user = getDmpDAO.getLogUser(dmpid);
+				user = this.getDmpDAO.getLogUser(dmpid);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (type == 1) {// 推送包括失败的，先把失败的更新成未推送的状态
-				logger.info("对接异常监控，手工推送包含推送失败的订单，供货商：{}，用户名：{}", customer.getCustomername(), user.getRealname());
-				b2cJointMonitorDAO.updateFlagByCustomerid(customerid);
+				this.logger.info("对接异常监控，手工推送包含推送失败的订单，供货商：{}，用户名：{}", customer.getCustomername(), user.getRealname());
+				this.b2cJointMonitorDAO.updateFlagByCustomerid(customerid);
 			} else if (type == 2) {// 修改失败推送的订单为已成功
-				logger.info("对接异常监控，修改失败推送的订单为已成功，供货商：{}，用户名：{}", customer.getCustomername(), user.getRealname());
-				b2cJointMonitorDAO.updateFlagAndRemarkByCustomerid(customerid);
-				return list(1, model, "", customerid + "", 1);
+				this.logger.info("对接异常监控，修改失败推送的订单为已成功，供货商：{}，用户名：{}", customer.getCustomername(), user.getRealname());
+				this.b2cJointMonitorDAO.updateFlagAndRemarkByCustomerid(customerid);
+				return this.list(1, model, "", customerid + "", 1, "", "", 0);
 			} else if (type == 0) {
-				logger.info("对接异常监控，手工推送等待推送的订单，供货商：{}，用户名：{}", customer.getCustomername(), user.getRealname());
+				this.logger.info("对接异常监控，手工推送等待推送的订单，供货商：{}，用户名：{}", customer.getCustomername(), user.getRealname());
 			}
-			b2cPublicService.sendPublic(customer, customer.getB2cEnum());
+			this.b2cPublicService.sendPublic(customer, customer.getB2cEnum());
 		}
 		// 保存查询条件到request
-		return list(1, model, "", customerid + "", 1);
+		return this.list(1, model, "", customerid + "", 1, "", "", 0);
 	}
 
 	private void saveModel(Model model, String customerid) {
@@ -108,13 +123,13 @@ public class B2cMonitorController {
 		User user = new User();
 		try {
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			user = getDmpDAO.getLogUser(dmpid);
+			user = this.getDmpDAO.getLogUser(dmpid);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		logger.info("对接异常监控，手工标记为成功，b2cid：{}，用户名：{}", b2cid, user.getRealname());
-		b2cJointMonitorDAO.updateFlagAndRemarkByCwb(b2cid, 3, user.getRealname() + "：标记为成功");
+		this.logger.info("对接异常监控，手工标记为成功，b2cid：{}，用户名：{}", b2cid, user.getRealname());
+		this.b2cJointMonitorDAO.updateFlagAndRemarkByCwb(b2cid, 3, user.getRealname() + "：标记为成功");
 		return "ok";
 	}
 
@@ -123,19 +138,19 @@ public class B2cMonitorController {
 		User user = new User();
 		try {
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			user = getDmpDAO.getLogUser(dmpid);
+			user = this.getDmpDAO.getLogUser(dmpid);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		logger.info("对接异常监控，手工重置，b2cid：{}，用户名：{}", b2cid, user.getRealname());
-		b2cJointMonitorDAO.updateFlagAndRemarkByCwb(b2cid, 0, user.getRealname() + "：重置");
+		this.logger.info("对接异常监控，手工重置，b2cid：{}，用户名：{}", b2cid, user.getRealname());
+		this.b2cJointMonitorDAO.updateFlagAndRemarkByCwb(b2cid, 0, user.getRealname() + "：重置");
 		return "ok";
 	}
 
 	/**
 	 * 按照订单 重置订单推送状态为 未推送
-	 * 
+	 *
 	 * @param cwbs
 	 */
 	@RequestMapping("/reset")
@@ -144,39 +159,42 @@ public class B2cMonitorController {
 			User user = new User();
 			try {
 				String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-				user = getDmpDAO.getLogUser(dmpid);
+				user = this.getDmpDAO.getLogUser(dmpid);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			logger.info("对接异常监控，手工批量重置，cwbs：{}，用户名：{}", cwbs, user.getRealname());
+			this.logger.info("对接异常监控，手工批量重置，cwbs：{}，用户名：{}", cwbs, user.getRealname());
 			StringBuffer str = new StringBuffer();
 			String[] cwb = cwbs.trim().split("\n");
 			List<String> cwbList = new ArrayList<String>();
 			for (int i = 0; i < cwb.length; i++) {
-				if (!cwbList.contains(cwb[i]) && cwb[i].trim().length() > 0) {
+				if (!cwbList.contains(cwb[i]) && (cwb[i].trim().length() > 0)) {
 					cwbList.add(cwb[i]);
 					str = str.append("'").append(cwb[i]).append("',");
 				}
 			}
 			cwbs = str.substring(0, str.length() - 1);
-			b2cJointMonitorDAO.updateSendB2cFlag(cwbs);
+			this.b2cJointMonitorDAO.updateSendB2cFlag(cwbs);
 			return "{\"errorCode\":0,\"error\":\"操作成功\"}";
 		}
 		return "{\"errorCode\":1,\"error\":\"操作失败\"}";
 	}
 
 	@RequestMapping("/export")
-	public void ExportB2cDataExptInfo(@RequestParam(value = "customerid", required = false, defaultValue = "0") String customerid, HttpServletResponse response, HttpServletRequest request) {
+	public void ExportB2cDataExptInfo(@RequestParam(value = "cwb", required = false, defaultValue = "") String cwb,
+			@RequestParam(value = "customerid", required = false, defaultValue = "0") long customerid, @RequestParam(value = "starttime", required = false, defaultValue = "") String starttime,
+			@RequestParam(value = "endtime", required = false, defaultValue = "") String endtime, @RequestParam(value = "flowordertypeid", required = false, defaultValue = "0") long flowordertypeid,
+			HttpServletResponse response, HttpServletRequest request) {
 		try {
 			String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
-			User user = getDmpDAO.getLogUser(dmpid);
-			long count = b2cJointMonitorDAO.selectB2cMonitorDataCount(customerid);
-			logger.info("对接异常监控，导出数据，用户名：{},单数：{}", user.getRealname(), count);
+			User user = this.getDmpDAO.getLogUser(dmpid);
+			long count = this.b2cJointMonitorDAO.getB2cMonitorDataListCount(cwb, customerid, flowordertypeid, starttime, endtime);
+			this.logger.info("对接异常监控，导出数据，用户名：{},单数：{}", user.getRealname(), count);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		b2cMonitorService.exportB2cDataExptInfo(customerid, response);
+		this.b2cMonitorService.exportB2cDataExptInfo(cwb, customerid, flowordertypeid, starttime, endtime, response);
 	}
 }

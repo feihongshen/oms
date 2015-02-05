@@ -32,7 +32,7 @@ import cn.explink.util.StreamingStatementCreator;
 
 /**
  * 针对B2C对接的监控，若OMS没有存入数据或发生推送失败等等，则可以用此类来监控
- * 
+ *
  * @author Administrator
  *
  */
@@ -47,7 +47,7 @@ public class B2cMonitorService {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public void exportB2cDataExptInfo(String customerid, HttpServletResponse response) {
+	public void exportB2cDataExptInfo(String cwb, long customerid, long flowordertypeid, String starttime, String endtime, HttpServletResponse response) {
 
 		String[] cloumnName1 = new String[7]; // 导出的列名
 		String[] cloumnName2 = new String[7];// 导出的英文列名
@@ -72,27 +72,27 @@ public class B2cMonitorService {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 		String fileName = "Order_" + df.format(new Date()) + ".xlsx"; // 文件名
 		try {
-			final String sql = b2cJointMonitorDAO.selectB2cMonitorDataListSql(customerid);
+			final String sql = this.b2cJointMonitorDAO.selectB2cMonitorDataListSql(cwb, customerid, flowordertypeid, starttime, endtime);
 			//
 			ExcelUtilsOld excelUtil = new ExcelUtilsOld() { // 生成工具类实例，并实现填充数据的抽象方法
 				@Override
 				public void fillData(final Sheet sheet, final CellStyle style) {
-					final List<Customer> cList = getDmpDAO.getAllCustomers();
-					jdbcTemplate.query(new StreamingStatementCreator(sql), new RowCallbackHandler() {
+					final List<Customer> cList = B2cMonitorService.this.getDmpDAO.getAllCustomers();
+					B2cMonitorService.this.jdbcTemplate.query(new StreamingStatementCreator(sql), new RowCallbackHandler() {
 						private int count = 0;
 
 						@Override
 						public void processRow(ResultSet rs) throws SQLException {
-							Row row = sheet.createRow(count + 1);
-							row.setHeightInPoints((float) 15);
+							Row row = sheet.createRow(this.count + 1);
+							row.setHeightInPoints(15);
 							// System.out.println(ds.getCwb()+":"+System.currentTimeMillis());
 							for (int i = 0; i < cloumnName.length; i++) {
 								Cell cell = row.createCell((short) i);
 								cell.setCellStyle(style);
-								Object a = setObjectA(cloumnName3, new ResultSetWrappingSqlRowSet(rs), i, cList);
+								Object a = B2cMonitorService.this.setObjectA(cloumnName3, new ResultSetWrappingSqlRowSet(rs), i, cList);
 								cell.setCellValue(a == null ? "" : a.toString());
 							}
-							count++;
+							this.count++;
 
 						}
 					});
@@ -124,8 +124,9 @@ public class B2cMonitorService {
 			} else if ("flowordertype".equals(cloumname)) {
 				a = r.getObject("flowordertype") == null ? "" : r.getObject("flowordertype");
 				for (FlowOrderTypeEnum fote : FlowOrderTypeEnum.values()) {
-					if (fote.getValue() == Integer.parseInt(a.toString()))
+					if (fote.getValue() == Integer.parseInt(a.toString())) {
 						return fote.getText();
+					}
 				}
 			} else if ("posttime".equals(cloumname)) {
 				a = r.getObject("posttime") == null ? "" : r.getObject("posttime");
@@ -135,7 +136,7 @@ public class B2cMonitorService {
 				a = r.getObject("posttime") == null ? "" : r.getObject("posttime");
 				if (DateDayUtil.getQuotMin(a.toString()) > 60) {
 
-					return DateDayUtil.getQuotMin(a.toString()) / 60 + "小时" + (DateDayUtil.getQuotMin(a.toString()) % 60) + "分";
+					return (DateDayUtil.getQuotMin(a.toString()) / 60) + "小时" + (DateDayUtil.getQuotMin(a.toString()) % 60) + "分";
 				} else {
 					return DateDayUtil.getQuotMin(a.toString()) + "分";
 				}
