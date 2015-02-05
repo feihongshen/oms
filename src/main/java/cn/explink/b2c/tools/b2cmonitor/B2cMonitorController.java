@@ -54,8 +54,13 @@ public class B2cMonitorController {
 						str = str.append("'").append(cwbs[i]).append("',");
 					}
 				}
-//				cwb = str.substring(0, str.length() - 1);
-				cwb=str+"''";
+				if(str.indexOf(",")>0)
+				{
+				cwb = str.substring(0, str.length() - 1);
+				}
+				else{
+					cwb="";
+				}
 				/*
 				 * model.addAttribute("monitorlist",
 				 * this.b2cJointMonitorDAO.getB2cMonitorDataListByCwb(cwb,

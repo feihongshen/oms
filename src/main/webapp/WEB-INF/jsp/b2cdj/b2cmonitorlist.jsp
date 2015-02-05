@@ -232,6 +232,7 @@ alert('<%=msg%>');
 		        
         	   </select>
         	   <select name="flowordertypeid" id="flowordertypeid">
+        	   <option value="0">请选择</option>
         	   <option value="<%=FlowOrderTypeEnum.YiShenHe.getValue()%>"><%=FlowOrderTypeEnum.YiShenHe.getText()%></option>
         	   <option value="<%=FlowOrderTypeEnum.RuKu.getValue()%>"><%=FlowOrderTypeEnum.RuKu.getText()%></option>
         	   <option value="<%=FlowOrderTypeEnum.ChuKuSaoMiao.getValue()%>"><%=FlowOrderTypeEnum.ChuKuSaoMiao.getText()%></option>
