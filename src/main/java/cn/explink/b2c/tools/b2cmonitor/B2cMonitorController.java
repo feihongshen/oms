@@ -44,7 +44,7 @@ public class B2cMonitorController {
 			@RequestParam(value = "starttime", required = false, defaultValue = "") String starttime, @RequestParam(value = "endtime", required = false, defaultValue = "") String endtime,
 			@RequestParam(value = "flowordertypeid", required = false, defaultValue = "0") long flowordertypeid) {
 		if (showflag == 1) {
-			if (cwb.trim().length() > 0) {
+			if (cwb.trim().length() > 0||!customerid.equals("0")||flowordertypeid>0||(starttime.length()>0&&endtime.length()>0)) {
 				StringBuffer str = new StringBuffer();
 				String[] cwbs = cwb.trim().split("\r\n");
 				List<String> cwbList = new ArrayList<String>();
