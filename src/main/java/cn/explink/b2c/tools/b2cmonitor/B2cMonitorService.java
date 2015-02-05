@@ -74,6 +74,7 @@ public class B2cMonitorService {
 		try {
 			final String sql = this.b2cJointMonitorDAO.selectB2cMonitorDataListSql(cwb, customerid, flowordertypeid, starttime, endtime);
 			//
+			logger.info("对接异常监控导出sql：{}",sql);
 			ExcelUtilsOld excelUtil = new ExcelUtilsOld() { // 生成工具类实例，并实现填充数据的抽象方法
 				@Override
 				public void fillData(final Sheet sheet, final CellStyle style) {
