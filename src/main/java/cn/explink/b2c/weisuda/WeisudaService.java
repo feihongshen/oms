@@ -161,7 +161,7 @@ public class WeisudaService {
 		}
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String response = this.check(weisuda, "nums", weisuda.getNums(), WeisudsInterfaceEnum.getUnVerifyOrders.getValue());
-		this.logger.info("唯速达_02_APP包裹签收信息同步接口下载数据,{}", response);
+		// this.logger.info("唯速达_02_APP包裹签收信息同步接口下载数据,{}", response);
 		if (response != null) {
 			if (response.contains("<error><code>")) {
 				this.logger.info("唯速达_02包裹签收信息同步接口验证失败！userMessage={}", response);
