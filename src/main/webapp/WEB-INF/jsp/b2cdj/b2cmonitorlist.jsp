@@ -16,7 +16,7 @@
  String cwb=request.getParameter("cwb")==null?"":request.getParameter("cwb");
  String endtime=request.getParameter("endtime")==null?"":request.getParameter("endtime");
  String starttime=request.getParameter("starttime")==null?"":request.getParameter("starttime");
- String flowordertypeid=request.getParameter("flowordertypeid")==null?"":request.getParameter("flowordertypeid");
+ int flowordertypeid=request.getParameter("flowordertypeid")==null?0:Integer.parseInt(request.getParameter("flowordertypeid").toString());
  String customerid=request.getParameter("customerid")==null?"0":request.getParameter("customerid");
  String customername = "";
  %>
@@ -231,13 +231,13 @@ alert('<%=msg%>');
 		        <%} 	}}%>
 		        
         	   </select>
-        	   <select name="flowordertypeid" id="flowordertypeid">
+        	订单操作状态:   <select name="flowordertypeid" id="flowordertypeid">
         	   <option value="0">请选择</option>
-        	   <option value="<%=FlowOrderTypeEnum.YiShenHe.getValue()%>"><%=FlowOrderTypeEnum.YiShenHe.getText()%></option>
-        	   <option value="<%=FlowOrderTypeEnum.RuKu.getValue()%>"><%=FlowOrderTypeEnum.RuKu.getText()%></option>
-        	   <option value="<%=FlowOrderTypeEnum.ChuKuSaoMiao.getValue()%>"><%=FlowOrderTypeEnum.ChuKuSaoMiao.getText()%></option>
-        	   <option value="<%=FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()%>"><%=FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getText()%></option>
-        	   <option value="<%=FlowOrderTypeEnum.FenZhanLingHuo.getValue()%>"><%=FlowOrderTypeEnum.FenZhanLingHuo.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.YiShenHe.getValue()%>" <%if(FlowOrderTypeEnum.YiShenHe.getValue()==flowordertypeid){ %>selected="selected"<%} %>><%=FlowOrderTypeEnum.YiShenHe.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.RuKu.getValue()%>" <%if(FlowOrderTypeEnum.RuKu.getValue()==flowordertypeid){ %>selected="selected"<%} %>><%=FlowOrderTypeEnum.RuKu.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.ChuKuSaoMiao.getValue()%>" <%if(FlowOrderTypeEnum.ChuKuSaoMiao.getValue()==flowordertypeid){ %>selected="selected"<%} %>><%=FlowOrderTypeEnum.ChuKuSaoMiao.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()%>" <%if(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()==flowordertypeid){ %>selected="selected"<%} %>><%=FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getText()%></option>
+        	   <option value="<%=FlowOrderTypeEnum.FenZhanLingHuo.getValue()%>" <%if(FlowOrderTypeEnum.FenZhanLingHuo.getValue()==flowordertypeid){ %>selected="selected"<%} %>><%=FlowOrderTypeEnum.FenZhanLingHuo.getText()%></option>
         	   </select>
         	   订单操作时间：<input type ="text" name ="starttime" id="strtime"  value="<%=request.getParameter("starttime")==null?"":request.getParameter("starttime") %>"/>
         	  			 到
