@@ -64,9 +64,13 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 
 	@Override
 	public void onChange(Map<String, String> parameters) {
+		
+		
 		if (parameters == null) {
 			this.initAll();
 		}
+		logger.info("oms基础信息同步成功,key={}",parameters.keySet());
+		
 		if (parameters.keySet().contains("customer")) {
 			this.initCustomerList();
 		}
