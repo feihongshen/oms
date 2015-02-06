@@ -30,31 +30,33 @@ public class WeisudaController {
 	 * 提供口查询
 	 */
 	@RequestMapping("/select")
-	public @ResponseBody String requestCwbSearch(HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody
+	String requestCwbSearch(HttpServletRequest request, HttpServletResponse response) {
 
 		response.setCharacterEncoding("UTF-8");
 
-		if (!b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-			logger.info("未开启[唯速达]查询接口");
+		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+			this.logger.info("未开启[唯速达]查询接口");
 			return "未开启[唯速达]查询接口";
 		}
-		logger.info("进入唯速达数据对接Controller");
-		weisudaService.selectWeisudaCwb();
+		this.logger.info("进入唯速达_01数据对接Controller");
+		this.weisudaService.selectWeisudaCwb();
 
 		return "";
 
 	}
 
 	@RequestMapping("/update")
-	public @ResponseBody String getUnVerifyOrders(HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody
+	String getUnVerifyOrders(HttpServletRequest request, HttpServletResponse response) {
 
 		response.setCharacterEncoding("UTF-8");
 
-		if (!b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-			logger.info("未开启[唯速达]查询接口");
+		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+			this.logger.info("未开启[唯速达]查询接口");
 			return "未开启[唯速达]查询接口";
 		}
-		weisudaService.getUnVerifyOrders();
+		this.weisudaService.getUnVerifyOrders();
 
 		return "";
 
