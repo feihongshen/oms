@@ -71,9 +71,9 @@ public class WeisudaService {
 				public void configure() throws Exception {
 
 					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.savezhandian?concurrentConsumers=1").to("bean:weisudaService?method=siteUpdate").routeId("weisuda_更新站点");
-					// from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.delzhandian?concurrentConsumers=5").to("bean:weisudaService?method=siteDel").routeId("weisuda_撤销站点");
+					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.delzhandian?concurrentConsumers=5").to("bean:weisudaService?method=siteDel").routeId("weisuda_撤销站点");
 					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.courierUpdate?concurrentConsumers=1").to("bean:weisudaService?method=courierUpdate").routeId("weisuda_更新快递员");
-					// from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.carrierDel?concurrentConsumers=5").to("bean:weisudaService?method=carrierDel").routeId("weisuda_删除快递员");
+					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.carrierDel?concurrentConsumers=5").to("bean:weisudaService?method=carrierDel").routeId("weisuda_删除快递员");
 				}
 			});
 		} catch (Exception e) {
@@ -83,7 +83,7 @@ public class WeisudaService {
 
 	/**
 	 * 插入唯速达订单数据
-	 *
+	 * 
 	 * @param cwbOrderWithDeliveryState
 	 * @param orderFlow
 	 */
@@ -216,7 +216,7 @@ public class WeisudaService {
 
 	/**
 	 * APP包裹签收信息同步结果反馈接口
-	 *
+	 * 
 	 * @param 订单号码
 	 */
 	private void updateUnVerifyOrders(String orderid) {
@@ -258,8 +258,8 @@ public class WeisudaService {
 						String memo = "";
 						String paymethod = "";
 						if (deliveryState.getDeliverystate() == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
-							order_status="4";
-							delay_reason=cwbOrder.getLeavedreason();
+							order_status = "4";
+							delay_reason = cwbOrder.getLeavedreason();
 						} else if (deliveryState.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue()) {
 							order_status = "7";
 							reason = cwbOrder.getBackreason();
@@ -276,18 +276,10 @@ public class WeisudaService {
 							pay_status = "4";
 						}
 						String backreason = reason == null ? "" : reason;
-						delay_reason=delay_reason==null?"":delay_reason;
-						String data = "<root>" + "<item>" 
-								+ "<order_id>" + order_id + "</order_id>" 
-								+ "<order_status>" + order_status + "</order_status>" 
-								+ "<pay_status>" + pay_status+ "</pay_status>" 
-								+ "<consignee>" + consignee + "</consignee>" 
-								+ "<opertime>" + opertime + "</opertime>" 
-								+ "<reason>" + backreason + "</reason>" 
-								+ "<delay_reason>" + delay_reason + "</delay_reason>" 
-								+ "<memo>" + memo+ "</memo>" 
-								+ "<paymethod>" + paymethod + "</paymethod>" 
-								+ "</item>" + "</root>";
+						delay_reason = delay_reason == null ? "" : delay_reason;
+						String data = "<root>" + "<item>" + "<order_id>" + order_id + "</order_id>" + "<order_status>" + order_status + "</order_status>" + "<pay_status>" + pay_status
+								+ "</pay_status>" + "<consignee>" + consignee + "</consignee>" + "<opertime>" + opertime + "</opertime>" + "<reason>" + backreason + "</reason>" + "<delay_reason>"
+								+ delay_reason + "</delay_reason>" + "<memo>" + memo + "</memo>" + "<paymethod>" + paymethod + "</paymethod>" + "</item>" + "</root>";
 						this.logger.info("唯速达_04包裹修改信息接口修改发送数据！data={}", data);
 						String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.updateOrders.getValue());
 						if (response.contains("<error><code>")) {
@@ -342,20 +334,27 @@ public class WeisudaService {
 	/**
 	 * 站点撤销接口
 	 */
-	/*
-	 * public void siteDel(@Header("branchid")String branchid){ if
-	 * (!b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-	 * logger.info("未开启[唯速达]接口"); return ; } try { Weisuda weisuda=
-	 * getWeisuda(PosEnum.Weisuda.getKey()); String data="<root>" + "<item>" +
-	 * "<del_code>"+branchid+"</del_code>" + "<rec_code></rec_code>" + "</item>"
-	 * + "</root>"; String response=check(weisuda, "data",
-	 * data,WeisudsInterfaceEnum.siteDel.getValue());
-	 * if("<root></root>".equals(response)) {
-	 * logger.info("站点撤销失败！branchid={}",branchid); } else{
-	 *
-	 * logger.info("站点撤销成功！{}",response); } } catch (Exception e) {
-	 * logger.error("站点撤销信息出错{}",branchid); } }
-	 */
+
+	public void siteDel(@Header("branchid") String branchid) {
+		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+			this.logger.info("未开启[唯速达]接口");
+			return;
+		}
+		try {
+			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+			String data = "<root>" + "<item>" + "<del_code>" + branchid + "</del_code>" + "<rec_code></rec_code>" + "</item>" + "</root>";
+			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteDel.getValue());
+			if ("<root></root>".equals(response)) {
+				this.logger.info("站点撤销失败！branchid={}", branchid);
+			} else {
+
+				this.logger.info("站点撤销成功！{}", response);
+			}
+		} catch (Exception e) {
+			this.logger.error("站点撤销信息出错{}", branchid);
+		}
+	}
+
 	/**
 	 * 快递员信息更新接口
 	 */
@@ -434,7 +433,7 @@ public class WeisudaService {
 
 	/**
 	 * 获取对接电商 的配置 支持同一类客户不同枚举的设置 如：唯品会，天猫，一号店等。
-	 *
+	 * 
 	 * @param customer
 	 * @return
 	 */
