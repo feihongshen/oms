@@ -254,10 +254,12 @@ public class WeisudaService {
 						String opertime = "";
 						opertime = (deliverytime == null ? "" : (deliverytime / 1000) + "");
 						String reason = "";
+						String delay_reason = "";
 						String memo = "";
 						String paymethod = "";
 						if (deliveryState.getDeliverystate() == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
-							return;
+							order_status="4";
+							delay_reason=cwbOrder.getLeavedreason();
 						} else if (deliveryState.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue()) {
 							order_status = "7";
 							reason = cwbOrder.getBackreason();
@@ -274,9 +276,18 @@ public class WeisudaService {
 							pay_status = "4";
 						}
 						String backreason = reason == null ? "" : reason;
-						String data = "<root>" + "<item>" + "<order_id>" + order_id + "</order_id>" + "<order_status>" + order_status + "</order_status>" + "<pay_status>" + pay_status
-								+ "</pay_status>" + "<consignee>" + consignee + "</consignee>" + "<opertime>" + opertime + "</opertime>" + "<reason>" + backreason + "</reason>" + "<memo>" + memo
-								+ "</memo>" + "<paymethod>" + paymethod + "</paymethod>" + "</item>" + "</root>";
+						delay_reason=delay_reason==null?"":delay_reason;
+						String data = "<root>" + "<item>" 
+								+ "<order_id>" + order_id + "</order_id>" 
+								+ "<order_status>" + order_status + "</order_status>" 
+								+ "<pay_status>" + pay_status+ "</pay_status>" 
+								+ "<consignee>" + consignee + "</consignee>" 
+								+ "<opertime>" + opertime + "</opertime>" 
+								+ "<reason>" + backreason + "</reason>" 
+								+ "<delay_reason>" + delay_reason + "</delay_reason>" 
+								+ "<memo>" + memo+ "</memo>" 
+								+ "<paymethod>" + paymethod + "</paymethod>" 
+								+ "</item>" + "</root>";
 						this.logger.info("唯速达_04包裹修改信息接口修改发送数据！data={}", data);
 						String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.updateOrders.getValue());
 						if (response.contains("<error><code>")) {
