@@ -587,10 +587,10 @@
 		<profile>
 			<id>version</id>
 			<properties>
-				<tomcat.manager.url>http://192.168.0.217:8011/manager</tomcat.manager.url>
+				<tomcat.manager.url>http://192.168.0.217:8086/manager</tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
 				<expressurl.maxconn>20</expressurl.maxconn>
-				<expressurl.url>jdbc:mysql://localhost:3306/oms_40818t_test?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.url>jdbc:mysql://localhost:3306/oms_pxwl_smt?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>root</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase>false</expressurl.promptOnNonLocalDatabase>
@@ -1059,7 +1059,7 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<jms.brokerURL>tcp://192.168.1.2:61616</jms.brokerURL>
 				<dmpUrl>http://127.0.0.1/hnjh_smt</dmpUrl>
 				<label>HNJH_SMT</label>
 			</properties>
