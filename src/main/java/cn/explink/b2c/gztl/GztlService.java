@@ -86,7 +86,7 @@ public class GztlService {
 			
 			if ((flowordertype != FlowOrderTypeEnum.YiShenHe.getValue()) && (e.getFlowtype() == flowordertype)) {
 				if ((flowordertype==6&&cwbOrder.getCwbstate()==6)) {
-					GztlEnum.ZhongZhuanChuZhan.setReturnMsg("到错货");
+					GztlEnum.ZhongZhuanChuZhan.setReturnMsg(cwbOrder.getZhongzhuanreason());
 					return GztlEnum.ZhongZhuanChuZhan;
 				}
 				if (flowordertype==4&&cwbOrder.getCwbstate()==6) {

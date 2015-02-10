@@ -105,6 +105,26 @@ public class DmpCwbOrder {
 	private String customerbrackhouseremark; // 供货商拒收返库备注
 
 	private String historybranchname;// 历史配送站点
+	// 2013-12-10 新加字段
+	private long zhongzhuanreasonid;//中转id
+	private String zhongzhuanreason;//中转原因
+	
+
+	public long getZhongzhuanreasonid() {
+		return zhongzhuanreasonid;
+	}
+
+	public void setZhongzhuanreasonid(long zhongzhuanreasonid) {
+		this.zhongzhuanreasonid = zhongzhuanreasonid;
+	}
+
+	public String getZhongzhuanreason() {
+		return zhongzhuanreason;
+	}
+
+	public void setZhongzhuanreason(String zhongzhuanreason) {
+		this.zhongzhuanreason = zhongzhuanreason;
+	}
 
 	public String getHistorybranchname() {
 		return historybranchname;
