@@ -379,11 +379,12 @@ public class WeisudaService {
 		}
 		try {
 			User user = JsonUtil.readValue(jsonUser, User.class);
-			String userMessage = "快递员ID:" + user.getUsername() + " 快递员姓名:" + user.getRealname() + " 快递员站点ID" + user.getBranchid() + " 快递员手机号码:" + user.getUsermobile() + " 快递员登陆密码:"
-					+ user.getPassword();
+			String oldusername = user.getOldusername() == null ? "" : user.getOldusername();
+			String userMessage = "快递员OLDID=" + oldusername + " 快递员ID:" + user.getUsername() + " 快递员姓名:" + user.getRealname() + " 快递员站点ID" + user.getBranchid() + " 快递员手机号码:" + user.getUsermobile()
+					+ " 快递员登陆密码:" + user.getPassword();
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" + "<item>" + "<code>" + user.getUsername() + "</code>" + "<old_code></old_code>" + "<name>" + user.getRealname() + "</name>" + "<site_code>" + user.getBranchid()
-					+ "</site_code>" + "<mobile>" + user.getUsermobile() + "</mobile>" + "<password>" + user.getPassword() + "</password>" + "</item>" + "</root>";
+			String data = "<root>" + "<item>" + "<code>" + user.getUsername() + "</code>" + "<old_code>" + oldusername + "</old_code>" + "<name>" + user.getRealname() + "</name>" + "<site_code>"
+					+ user.getBranchid() + "</site_code>" + "<mobile>" + user.getUsermobile() + "</mobile>" + "<password>" + user.getPassword() + "</password>" + "</item>" + "</root>";
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.courierUpdate.getValue());
 
 			if (response.contains("<error><code>")) {

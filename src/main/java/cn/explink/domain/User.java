@@ -11,6 +11,7 @@ import cn.explink.enumutil.UserEmployeestatusEnum;
 public class User implements Serializable {
 	long userid;
 	String username;
+	String oldusername;
 	String realname;
 	// String lastusername;
 	String password;
@@ -37,7 +38,7 @@ public class User implements Serializable {
 	String deliverManCode; // 配送员编码 add 20130319
 
 	public String getDeliverManCode() {
-		return deliverManCode;
+		return this.deliverManCode;
 	}
 
 	public void setDeliverManCode(String deliverManCode) {
@@ -45,7 +46,7 @@ public class User implements Serializable {
 	}
 
 	public long getUserid() {
-		return userid;
+		return this.userid;
 	}
 
 	public void setUserid(long userid) {
@@ -53,7 +54,15 @@ public class User implements Serializable {
 	}
 
 	public String getUsername() {
-		return username;
+		return this.username;
+	}
+
+	public String getOldusername() {
+		return this.oldusername;
+	}
+
+	public void setOldusername(String oldusername) {
+		this.oldusername = oldusername;
 	}
 
 	public void setUsername(String username) {
@@ -61,7 +70,7 @@ public class User implements Serializable {
 	}
 
 	public String getRealname() {
-		return realname;
+		return this.realname;
 	}
 
 	public void setRealname(String realname) {
@@ -69,7 +78,7 @@ public class User implements Serializable {
 	}
 
 	public String getPassword() {
-		return password;
+		return this.password;
 	}
 
 	public void setPassword(String password) {
@@ -77,7 +86,7 @@ public class User implements Serializable {
 	}
 
 	public long getBranchid() {
-		return branchid;
+		return this.branchid;
 	}
 
 	public void setBranchid(long branchid) {
@@ -91,7 +100,7 @@ public class User implements Serializable {
 	// this.lastusername = lastusername;
 	// }
 	public long getUsercustomerid() {
-		return usercustomerid;
+		return this.usercustomerid;
 	}
 
 	public void setUsercustomerid(long usercustomerid) {
@@ -111,7 +120,7 @@ public class User implements Serializable {
 	// this.departid = departid;
 	// }
 	public String getIdcardno() {
-		return idcardno;
+		return this.idcardno;
 	}
 
 	public void setIdcardno(String idcardno) {
@@ -119,13 +128,14 @@ public class User implements Serializable {
 	}
 
 	public int getEmployeestatus() {
-		return employeestatus;
+		return this.employeestatus;
 	}
 
 	public String getEmployeestatusName() {
 		for (UserEmployeestatusEnum ue : UserEmployeestatusEnum.values()) {
-			if (ue.getValue() == this.employeestatus)
+			if (ue.getValue() == this.employeestatus) {
 				return ue.getText();
+			}
 		}
 		return "";
 	}
@@ -135,7 +145,7 @@ public class User implements Serializable {
 	}
 
 	public String getUserphone() {
-		return userphone;
+		return this.userphone;
 	}
 
 	public void setUserphone(String userphone) {
@@ -143,7 +153,7 @@ public class User implements Serializable {
 	}
 
 	public String getUsermobile() {
-		return usermobile;
+		return this.usermobile;
 	}
 
 	public void setUsermobile(String usermobile) {
@@ -151,7 +161,7 @@ public class User implements Serializable {
 	}
 
 	public String getUseraddress() {
-		return useraddress;
+		return this.useraddress;
 	}
 
 	public void setUseraddress(String useraddress) {
@@ -159,7 +169,7 @@ public class User implements Serializable {
 	}
 
 	public String getUserremark() {
-		return userremark;
+		return this.userremark;
 	}
 
 	public void setUserremark(String userremark) {
@@ -167,7 +177,7 @@ public class User implements Serializable {
 	}
 
 	public BigDecimal getUsersalary() {
-		return usersalary;
+		return this.usersalary;
 	}
 
 	public void setUsersalary(BigDecimal usersalary) {
@@ -175,7 +185,7 @@ public class User implements Serializable {
 	}
 
 	public String getShowphoneflag() {
-		return showphoneflag;
+		return this.showphoneflag;
 	}
 
 	public void setShowphoneflag(String showphoneflag) {
@@ -183,7 +193,7 @@ public class User implements Serializable {
 	}
 
 	public String getUseremail() {
-		return useremail;
+		return this.useremail;
 	}
 
 	public void setUseremail(String useremail) {
@@ -191,7 +201,7 @@ public class User implements Serializable {
 	}
 
 	public String getUserwavfile() {
-		return userwavfile;
+		return this.userwavfile;
 	}
 
 	public void setUserwavfile(String userwavfile) {
@@ -199,7 +209,7 @@ public class User implements Serializable {
 	}
 
 	public long getRoleid() {
-		return roleid;
+		return this.roleid;
 	}
 
 	public void setRoleid(long roleid) {
@@ -214,7 +224,7 @@ public class User implements Serializable {
 	 * branchmanagerflag) { this.branchmanagerflag = branchmanagerflag; }
 	 */
 	public long getUserDeleteFlag() {
-		return userDeleteFlag;
+		return this.userDeleteFlag;
 	}
 
 	public void setUserDeleteFlag(long userDeleteFlag) {
