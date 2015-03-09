@@ -596,12 +596,13 @@ public class WeisudaService {
 		dto.setExptmsg(item.getReason());
 		dto.setFlowordertype(FlowOrderTypeEnum.YiFanKui.getValue() + "");
 		dto.setOperatortime(DateTimeUtil.getNowTime());
-		dto.setCwbremark(item.getMemo());
 		dto.setDeliveryname(item.getCourier_code());
-
+		String payremark = "_";
 		int paytype = 0;
 		if ("1".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.Xianjin.getValue();
+			// paytype = PaytypeEnum.Qita.getValue();
+			payremark = "线上已支付";
 		} else if ("2".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.Xianjin.getValue();
 		} else if ("3".equals(item.getPaymethod())) {
@@ -612,7 +613,21 @@ public class WeisudaService {
 			paytype = PaytypeEnum.Qita.getValue();
 		} else if ("6".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.CodPos.getValue();
+		} else if ("11".equals(item.getPaymethod())) {
+			payremark = "微信APP支付";
+			paytype = PaytypeEnum.Qita.getValue();
+		} else if ("12".equals(item.getPaymethod())) {
+			payremark = "支付宝APP支付";
+			paytype = PaytypeEnum.Qita.getValue();
+		} else if ("13".equals(item.getPaymethod())) {
+			payremark = "工行MPOS";
+			paytype = PaytypeEnum.Qita.getValue();
+		} else if ("14".equals(item.getPaymethod())) {
+			payremark = "快刷MPOS";
+			paytype = PaytypeEnum.Qita.getValue();
 		}
+		dto.setCwbremark(item.getMemo());
+		dto.setPayremark(payremark);
 		dto.setPaytype(paytype);
 		dto.setConsignee(item.getConsignee());
 		if (item.getOpertime() == null) {
