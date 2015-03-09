@@ -604,10 +604,13 @@ public class WeisudaService {
 			// paytype = PaytypeEnum.Qita.getValue();
 			payremark = "线上已支付";
 		} else if ("2".equals(item.getPaymethod())) {
+			payremark = "现金";
 			paytype = PaytypeEnum.Xianjin.getValue();
 		} else if ("3".equals(item.getPaymethod())) {
+			payremark = "POS";
 			paytype = PaytypeEnum.Pos.getValue();
 		} else if ("4".equals(item.getPaymethod())) {
+			payremark = "支付宝COD";
 			paytype = PaytypeEnum.CodPos.getValue();
 		} else if ("5".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.Qita.getValue();
