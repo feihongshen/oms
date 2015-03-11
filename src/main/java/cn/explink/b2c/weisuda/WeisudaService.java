@@ -249,7 +249,7 @@ public class WeisudaService {
 						DmpDeliveryState deliveryState = cwbOrderWithDeliveryState.getDeliveryState();
 						String order_id = cwbOrder.getCwb();
 						String order_status = "";
-						String pay_status = "2";
+						String pay_status = "1";
 						String consignee = "";
 						Long deliverytime = DateTimeUtil.StringToDate(deliveryState.getDeliverytime()).getTime();
 						String opertime = "";
@@ -257,30 +257,40 @@ public class WeisudaService {
 						String reason = "";
 						String delay_reason = "";
 						String memo = "";
-						String paymethod = "";
+						String paymethod = "2";
 						if (deliveryState.getDeliverystate() == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
 							order_status = "4";
 							delay_reason = cwbOrder.getLeavedreason();
+							pay_status = "0";
 						} else if (deliveryState.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue()) {
 							order_status = "7";
 							reason = cwbOrder.getBackreason();
 							consignee = cwbOrder.getConsigneename();
+							pay_status = "0";
 						} else if (deliveryState.getDeliverystate() == DeliveryStateEnum.PeiSongChengGong.getValue()) {
 							order_status = "9";
 							consignee = deliveryState.getSign_man();
+							pay_status = "1";
 						}
 						if (cwbOrder.getPaywayid() == PaytypeEnum.Xianjin.getValue()) {
-							pay_status = "2";
+							paymethod = "2";
 						} else if (cwbOrder.getPaywayid() == PaytypeEnum.Pos.getValue()) {
-							pay_status = "3";
-						} else if (cwbOrder.getPaywayid() == PaytypeEnum.CodPos.getValue()) {
-							pay_status = "4";
+							paymethod = "3";
 						}
 						String backreason = reason == null ? "" : reason;
 						delay_reason = delay_reason == null ? "" : delay_reason;
-						String data = "<root>" + "<item>" + "<order_id>" + order_id + "</order_id>" + "<order_status>" + order_status + "</order_status>" + "<pay_status>" + pay_status
-								+ "</pay_status>" + "<consignee>" + consignee + "</consignee>" + "<opertime>" + opertime + "</opertime>" + "<reason>" + backreason + "</reason>" + "<delay_reason>"
-								+ delay_reason + "</delay_reason>" + "<memo>" + memo + "</memo>" + "<paymethod>" + paymethod + "</paymethod>" + "</item>" + "</root>";
+						String data = "<root>" 
+						+ "<item>" 
+								+ "<order_id>" + order_id + "</order_id>" 
+								+ "<order_status>" + order_status + "</order_status>" 
+								+ "<pay_status>" + pay_status+ "</pay_status>" 
+								+ "<consignee>" + consignee + "</consignee>" 
+								+ "<opertime>" + opertime + "</opertime>" 
+								+ "<reason>" + backreason + "</reason>" 
+								+ "<delay_reason>"+ delay_reason + "</delay_reason>" 
+								+ "<memo>" + memo + "</memo>" 
+								+ "<paymethod>" + paymethod + "</paymethod>" 
+								+ "</item>" + "</root>";
 						this.logger.info("唯速达_04包裹修改信息接口修改发送数据！data={}", data);
 						String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.updateOrders.getValue());
 						if (response.contains("<error><code>")) {
