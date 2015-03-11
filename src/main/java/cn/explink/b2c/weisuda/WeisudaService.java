@@ -224,7 +224,7 @@ public class WeisudaService {
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String send = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<order_id>" + orderid + "</order_id>" + "</item>" + "</root>";
 		this.check(weisuda, "data", send, WeisudsInterfaceEnum.updateUnVerifyOrders.getValue());
-		// this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口 {}", send);
+		this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口 发送报文,userMessage={}", send);
 	}
 
 	/**
@@ -316,6 +316,7 @@ public class WeisudaService {
 			String data = "<root>" + "<item>" + "<code>" + bch.getBranchid() + "</code>" + "<old_code></old_code>" + "<name>" + bch.getBranchname() + "</name>" + "<province>"
 					+ bch.getBranchprovince() + "</province>" + "<city>" + bch.getBranchcity() + "</city>" + "<zone>" + bch.getBrancharea() + "</zone>" + "<password></password>" + "</item>"
 					+ "</root>";
+			this.logger.info("唯速达_05站点更新接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteUpdate.getValue());
 			if (response.contains("<error><code>")) {
 				this.logger.info("唯速达_05站点更新接口验证失败！userMessage={}", response);
@@ -344,6 +345,7 @@ public class WeisudaService {
 		try {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			String data = "<root>" + "<item>" + "<del_code>" + branchid + "</del_code>" + "<rec_code></rec_code>" + "</item>" + "</root>";
+			this.logger.info("唯速达_06站点撤销接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteDel.getValue());
 			if ("<root></root>".equals(response)) {
 				this.logger.info("站点撤销失败！branchid={}", branchid);
@@ -385,6 +387,7 @@ public class WeisudaService {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			String data = "<root>" + "<item>" + "<code>" + user.getUsername() + "</code>" + "<old_code>" + oldusername + "</old_code>" + "<name>" + user.getRealname() + "</name>" + "<site_code>"
 					+ user.getBranchid() + "</site_code>" + "<mobile>" + user.getUsermobile() + "</mobile>" + "<password>" + user.getPassword() + "</password>" + "</item>" + "</root>";
+			this.logger.info("唯速达_07快递员更新接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.courierUpdate.getValue());
 
 			if (response.contains("<error><code>")) {
@@ -417,6 +420,7 @@ public class WeisudaService {
 					+ user.getPassword();
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			String data = "<root>" + "<item>" + "<del_code>" + user.getUsername() + "</del_code>" + "</item>" + "</root>";
+			this.logger.info("唯速达_08快递员删除接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.carrierDel.getValue());
 			if (response.contains("<error><code>")) {
 				this.logger.info("唯速达_08快递员删除接口验证失败！userMessage={}", response);
@@ -460,6 +464,7 @@ public class WeisudaService {
 				String timestamp = (System.currentTimeMillis() / 1000) + "";
 				String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<courier_code>" + courier_code + "</courier_code>" + "<order_id>" + cwb + "</order_id>"
 						+ "<bound_time>" + timestamp + "</bound_time>" + "</item>" + "</root>";
+				this.logger.info("唯速达_01快递员绑定接口接口发送报文,userMessage={}", xml);
 				response = this.check(weisuda, "data", xml, WeisudsInterfaceEnum.pushOrders.getValue());
 
 				this.logger.info("唯速达_01快递员绑定接口返回：{},cwb={}", response, cwb);
