@@ -279,7 +279,7 @@ public class B2cJsonService {
 		}
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Guangzhoutonglu.getKey()))) {
 			return this.buildB2cDataMaster.getBuildGztlB2cData().buildGztlMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
-					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
+					cwbOrderWothDeliverystate.getDeliveryState(), customer,this.objectMapper);
 		}
 		return null;
 

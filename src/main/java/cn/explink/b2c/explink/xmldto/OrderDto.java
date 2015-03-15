@@ -52,9 +52,18 @@ public class OrderDto implements Serializable {
 	private String remark3;
 	private String remark4;
 	private String remark5;
+	private long customerid;
 
 	public String getRemark1() {
 		return remark1;
+	}
+
+	public long getCustomerid() {
+		return customerid;
+	}
+
+	public void setCustomerid(long customerid) {
+		this.customerid = customerid;
 	}
 
 	public void setRemark1(String remark1) {

@@ -16,6 +16,7 @@ import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.dao.CommonSendDataDAO;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.domain.Customer;
 import cn.explink.domain.User;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.DmpCwbOrder;
@@ -57,11 +58,9 @@ public class BuildGztlB2cData {
 	 * @throws JsonGenerationException
 	 * @throws JsonMappingException
 	 */
-	public String buildGztlMethod(DmpOrderFlow orderFlow, long flowOrdertype, DmpCwbOrder cwbOrder, long delivery_state, DmpDeliveryState dmpDeliveryState, ObjectMapper objectMapper)
+	public String buildGztlMethod(DmpOrderFlow orderFlow, long flowOrdertype, DmpCwbOrder cwbOrder, long delivery_state, DmpDeliveryState dmpDeliveryState,Customer customer, ObjectMapper objectMapper)
 			throws IOException, JsonGenerationException, JsonMappingException {
-		if (cwbOrder.getCwb().equals("U1249103976")) {
-			System.out.println("----"+cwbOrder.getCwb());
-		}
+		
 		GztlEnum cmstate = this.gztlService.filterFlowState(delivery_state, cwbOrder, flowOrdertype, delivery_state, Integer.parseInt(cwbOrder.getCwbordertypeid())) == null ? null : this.gztlService
 				.filterFlowState(delivery_state, cwbOrder, flowOrdertype, delivery_state, Integer.parseInt(cwbOrder.getCwbordertypeid()));
 
@@ -107,19 +106,14 @@ public class BuildGztlB2cData {
 		}
 
 		gztlXmlNote.setReturnStatedesc(this.orderFlowDetail.getDetail(orderFlow));// 订单状态详情
-		String cuscode = "";
-		for (CuscodeAndCustomerNameEnum element : CuscodeAndCustomerNameEnum.values()) {
-			if (element.getCustomerName().equals(cwbOrder.getRemark4())) {
-				cuscode = element.getCuscode();
-				break;
-			}
-
-		}
-		gztlXmlNote.setCuscode(cuscode);// ??供货商代码(由飞远提供)
+		
+		CuscodeAndCustomerNameEnum	customerandCode = getCustomerEnum(customer);
+		
+		gztlXmlNote.setCuscode(customerandCode.getCuscode());// ??供货商代码(由飞远提供)
 		gztlXmlNote.setReceiverName(cwbOrder.getConsigneename());// 收件人姓名
 		gztlXmlNote.setReceiverMobile(cwbOrder.getConsigneephone());// 收件人电话
 
-		gztlXmlNote.setCustomername(cwbOrder.getRemark4());// 供货商
+		gztlXmlNote.setCustomername(customerandCode.getCustomerName());// 供货商
 		gztlXmlNote.setSenderName("");// 可以为空，寄件人
 		gztlXmlNote.setSenderMobile("");// 可以为空，寄件人手机
 		String receiveable="";
@@ -163,4 +157,14 @@ public class BuildGztlB2cData {
 	 * senderMobile;// 寄件手机?? private String payinamount;// 代收货款 private String
 	 * arrivedate;// 最初扫描时间 private String lspabbr;// 配送区域
 	 */
+
+	private CuscodeAndCustomerNameEnum getCustomerEnum(Customer customer) {
+		for (CuscodeAndCustomerNameEnum element : CuscodeAndCustomerNameEnum.values()) {
+			if (element.getCuscode().equals(customer.getCustomercode())) {
+				return element;
+			}
+
+		}
+		return null;
+	}
 }

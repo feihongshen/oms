@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.explink.xmldto.OrderDto;
 import cn.explink.b2c.explink.xmldto.OrderFlowDto;
+import cn.explink.b2c.gztl.CuscodeAndCustomerNameEnum;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.gztl.sendFeedbackData.SendFeedbackData;
 import cn.explink.b2c.gztl.sendFeedbackData.SendFeedbackDatas;
@@ -47,12 +48,14 @@ import cn.explink.b2c.maisike.MaisikeService_Send2LvBranch;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.ExptReason;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.dao.CommonSendDataDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WarehouseCommenDAO;
+import cn.explink.domain.Customer;
 import cn.explink.domain.WarehouseToCommen;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -80,6 +83,9 @@ public class GztlServiceFeedback {
 	@Autowired
 	CommonSendDataDAO commonSendDataDAO;
 
+	@Autowired
+	CacheBaseListener cacheBaseListener;
+	
 	/**
 	 * 获取广州通路配置信息并转化成为Gztl这个类中的信息
 	 *
@@ -214,16 +220,18 @@ public class GztlServiceFeedback {
 			EcisServiceHttpBindingStub ce = new EcisServiceHttpBindingStub(new URL(url), new org.apache.axis.client.Service());
 			TraceArgs traceArgs = new TraceArgs();
 			traceArgs.setCode(gztl.getCode());
-			System.out.println(gztl.getCode());
+			//System.out.println(gztl.getCode());
 			traceArgs.setInvokeMethod(gztl.getInvokeMethod());
-			System.out.println(gztl.getInvokeMethod());
-			System.out.println(gztl.getPrivate_key());
+			//System.out.println(gztl.getInvokeMethod());
+			//System.out.println(gztl.getPrivate_key());
 			String sign = MD5Util.md5(xmlString + gztl.getPrivate_key());
-			System.out.println(sign);
+			this.logger.info("广州通路key信息={}", sign);
 			traceArgs.setSign(sign);
 			traceArgs.setXml(URLEncoder.encode(xmlString,"utf-8"));
+			this.logger.info("广州通路反馈兄弟推送出库xml信息={}",URLEncoder.encode(xmlString,"utf-8"));
 			String responseData = URLDecoder.decode(ce.orderAndFeedbackApi(traceArgs), "UTF-8");
-			System.out.println(responseData);
+			this.logger.info("广州通路反馈兄弟推送出库返回来的响应：={}",responseData);
+			//System.out.println(responseData);
 			/**
 			 * 在下面利用webservice实现参数的传递????还没实现
 			 */
@@ -256,7 +264,6 @@ public class GztlServiceFeedback {
 
 	private List<SendFeedbackData> buildOutLv2BranchList_forward(List<OrderDto> respOrders, List<WarehouseToCommen> commondataList, Map<String, WarehouseToCommen> comenMap)
 			throws UnsupportedEncodingException {
-		String customerCode = "";
 		List<SendFeedbackData> orderList = new ArrayList<SendFeedbackData>();
 		// List<Branch> branchlist = this.getDmpDAO.getAllBranchs();这个有什么作用
 		for (OrderDto orderDto : respOrders) {
@@ -272,15 +279,16 @@ public class GztlServiceFeedback {
 					}
 					sData.setSubWaybillNo(subWaybillNo);// 子运单号？？
 					sData.setOrderNo(orderDto.getCwb());// 订单号
-					sData.setCustName(orderDto.getRemark4());// 客户名称???
-					for (CuscodeAndCustomerNameEnum customerNameEnum : CuscodeAndCustomerNameEnum.values()) {
-						if (customerNameEnum.getCustomerName().contains(orderDto.getRemark4())) {
-							customerCode = customerNameEnum.getCuscode();
-							break;
-						}
-					}
-					sData.setCustCode(customerCode);
 					
+					
+					
+					Customer customer = this.cacheBaseListener.getCustomer(orderDto.getCustomerid());
+					
+					CuscodeAndCustomerNameEnum	customerCodeEnum = getCustomerEnum(customer);
+					
+					
+					sData.setCustCode(customerCodeEnum.getCuscode());
+					sData.setCustName(customerCodeEnum.getCustomerName());// 客户名称???
 				
 					
 					sData.setOrderType(orderDto.getCwbordertypeid() + "");
@@ -341,6 +349,16 @@ public class GztlServiceFeedback {
 
 	}
 
+	private CuscodeAndCustomerNameEnum getCustomerEnum(Customer customer) {
+		for (CuscodeAndCustomerNameEnum element : CuscodeAndCustomerNameEnum.values()) {
+			if (element.getCuscode().equals(customer.getCustomercode())) {
+				return element;
+			}
+
+		}
+		return null;
+	}
+	
 	/**
 	 * 处理广州通路返回的信息节点
 	 *
@@ -557,7 +575,7 @@ public class GztlServiceFeedback {
 		long customerid=this.WarehouseCommenDAO.getCommenCwbBycwb(orderFeedback.getWaybillNo()).getCustomerid();
 		if (flowordertype==35||flowordertype==36) {
 			String except_code=orderFeedback.getStatus()+"_"+orderFeedback.getReason();
-			ExptReason exptReason=this.b2ctools.getGztlExptReason(customerid,except_code);
+			ExptReason exptReason=this.b2ctools.getGztlExptReason(0,except_code);
 			String content="";
 			if (exptReason!=null) {
 				content=exptReason.getExpt_code();//我们系统里面的信息异常原因

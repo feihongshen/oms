@@ -119,7 +119,7 @@ public class GztlService {
 			}
 
 			if ((deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenJuTui.getValue())) {
-				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(0, cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(0, cwbOrder.getBackreasonid(), String.valueOf(0), delivery_state);
 				
 				String reasonString = exptReason.getExpt_code();
 				
@@ -133,15 +133,15 @@ public class GztlService {
 
 			if (deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
 
-				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(0), delivery_state);
 				String reasonString = exptReason.getExpt_code();
 				
 					System.out.println(reasonString);
 					String[] reason = reasonString.split("_");
 					if (reason[0].equals(GztlEnum.KehuYanqi.getState())) {
 						GztlEnum.KehuYanqi.setReturnMsg(reason[reason.length - 1]);
-						System.out.println("第一个参数：" + reason[0]);
-						System.out.println("第二个参数：" + reason[1]);
+						//System.out.println("第一个参数：" + reason[0]);
+						//System.out.println("第二个参数：" + reason[1]);
 						return GztlEnum.KehuYanqi;
 					} else {
 						GztlEnum.Peisongyanchi.setReturnMsg(reason[reason.length - 1]);
@@ -302,7 +302,7 @@ public class GztlService {
 		subBuffer.append("</TMS>");
 		this.logger.info("生成符合广州通路的xml数据：{}", subBuffer.toString());
 		b2cidsString = b2cidsString.length() > 0 ? b2cidsString.substring(0, b2cidsString.length() - 1) : b2cidsString;
-		System.out.println(b2cidsString);
+	//	System.out.println(b2cidsString);
 
 		// JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 		// factory.getInInterceptors().add(new LoggingInInterceptor());
@@ -352,15 +352,18 @@ public class GztlService {
 		TraceArgs traceArgs = new TraceArgs();
 		traceArgs.setCode(gztl.getCode());
 		traceArgs.setInvokeMethod(gztl.getInvokeMethod());
-		String sign = MD5Util.md5(subBuffer.toString() + gztl.getSign());
-		System.out.println(gztl.getSign());
-		System.out.println(sign);
+		String sign = MD5Util.md5(subBuffer.toString() + gztl.getPrivate_key());
+		//System.out.println(gztl.getPrivate_key());
+		//System.out.println(sign);
 		traceArgs.setSign(sign);
 		traceArgs.setXml(subBuffer.toString());
 		String responseString = URLDecoder.decode(ce.orderAndFeedbackApi(traceArgs), "UTF-8");
 		// WebserviceImp wImp = new WebserviceImp();
 		// String responseString = wImp.getSendWs(traceArgs);
-		System.out.println(responseString);
+		//System.out.println(responseString);
+		
+		logger.info("通路返回信息xml={}",responseString);
+		
 		TmsFeedback tmsFeedback = (TmsFeedback) this.xmlToObject(responseString, new TmsFeedback());
 		if (tmsFeedback == null) {
 			this.logger.warn("请求0广州通路0解析xml为空，跳出循环,throw Exception,xml={}", responseString);
