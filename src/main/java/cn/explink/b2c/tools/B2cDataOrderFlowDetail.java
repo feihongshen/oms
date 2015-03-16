@@ -35,6 +35,8 @@ public class B2cDataOrderFlowDetail {
 	GetDmpDAO getdmpDao;
 	@Autowired
 	DeliveryStateDAO deliveryDAO;
+	@Autowired
+	CacheBaseListener cacheBaseListener;
 
 	private Logger logger = LoggerFactory.getLogger(BulidVipShopB2cData.class);
 
@@ -47,9 +49,13 @@ public class B2cDataOrderFlowDetail {
 	}
 
 	public String getDetail(DmpOrderFlow orderFlow) {
+		
+		
+		
 		try {
 			User operatorUser = getUserById(orderFlow.getUserid());
-
+			logger.info("====cwb={},flowordertype="+orderFlow.getFlowordertype()+",user={}==================",orderFlow.getCwb(),JacksonMapper.getInstance().writeValueAsString(operatorUser));
+			
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.DaoRuShuJu.getValue()) {
 				return MessageFormat.format("从[{0}]导入数据", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}

@@ -110,8 +110,8 @@ public class BuildGztlB2cData {
 		CuscodeAndCustomerNameEnum	customerandCode = getCustomerEnum(customer);
 		
 		gztlXmlNote.setCuscode(customerandCode.getCuscode());// ??供货商代码(由飞远提供)
-		gztlXmlNote.setReceiverName(cwbOrder.getConsigneename());// 收件人姓名
-		gztlXmlNote.setReceiverMobile(cwbOrder.getConsigneephone());// 收件人电话
+		gztlXmlNote.setReceiverName(cwbOrder.getConsigneenameOfkf());// 收件人姓名
+		gztlXmlNote.setReceiverMobile(cwbOrder.getConsigneephoneOfkf());// 收件人电话
 
 		gztlXmlNote.setCustomername(customerandCode.getCustomerName());// 供货商
 		gztlXmlNote.setSenderName("");// 可以为空，寄件人
@@ -125,7 +125,7 @@ public class BuildGztlB2cData {
 		gztlXmlNote.setPayinamount(receiveable);// 代收货款
 		gztlXmlNote.setArrivedate(cwbOrder.getEmaildate());// ??最初扫描时间
 		gztlXmlNote.setLspabbr("");// 可以为空,配送区域
-		gztlXmlNote.setPcs(String.valueOf(cwbOrder.getSendcarnum()==0?cwbOrder.getBackcarnum():cwbOrder.getScannum()));
+		gztlXmlNote.setPcs(String.valueOf(cwbOrder.getSendcarnum()==0?cwbOrder.getBackcarnum():cwbOrder.getSendcarnum()));
 		String cwbOrderType = "";
 		if (cwbOrder.getCwbordertypeid().equals("1")) {
 			cwbOrderType = BuildGztlB2cData.PEISONG;

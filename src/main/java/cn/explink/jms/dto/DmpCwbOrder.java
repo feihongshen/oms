@@ -108,7 +108,38 @@ public class DmpCwbOrder {
 	// 2013-12-10 新加字段
 	private long zhongzhuanreasonid;//中转id
 	private String zhongzhuanreason;//中转原因
+	/**
+	 * 广州通路对接接口需要添加的字段
+	 */
+	private String consigneenameOfkf;
+	private String consigneemobileOfkf;
+	private String consigneephoneOfkf;
 	
+	
+
+	public String getConsigneenameOfkf() {
+		return consigneenameOfkf;
+	}
+
+	public void setConsigneenameOfkf(String consigneenameOfkf) {
+		this.consigneenameOfkf = consigneenameOfkf;
+	}
+
+	public String getConsigneemobileOfkf() {
+		return consigneemobileOfkf;
+	}
+
+	public void setConsigneemobileOfkf(String consigneemobileOfkf) {
+		this.consigneemobileOfkf = consigneemobileOfkf;
+	}
+
+	public String getConsigneephoneOfkf() {
+		return consigneephoneOfkf;
+	}
+
+	public void setConsigneephoneOfkf(String consigneephoneOfkf) {
+		this.consigneephoneOfkf = consigneephoneOfkf;
+	}
 
 	public long getZhongzhuanreasonid() {
 		return zhongzhuanreasonid;
