@@ -575,7 +575,7 @@ public class GztlServiceFeedback {
 		long customerid=this.WarehouseCommenDAO.getCommenCwbBycwb(orderFeedback.getWaybillNo()).getCustomerid();
 		if (flowordertype==35||flowordertype==36) {
 			String except_code=orderFeedback.getStatus()+"_"+orderFeedback.getReason();
-			ExptReason exptReason=this.b2ctools.getGztlExptReason(0,except_code);
+			ExptReason exptReason=this.b2ctools.getGztlExptReason(-2,except_code);
 			String content="";
 			if (exptReason!=null) {
 				content=exptReason.getExpt_code();//我们系统里面的信息异常原因
