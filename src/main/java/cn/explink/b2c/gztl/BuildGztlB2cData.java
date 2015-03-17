@@ -87,9 +87,9 @@ public class BuildGztlB2cData {
 
 		String sign_man = "";
 		if (dmpDeliveryState != null) {
-			sign_man = (dmpDeliveryState.getSign_man() == null) || dmpDeliveryState.getSign_man().isEmpty() ? cwbOrder.getConsigneename() : dmpDeliveryState.getSign_man();
+			sign_man = (dmpDeliveryState.getSign_man() == null) || dmpDeliveryState.getSign_man().isEmpty() ? cwbOrder.getConsigneenameOfkf() : dmpDeliveryState.getSign_man();
 		}
-
+		
 		gztlXmlNote.setSignname(sign_man);// 签收人
 		gztlXmlNote.setOpDt(DateTimeUtil.formatDateLong(orderFlow.getCredate(), "yyyy-MM-dd HH:mm:ss"));// ??网点反馈时间/签收时间/导入时间/出入库时间
 
