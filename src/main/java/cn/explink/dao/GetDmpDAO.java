@@ -484,7 +484,7 @@ public class GetDmpDAO {
 				customer.setCustomerid(jSONArray.getJSONObject(i).getLong("customerid"));
 				customer.setCustomername(jSONArray.getJSONObject(i).getString("customername"));
 				customer.setB2cEnum(jSONArray.getJSONObject(i).getString("b2cEnum"));
-				customer.setCustomercode(jSONArray.getJSONObject(i).getString("customerode"));
+				customer.setCustomercode(jSONArray.getJSONObject(i).getString("customercode"));
 				list.add(customer);
 			}
 		} catch (Exception e) {
