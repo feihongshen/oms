@@ -2139,7 +2139,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8081/hnyt</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8082/hnyt</dmpUrl>
 				<label>HNYT</label>
 			</properties>
 		</profile>
@@ -2155,7 +2155,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8082/tsqc</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8081/tsqc</dmpUrl>
 				<label>TSQC</label>
 			</properties>
 		</profile>
