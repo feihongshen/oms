@@ -12,7 +12,7 @@ public enum GztlEnum {
 	ChukuSaomiao(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(), "出入库", "发件", "",""),
 	FenZhanDaoHuo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(), "出入库", "到件", "",""),
 	Deliverying(FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "出入库", "派件", "",""), 
-	TuiGongYingShangChuKu(FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue(), "出入库","退件确认", "",""), 
+	TuiGongYingShangChuKu(FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue(), "出入库","退供应商 ", "",""),
 	TuiHuoZhanRuKu(FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue(), "出入库", "退件到件", "",""),
 	TuiHuoChuZhan(FlowOrderTypeEnum.TuiHuoChuZhan.getValue(), "出入库", "退件发件", "",""),
 	ZhongZhuanChuZhan(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(),"出入库","转件","",""),
@@ -26,7 +26,7 @@ public enum GztlEnum {
 	Peisongchenggong(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送成功", "配送成功",""), 
 	Peisongshibai(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送失败", "配送失败",""), 
 	Peisongyanchi(FlowOrderTypeEnum.YiShenHe.getValue(), "反馈", "配送延迟", "配送延迟",""),
-	TuiGonghuoshangChengGong(FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue(),"出入库","退供应商","","")
+	TuiGonghuoshangChengGong(FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue(),"出入库","退件确认","","")
 	;
 	private long flowtype;//本系统中的订单流程状态
 	private String optype;//反馈类型
