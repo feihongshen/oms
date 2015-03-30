@@ -2204,7 +2204,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://172.20.200.28:61616</jms.brokerURL>
-				<dmpUrl>http://172.20.200.25/hbpj</dmpUrl>
+				<dmpUrl>http://172.20.200.25:8080/hbpj</dmpUrl>
 				<label>HBPJ</label>
 			</properties>
 		</profile>
