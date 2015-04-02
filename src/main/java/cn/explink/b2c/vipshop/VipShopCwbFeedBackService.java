@@ -500,6 +500,7 @@ public class VipShopCwbFeedBackService {
 		xml = xml.replaceAll("<trace>", "").replaceAll("</trace>", "").replaceAll("<cust_data_id>", "").replaceAll("</cust_data_id>", "").replaceAll("<order_sn>", "").replaceAll("</order_sn>", "")
 				.replaceAll("<order_status>", "").replaceAll("</order_status>", "").replaceAll("<order_status_info>", "").replaceAll("</order_status_info>", "").replaceAll("<current_city_name>", "")
 				.replaceAll("</current_city_name>", "").replaceAll("<order_status_time>", "").replaceAll("</order_status_time>", "").replaceAll("<sign_man>", "").replaceAll("</sign_man>", "")
+			
 		// .replaceAll("<deliver_name>","").replaceAll("</deliver_name>","")
 		// //不参与签名
 		// .replaceAll("<delivery_phone>","").replaceAll("</delivery_phone>","")
@@ -508,7 +509,13 @@ public class VipShopCwbFeedBackService {
 
 			xml = xml.substring(0, xml.indexOf("<delivery_name>"));
 		}
+		//	.replaceAll("<is_unpacked>", "").replaceAll("</is_unpacked>", "") 不参与签名
+		if (xml.contains("<is_unpacked>") && xml.contains("</is_unpacked>")) {
 
+			xml = xml.substring(0, xml.indexOf("<is_unpacked>"));
+		}
+		
+		
 		return xml;
 	}
 
