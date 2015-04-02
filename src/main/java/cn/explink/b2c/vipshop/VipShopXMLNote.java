@@ -26,6 +26,15 @@ public class VipShopXMLNote {
 	private String deliver_name;
 	private String deliver_mobile;
 	private String station;
+	private String is_unpacked=""; //是否开箱验货 1_客户拒收
+
+	public String getIs_unpacked() {
+		return is_unpacked;
+	}
+
+	public void setIs_unpacked(String is_unpacked) {
+		this.is_unpacked = is_unpacked;
+	}
 
 	public String getDeliver_name() {
 		return deliver_name;

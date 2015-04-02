@@ -356,7 +356,7 @@ public class VipShopCwbFeedBackService {
 			sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 			sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 			sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
-
+			sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
 			sub1.append("</trace>");
 
 			if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
@@ -371,6 +371,7 @@ public class VipShopCwbFeedBackService {
 				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 				sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+				sub1.append("<is_unpacked></is_unpacked>");
 				sub1.append("</trace>");
 			}
 		}
