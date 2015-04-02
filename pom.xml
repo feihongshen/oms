@@ -2210,5 +2210,38 @@
 		</profile>
 		
 		
+		<profile>
+			<id>JLPJ</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.31:3306/jlpj_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://172.20.200.28:8080/jlpj</dmpUrl>
+				<label>JLPJ</label>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>SHPJ</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.27:3306/shpj_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://172.20.200.29:8080/shpj</dmpUrl>
+				<label>SHPJ</label>
+			</properties>
+		</profile>
+		
+		
 	</profiles>
 </project>
