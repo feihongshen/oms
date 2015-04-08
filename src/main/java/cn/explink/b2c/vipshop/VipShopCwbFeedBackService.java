@@ -468,14 +468,19 @@ public class VipShopCwbFeedBackService {
 
 				if ((orderGoodslist != null) && (orderGoodslist.size() > 0)) {
 
+					String reason = note.getGoods_reason();
 					for (OrderGoods orderGoods : orderGoodslist) {
+						String goodsReason=orderGoods.getReturn_reason();
+						if(goodsReason== null||goodsReason.isEmpty()){
+							goodsReason = reason;
+						}
 						sub_detail.append("<detail>");
 						sub_detail.append("<goods_code><![CDATA[" + orderGoods.getGoods_code() + "]]></goods_code>");
 						sub_detail.append("<goods_name><![CDATA[" + orderGoods.getGoods_name() + "]]></goods_name>");
 						sub_detail.append("<goods_num>" + orderGoods.getGoods_num() + "</goods_num>");
 						sub_detail.append("<fetch_goods_num>" + orderGoods.getShituicount() + "</fetch_goods_num>");
 						sub_detail.append("<special_goods_num>" + orderGoods.getTepituicount() + "</special_goods_num>");
-						sub_detail.append("<remark><![CDATA[" + orderGoods.getReturn_reason() + "]]></remark>");
+						sub_detail.append("<remark><![CDATA[" + goodsReason + "]]></remark>");
 						sub_detail.append("</detail>");
 
 					}

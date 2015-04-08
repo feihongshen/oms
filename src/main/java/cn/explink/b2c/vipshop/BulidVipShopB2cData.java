@@ -80,6 +80,11 @@ public class BulidVipShopB2cData {
 						|| VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))) {
 					String details = filterGoodDetails(cwbOrder, delivery_state);
 					vipshopXMLNote.setDetails(details);
+					
+					 if(VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))){
+						 vipshopXMLNote.setGoods_reason(cwbOrder.getBackreason());
+					 }
+					
 				}
 				vipshopXMLNote.setShangmenlanshoutime(deliveryState != null ? deliveryState.getShangmenlanshoutime() : "");
 

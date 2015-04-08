@@ -27,6 +27,15 @@ public class VipShopXMLNote {
 	private String deliver_mobile;
 	private String station;
 	private String is_unpacked=""; //是否开箱验货 1_客户拒收
+	private String goods_reason; //未退原因
+
+	public String getGoods_reason() {
+		return goods_reason;
+	}
+
+	public void setGoods_reason(String goods_reason) {
+		this.goods_reason = goods_reason;
+	}
 
 	public String getIs_unpacked() {
 		return is_unpacked;
