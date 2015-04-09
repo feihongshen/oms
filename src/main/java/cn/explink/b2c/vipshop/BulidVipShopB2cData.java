@@ -208,7 +208,7 @@ public class BulidVipShopB2cData {
 		if (orderGoodslist != null && orderGoodslist.size() > 0) {
 			for (OrderGoods good : orderGoodslist) {
 				if (delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue()) {
-					if (good.getShituicount() == 0 && good.getWeituicount() == 0) {
+					if (good.getShituicount() == 0 || good.getWeituicount() == 0) {
 						good.setShituicount(Integer.valueOf(good.getGoods_num()));
 					}
 				}
