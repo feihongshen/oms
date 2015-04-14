@@ -41,60 +41,38 @@ public class GztlController {
 	 */
 	@RequestMapping("/feedback")
 	public @ResponseBody String searchGztl(HttpServletRequest request) throws Exception {
-		int key = B2cEnum.GuangzhoutongluWaifadan.getKey();
 		String xml = null;
-		boolean isOpenFlag = this.b2cTools.isB2cOpen(key);
-		if (!isOpenFlag) {
-			return "未开启0广州通路外发0对接接口";
-			// this.errorReturnData("F", "未开启0广州通路外发0对接接口")
+		try {
+			int key = B2cEnum.GuangzhoutongluWaifadan.getKey();
+			boolean isOpenFlag = this.b2cTools.isB2cOpen(key);
+			if (!isOpenFlag) {
+				return "未开启0广州通路外发0对接接口";
+				// this.errorReturnData("F", "未开启0广州通路外发0对接接口")
+			}
+			GztlFeedback gztl = this.gztlServiceFeedback.getGztlFeedback(key);
+			xml = request.getParameter("XML");
+			System.out.println(xml);
+			String MD5 = request.getParameter("MD5");
+			xml = URLDecoder.decode(xml, "UTF-8");
+			System.out.println(xml);
+			this.logger.info("外发单订单反馈推送接口推送参数xml={},MD5={}", xml, MD5);
+			String localSignString = MD5Util.md5(xml + gztl.getPrivate_key());
+			System.out.println(localSignString);
+
+			if (!MD5.equalsIgnoreCase(localSignString)) {
+				this.logger.info("签名验证失败,xml={},MD5={}", xml, MD5);
+				return this.gztlServiceFeedback.errorReturnData("F", "签名验证失败" );
+
+			}
+
+			String responseString = this.gztlServiceFeedback.receivedOrderFeedback(xml, gztl);
+			return responseString;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			this.logger.error("0广州通路外发单处理业务逻辑异常（可能xml为空）！" + xml, e);
+			return this.gztlServiceFeedback.errorReturnData("F", "业务处理异常" );
+
 		}
-		GztlFeedback gztl = this.gztlServiceFeedback.getGztlFeedback(key);
-		xml = request.getParameter("XML");
-		System.out.println(xml);
-		String MD5 = request.getParameter("MD5");
-		xml = URLDecoder.decode(xml, "UTF-8");
-		System.out.println(xml);
-		this.logger.info("外发单订单反馈推送接口推送参数xml={},MD5={}", xml, MD5);
-		String localSignString = MD5Util.md5(xml + gztl.getPrivate_key());
-		System.out.println(localSignString);
-
-		if (!MD5.equalsIgnoreCase(localSignString)) {
-			this.logger.info("签名验证失败,xml={},MD5={}", xml, MD5);
-			return this.gztlServiceFeedback.errorReturnData("F", "签名验证失败" );
-
-		}
-
-		String responseString = this.gztlServiceFeedback.receivedOrderFeedback(xml, gztl);
-		return responseString;
-		/*
-		 * String XML = request.getParameter("XML"); String MD5 =
-		 * request.getParameter("MD5");
-		 * 
-		 * RespStatus respStatus = new RespStatus(); String fn =
-		 * request.getParameter("fn"); String appname =
-		 * request.getParameter("appname"); String apptime =
-		 * request.getParameter("apptime"); String appkey =
-		 * request.getParameter("appkey"); String appdata =
-		 * request.getParameter("appdata");
-		 * 
-		 * String repsonsedata = null; try {
-		 * 
-		 * appdata = URLDecoder.decode(appdata, "UTF-8"); logger.info(
-		 * "状态反馈-迈思可请求信息fn={},appname={},apptime={},appkey={],appdata={}", new
-		 * Object[] { fn, appname, apptime, appkey, appdata });
-		 * 
-		 * repsonsedata = maisikeService_Feedback.receivedOrderFeedback(fn,
-		 * appname, apptime, appkey, appdata);
-		 * logger.info("状态反馈-返回迈思可信息data={}", repsonsedata); return
-		 * repsonsedata;
-		 * 
-		 * } catch (Exception e) {
-		 * respStatus.setCode(MaisikeExpEmum.CommitFailed.getErrCode());
-		 * respStatus.setMsg(MaisikeExpEmum.CommitFailed.getErrMsg() +
-		 * e.getMessage()); String respdatas =
-		 * JacksonMapper.getInstance().writeValueAsString(respStatus);
-		 * logger.info("状态反馈-返回迈思可信息data={}", respdatas); return respdatas; }
-		 */
 	}
 
 	@RequestMapping("/testinsert")
