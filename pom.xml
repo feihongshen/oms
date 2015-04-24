@@ -395,7 +395,7 @@
 		
 	</dependencies>
 	<build>
-		<finalName>oms_pxwl_smt</finalName>
+		<finalName>oms_pj</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -531,7 +531,7 @@
 					<url>${tomcat.manager.url}</url>
 					<username>tomcat</username>
 					<password>explink</password>
-					<path>/oms_pxwl_smt</path>
+					<path>/oms_pj</path>
 					<update>true</update>
 				</configuration>
 			</plugin>
@@ -2292,7 +2292,7 @@
 		</profile>
 		
 		<profile>
-			<id>dmp4.1</id>
+			<id>version_pj</id>
 			<properties>
 				<tomcat.manager.url>http://192.168.0.217:8041/manager</tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
@@ -2302,8 +2302,8 @@
 				<expressurl.password>root</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase>false</expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8041/dmp4.1</dmpUrl>
-				<label>dmp4.1</label>
+				<dmpUrl>http://127.0.0.1:8041/dmp_pj</dmpUrl>
+				<label>version_pj</label>
 			</properties>
 		</profile>
 
