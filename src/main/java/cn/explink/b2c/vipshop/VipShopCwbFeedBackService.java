@@ -356,7 +356,7 @@ public class VipShopCwbFeedBackService {
 			sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 			sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 			sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
-
+			sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
 			sub1.append("</trace>");
 
 			if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
@@ -371,6 +371,7 @@ public class VipShopCwbFeedBackService {
 				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 				sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+				sub1.append("<is_unpacked></is_unpacked>");
 				sub1.append("</trace>");
 			}
 		}
@@ -467,14 +468,19 @@ public class VipShopCwbFeedBackService {
 
 				if ((orderGoodslist != null) && (orderGoodslist.size() > 0)) {
 
+					String reason = note.getGoods_reason();
 					for (OrderGoods orderGoods : orderGoodslist) {
+						String goodsReason=orderGoods.getReturn_reason();
+						if(goodsReason== null||goodsReason.isEmpty()){
+							goodsReason = reason;
+						}
 						sub_detail.append("<detail>");
-						sub_detail.append("<goods_code>" + orderGoods.getGoods_code() + "</goods_code>");
-						sub_detail.append("<goods_name>" + orderGoods.getGoods_name() + "</goods_name>");
+						sub_detail.append("<goods_code><![CDATA[" + orderGoods.getGoods_code() + "]]></goods_code>");
+						sub_detail.append("<goods_name><![CDATA[" + orderGoods.getGoods_name() + "]]></goods_name>");
 						sub_detail.append("<goods_num>" + orderGoods.getGoods_num() + "</goods_num>");
 						sub_detail.append("<fetch_goods_num>" + orderGoods.getShituicount() + "</fetch_goods_num>");
 						sub_detail.append("<special_goods_num>" + orderGoods.getTepituicount() + "</special_goods_num>");
-						sub_detail.append("<remark>" + orderGoods.getReturn_reason() + "</remark>");
+						sub_detail.append("<remark><![CDATA[" + goodsReason + "]]></remark>");
 						sub_detail.append("</detail>");
 
 					}
@@ -499,6 +505,8 @@ public class VipShopCwbFeedBackService {
 		xml = xml.replaceAll("<trace>", "").replaceAll("</trace>", "").replaceAll("<cust_data_id>", "").replaceAll("</cust_data_id>", "").replaceAll("<order_sn>", "").replaceAll("</order_sn>", "")
 				.replaceAll("<order_status>", "").replaceAll("</order_status>", "").replaceAll("<order_status_info>", "").replaceAll("</order_status_info>", "").replaceAll("<current_city_name>", "")
 				.replaceAll("</current_city_name>", "").replaceAll("<order_status_time>", "").replaceAll("</order_status_time>", "").replaceAll("<sign_man>", "").replaceAll("</sign_man>", "")
+				.replaceAll("<is_unpacked></is_unpacked>", "").replaceAll("<is_unpacked>0</is_unpacked>", "").replaceAll("<is_unpacked>1</is_unpacked>", "")
+			
 		// .replaceAll("<deliver_name>","").replaceAll("</deliver_name>","")
 		// //不参与签名
 		// .replaceAll("<delivery_phone>","").replaceAll("</delivery_phone>","")
@@ -507,7 +515,13 @@ public class VipShopCwbFeedBackService {
 
 			xml = xml.substring(0, xml.indexOf("<delivery_name>"));
 		}
-
+		//	.replaceAll("<is_unpacked>", "").replaceAll("</is_unpacked>", "") 不参与签名
+//		if (xml.contains("<is_unpacked>") && xml.contains("</is_unpacked>")) {
+//
+//			xml = xml.substring(0, xml.indexOf("<is_unpacked>"));
+//		}
+		
+		
 		return xml;
 	}
 
