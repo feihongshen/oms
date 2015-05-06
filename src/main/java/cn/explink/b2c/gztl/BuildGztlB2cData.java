@@ -84,7 +84,7 @@ public class BuildGztlB2cData {
 		gztlXmlNote.setReturnState(cmstate.getReturnState());
 		gztlXmlNote.setReturnCause(cmstate.getReturnMsg());// ??网点反馈原因(由飞远提供)?????????
 		gztlXmlNote.setReturnRemark(cmstate.getReturnMsg());// ??网点反馈备注(由飞远提供)????????
-
+		gztlXmlNote.setLspabbr(cwbOrder.getRemark3());// 可以为空,配送区域
 		String sign_man = "";
 		if (dmpDeliveryState != null) {
 			sign_man = (dmpDeliveryState.getSign_man() == null) || dmpDeliveryState.getSign_man().isEmpty() ? cwbOrder.getConsigneenameOfkf() : dmpDeliveryState.getSign_man();
@@ -133,7 +133,7 @@ public class BuildGztlB2cData {
 		}
 		gztlXmlNote.setPayinamount(receiveable);// 代收货款
 		gztlXmlNote.setArrivedate(cwbOrder.getEmaildate());// ??最初扫描时间
-		gztlXmlNote.setLspabbr("");// 可以为空,配送区域
+		//gztlXmlNote.setLspabbr("");// 可以为空,配送区域
 		gztlXmlNote.setPcs(String.valueOf(cwbOrder.getSendcarnum()==0?cwbOrder.getBackcarnum():cwbOrder.getSendcarnum()));
 		String cwbOrderType = "";
 		if (cwbOrder.getCwbordertypeid().equals("1")) {

@@ -288,7 +288,7 @@ public class GztlService {
 			subBuffer.append("<senderMobile>" + "" + "</senderMobile>");// 寄件手机
 			subBuffer.append("<payinamount>" + note.getPayinamount() + "</payinamount>");// 代收货款
 			subBuffer.append("<arrivedate>" + note.getArrivedate() + "</arrivedate>");// 最初扫描时间
-			subBuffer.append("<lspabbr>" + "" + "</lspabbr>");// 配送区域
+			subBuffer.append("<lspabbr>" + note.getLspabbr() + "</lspabbr>");// 配送区域
 			subBuffer.append("<pcs>" + note.getPcs() + "</pcs>");
 			subBuffer.append("<business>" + note.getBusiness() + "</business>");
 			subBuffer.append("</TMSFeedback>");
