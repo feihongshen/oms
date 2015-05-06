@@ -274,7 +274,7 @@ public class GztlServiceFeedback {
 					SendFeedbackData sData = new SendFeedbackData();
 					sData.setWaybillNo(orderDto.getCwb());// 运单号
 					String subWaybillNo = "";
-					if ((!orderDto.getRemark1().equals(orderDto.getTranscwb()))&&!(orderDto.getTranscwb().isEmpty())) {
+					if ((!GztlServiceFeedback.removezero(orderDto.getRemark1()).equals(orderDto.getTranscwb()))&&!(orderDto.getTranscwb().isEmpty())) {
 						subWaybillNo = orderDto.getTranscwb();
 					}
 					sData.setSubWaybillNo(subWaybillNo);// 子运单号？？
@@ -296,12 +296,14 @@ public class GztlServiceFeedback {
 					sData.setDeliveryman("");// 配送人
 					sData.setDeliverymanPhone("");// 配送人电话
 					sData.setDeliverymanAddress("");// 配送人地址
-					sData.setReceiverName(orderDto.getConsigneename());
+					sData.setReceiverName(orderDto.getConsigneenameOfkf());
 					String receiverPhone = "";
-					if (orderDto.getConsigneephone() != null) {
-						receiverPhone = orderDto.getConsigneephone();
-					} else {
-						receiverPhone = orderDto.getConsigneemobile();
+					if ((orderDto.getConsigneephoneOfkf() != null)&&(orderDto.getConsigneemobileOfkf() != null)) {
+						receiverPhone = GztlServiceFeedback.removezero(orderDto.getConsigneephoneOfkf())+","+orderDto.getConsigneemobileOfkf();
+					} else if (orderDto.getConsigneephoneOfkf() != null) {
+						receiverPhone=GztlServiceFeedback.removezero(orderDto.getConsigneephoneOfkf());
+					}else if (orderDto.getConsigneemobileOfkf() != null) {
+						receiverPhone=GztlServiceFeedback.removezero(orderDto.getConsigneemobileOfkf());
 					}
 					sData.setReceiverPhone(receiverPhone);// 收件人电话
 					sData.setReceiverAddress(orderDto.getConsigneeaddress());
@@ -684,6 +686,7 @@ public class GztlServiceFeedback {
 		buffer.append("</MSD>");
 		return buffer.toString();
 	}
+	
 
 	/**
 	 * 响应给客户的xml格式的信息
@@ -744,6 +747,18 @@ public class GztlServiceFeedback {
 		System.out.println(content1);*/
 		
 
+	}
+	public static String  removezero(String content){
+		StringBuffer buffer=new StringBuffer();
+		if (content.indexOf(".0")!=-1) {
+			String[] arrayContent=content.split("\\.0");
+			for (int i = 0; i < arrayContent.length; i++) {
+				buffer.append(arrayContent[i]);
+			}
+		}else {
+			buffer.append(content);
+		}
+		return buffer.toString();
 	}
 	public static String  parseDate(String date){
 		String date5="";

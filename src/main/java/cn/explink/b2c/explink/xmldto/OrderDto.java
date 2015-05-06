@@ -53,6 +53,34 @@ public class OrderDto implements Serializable {
 	private String remark4;
 	private String remark5;
 	private long customerid;
+	private String consigneenameOfkf;
+	private String consigneemobileOfkf;
+	private String consigneephoneOfkf;
+	
+
+	public String getConsigneenameOfkf() {
+		return consigneenameOfkf;
+	}
+
+	public void setConsigneenameOfkf(String consigneenameOfkf) {
+		this.consigneenameOfkf = consigneenameOfkf;
+	}
+
+	public String getConsigneemobileOfkf() {
+		return consigneemobileOfkf;
+	}
+
+	public void setConsigneemobileOfkf(String consigneemobileOfkf) {
+		this.consigneemobileOfkf = consigneemobileOfkf;
+	}
+
+	public String getConsigneephoneOfkf() {
+		return consigneephoneOfkf;
+	}
+
+	public void setConsigneephoneOfkf(String consigneephoneOfkf) {
+		this.consigneephoneOfkf = consigneephoneOfkf;
+	}
 
 	public String getRemark1() {
 		return remark1;

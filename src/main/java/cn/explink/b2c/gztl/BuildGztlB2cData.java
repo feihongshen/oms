@@ -75,7 +75,7 @@ public class BuildGztlB2cData {
 		gztlXmlNote.setId(cwbOrder.getOpscwbid() + "");// ??序列号，用于接收成功后返回标识
 		gztlXmlNote.setLogisticid(cwbOrder.getCwb());// 订单号
 		gztlXmlNote.setMyNo(cwbOrder.getCwb());// 运单编号
-		gztlXmlNote.setCustorderno(cwbOrder.getRemark1());// 客户订单号
+		gztlXmlNote.setCustorderno(gztlService.removezero(cwbOrder.getRemark1()));// 客户订单号
 		// gztlXmlNote.setOpType(cmstate.getText());// ??反馈类型(由飞远提供)
 		gztlXmlNote.setOpType(cmstate.getOptype());
 		// gztlXmlNote.setState(cmstate.getText());// ??订单状态(由飞远提供)
@@ -88,6 +88,7 @@ public class BuildGztlB2cData {
 		String sign_man = "";
 		if (dmpDeliveryState != null) {
 			sign_man = (dmpDeliveryState.getSign_man() == null) || dmpDeliveryState.getSign_man().isEmpty() ? cwbOrder.getConsigneenameOfkf() : dmpDeliveryState.getSign_man();
+			
 		}
 		
 		gztlXmlNote.setSignname(sign_man);// 签收人
@@ -111,7 +112,15 @@ public class BuildGztlB2cData {
 		
 		gztlXmlNote.setCuscode(customerandCode.getCuscode());// ??供货商代码(由飞远提供)
 		gztlXmlNote.setReceiverName(cwbOrder.getConsigneenameOfkf());// 收件人姓名
-		gztlXmlNote.setReceiverMobile(cwbOrder.getConsigneephoneOfkf());// 收件人电话
+		String consigneephone = "";
+		if (!cwbOrder.getConsigneemobileOfkf().isEmpty() && !cwbOrder.getConsigneephoneOfkf().isEmpty()) {
+			consigneephone = gztlService.removezero(cwbOrder.getConsigneemobileOfkf() + "," + cwbOrder.getConsigneephoneOfkf());
+		} else if (!cwbOrder.getConsigneephoneOfkf().isEmpty()) {
+			consigneephone = gztlService.removezero(cwbOrder.getConsigneephoneOfkf());
+		} else {
+			consigneephone = gztlService.removezero(cwbOrder.getConsigneemobileOfkf());
+		}
+		gztlXmlNote.setReceiverMobile(consigneephone);// 收件人电话
 
 		gztlXmlNote.setCustomername(customerandCode.getCustomerName());// 供货商
 		gztlXmlNote.setSenderName("");// 可以为空，寄件人

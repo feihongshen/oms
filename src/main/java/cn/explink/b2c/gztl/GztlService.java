@@ -78,9 +78,6 @@ public class GztlService {
 			return GztlEnum.TuiGonghuoshangChengGong;
 		}
 		
-		if(36 == flowordertype){
-			System.out.println("------------");
-		}
 		for (GztlEnum e : GztlEnum.values()) {
 		
 			
@@ -92,10 +89,8 @@ public class GztlService {
 				if (flowordertype==4&&cwbOrder.getCwbstate()==6) {
 					return GztlEnum.ZhongzhuanZhanRuKu;
 				}
-				System.out.println("++++++++++++");
 				if (flowordertype==9) {
 					long flowType=this.b2cDataDAO.getNearFlowOrdertypeByCwb(cwbOrder.getCwb());
-					System.out.println(flowordertype+"===");
 					if (flowType==36) {
 						return null;
 					}
@@ -123,9 +118,9 @@ public class GztlService {
 				
 				String reasonString = exptReason.getExpt_code();
 				
-					System.out.println(reasonString);
+					//System.out.println(reasonString);
 					String[] reason = reasonString.split("_");
-					System.out.println(exptReason.getExpt_msg());
+					//System.out.println(exptReason.getExpt_msg());
 					GztlEnum.Peisongshibai.setReturnMsg(reason[reason.length - 1]);
 				
 				return GztlEnum.Peisongshibai;
@@ -136,7 +131,7 @@ public class GztlService {
 				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(-2), delivery_state);
 				String reasonString = exptReason.getExpt_code();
 				
-					System.out.println(reasonString);
+					//System.out.println(reasonString);
 					String[] reason = reasonString.split("_");
 					if (reason[0].equals(GztlEnum.KehuYanqi.getState())) {
 						GztlEnum.KehuYanqi.setReturnMsg(reason[reason.length - 1]);
@@ -300,52 +295,8 @@ public class GztlService {
 		}
 		subBuffer.append("</TMSFeedbacks>");
 		subBuffer.append("</TMS>");
-		this.logger.info("生成符合广州通路的xml数据：{}", subBuffer.toString());
+		this.logger.info("生成符合广州通路状态回传的xml数据(发送给对方的xml数据)：{}", subBuffer.toString());
 		b2cidsString = b2cidsString.length() > 0 ? b2cidsString.substring(0, b2cidsString.length() - 1) : b2cidsString;
-	//	System.out.println(b2cidsString);
-
-		// JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-		// factory.getInInterceptors().add(new LoggingInInterceptor());
-		// factory.getOutInterceptors().add(new LoggingOutInterceptor());
-		// factory.setAddress("http://model.web.fyps.com");
-		// factory.setWsdlURL(gztl.getSearch_url());
-		// factory.setServiceClass(EcisService.class);
-		// EcisService service = (EcisService) factory.create();
-		// TraceArgs traArgs = new TraceArgs();
-		// traArgs.setCode(gztl.getCode());
-		// traArgs.setInvokeMethod(gztl.getInvokeMethod());
-		// traArgs.setSign(gztl.getSign());
-		// traArgs.setXml(subBuffer.toString());
-		// String responseString = service.orderAndFeedbackApi(traArgs);
-
-		// String responseString = service.orderAndFeedbackApi(gztl.getCode(),
-		// gztl.getInvokeMethod(), gztl.getSign(), subBuffer.toString());
-		/*
-		 * URL wsdlUrl = new URL(gztl.getSearch_url()); Service s =
-		 * Service.create(wsdlUrl, new QName("http://model.web.fyps.com/",
-		 * "EcisService")); GztlWebService hs = s.getPort(new
-		 * QName("http://model.web.fyps.com/", "EcisServiceHttpPort"),
-		 * GztlWebService.class); String responseString =
-		 * hs.orderAndFeedbackApi(gztl.getCode(), gztl.getInvokeMethod(),
-		 * gztl.getSign(), subBuffer.toString());
-		 */
-		// String responseString =
-		// RestHttpServiceHanlder.sendHttptoServer(gztl.getSign(),
-		// subBuffer.toString());
-		// String url =
-		// "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
-		// EcisServiceHttpBindingStub eBindingStub = new
-		// EcisServiceHttpBindingStub(new URL(url), new Service());
-		// com.fyps.web.model.TraceArgs traArgs = new
-		// com.fyps.web.model.TraceArgs();
-		// traArgs.setCode(gztl.getCode());
-		// traArgs.setInvokeMethod(gztl.getInvokeMethod());
-		// traArgs.setSign(gztl.getSign());
-		// traArgs.setXml(subBuffer.toString());
-		// EcisService ecisService = new EcisService();
-		// EcisServicePortType eci = ecisService.getEcisServiceHttpPort();
-		// String url =
-		// "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
 		String url = gztl.getSearch_url();
 
 		EcisServiceHttpBindingStub ce = new EcisServiceHttpBindingStub(new URL(url), new Service());
@@ -362,23 +313,25 @@ public class GztlService {
 		// String responseString = wImp.getSendWs(traceArgs);
 		//System.out.println(responseString);
 		
-		logger.info("通路返回信息xml={}",responseString);
+		logger.info("广州通路状态回传返回信息xml={}",responseString);
 		
 		TmsFeedback tmsFeedback = (TmsFeedback) this.xmlToObject(responseString, new TmsFeedback());
 		if (tmsFeedback == null) {
 			this.logger.warn("请求0广州通路0解析xml为空，跳出循环,throw Exception,xml={}", responseString);
-			System.out.println("请求0广州通路0解析xml为空，跳出循环");
+			//System.out.println("请求0广州通路0解析xml为空，跳出循环");
 			return;
 		}
 		if (tmsFeedback.getSuccess().equals("true")) {
 			this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cidsString);
-			System.out.println("成功");
-			this.logger.info("返回成功消息：xml={}" + tmsFeedback.getRemark());
+			//System.out.println("成功");
+			this.logger.info("广州通路状态回传返回成功消息：xml={}" + tmsFeedback.getRemark());
+			this.logger.info("广州通路状态回传返回成功消息的cwbs：xml={}" + b2cidsString);
 
 		} else if (tmsFeedback.getSuccess().equals("false")) {
 			this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllFaild(b2cidsString);
-			System.out.println("失败" + tmsFeedback.getRemark());
-			this.logger.info("返回失败消息：xml={}" + tmsFeedback.getRemark());
+			//System.out.println("失败" + tmsFeedback.getRemark());
+			this.logger.info("广州通路状态回传返回失败消息：xml={}" + tmsFeedback.getRemark());
+			this.logger.info("广州通路状态回传返回失败消息的cwbs：cwbs={}" + b2cidsString);
 
 		}
 	}
@@ -400,6 +353,7 @@ public class GztlService {
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			this.logger.error("将xml解析成GztlXmlElement类时出错", e);
+			this.logger.error("将xml解析成GztlXmlElement类时出错，其中xml=" + xml, e);
 		}
 		return obj;
 	}
@@ -416,21 +370,25 @@ public class GztlService {
 	public GztlXmlNote getXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
 		return JacksonMapper.getInstance().readValue(jsoncontent, GztlXmlNote.class);
 	}
+	public  String  removezero(String content){
+		StringBuffer buffer=new StringBuffer();
+		if (content.indexOf(".0")!=-1) {
+			String[] arrayContent=content.split("\\.0");
+			for (int i = 0; i < arrayContent.length; i++) {
+				buffer.append(arrayContent[i]);
+			}
+		}else {
+			buffer.append(content);
+		}
+		return buffer.toString();
+	}
 
-	public static void main(String[] args) {
-		// GztlService gztlService = new GztlService();
-		// String xmlString =
-		// "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><TMSFeedback><id>15974,15979,15980,15981,15982,15985,15986,15987,15988</id><success>true</success><remark></remark></TMSFeedback>";
-		// TmsFeedback tmsFeedback = (TmsFeedback)
-		// gztlService.xmlToObject(xmlString, new TmsFeedback());//
-		// 注意第二个参数的类型，容易出错
-		// System.out.println(tmsFeedback.getId());
-		// System.out.println(tmsFeedback.getRemark());
-		// System.out.println(tmsFeedback.getSuccess());
+/*	public static void main(String[] args) {
+
 		String string = "配送成功_配送延期";
 		String[] aaStrings = string.split("_");
 		System.out.println(aaStrings[0]);
 		System.out.println(aaStrings[aaStrings.length - 1]);
 
-	}
+	}*/
 }

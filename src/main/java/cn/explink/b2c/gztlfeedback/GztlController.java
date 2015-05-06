@@ -51,7 +51,7 @@ public class GztlController {
 			}
 			GztlFeedback gztl = this.gztlServiceFeedback.getGztlFeedback(key);
 			xml = request.getParameter("XML");
-			System.out.println(xml);
+//			System.out.println(xml);
 			String MD5 = request.getParameter("MD5");
 			xml = URLDecoder.decode(xml, "UTF-8");
 			System.out.println(xml);
