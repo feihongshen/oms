@@ -18,6 +18,15 @@ public class VipShop {
 	private long vipshop_seq; // 每次获取的seq，之后不断累加
 	private int forward_hours; // 提前N个小时发送，可动态配置的。
 	private int isTuoYunDanFlag; // 是否开启托运单 模式，生成多个批次
+	private int resuseReasonFlag;  //拒收原因是否回传默认 0，  0回传， 1不回传
+	
+	public int getResuseReasonFlag() {
+		return resuseReasonFlag;
+	}
+
+	public void setResuseReasonFlag(int resuseReasonFlag) {
+		this.resuseReasonFlag = resuseReasonFlag;
+	}
 
 	public int getForward_hours() {
 		return forward_hours;
