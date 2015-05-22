@@ -27,10 +27,8 @@ import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.ExptReason;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
-import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
-import cn.explink.domain.Branch;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.DmpCwbOrder;
@@ -281,8 +279,16 @@ public class GztlService {
 			subBuffer.append("<empSend>" + note.getEmpSend() + "</empSend>");// 派件员/反馈人/导入信息人员/出入库人
 			subBuffer.append("<returnStatedesc>" + note.getReturnStatedesc() + "</returnStatedesc>");// 订单状态详情
 			subBuffer.append("<cuscode>" + note.getCuscode() + "</cuscode>");// 供货商代码(由飞远提供)??
-			subBuffer.append("<receiverName>" + note.getReceiverName() + "</receiverName>");// 收件人
-			subBuffer.append("<receiverMobile>" + note.getReceiverMobile() + "</receiverMobile>");// 收件人电话
+			String receivename=note.getReceiverName();
+			if (receivename.contains("+")) {
+				receivename=receivename.replace("+", "Q");
+			}
+			String receivephone=note.getReceiverMobile();
+			if (receivephone.contains("+")) {
+				receivephone=receivephone.replace("+", "Q");
+			}
+			subBuffer.append("<receiverName>" + receivename + "</receiverName>");// 收件人
+			subBuffer.append("<receiverMobile>" + receivephone + "</receiverMobile>");// 收件人电话
 			subBuffer.append("<customername>" + note.getCustomername() + "</customername>");// 供货商(由飞远提供)
 			subBuffer.append("<senderName>" + "" + "</senderName>");// 寄件人
 			subBuffer.append("<senderMobile>" + "" + "</senderMobile>");// 寄件手机
