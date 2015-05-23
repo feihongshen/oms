@@ -12,7 +12,6 @@ public class OrderGoods {
 	private String cwb;
 	private String cretime;
 	private String goods_code;
-
 	private String goods_brand;
 	private String goods_name;
 	private String goods_spec;

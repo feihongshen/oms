@@ -28,6 +28,23 @@ public class VipShopXMLNote {
 	private String station;
 	private String is_unpacked=""; //是否开箱验货 1_客户拒收
 	private String goods_reason; //未退原因
+	private long is_allograph_sign;  //是否代签收 1：待签收.0:为非待签收
+	private String allograph_tel; //待签收电话
+	
+	public long getIs_allograph_sign() {
+		return is_allograph_sign;
+	}
+	public void setIs_allograph_sign(long is_allograph_sign) {
+		this.is_allograph_sign = is_allograph_sign;
+	}
+
+	public String getAllograph_tel() {
+		return allograph_tel;
+	}
+
+	public void setAllograph_tel(String allograph_tel) {
+		this.allograph_tel = allograph_tel;
+	}
 
 	public String getGoods_reason() {
 		return goods_reason;

@@ -65,6 +65,8 @@
 							  <ref bean="doTime_sfxhm"/>
 							  <ref bean="doTime_weisuda"/>
 							  <ref bean="doTime_zhongliang"/>
+							  <ref bean="doTime_gztlOutbranch"/>
+							  <ref bean="doTime_gztl"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -693,6 +695,40 @@
          </property>
          <property name="targetMethod">
              <value>getZhongliang_Task</value>
+         </property>
+     </bean>
+          <bean id="doTime_gztl" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+           <property name="jobDetail">
+               <ref bean="getGztl" />
+           </property>
+             <property name="cronExpression">
+               <value>0 */10 * * * ?</value>
+           </property>
+      </bean>
+     
+     <bean id="getGztl" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+      <property name="targetBean">
+             <value>updateEMS</value>
+         </property>
+         <property name="targetMethod">
+             <value>getGztl_Task</value>
+         </property>
+     </bean>
+          <bean id="doTime_gztlOutbranch" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+           <property name="jobDetail">
+               <ref bean="getGztlOutBranch" />
+           </property>
+             <property name="cronExpression">
+               <value>0 */10 * * * ?</value>
+           </property>
+      </bean>
+     
+     <bean id="getGztlOutBranch" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+      <property name="targetBean">
+             <value>updateEMS</value>
+         </property>
+         <property name="targetMethod">
+             <value>getOuttoBranchGztl_Task</value>
          </property>
      </bean>
      <bean id="doTime_weisuda" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">

@@ -356,8 +356,7 @@ public class DataStatisticController {
 			branchAllList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
 					BranchEnum.ZhanDian.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
 			// 按用户ID和库房(1)+退货(3)+中转(4) 按照站点类型和用户ID查找 2,3,4:代表 处理退货的中转站
-			kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(),
-					BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
+			kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(), BranchEnum.KuFang.getValue() + "");
 			// 如果说站点的类型是库房或退货或中转站的时候进入判断
 			if ((branch.getSitetype() == BranchEnum.KuFang.getValue()) || (branch.getSitetype() == BranchEnum.TuiHuo.getValue()) || (branch.getSitetype() == BranchEnum.ZhongZhuan.getValue())) {
 				// 库房的集合为0的时候,添加符合以上条件的站点到库房集合中(这..........,因为退货业务中退步到合适的库房,所以由站点直接退?)
@@ -982,19 +981,19 @@ public class DataStatisticController {
 	/*
 	 * @RequestMapping("/outwarehousecollectdata") public String
 	 * outwarehousecollectdata(Model model,
-	 *
+	 * 
 	 * @RequestParam(value = "begindate", required = false, defaultValue = "")
 	 * String begindate,
-	 *
+	 * 
 	 * @RequestParam(value = "enddate", required = false, defaultValue = "")
 	 * String enddate,
-	 *
+	 * 
 	 * @RequestParam(value = "kufangid", required = false, defaultValue = "0")
 	 * long kufangid,
-	 *
+	 * 
 	 * @RequestParam(value = "isshow", required = false, defaultValue = "0")
 	 * long isshow, HttpServletResponse response, HttpServletRequest request) {
-	 *
+	 * 
 	 * String dmpid = request.getSession().getAttribute("dmpid") == null ? "" :
 	 * request.getSession().getAttribute("dmpid").toString(); User user =
 	 * getDmpDAO.getLogUser(dmpid); //加载供货商 List<Customer> customerlist =
@@ -1008,9 +1007,9 @@ public class DataStatisticController {
 	 * getDmpDAO.getNowBranch(user.getBranchid()); branchAllList =
 	 * getDmpDAO.getQueryBranchByBranchsiteAndUserid
 	 * (user.getUserid(),BranchEnum.ZhanDian.getValue()+"");
-	 *
+	 * 
 	 * for(Branch b : branchAllList){ nextbranchids += b.getBranchid()+","; }
-	 *
+	 * 
 	 * kufangList =
 	 * getDmpDAO.getQueryBranchByBranchsiteAndUserid(user.getUserid(
 	 * ),BranchEnum.KuFang.getValue()+"");
@@ -1019,7 +1018,7 @@ public class DataStatisticController {
 	 * if(!dataStatisticService.checkBranchRepeat(kufangList, branch)){
 	 * kufangList.add(branch); } } } } //加载导出模板 List<Exportmould>
 	 * exportmouldlist = getDmpDAO.getExportmoulds(user,dmpid);
-	 *
+	 * 
 	 * if(user == null || user.getUserid()==0 ){//如果登录失效，提示登录失败
 	 * model.addAttribute("nouser", "nouser"); }else
 	 * if(isshow==1){//如果是点击查询按钮，封装查询数据
@@ -1036,16 +1035,16 @@ public class DataStatisticController {
 	 * enddate,nextbranchids); branchAllMap =
 	 * dataStatisticService.getbranchAllMap(branchAllList, kufangid, begindate,
 	 * enddate); }
-	 *
+	 * 
 	 * model.addAttribute("customerMap", customerMap);
 	 * model.addAttribute("customerAllMap", customerAllMap);
 	 * model.addAttribute("branchAllMap", branchAllMap);
-	 *
+	 * 
 	 * model.addAttribute("branchList", branchAllList);
 	 * model.addAttribute("customerlist", customerlist);
 	 * model.addAttribute("exportmouldlist", exportmouldlist);
 	 * model.addAttribute("kufangList", kufangList);
-	 *
+	 * 
 	 * model.addAttribute("lastupdatetime",
 	 * updateMessageDAO.getUpdateMessageByMenunvalue
 	 * (UpdateMessageMenuNameEnum.KuFangChuKuTongJi

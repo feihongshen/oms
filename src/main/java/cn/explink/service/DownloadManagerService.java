@@ -1,7 +1,6 @@
 package cn.explink.service;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,9 +12,6 @@ import javax.annotation.PostConstruct;
 
 import net.sf.json.JSONObject;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,53 +62,53 @@ public class DownloadManagerService {
 	public void init() throws Exception {
 		try {
 			// 重启的tomcat时，将所有正下下载的都置成中断下载
-			downloadManagerDAO.updateXiazaiToZhongzhi();
+			this.downloadManagerDAO.updateXiazaiToZhongzhi();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("初始化正在下载的列表出异常：", e);
+			this.logger.error("初始化正在下载的列表出异常：", e);
 			e.printStackTrace();
 		}
 	}
 
 	public void saveXiazaitoMap(long id, int state) {
-		mapA.put(id, state);
+		this.mapA.put(id, state);
 	}
 
 	public void removeXiazaitoMap(long id) {
-		mapA.remove(id);
+		this.mapA.remove(id);
 	}
 
 	public boolean checkMap(long id) {
-		return (mapA != null && mapA.get(id) != null && mapA.get(id) == 0);
+		return ((this.mapA != null) && (this.mapA.get(id) != null) && (this.mapA.get(id) == 0));
 	}
 
 	/**
 	 * 导出任务
 	 */
 	public void down_task() {
-		SystemInstall sysInstall = getDmpDAO.getSystemInstallByName("downThreadCount");
+		SystemInstall sysInstall = this.getDmpDAO.getSystemInstallByName("downThreadCount");
 		if (sysInstall != null) {
 			int theadCount = Integer.parseInt(sysInstall.getValue());
-			int count = downloadManagerDAO.getDownloadManagerCountByState(0);
+			int count = this.downloadManagerDAO.getDownloadManagerCountByState(0);
 			if (count >= theadCount) {
-				logger.info("下载进程已满");
+				this.logger.info("下载进程已满");
 				return;
 			}
-			List<DownloadManager> downlist = downloadManagerDAO.getDownloadManagerListByState(-1);
+			List<DownloadManager> downlist = this.downloadManagerDAO.getDownloadManagerListByState(-1);
 
-			if (downlist != null && downlist.size() > 0) {
+			if ((downlist != null) && (downlist.size() > 0)) {
 				for (DownloadManager down : downlist) {
-					if (mapA.get(down.getId()) != null && mapA.get(down.getId()) == 0) {
-						logger.info("已导出中");
+					if ((this.mapA.get(down.getId()) != null) && (this.mapA.get(down.getId()) == 0)) {
+						this.logger.info("已导出中");
 						return;
 					}
-					mapA.put(down.getId(), 0);
-					downloadManagerDAO.updateStateById(0, down.getId(), "");// 更新下载状态为
-					dataStatisticService.repeatExportExcelMethod(down);
+					this.mapA.put(down.getId(), 0);
+					this.downloadManagerDAO.updateStateById(0, down.getId(), "");// 更新下载状态为
+					this.dataStatisticService.repeatExportExcelMethod(down);
 					theadCount = Integer.parseInt(sysInstall.getValue());
-					count = downloadManagerDAO.getDownloadManagerCountByState(0);
+					count = this.downloadManagerDAO.getDownloadManagerCountByState(0);
 					if (count > theadCount) {
-						logger.info("下载进程已满");
+						this.logger.info("下载进程已满");
 						return;
 					}
 				}
@@ -127,7 +123,7 @@ public class DownloadManagerService {
 	 * 定时器删除文件
 	 */
 	public void deleteFile_Task() {
-		SystemInstall sysInstall = getDmpDAO.getSystemInstallByName("fileEffectiveDay");
+		SystemInstall sysInstall = this.getDmpDAO.getSystemInstallByName("fileEffectiveDay");
 		int day = 7;
 		if (sysInstall != null) {
 			try {
@@ -138,10 +134,10 @@ public class DownloadManagerService {
 			}
 		}
 		String createtime = DateDayUtil.getDateBefore(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), day) + " 00:00:00";
-		List<DownloadManager> downlist = downloadManagerDAO.getAllListByCreateTime(createtime);
-		if (downlist != null && downlist.size() > 0) {
+		List<DownloadManager> downlist = this.downloadManagerDAO.getAllListByCreateTime(createtime);
+		if ((downlist != null) && (downlist.size() > 0)) {
 			for (DownloadManager down : downlist) {
-				if (down.getState() == 1 || down.getState() == 3) {// 如果导出了文件，将文件删掉
+				if ((down.getState() == 1) || (down.getState() == 3)) {// 如果导出了文件，将文件删掉
 					try {
 						File myFilePath = new File(down.getFileurl() + down.getFilename());
 						if (myFilePath.exists()) {// 文件是否存在
@@ -151,9 +147,9 @@ public class DownloadManagerService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					downloadManagerDAO.delStateById(down.getId());
-					removeXiazaitoMap(down.getId());
-					logger.info("已删除文件：id:{},文件名：{}", down.getId(), down.getFilename());
+					this.downloadManagerDAO.delStateById(down.getId());
+					this.removeXiazaitoMap(down.getId());
+					this.logger.info("已删除文件：id:{},文件名：{}", down.getId(), down.getFilename());
 				}
 			}
 
@@ -162,7 +158,7 @@ public class DownloadManagerService {
 
 	/**
 	 * 库房出库汇总导出
-	 * 
+	 *
 	 * @param down
 	 */
 	public void KuFangChuKuHuiZongExport(DownloadManager down) {
@@ -172,9 +168,9 @@ public class DownloadManagerService {
 		List<Customer> customerlist = new ArrayList<Customer>();
 		// 供货商列表
 		if (customerid.length() > 0) {
-			customerlist = getDmpDAO.getCustomerByIds(customerid);
+			customerlist = this.getDmpDAO.getCustomerByIds(customerid);
 		} else {
-			customerlist = getDmpDAO.getAllCustomers();
+			customerlist = this.getDmpDAO.getAllCustomers();
 		}
 		String nextbranchid = json.getString("nextbranchid");
 		// 下一站列表
@@ -182,37 +178,37 @@ public class DownloadManagerService {
 
 		List<Branch> branchList = new ArrayList<Branch>();
 		if (nextbranchid.length() > 0) {
-			branchList = getDmpDAO.getBranchByBranchids(nextbranchid);
+			branchList = this.getDmpDAO.getBranchByBranchids(nextbranchid);
 		} else {
-			branchList = getDmpDAO.getBranchListByUser(userid);
+			branchList = this.getDmpDAO.getBranchListByUser(userid);
 		}
 		// 对应下载列表的汇总表记录
-		List<ChukuDataResult> chukuDataResultList = chukuDataResultDAO.getChukuDataResultByExportid(down.getId());
+		List<ChukuDataResult> chukuDataResultList = this.chukuDataResultDAO.getChukuDataResultByExportid(down.getId());
 
 		// 站点和供货商对应的map
-		Map<String, Long> branchAndCustomerMap = dataStatisticService.getBranchAndCustomerMap(chukuDataResultList);
+		Map<String, Long> branchAndCustomerMap = this.dataStatisticService.getBranchAndCustomerMap(chukuDataResultList);
 		// 以供货商为key的map
-		Map<Long, Long> customerAllMap = dataStatisticService.getcustomerAllMap(chukuDataResultList);
+		Map<Long, Long> customerAllMap = this.dataStatisticService.getcustomerAllMap(chukuDataResultList);
 		// 以站点为key的map
-		Map<Long, Long> branchAllMap = dataStatisticService.getbranchAllMap(chukuDataResultList);
+		Map<Long, Long> branchAllMap = this.dataStatisticService.getbranchAllMap(chukuDataResultList);
 
-		dataStatisticService.kufangchukuexportFormExcel(down.getId(), down.getFilename(), down.getFileurl(), branchList, customerlist, branchAndCustomerMap, customerAllMap, branchAllMap);
+		this.dataStatisticService.kufangchukuexportFormExcel(down.getId(), down.getFilename(), down.getFileurl(), branchList, customerlist, branchAndCustomerMap, customerAllMap, branchAllMap);
 	}
 
 	/**
 	 * 列表下载请求
-	 * 
+	 *
 	 * @param userId
 	 * @param modelId
 	 * @return
 	 */
 	public List<DownloadManager> listDownloadRequest(long userId, ModelEnum modelId) {
-		return downloadManagerDAO.getDownloadManager(userId, modelId, DownloadState.values());
+		return this.downloadManagerDAO.getDownloadManager(userId, modelId, DownloadState.values());
 	}
 
 	/**
 	 * 创建下载请求
-	 * 
+	 *
 	 * @param userId
 	 * @param modelId
 	 * @return
@@ -228,14 +224,14 @@ public class DownloadManagerService {
 		downloadManager.setState(DownloadState.pending.getValue());
 		downloadManager.setTimeout(20);
 		downloadManager.setUserid(userid);
-		long id = downloadManagerDAO.creDownloadManager(downloadManager);
+		long id = this.downloadManagerDAO.creDownloadManager(downloadManager);
 		downloadManager.setId(id);
 		return downloadManager;
 	}
 
 	/**
 	 * 创建妥投率的查询请求
-	 * 
+	 *
 	 * @param drRequest
 	 * @param userId
 	 */
@@ -247,12 +243,12 @@ public class DownloadManagerService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		DownloadManager downloadManager = createDownloadRequest(requestJson, null, null, null, ModelEnum.deliveryRate, userId);
-		scheduledTaskService.createScheduledTask(Constants.TASK_TYPE_DELIVERY_RATE, Constants.REFERENCE_TYPE_DOWNLOAD_MANAGER_ID, String.valueOf(downloadManager.getId()), true);
+		DownloadManager downloadManager = this.createDownloadRequest(requestJson, null, null, null, ModelEnum.deliveryRate, userId);
+		this.scheduledTaskService.createScheduledTask(Constants.TASK_TYPE_DELIVERY_RATE, Constants.REFERENCE_TYPE_DOWNLOAD_MANAGER_ID, String.valueOf(downloadManager.getId()), true);
 	}
 
 	public DeliveryRateAggregation getDeliveryRateResult(Integer downloadRequestId) {
-		DownloadResult downloadResult = downloadResultDAO.getDownloadResultByDownloadRequestId(downloadRequestId);
+		DownloadResult downloadResult = this.downloadResultDAO.getDownloadResultByDownloadRequestId(downloadRequestId);
 		try {
 			return JsonUtil.readValue(downloadResult.getResult(), DeliveryRateAggregation.class);
 		} catch (Exception e) {
@@ -262,6 +258,6 @@ public class DownloadManagerService {
 
 	public void deleteDownloadManager(long userId, Long downloadRequestId) {
 		// TODO verify user
-		downloadManagerDAO.delStateById(downloadRequestId);
+		this.downloadManagerDAO.delStateById(downloadRequestId);
 	}
 }

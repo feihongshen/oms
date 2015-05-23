@@ -52,89 +52,89 @@ public class GetDmpDAO {
 	@Autowired
 	ProxyConfDAO proxyConfDAO;
 	private static ResourceBundle oms = ResourceBundle.getBundle("oms");
-	private static String dmpUrl = oms.getString("dmpUrl");
+	private static String dmpUrl = GetDmpDAO.oms.getString("dmpUrl");
 	private Logger logger = LoggerFactory.getLogger(GetDmpDAO.class);
 
 	public String getDmpurl() {
-		return dmpUrl;
+		return GetDmpDAO.dmpUrl;
 	}
 
 	/**
 	 * 获取当前站点id
-	 * 
+	 *
 	 * @param dmpid
 	 * @return
 	 */
 	public long getNowBrancheId(String dmpid) {
 		long branchid = 0;
 		try {
-			String branchStr = Http.post(dmpUrl + "/OMSInterface/getNowBrancheId;jsessionid=" + dmpid, "");
+			String branchStr = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowBrancheId;jsessionid=" + dmpid, "");
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			branchid = jsonValue.getLong("nowbranchid");
 		} catch (Exception e) {
-			logger.error("获取当前机构id异常", e);
+			this.logger.error("获取当前机构id异常", e);
 		}
 		return branchid;
 	}
 
 	/**
 	 * 获取当前用户真实姓名
-	 * 
+	 *
 	 * @param dmpid
 	 * @return
 	 */
 	public String getNowRealname(String dmpid) {
 		String realName = "";
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getNowRealname;jsessionid=" + dmpid, "UTF-8", "POST").toString();
-			logger.debug("now branchRealname");
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getNowRealname;jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			this.logger.debug("now branchRealname");
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			realName = jsonValue.get("nowRealname").toString();
 		} catch (Exception e) {
-			logger.error("获取当前机构名称异常", e);
+			this.logger.error("获取当前机构名称异常", e);
 		}
 		return realName;
 	}
 
 	/**
 	 * 获取当前用户id
-	 * 
+	 *
 	 * @param dmpid
 	 * @return
 	 */
 	public int getNowUserId(String dmpid) {
 		int nowUserId = 0;
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getNowUserId;jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getNowUserId;jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			nowUserId = Integer.parseInt(jsonValue.get("nowUserId").toString());
 		} catch (Exception e) {
-			logger.error("获取当前用户id异常", e);
+			this.logger.error("获取当前用户id异常", e);
 		}
 		return nowUserId;
 	}
 
 	/**
 	 * 获取用户导出手机号权限
-	 * 
+	 *
 	 * @param dmpid
 	 * @return
 	 */
 	public int getNowUserShowPhoneFlag(String dmpid) {
 		int nowShowPhoneFlag = 0;
 		try {
-			String branchStr = Http.post(dmpUrl + "/OMSInterface/getNowUserShowPhoneFlag;jsessionid=" + dmpid, "");
+			String branchStr = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowUserShowPhoneFlag;jsessionid=" + dmpid, "");
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			nowShowPhoneFlag = Integer.parseInt(jsonValue.get("nowShowPhoneFlag").toString());
 		} catch (Exception e) {
-			logger.error("获取当前用户可导出手机号权限异常", e);
+			this.logger.error("获取当前用户可导出手机号权限异常", e);
 		}
 		return nowShowPhoneFlag;
 	}
 
 	/**
 	 * 按userid获取用户
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -142,7 +142,7 @@ public class GetDmpDAO {
 		User user = new User();
 		JSONArray jSONArray = new JSONArray();
 		try {
-			String userStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getUserByid/" + id, "UTF-8", "POST").toString();
+			String userStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getUserByid/" + id, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(userStr);
 			String delivermancode = jSONArray.getJSONObject(0).get("deliverManCode") == null ? "" : jSONArray.getJSONObject(0).getString("deliverManCode");
 			user.setBranchid(jSONArray.getJSONObject(0).getLong("branchid"));
@@ -151,7 +151,9 @@ public class GetDmpDAO {
 			user.setIdcardno(jSONArray.getJSONObject(0).getString("idcardno"));
 			user.setRealname(jSONArray.getJSONObject(0).getString("realname"));
 			user.setRoleid(jSONArray.getJSONObject(0).getLong("roleid"));
-			user.setShowphoneflag(jSONArray.getJSONObject(0).getString("showphoneflag"));
+			user.setShowphoneflag(jSONArray.getJSONObject(0).getLong("showphoneflag"));
+			user.setShownameflag(jSONArray.getJSONObject(0).getLong("shownameflag"));
+			user.setShowmobileflag(jSONArray.getJSONObject(0).getLong("showmobileflag"));
 			user.setUserDeleteFlag(jSONArray.getJSONObject(0).getLong("userDeleteFlag"));
 			user.setUseraddress(jSONArray.getJSONObject(0).getString("useraddress"));
 			user.setUsercustomerid(jSONArray.getJSONObject(0).getLong("usercustomerid"));
@@ -165,7 +167,7 @@ public class GetDmpDAO {
 			user.setUserwavfile(jSONArray.getJSONObject(0).getString("userwavfile"));
 			user.setDeliverManCode(delivermancode);
 		} catch (Exception e) {
-			logger.error("获取当前用户信息异常", e);
+			this.logger.error("获取当前用户信息异常", e);
 		}
 
 		return user;
@@ -173,7 +175,7 @@ public class GetDmpDAO {
 
 	/**
 	 * 查询所有站点类型的站点
-	 * 
+	 *
 	 * @return 返回站点名和站点id
 	 */
 	public List<Branch> getBranchByZhanDian() {
@@ -181,7 +183,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByZhanDian", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByZhanDian", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -196,14 +198,14 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取所有站点异常", e);
+			this.logger.error("获取所有站点异常", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 查询所有站点类型的站点
-	 * 
+	 *
 	 * @return 返回站点名,站点id,站点类型
 	 */
 	public List<Branch> getBranchByAllZhanDian() {
@@ -211,7 +213,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByAllZhanDian", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByAllZhanDian", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -226,14 +228,14 @@ public class GetDmpDAO {
 
 		} catch (IOException e) {
 			list = new ArrayList<Branch>();
-			logger.error("查询所有站点类型的站点 返回站点名,站点id,站点类型", e);
+			this.logger.error("查询所有站点类型的站点 返回站点名,站点id,站点类型", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 查询所有启用的站点类型机构
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Branch> getBranchByAllEffectZhanDian() {
@@ -241,7 +243,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByAllEffectZhanDian", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByAllEffectZhanDian", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -256,21 +258,21 @@ public class GetDmpDAO {
 
 		} catch (IOException e) {
 			list = new ArrayList<Branch>();
-			logger.error("查询所有站点类型的站点 返回站点名,站点id,站点类型", e);
+			this.logger.error("查询所有站点类型的站点 返回站点名,站点id,站点类型", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 获得可访问的站点
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */
 	public List<Branch> getAccessableBranch(long userId) {
 		List<Branch> list = new ArrayList<Branch>();
 		try {
-			String branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAccessableBranch/" + userId, "UTF-8", "POST").toString();
+			String branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAccessableBranch/" + userId, "UTF-8", "POST").toString();
 			JSONArray jSONArray = JSONArray.fromObject(branchByZhanDian);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Branch branch = new Branch();
@@ -284,14 +286,14 @@ public class GetDmpDAO {
 
 		} catch (IOException e) {
 			list = new ArrayList<Branch>();
-			logger.error("查询所有站点类型的站点 返回站点名,站点id,站点类型", e);
+			this.logger.error("查询所有站点类型的站点 返回站点名,站点id,站点类型", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 查询所有库房
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Branch> getBranchByKufang() {
@@ -299,8 +301,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByKufang", "UTF-8", "POST").toString();
-			logger.debug("branchAll");
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByKufang", "UTF-8", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -315,14 +317,14 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取所有库房异常", e);
+			this.logger.error("获取所有库房异常", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 查询所有机构
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Branch> getAllBranchs() {
@@ -330,8 +332,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchList = "";
 		try {
-			branchList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAllBranch", "UTF-8", "POST").toString();
-			logger.debug("branchAll");
+			branchList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllBranch", "UTF-8", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchList);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -346,7 +348,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取所有站点异常", e);
+			this.logger.error("获取所有站点异常", e);
 		}
 		return list;
 	}
@@ -354,7 +356,7 @@ public class GetDmpDAO {
 	public Branch getBranchByBranchName(String branchname) {
 		Branch branch = new Branch();
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByBranchName", "branchname=" + branchname, "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByBranchName", "branchname=" + branchname, "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(branchStr);
 			branch.setBranchid(jsonObject.getLong("branchid"));
 			branch.setBranchname(jsonObject.getString("branchname"));
@@ -363,7 +365,7 @@ public class GetDmpDAO {
 			branch.setBindmsksid(jsonObject.getInt("bindmsksid"));
 		} catch (IOException e) {
 			branch = null;
-			logger.error("获取当前站点的详细信息异常", e);
+			this.logger.error("获取当前站点的详细信息异常", e);
 		}
 		return branch == null ? new Branch() : branch;
 	}
@@ -373,8 +375,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchList = "";
 		try {
-			branchList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByBranchids/" + branchids, "UTF-8", "POST").toString();
-			logger.debug("branchAll");
+			branchList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByBranchids/" + branchids, "UTF-8", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchList);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -389,7 +391,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取所有站点异常", e);
+			this.logger.error("获取所有站点异常", e);
 		}
 		return list;
 	}
@@ -398,9 +400,9 @@ public class GetDmpDAO {
 
 		String branchbyidTojson = "";
 		try {
-			branchbyidTojson = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
+			branchbyidTojson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
 		} catch (IOException e) {
-			logger.error("获取所有指点站点异常", e);
+			this.logger.error("获取所有指点站点异常", e);
 		}
 
 		return branchbyidTojson;
@@ -408,14 +410,14 @@ public class GetDmpDAO {
 
 	/**
 	 * 按beanchid 查询站点
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
 	public Branch getNowBranch(long id) {
 		Branch branch = new Branch();
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(branchStr);
 			branch.setBranchid(jsonObject.getLong("branchid"));
 			branch.setBranchname(jsonObject.getString("branchname"));
@@ -429,14 +431,14 @@ public class GetDmpDAO {
 			branch.setBrancharea(jsonObject.getString("brancharea"));
 		} catch (IOException e) {
 			branch = null;
-			logger.error("获取当前站点的详细信息异常", e);
+			this.logger.error("获取当前站点的详细信息异常", e);
 		}
 		return branch == null ? new Branch() : branch;
 	}
 
 	/**
 	 * 按branchname查询站点
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -445,8 +447,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchByName", "name=" + name + "", "POST").toString();
-			logger.debug("branchAll");
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByName", "name=" + name + "", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -460,14 +462,14 @@ public class GetDmpDAO {
 			}
 		} catch (Exception e) {
 			list = null;
-			logger.error("按站点名称获取站点列表异常");
+			this.logger.error("按站点名称获取站点列表异常");
 		}
 		return list;
 	}
 
 	/**
 	 * 查询 所有供货商
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Customer> getAllCustomers() {
@@ -475,17 +477,18 @@ public class GetDmpDAO {
 		List<Customer> list = new ArrayList<Customer>();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(customerAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Customer customer = new Customer();
 				customer.setCustomerid(jSONArray.getJSONObject(i).getLong("customerid"));
 				customer.setCustomername(jSONArray.getJSONObject(i).getString("customername"));
 				customer.setB2cEnum(jSONArray.getJSONObject(i).getString("b2cEnum"));
+				customer.setCustomercode(jSONArray.getJSONObject(i).getString("customercode"));
 				list.add(customer);
 			}
 		} catch (Exception e) {
-			logger.error("获取所有供货商异常", e);
+			this.logger.error("获取所有供货商异常", e);
 		}
 		return list;
 
@@ -493,7 +496,7 @@ public class GetDmpDAO {
 
 	/**
 	 * 查询 所有供货商
-	 * 
+	 *
 	 * @return
 	 */
 	public static List<Customer> getStaticAllCustomers() {
@@ -501,7 +504,7 @@ public class GetDmpDAO {
 		List<Customer> list = new ArrayList<Customer>();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
 
 			jSONArray = JSONArray.fromObject(customerAll);
 
@@ -521,7 +524,7 @@ public class GetDmpDAO {
 
 	/**
 	 * 查询 所有供货商发货库房
-	 * 
+	 *
 	 * @return
 	 */
 	public List<CustomWareHouse> getCustomWareHouse() {
@@ -529,8 +532,8 @@ public class GetDmpDAO {
 		List<CustomWareHouse> list = new ArrayList();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomWareHouse", "UTF-8", "POST").toString();
-			logger.debug("get CustomWareHouse");
+			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouse", "UTF-8", "POST").toString();
+			this.logger.debug("get CustomWareHouse");
 			jSONArray = JSONArray.fromObject(customerAll);
 
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -540,14 +543,14 @@ public class GetDmpDAO {
 				list.add(customer);
 			}
 		} catch (Exception e) {
-			logger.error("获取所有供货商发货库房异常", e);
+			this.logger.error("获取所有供货商发货库房异常", e);
 		}
 		return list;
 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param customid
 	 * @return
 	 */
@@ -556,8 +559,8 @@ public class GetDmpDAO {
 		List<CustomWareHouse> list = new ArrayList();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomWareHouseByCustomid/" + customid, "UTF-8", "POST").toString();
-			logger.debug("get CustomWareHouse");
+			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouseByCustomid/" + customid, "UTF-8", "POST").toString();
+			this.logger.debug("get CustomWareHouse");
 			jSONArray = JSONArray.fromObject(customerAll);
 
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -567,7 +570,7 @@ public class GetDmpDAO {
 				list.add(customer);
 			}
 		} catch (Exception e) {
-			logger.error("获取供货商发货库房异常", e);
+			this.logger.error("获取供货商发货库房异常", e);
 		}
 		return list;
 
@@ -576,15 +579,15 @@ public class GetDmpDAO {
 	public CustomWareHouse getCustomWareHouseByid(String customid) {
 		CustomWareHouse customerH = new CustomWareHouse();
 		try {
-			String customerStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomWareHouseByid/" + customid, "UTF-8", "POST").toString();
-			logger.debug(" get CustomWareHouse");
+			String customerStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouseByid/" + customid, "UTF-8", "POST").toString();
+			this.logger.debug(" get CustomWareHouse");
 			if (!JSONObject.fromObject(customerStr).isEmpty()) {
 				customerH.setWarehouseid(JSONObject.fromObject(customerStr).getLong("warehouseid"));
 				customerH.setCustomerwarehouse(JSONObject.fromObject(customerStr).getString("customerwarehouse"));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("获取供货商发货库房异常", e);
+			this.logger.error("获取供货商发货库房异常", e);
 			customerH = null;
 		}
 		return customerH;
@@ -596,8 +599,8 @@ public class GetDmpDAO {
 		List<Customer> list = new ArrayList<Customer>();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomerByIds/" + ids, "UTF-8", "POST").toString();
-			logger.debug(" get customerAll");
+			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomerByIds/" + ids, "UTF-8", "POST").toString();
+			this.logger.debug(" get customerAll");
 			jSONArray = JSONArray.fromObject(customerAll);
 
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -608,21 +611,21 @@ public class GetDmpDAO {
 				list.add(customer);
 			}
 		} catch (Exception e) {
-			logger.error("获取所有供货商异常", e);
+			this.logger.error("获取所有供货商异常", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 按供货商id查询供货商
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
 	public Customer getCustomer(long id) {
 		Customer customer = new Customer();
 		try {
-			String customerStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomerById/" + id, "UTF-8", "POST").toString();
+			String customerStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomerById/" + id, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(customerStr);
 
 			customer.setCustomerid(jsonObject.getLong("customerid"));
@@ -634,7 +637,7 @@ public class GetDmpDAO {
 			customer.setIfeffectflag(jsonObject.getLong("ifeffectflag"));
 			customer.setCustomercode(jsonObject.getString("customercode"));
 		} catch (Exception e) {
-			logger.error("获取供货商异常", e);
+			this.logger.error("获取供货商异常", e);
 		}
 		return customer;
 	}
@@ -643,8 +646,8 @@ public class GetDmpDAO {
 		CwbOrderCopyForDmp cwborder = new CwbOrderCopyForDmp();
 		String reJson = "";
 		try {
-			logger.debug("get getCwbDetailsByCwb");
-			reJson = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
+			this.logger.debug("get getCwbDetailsByCwb");
+			reJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(JSONObject.fromObject(reJson).get("cwb"));
 			cwborder = (CwbOrderCopyForDmp) JSONObject.toBean(json, CwbOrderCopyForDmp.class);
 
@@ -655,7 +658,7 @@ public class GetDmpDAO {
 			}
 
 		} catch (Exception e) {
-			logger.error("获取dmp订单失败 RE: orderFlow -----------订单号：" + cwb + "", e);
+			this.logger.error("获取dmp订单失败 RE: orderFlow -----------订单号：" + cwb + "", e);
 			cwborder = null;
 		}
 		return cwborder;
@@ -665,12 +668,12 @@ public class GetDmpDAO {
 		DeliveryStateForDmp delivery = new DeliveryStateForDmp();
 		String reJson = "";
 		try {
-			reJson = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
+			reJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(JSONObject.fromObject(reJson).get("deliveryState"));
 			json.remove("mobilepodtime");
 			delivery = (DeliveryStateForDmp) JSONObject.toBean(json, DeliveryStateForDmp.class);
 		} catch (Exception e) {
-			logger.error("获取DeliveryStateForDmp异常RE: orderFlow -----------订单号：" + cwb + "", e);
+			this.logger.error("获取DeliveryStateForDmp异常RE: orderFlow -----------订单号：" + cwb + "", e);
 		}
 		return delivery;
 	}
@@ -679,9 +682,9 @@ public class GetDmpDAO {
 
 		String deliverByIdToJson = "";
 		try {
-			deliverByIdToJson = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getDeliverById/" + id, "UTF-8", "POST").toString();
+			deliverByIdToJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getDeliverById/" + id, "UTF-8", "POST").toString();
 		} catch (Exception e) {
-			logger.error("获取deliverByIdToJson异常");
+			this.logger.error("获取deliverByIdToJson异常");
 		}
 		return deliverByIdToJson;
 	}
@@ -690,11 +693,11 @@ public class GetDmpDAO {
 
 		String password = "";
 		try {
-			String deliverByIdToJson = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getUserByUserName/" + userName, "UTF-8", "POST").toString();
+			String deliverByIdToJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getUserByUserName/" + userName, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(deliverByIdToJson);
 			password = json.getString("password");
 		} catch (Exception e) {
-			logger.error("获取deliverByIdToJson异常");
+			this.logger.error("获取deliverByIdToJson异常");
 		}
 		return password;
 	}
@@ -704,7 +707,7 @@ public class GetDmpDAO {
 		List<Common> list = new ArrayList();
 		String commonAll = "";
 		try {
-			commonAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
+			commonAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(commonAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Common common = new Common();
@@ -732,7 +735,7 @@ public class GetDmpDAO {
 		List<Common> list = new ArrayList();
 		String commonAll = "";
 		try {
-			commonAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
+			commonAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(commonAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Common common = new Common();
@@ -755,9 +758,9 @@ public class GetDmpDAO {
 		User u = new User();
 		String user = "";
 		try {
-			user = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getLogUser;jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			user = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getLogUser;jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			if ("[]".equals(user)) {
-				logger.error("获取[]登录用户失败,登录失效了");
+				this.logger.error("获取[]登录用户失败,登录失效了");
 				return u;
 			}
 			jsonObject = JSONObject.fromObject(user);
@@ -767,13 +770,13 @@ public class GetDmpDAO {
 			u.setRealname(jsonObject.getString("realname"));
 			u.setRoleid(jsonObject.getInt("roleid"));
 		} catch (Exception e) {
-			logger.error("获取登录用户失败,登录失效了");
+			this.logger.error("获取登录用户失败,登录失效了");
 		}
 		return u;
 	}
 
 	public String getEMSType(String emsOrder) {
-		ProxyConf defualtproxyConf = proxyConfDAO.getDefualtProxy();
+		ProxyConf defualtproxyConf = this.proxyConfDAO.getDefualtProxy();
 		String emsType = "";// ET365852853CS
 		SocketAddress socketAddress = null;
 		try {
@@ -781,31 +784,31 @@ public class GetDmpDAO {
 				Socket socket1 = new Socket(defualtproxyConf.getIp(), defualtproxyConf.getPort());
 				socketAddress = socket1.getRemoteSocketAddress();
 				socket1.close();
-				logger.debug("获取数据库默认的代理ip:" + defualtproxyConf.getIp());
+				this.logger.debug("获取数据库默认的代理ip:" + defualtproxyConf.getIp());
 			} else {
 				Socket socket1 = new Socket("161.139.195.98", 80);
 				socketAddress = socket1.getRemoteSocketAddress();
 				socket1.close();
-				logger.debug("获取的程序写死默认代理ip:161.139.195.98");
+				this.logger.debug("获取的程序写死默认代理ip:161.139.195.98");
 			}
 			emsType = JSONReslutUtil.getResultMessageShort(socketAddress,
 					"http://www.kuaidi100.com/query?type=ems&postid=" + emsOrder + "&id=1&valicode=&temp=0.0015379865653812885&sessionid=&tmp=0.6559703338425606", "UTF-8", "POST").toString();
 		} catch (IOException e) {
-			logger.debug("代理ip:" + defualtproxyConf == null ? defualtproxyConf.getIp() : "161.139.195.98" + "  EMS抓取result:" + emsOrder + ":连接超时");
+			this.logger.debug(("代理ip:" + defualtproxyConf) == null ? defualtproxyConf.getIp() : "161.139.195.98" + "  EMS抓取result:" + emsOrder + ":连接超时");
 		}
 		return emsType;
 	}
 
 	public String getEMSTypeByLong(String emsOrder) {
-		SocketAddress socketAddress = proxyService.getNextProxy();
+		SocketAddress socketAddress = this.proxyService.getNextProxy();
 		String emsType = "";// ET365852853CS
 		try {
 			emsType = JSONReslutUtil.getResultMessageByProxy(socketAddress,
 					"http://www.kuaidi100.com/query?type=ems&postid=" + emsOrder + "&id=1&valicode=&temp=0.0015379865653812885&sessionid=&tmp=0.6559703338425606", "UTF-8", "POST").toString();
 		} catch (IOException e) {
-			logger.debug("EMS抓取result:" + emsOrder + ":连接超时");
-			ProxyConf p = proxyConfDAO.getProxyNowUse(1);
-			proxyService.removProxy(p);
+			this.logger.debug("EMS抓取result:" + emsOrder + ":连接超时");
+			ProxyConf p = this.proxyConfDAO.getProxyNowUse(1);
+			this.proxyService.removProxy(p);
 		}
 		return emsType;
 	}
@@ -814,9 +817,9 @@ public class GetDmpDAO {
 
 		String commonByIdToJson = "";
 		try {
-			commonByIdToJson = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCommonById/" + id, "UTF-8", "POST").toString();
+			commonByIdToJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommonById/" + id, "UTF-8", "POST").toString();
 		} catch (IOException e) {
-			logger.error("获取指定承运商异常");
+			this.logger.error("获取指定承运商异常");
 		}
 		return commonByIdToJson;
 	}
@@ -825,16 +828,16 @@ public class GetDmpDAO {
 
 		JointEntity jointEntity = new JointEntity();
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getJointEntity/" + jointnum, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointEntity/" + jointnum, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(jointEntityStr);
-			if (jsonObject == null || jsonObject.isEmpty()) {
+			if ((jsonObject == null) || jsonObject.isEmpty()) {
 				return new JointEntity();
 			}
 			jointEntity.setJoint_num(jsonObject.getInt("joint_num"));
 			jointEntity.setJoint_property(jsonObject.getString("joint_property"));
 			jointEntity.setState(jsonObject.getInt("state"));
 		} catch (Exception e) {
-			logger.error("获取指定JointEntity异常", e);
+			this.logger.error("获取指定JointEntity异常", e);
 		}
 		return jointEntity == null ? new JointEntity() : jointEntity;
 	}
@@ -842,9 +845,9 @@ public class GetDmpDAO {
 	public List<JointEntity> getJointEntityList() {
 		List<JointEntity> jointlist = new ArrayList<JointEntity>();
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getJointEntityList/", "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointEntityList/", "UTF-8", "POST").toString();
 			JSONArray jSONArray = JSONArray.fromObject(jointEntityStr);
-			if (jSONArray != null && jSONArray.size() > 0) {
+			if ((jSONArray != null) && (jSONArray.size() > 0)) {
 				for (int i = 0; i < jSONArray.size(); i++) {
 					JointEntity jointEntity = new JointEntity();
 					jointEntity.setJoint_num(jSONArray.getJSONObject(i).getInt("joint_num"));
@@ -854,14 +857,14 @@ public class GetDmpDAO {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("获取指定List<JointEntity>异常", e);
+			this.logger.error("获取指定List<JointEntity>异常", e);
 		}
 		return jointlist;
 	}
 
 	/**
 	 * 针对b2c对接中用到
-	 * 
+	 *
 	 * @param jointnum
 	 * @return
 	 */
@@ -869,7 +872,7 @@ public class GetDmpDAO {
 
 		JointEntity jointEntity = null;
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getJointEntityByCompany/" + companyname, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointEntityByCompany/" + companyname, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(jointEntityStr);
 			jointEntity = new JointEntity();
 			jointEntity.setJoint_num(jsonObject.getInt("joint_num"));
@@ -877,7 +880,7 @@ public class GetDmpDAO {
 			jointEntity.setState(jsonObject.getInt("state"));
 
 		} catch (Exception e) {
-			logger.error("获取指定getJointEntityByCompanyname异常");
+			this.logger.error("获取指定getJointEntityByCompanyname异常");
 		}
 		return jointEntity;
 	}
@@ -886,14 +889,14 @@ public class GetDmpDAO {
 
 		JointEntity jointEntity = null;
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getJointDaoByClientID/" + ClientID, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointDaoByClientID/" + ClientID, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(jointEntityStr);
 			jointEntity = new JointEntity();
 			jointEntity.setJoint_num(jsonObject.getInt("joint_num"));
 			jointEntity.setJoint_property(jsonObject.getString("joint_property"));
 			jointEntity.setState(jsonObject.getInt("state"));
 		} catch (Exception e) {
-			logger.error("获取指定getJointDaoByClientID异常");
+			this.logger.error("获取指定getJointDaoByClientID异常");
 		}
 		return jointEntity;
 	}
@@ -903,7 +906,7 @@ public class GetDmpDAO {
 		List<Exportmould> list = new ArrayList<Exportmould>();
 		String exportmouldAll = "";
 		try {
-			exportmouldAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getExportMoulds/" + user.getRoleid() + ";jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			exportmouldAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getExportMoulds/" + user.getRoleid() + ";jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(exportmouldAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Exportmould exportmould = new Exportmould();
@@ -916,14 +919,14 @@ public class GetDmpDAO {
 				list.add(exportmould);
 			}
 		} catch (Exception e) {
-			logger.error("获取指定getExportmoulds异常");
+			this.logger.error("获取指定getExportmoulds异常");
 		}
 		return list;
 	}
 
 	/**
 	 * 根据参数获取导出excel列
-	 * 
+	 *
 	 * @param strs
 	 *            逗号隔开
 	 * @return
@@ -933,7 +936,7 @@ public class GetDmpDAO {
 		List<SetExportField> list = new ArrayList<SetExportField>();
 		String exportmouldAll = "";
 		try {
-			exportmouldAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getSetExportFieldByStrs/" + strs, "UTF-8", "POST").toString();
+			exportmouldAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getSetExportFieldByStrs/" + strs, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(exportmouldAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				SetExportField setExportField = new SetExportField();
@@ -945,7 +948,7 @@ public class GetDmpDAO {
 				list.add(setExportField);
 			}
 		} catch (Exception e) {
-			logger.error("获取指定getSetExportFieldByExportstate异常");
+			this.logger.error("获取指定getSetExportFieldByExportstate异常");
 		}
 		return list;
 	}
@@ -955,8 +958,8 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAllUsers", "UTF-8", "POST").toString();
-			logger.debug("userList :");
+			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllUsers", "UTF-8", "POST").toString();
+			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -971,7 +974,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getAllUsers异常");
+			this.logger.error("获取指定getAllUsers异常");
 		}
 		return list;
 	}
@@ -981,8 +984,8 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getDeliverListByBranch/" + branchid, "UTF-8", "POST").toString();
-			logger.debug("userList :");
+			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getDeliverListByBranch/" + branchid, "UTF-8", "POST").toString();
+			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -995,7 +998,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getAllDeliver异常");
+			this.logger.error("获取指定getAllDeliver异常");
 		}
 		return list;
 	}
@@ -1005,8 +1008,8 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAllUserByBranchIds/" + branchids, "UTF-8", "POST").toString();
-			logger.debug("userList :");
+			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllUserByBranchIds/" + branchids, "UTF-8", "POST").toString();
+			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -1019,7 +1022,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getAllDeliver异常");
+			this.logger.error("获取指定getAllDeliver异常");
 		}
 		return list;
 	}
@@ -1028,14 +1031,14 @@ public class GetDmpDAO {
 
 		SystemInstall systemIn = null;
 		try {
-			String switchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getSystemInstallByName/" + name, "UTF-8", "POST").toString();
+			String switchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getSystemInstallByName/" + name, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(switchStr);
 			systemIn = new SystemInstall();
 			systemIn.setName(jsonObject.getString("name"));
 			systemIn.setChinesename(jsonObject.getString("chinesename"));
 			systemIn.setValue(jsonObject.getString("value"));
 		} catch (Exception e) {
-			logger.error("获取指定getSystemInstallByName异常", e);
+			this.logger.error("获取指定getSystemInstallByName异常", e);
 		}
 		return systemIn;
 	}
@@ -1044,13 +1047,13 @@ public class GetDmpDAO {
 
 		Switch swith = new Switch();
 		try {
-			String switchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getSwitchBySwitchname/" + switchname, "UTF-8", "POST").toString();
+			String switchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getSwitchBySwitchname/" + switchname, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(switchStr);
 			swith.setId(jsonObject.getLong("id"));
 			swith.setSwitchname(jsonObject.getString("switchname"));
 			swith.setState(jsonObject.getString("state"));
 		} catch (Exception e) {
-			logger.error("获取指定getSwitchBySwitchname异常");
+			this.logger.error("获取指定getSwitchBySwitchname异常");
 		}
 		return swith;
 	}
@@ -1060,10 +1063,10 @@ public class GetDmpDAO {
 		List<User> userlist = new ArrayList<User>();
 		JSONArray jSONArray = new JSONArray();
 		try {
-			String userStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getDeliverListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
-			logger.debug("get userlist by cwiwu!");
+			String userStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getDeliverListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
+			this.logger.debug("get userlist by cwiwu!");
 			jSONArray = JSONArray.fromObject(userStr);
-			if (jSONArray != null && jSONArray.size() > 0) {
+			if ((jSONArray != null) && (jSONArray.size() > 0)) {
 				for (int i = 0; i < jSONArray.size(); i++) {
 					User user = new User();
 					user.setUserid(jSONArray.getJSONObject(i).getLong("userid"));
@@ -1074,7 +1077,7 @@ public class GetDmpDAO {
 			}
 
 		} catch (Exception e) {
-			logger.error("获取指定getDeliverListByCaiWu异常");
+			this.logger.error("获取指定getDeliverListByCaiWu异常");
 		}
 
 		return userlist;
@@ -1085,8 +1088,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
-			logger.debug("branchAll");
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -1097,7 +1100,7 @@ public class GetDmpDAO {
 			}
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getBranchListByCawWu异常");
+			this.logger.error("获取指定getBranchListByCawWu异常");
 		}
 		return list;
 	}
@@ -1107,8 +1110,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchListByCaiwuAndUser/" + caiwubranchid + "?userid=" + userid, "UTF-8", "POST").toString();
-			logger.debug("branchAll");
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByCaiwuAndUser/" + caiwubranchid + "?userid=" + userid, "UTF-8", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -1120,7 +1123,7 @@ public class GetDmpDAO {
 			}
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getBranchListByCawWuAndUser异常");
+			this.logger.error("获取指定getBranchListByCawWuAndUser异常");
 		}
 		return list;
 	}
@@ -1130,8 +1133,8 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchListByTypeAndUser/" + type + "?userid=" + userid, "UTF-8", "POST").toString();
-			logger.debug("branchAll");
+			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByTypeAndUser/" + type + "?userid=" + userid, "UTF-8", "POST").toString();
+			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -1143,7 +1146,7 @@ public class GetDmpDAO {
 			}
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getBranchListByTypeAndUser异常");
+			this.logger.error("获取指定getBranchListByTypeAndUser异常");
 		}
 		return list;
 	}
@@ -1151,13 +1154,13 @@ public class GetDmpDAO {
 	public String getReason(long id) {
 		String reason = "";
 		try {
-			String reasonStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getReason/" + id, "UTF-8", "POST").toString();
+			String reasonStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReason/" + id, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(reasonStr);
-			if (json != null && !json.isEmpty()) {
+			if ((json != null) && !json.isEmpty()) {
 				reason = json.getString("reasoncontent");
 			}
 		} catch (Exception e) {
-			logger.error("获取指定getBranchListByCawWu异常");
+			this.logger.error("获取指定getBranchListByCawWu异常");
 		}
 		return reason;
 	}
@@ -1167,8 +1170,8 @@ public class GetDmpDAO {
 		List<Role> list = null;
 		String roleList = "";
 		try {
-			roleList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getRoles", "UTF-8", "POST").toString();
-			logger.debug("rolelist :");
+			roleList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getRoles", "UTF-8", "POST").toString();
+			this.logger.debug("rolelist :");
 			jSONArray = JSONArray.fromObject(roleList);
 			list = new ArrayList<Role>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -1181,7 +1184,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getAllUsers异常");
+			this.logger.error("获取指定getAllUsers异常");
 		}
 		return list;
 	}
@@ -1190,18 +1193,18 @@ public class GetDmpDAO {
 
 		Role r = new Role();
 		try {
-			String roleStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getRoleByRoleid/" + id, "UTF-8", "POST").toString();
-			logger.debug("role");
+			String roleStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getRoleByRoleid/" + id, "UTF-8", "POST").toString();
+			this.logger.debug("role");
 			r = (Role) JSONObject.toBean(JSONObject.fromObject(roleStr), Role.class);
 		} catch (Exception e) {
-			logger.error("获取指定getSwitchBySwitchname异常");
+			this.logger.error("获取指定getSwitchBySwitchname异常");
 		}
 		return r;
 	}
 
 	/**
 	 * 异常反馈reasonid
-	 * 
+	 *
 	 * @param reasonid
 	 * @param expt_type
 	 * @param customerid
@@ -1211,24 +1214,24 @@ public class GetDmpDAO {
 		ExptReason exptReason = new ExptReason();
 
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid, "UTF-8", "POST").toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 			if (jparm.isEmpty()) {
 				exptReason.setExpt_code("");
 			} else {
-				exptReason.setExpt_code(jparm.get("reasonid") != null && !"".equals(jparm.getString("reasonid")) ? jparm.getString("reasonid") : "");
+				exptReason.setExpt_code((jparm.get("reasonid") != null) && !"".equals(jparm.getString("reasonid")) ? jparm.getString("reasonid") : "");
 
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("获取指定getExptCodeJointByB2c异常");
+			this.logger.error("获取指定getExptCodeJointByB2c异常");
 		}
 		return exptReason == null ? new ExptReason() : exptReason;
 	}
 
 	/**
 	 * 异常反馈的时候查询该供货商对应的异常信息
-	 * 
+	 *
 	 * @param reasonid
 	 * @param expt_type
 	 * @param customerid
@@ -1238,24 +1241,25 @@ public class GetDmpDAO {
 		ExptReason exptReason = new ExptReason();
 
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid, "UTF-8", "POST")
+					.toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 
-			exptReason.setExpt_code(jparm.get("expt_code") != null && !"".equals(jparm.getString("expt_code")) ? jparm.getString("expt_code") : "");
-			exptReason.setExpt_msg(jparm.get("expt_msg") != null && !"".equals(jparm.getString("expt_msg")) ? jparm.getString("expt_msg") : "");
+			exptReason.setExpt_code((jparm.get("expt_code") != null) && !"".equals(jparm.getString("expt_code")) ? jparm.getString("expt_code") : "");
+			exptReason.setExpt_msg((jparm.get("expt_msg") != null) && !"".equals(jparm.getString("expt_msg")) ? jparm.getString("expt_msg") : "");
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("获取指定getExptCodeJointByB2c异常");
+			this.logger.error("获取指定getExptCodeJointByB2c异常");
 		}
-		logger.debug("OMS请求接口:reasonid：" + reasonid + ";expt_type:" + expt_type + ";support_key:" + customerid);
-		logger.debug("OMS对接请求接口路径:" + dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid);
+		this.logger.debug("OMS请求接口:reasonid：" + reasonid + ";expt_type:" + expt_type + ";support_key:" + customerid);
+		this.logger.debug("OMS对接请求接口路径:" + GetDmpDAO.dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid);
 		return exptReason == null ? new ExptReason() : exptReason;
 	}
 
 	/**
 	 * 异常反馈reasonid
-	 * 
+	 *
 	 * @param reasonid
 	 * @param expt_type
 	 * @param customerid
@@ -1265,17 +1269,17 @@ public class GetDmpDAO {
 		ExptReason exptReason = new ExptReason();
 
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + Long.valueOf(customerid), "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + Long.valueOf(customerid), "UTF-8", "POST").toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 
-			exptReason.setExpt_code(jparm.get("reasonid") != null && !"".equals(jparm.getString("reasonid")) ? jparm.getString("reasonid") : "");
+			exptReason.setExpt_code((jparm.get("reasonid") != null) && !"".equals(jparm.getString("reasonid")) ? jparm.getString("reasonid") : "");
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("获取指定getExptCodeJointByB2c异常");
+			this.logger.error("获取指定getExptCodeJointByB2c异常");
 		}
-		logger.debug("OMS请求接口:reasonid：" + code + ";expt_type:" + customerid);
-		logger.debug("OMS对接请求接口路径:" + dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid + "/" + customerid);
+		this.logger.debug("OMS请求接口:reasonid：" + code + ";expt_type:" + customerid);
+		this.logger.debug("OMS对接请求接口路径:" + GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid + "/" + customerid);
 		return exptReason == null ? new ExptReason() : exptReason;
 	}
 
@@ -1285,7 +1289,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getQueryBranchByBranchsiteAndUserid/" + userid + "/" + sitetype + "", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getQueryBranchByBranchsiteAndUserid/" + userid + "/" + sitetype + "", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((Branch) JSONObject.toBean(jSONArray.getJSONObject(i), Branch.class));
@@ -1293,7 +1297,7 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getQueryBranchByBranchsiteAndUserid异常", e);
+			this.logger.error("获取指定getQueryBranchByBranchsiteAndUserid异常", e);
 		}
 		return list;
 	}
@@ -1303,14 +1307,14 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getBranchListByUser/" + userid, "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByUser/" + userid, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((Branch) JSONObject.toBean(jSONArray.getJSONObject(i), Branch.class));
 			}
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getBranchListByUser异常", e);
+			this.logger.error("获取指定getBranchListByUser异常", e);
 		}
 		return list;
 	}
@@ -1320,14 +1324,14 @@ public class GetDmpDAO {
 		List<CustomWareHouse> list = new ArrayList<CustomWareHouse>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCustomWareHouseByCustomerid/" + customerid + "", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouseByCustomerid/" + customerid + "", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((CustomWareHouse) JSONObject.toBean(jSONArray.getJSONObject(i), CustomWareHouse.class));
 			}
 
 		} catch (Exception e) {
-			logger.error("获取指定getCustomWareHouseByCustomerid异常", e);
+			this.logger.error("获取指定getCustomWareHouseByCustomerid异常", e);
 		}
 		return list;
 
@@ -1338,14 +1342,14 @@ public class GetDmpDAO {
 		List<Reason> list = new ArrayList<Reason>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAllReason", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllReason", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((Reason) JSONObject.toBean(jSONArray.getJSONObject(i), Reason.class));
 			}
 
 		} catch (Exception e) {
-			logger.error("获取指定getAllReason异常", e);
+			this.logger.error("获取指定getAllReason异常", e);
 		}
 		return list;
 	}
@@ -1354,13 +1358,13 @@ public class GetDmpDAO {
 		JSONArray jSONArray = new JSONArray();
 		List<User> list = new ArrayList<User>();
 		try {
-			String userStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAllUserbybranchid/" + branchid, "UTF-8", "POST").toString();
+			String userStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllUserbybranchid/" + branchid, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(userStr);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((User) JSONObject.toBean(jSONArray.getJSONObject(i), User.class));
 			}
 		} catch (Exception e) {
-			logger.error("按站点获取用户List异常", e);
+			this.logger.error("按站点获取用户List异常", e);
 		}
 
 		return list;
@@ -1379,7 +1383,7 @@ public class GetDmpDAO {
 		List<Remark> list = new ArrayList<Remark>();
 		String remarkAll = "";
 		try {
-			remarkAll = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getAllRemark", "UTF-8", "POST").toString();
+			remarkAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllRemark", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(remarkAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Remark remark = new Remark();
@@ -1392,14 +1396,14 @@ public class GetDmpDAO {
 				list.add(remark);
 			}
 		} catch (Exception e) {
-			logger.error("获取所有备注异常");
+			this.logger.error("获取所有备注异常");
 		}
 		return list;
 	}
 
 	public String getFileUrl() {
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getFileUrl", "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getFileUrl", "UTF-8", "POST").toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 			return jparm.getString("fileUrl");
 		} catch (IOException e) {
@@ -1411,7 +1415,7 @@ public class GetDmpDAO {
 
 	/**
 	 * 获取dmp 易派对接
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -1420,21 +1424,21 @@ public class GetDmpDAO {
 		List<EpaiApi> list = new ArrayList<EpaiApi>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getEpaiAPI", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getEpaiAPI", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((EpaiApi) JSONObject.toBean(jSONArray.getJSONObject(i), EpaiApi.class));
 			}
 
 		} catch (Exception e) {
-			logger.error("获取指定ExptReason异常", e);
+			this.logger.error("获取指定ExptReason异常", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 获取dmp 易派对接
-	 * 
+	 *
 	 * @param type
 	 *            异常类型 2滞留, 3拒收
 	 * @return
@@ -1444,21 +1448,21 @@ public class GetDmpDAO {
 		List<ExptReason> list = new ArrayList<ExptReason>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getExptB2cSetUp/" + customerid + "/" + type, "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getExptB2cSetUp/" + customerid + "/" + type, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((ExptReason) JSONObject.toBean(jSONArray.getJSONObject(i), ExptReason.class));
 			}
 
 		} catch (Exception e) {
-			logger.error("获取指定ExptReason异常", e);
+			this.logger.error("获取指定ExptReason异常", e);
 		}
 		return list;
 	}
 
 	/**
 	 * 根据订单号集合返回订单详细信息
-	 * 
+	 *
 	 * @param
 	 * @return
 	 */
@@ -1466,17 +1470,17 @@ public class GetDmpDAO {
 
 		try {
 
-			return JSONReslutUtil.SendHttptoServer(content, dmpUrl + "/OMSInterface/getOrdersByJsonCwbArr");
+			return JSONReslutUtil.SendHttptoServer(content, GetDmpDAO.dmpUrl + "/OMSInterface/getOrdersByJsonCwbArr");
 
 		} catch (Exception e) {
-			logger.error("获取指定dmp上游信息异常", e);
+			this.logger.error("获取指定dmp上游信息异常", e);
 		}
 		return null;
 	}
 
 	/**
 	 * 请求dmp反馈订单 分站到货，领货，反馈，审核
-	 * 
+	 *
 	 * @param
 	 * @return
 	 */
@@ -1485,9 +1489,9 @@ public class GetDmpDAO {
 		try {
 			// return JSONReslutUtil.getResultMessage( dmpUrl
 			// +"/OMSInterface/requestDMPorderService_feedback",cwbJson,"POST").toString();
-			return JSONReslutUtil.SendHttptoServer(cwbJson, dmpUrl + "/OMSInterface/requestDMPorderService_feedback");
+			return JSONReslutUtil.SendHttptoServer(cwbJson, GetDmpDAO.dmpUrl + "/OMSInterface/requestDMPorderService_feedback");
 		} catch (Exception e) {
-			logger.error("获取指定detail表异常", e);
+			this.logger.error("获取指定detail表异常", e);
 		}
 		return null;
 	}
@@ -1497,9 +1501,9 @@ public class GetDmpDAO {
 		try {
 			// return JSONReslutUtil.getResultMessage( dmpUrl
 			// +"/OMSInterface/requestDMPorderService_feedback",cwbJson,"POST").toString();
-			return JSONReslutUtil.SendHttptoServer(cwbJson, dmpUrl + "/OMSInterface/weisudaFeedback");
+			return JSONReslutUtil.SendHttptoServer(cwbJson, GetDmpDAO.dmpUrl + "/OMSInterface/weisudaFeedback");
 		} catch (Exception e) {
-			logger.error("获取指定detail表异常", e);
+			this.logger.error("获取指定detail表异常", e);
 		}
 		return null;
 	}
@@ -1508,21 +1512,21 @@ public class GetDmpDAO {
 
 		Stores stores = new Stores();
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getStoresById/" + id, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getStoresById/" + id, "UTF-8", "POST").toString();
 			stores = (Stores) JSONObject.toBean(JSONObject.fromObject(branchStr), Stores.class);
 		} catch (IOException e) {
-			logger.error("获取迈思可站点信息表的详细信息异常", e);
+			this.logger.error("获取迈思可站点信息表的详细信息异常", e);
 		}
 		return stores;
 	}
 
 	public Common getCommonByCommonnumber(String Commonnumber) {
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getCommonByCommonnumber/" + Commonnumber, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommonByCommonnumber/" + Commonnumber, "UTF-8", "POST").toString();
 			Common common = (Common) JSONObject.toBean(JSONObject.fromObject(branchStr), Common.class);
 			return common;
 		} catch (IOException e) {
-			logger.error("根据commonnumber获取承运商信息异常", e);
+			this.logger.error("根据commonnumber获取承运商信息异常", e);
 			return null;
 		}
 	}
@@ -1532,8 +1536,8 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getUserForALL", "UTF-8", "POST").toString();
-			logger.debug("userList :");
+			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getUserForALL", "UTF-8", "POST").toString();
+			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -1549,19 +1553,36 @@ public class GetDmpDAO {
 
 		} catch (Exception e) {
 			list = null;
-			logger.error("获取指定getAllUsers异常");
+			this.logger.error("获取指定getAllUsers异常");
 		}
 		return list;
 	}
 
 	public String getOrderGoods(String cwb) {
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(dmpUrl + "/OMSInterface/getOrderGoods/" + cwb, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getOrderGoods/" + cwb, "UTF-8", "POST").toString();
 			return branchStr;
 		} catch (Exception e) {
-			logger.error("获取唯品会商品列表异常" + cwb, e);
+			this.logger.error("获取唯品会商品列表异常" + cwb, e);
 			return null;
 		}
 	}
-
+/**
+ * 广州通路对接添加
+ */
+	public ExptReason getExptCodeJointByB2cGztl(long customerid,String expect_code){
+		ExptReason exptReason = new ExptReason();
+		try {
+			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2cGztl/"+ customerid , "code=" + expect_code, "POST").toString();
+			if(jointEntityStr != null ){
+				JSONObject jparm = JSONObject.fromObject(jointEntityStr);
+				exptReason.setExpt_code((jparm.get("expt_code") != null) && !"".equals(jparm.getString("expt_code")) ? jparm.getString("expt_code") : "");//广州通路对应我们系统中的原因
+				exptReason.setExpt_msg((jparm.get("expt_type") != null) && !"".equals(jparm.getString("expt_type")) ? jparm.getString("expt_type") : "");//广州通路发来的异常类型在我们系统中的异常类型
+				exptReason.setReasonid(jparm.get("reasonid")!=null&&!"".equals(jparm.getString("reasonid"))?jparm.getString("reasonid"):"");//在dmp里面查询出来的对应我们系统的原因所在表的id
+			}
+		} catch (Exception e) {
+			this.logger.error("获取指定getExptCodeJointByB2c异常",e);
+		}
+		return exptReason;
+	}
 }

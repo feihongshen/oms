@@ -27,7 +27,9 @@ public class User implements Serializable {
 	String useraddress;
 	String userremark;
 	BigDecimal usersalary;
-	String showphoneflag;
+	long showphoneflag;
+	long shownameflag;
+	long showmobileflag;
 	String useremail;
 	// int deliverpaytype;
 	String userwavfile;
@@ -184,12 +186,29 @@ public class User implements Serializable {
 		this.usersalary = usersalary;
 	}
 
-	public String getShowphoneflag() {
+
+	public long getShowphoneflag() {
 		return this.showphoneflag;
 	}
 
-	public void setShowphoneflag(String showphoneflag) {
+	public void setShowphoneflag(long showphoneflag) {
 		this.showphoneflag = showphoneflag;
+	}
+
+	public long getShownameflag() {
+		return this.shownameflag;
+	}
+
+	public void setShownameflag(long shownameflag) {
+		this.shownameflag = shownameflag;
+	}
+
+	public long getShowmobileflag() {
+		return this.showmobileflag;
+	}
+
+	public void setShowmobileflag(long showmobileflag) {
+		this.showmobileflag = showmobileflag;
 	}
 
 	public String getUseremail() {

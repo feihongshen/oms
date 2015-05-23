@@ -105,6 +105,57 @@ public class DmpCwbOrder {
 	private String customerbrackhouseremark; // 供货商拒收返库备注
 
 	private String historybranchname;// 历史配送站点
+	// 2013-12-10 新加字段
+	private long zhongzhuanreasonid;//中转id
+	private String zhongzhuanreason;//中转原因
+	/**
+	 * 广州通路对接接口需要添加的字段
+	 */
+	private String consigneenameOfkf;
+	private String consigneemobileOfkf;
+	private String consigneephoneOfkf;
+	
+	
+
+	public String getConsigneenameOfkf() {
+		return consigneenameOfkf;
+	}
+
+	public void setConsigneenameOfkf(String consigneenameOfkf) {
+		this.consigneenameOfkf = consigneenameOfkf;
+	}
+
+	public String getConsigneemobileOfkf() {
+		return consigneemobileOfkf;
+	}
+
+	public void setConsigneemobileOfkf(String consigneemobileOfkf) {
+		this.consigneemobileOfkf = consigneemobileOfkf;
+	}
+
+	public String getConsigneephoneOfkf() {
+		return consigneephoneOfkf;
+	}
+
+	public void setConsigneephoneOfkf(String consigneephoneOfkf) {
+		this.consigneephoneOfkf = consigneephoneOfkf;
+	}
+
+	public long getZhongzhuanreasonid() {
+		return zhongzhuanreasonid;
+	}
+
+	public void setZhongzhuanreasonid(long zhongzhuanreasonid) {
+		this.zhongzhuanreasonid = zhongzhuanreasonid;
+	}
+
+	public String getZhongzhuanreason() {
+		return zhongzhuanreason;
+	}
+
+	public void setZhongzhuanreason(String zhongzhuanreason) {
+		this.zhongzhuanreason = zhongzhuanreason;
+	}
 
 	public String getHistorybranchname() {
 		return historybranchname;

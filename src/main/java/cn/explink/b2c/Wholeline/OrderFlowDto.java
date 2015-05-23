@@ -24,6 +24,24 @@ public class OrderFlowDto {
 	private String floworderdetail;// 操作详情描述
 	private String exptcode; // 异常码
 	private String custid; // 唯一不重复的记录标识,用于异步回传下游最终的状态。
+	private String deliverymobile; // 派送员电话
+	private String deliveryname; // 派送员
+	
+	public String getDeliverymobile() {
+		return deliverymobile;
+	}
+
+	public void setDeliverymobile(String deliverymobile) {
+		this.deliverymobile = deliverymobile;
+	}
+
+	public String getDeliveryname() {
+		return deliveryname;
+	}
+
+	public void setDeliveryname(String deliveryname) {
+		this.deliveryname = deliveryname;
+	}
 
 	public String getUserCode() {
 		return userCode;

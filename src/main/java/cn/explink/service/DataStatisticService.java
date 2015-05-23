@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -32,11 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.explink.dao.BranchDAO;
 import cn.explink.dao.ChukuDataResultDAO;
@@ -53,7 +50,6 @@ import cn.explink.dao.UserDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.ChukuDataResult;
 import cn.explink.domain.Common;
-import cn.explink.domain.Complaint;
 import cn.explink.domain.CustomWareHouse;
 import cn.explink.domain.Customer;
 import cn.explink.domain.CwbOrder;
@@ -62,7 +58,6 @@ import cn.explink.domain.CwbTiHuo;
 import cn.explink.domain.DeliveryChuku;
 import cn.explink.domain.DeliveryDaohuo;
 import cn.explink.domain.DeliveryJuShou;
-import cn.explink.domain.DeliveryState;
 import cn.explink.domain.DeliverySuccessful;
 import cn.explink.domain.DeliveryZhiLiu;
 import cn.explink.domain.DownloadManager;
@@ -134,7 +129,7 @@ public class DataStatisticService {
 
 	public List<String> getList(String[] strArr) {
 		List<String> strList = new ArrayList<String>();
-		if (strArr != null && strArr.length > 0) {
+		if ((strArr != null) && (strArr.length > 0)) {
 			for (String str : strArr) {
 				strList.add(str);
 			}
@@ -157,7 +152,7 @@ public class DataStatisticService {
 
 	/**
 	 * 订单数*（customerList+branchList+userList） 谨慎使用
-	 * 
+	 *
 	 * @param clist
 	 * @param delList
 	 * @param customerList
@@ -167,7 +162,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getCwbOrderViewCount10(List<CwbOrder> clist, List<DeliverySuccessful> delList, List<Customer> customerList, List<Branch> branchList, List<User> userList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (delList.size() > 0 && clist.size() > 0) {
+		if ((delList.size() > 0) && (clist.size() > 0)) {
 			for (DeliverySuccessful delSuc : delList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(delSuc.getCwb())) {
@@ -188,7 +183,7 @@ public class DataStatisticService {
 
 	/**
 	 * 库房出库统计封装实体
-	 * 
+	 *
 	 * @param clist
 	 * @param delList
 	 * @param customerList
@@ -198,7 +193,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getChukuCwbOrderViewCount10(List<CwbOrder> clist, List<DeliveryChuku> delList, List<Customer> customerList, List<Branch> branchList, List<User> userList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (delList.size() > 0 && clist.size() > 0) {
+		if ((delList.size() > 0) && (clist.size() > 0)) {
 			for (DeliveryChuku delChuku : delList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(delChuku.getCwb())) {
@@ -220,7 +215,7 @@ public class DataStatisticService {
 
 	/**
 	 * 库对库出库统计封装实体
-	 * 
+	 *
 	 * @param clist
 	 * @param delList
 	 * @param customerList
@@ -230,7 +225,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getKDKChukuCwbOrderViewCount10(List<CwbOrder> clist, List<KDKDeliveryChuku> delList, List<Customer> customerList, List<Branch> branchList, List<User> userList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (delList.size() > 0 && clist.size() > 0) {
+		if ((delList.size() > 0) && (clist.size() > 0)) {
 			for (KDKDeliveryChuku delChuku : delList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(delChuku.getCwb())) {
@@ -251,7 +246,7 @@ public class DataStatisticService {
 
 	/**
 	 * 分站到货统计封装实体
-	 * 
+	 *
 	 * @param clist
 	 * @param delList
 	 * @param customerList
@@ -261,7 +256,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getDaohuoCwbOrderViewCount10(List<CwbOrder> clist, List<DeliveryDaohuo> delList, List<Customer> customerList, List<Branch> branchList, List<User> userList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (delList.size() > 0 && clist.size() > 0) {
+		if ((delList.size() > 0) && (clist.size() > 0)) {
 			for (DeliveryDaohuo delDaohuo : delList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(delDaohuo.getCwb())) {
@@ -282,7 +277,7 @@ public class DataStatisticService {
 
 	/**
 	 * 中转订单统计封装实体
-	 * 
+	 *
 	 * @param clist
 	 * @param zhongzhuanList
 	 * @param customerList
@@ -292,7 +287,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getZhongzhuanCwbOrderViewCount10(List<CwbOrder> clist, List<ZhongZhuan> zhongzhuanList, List<Customer> customerList, List<Branch> branchList, List<User> userList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (zhongzhuanList.size() > 0 && clist.size() > 0) {
+		if ((zhongzhuanList.size() > 0) && (clist.size() > 0)) {
 			for (ZhongZhuan zhongZhuan : zhongzhuanList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(zhongZhuan.getCwb())) {
@@ -312,7 +307,7 @@ public class DataStatisticService {
 
 	/**
 	 * 提货订单统计封装实体
-	 * 
+	 *
 	 * @param clist
 	 * @param tihuoList
 	 * @param customerList
@@ -320,7 +315,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getTiHuoCwbOrderViewCount10(List<CwbOrder> clist, List<CwbTiHuo> tihuoList, List<Customer> customerList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (tihuoList.size() > 0 && clist.size() > 0) {
+		if ((tihuoList.size() > 0) && (clist.size() > 0)) {
 			for (CwbTiHuo cwbTiHuo : tihuoList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(cwbTiHuo.getCwb())) {
@@ -338,7 +333,7 @@ public class DataStatisticService {
 
 	/**
 	 * 拒收订单 汇总 封装
-	 * 
+	 *
 	 * @param orderlist
 	 * @param djList
 	 * @param customerlist
@@ -352,7 +347,7 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getJuShouCwbOrderViewCount10(List<CwbOrder> orderlist, List<DeliveryJuShou> djList, List<Customer> customerlist, List<Branch> branchList, List<Reason> reasonList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (djList.size() > 0 && orderlist.size() > 0) {
+		if ((djList.size() > 0) && (orderlist.size() > 0)) {
 			for (DeliveryJuShou dj : djList) {
 				for (CwbOrder cwbOrder : orderlist) {
 					if (dj.getCwb().equals(cwbOrder.getCwb())) {
@@ -407,7 +402,7 @@ public class DataStatisticService {
 
 	/**
 	 * 检查导出状况，是否重复导出
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -417,65 +412,65 @@ public class DataStatisticService {
 	 */
 	public String DataStatisticsExportExcelCheck(HttpServletResponse response, HttpServletRequest request, long page, long sign, long userid) {
 		if (sign == ModelEnum.TuoTouDingdanhuizong.getValue()) {
-			return checkTuotou(response, request, page, userid);
+			return this.checkTuotou(response, request, page, userid);
 		}
 
 		if (sign == ModelEnum.KuFangChuKuDingdantongji.getValue()) {
-			return checkOutWarehouseData(response, request, page, userid);
+			return this.checkOutWarehouseData(response, request, page, userid);
 		}
 		if (sign == ModelEnum.ZhiLiuDingdanhuizong.getValue()) {
-			return checkZhiLiuHuiZong(response, request, page, userid);
+			return this.checkZhiLiuHuiZong(response, request, page, userid);
 		}
 		if (sign == ModelEnum.FenZhanDaoHuotongji.getValue()) {
-			return checkDaoHuoData(response, request, page, userid);
+			return this.checkDaoHuoData(response, request, page, userid);
 		}
 		if (sign == ModelEnum.ZhanDianDaoHuohuizong.getValue()) {
-			return checkDaoHuoHuiZong(response, request, userid);
+			return this.checkDaoHuoHuiZong(response, request, userid);
 		}
 		if (sign == ModelEnum.TuiHuoChuZhanTongJi.getValue()) {
-			return checkTuiHuoChuZhanTongJi(response, request, page, userid);
+			return this.checkTuiHuoChuZhanTongJi(response, request, page, userid);
 		}
 		if (sign == ModelEnum.ZhongZhuanDingDanTongJi.getValue()) {
-			return checkZhongZhuanTongJi(response, request, userid);
+			return this.checkZhongZhuanTongJi(response, request, userid);
 		}
 
 		if (sign == ModelEnum.JuShouDingdanhuizong.getValue()) {
-			return checkJuShouHuiZong(response, request, page, userid);
+			return this.checkJuShouHuiZong(response, request, page, userid);
 		}
 
 		if (sign == ModelEnum.TiHuoDingDanTongJi.getValue()) {
-			return checkTiHuoDingDanTongJi(response, request, page, userid);
+			return this.checkTiHuoDingDanTongJi(response, request, page, userid);
 		}
 		// 库房出库统计（云）导出报表
 		if (sign == ModelEnum.KuFangChuKuHuiZong.getValue()) {
-			return checkKuFangChuKuHuiZong(response, request, userid);
+			return this.checkKuFangChuKuHuiZong(response, request, userid);
 		}
 
 		if (sign == ModelEnum.KDKChuKuDingdantongji.getValue()) {
-			return checkKDKOutWarehouseData(response, request, page, userid);
+			return this.checkKDKOutWarehouseData(response, request, page, userid);
 		}
 		if (sign == ModelEnum.TuiHuoZhanRuKuTongJi.getValue()) {
-			return checkTuiHuoZhanRuKuTongJi(response, request, page, userid);
+			return this.checkTuiHuoZhanRuKuTongJi(response, request, page, userid);
 		}
 		if (sign == ModelEnum.KuFangZaiTuTongJi.getValue()) {
-			return checkKuFangZaiTuTongJi(response, request, page, userid);
+			return this.checkKuFangZaiTuTongJi(response, request, page, userid);
 		}
 		if (sign == ModelEnum.KuFangRuKuTongJi.getValue()) {
 
-			return checkKuFangRuKuTongJi(response, request, page, userid);
+			return this.checkKuFangRuKuTongJi(response, request, page, userid);
 		}
 		if (sign == ModelEnum.KeHuFaHuoTongJi.getValue()) {
-			return checkKeHuFaHuoTongJi(response, request, page, userid);
+			return this.checkKeHuFaHuoTongJi(response, request, page, userid);
 		}
 		if (sign == ModelEnum.KeHuFaHuoHuiZong.getValue()) {
 
-			return checkKeHuFaHuoHuiZong(response, request, userid);
+			return this.checkKeHuFaHuoHuiZong(response, request, userid);
 		}
 		if (sign == ModelEnum.ZongHeChaXun.getValue()) {
-			return checkZongHeChaXun(response, request, page, userid);
+			return this.checkZongHeChaXun(response, request, page, userid);
 		}
 		if (sign == ModelEnum.DanliangChaxun.getValue()) {
-			return checkDanliangchaxun(response, request, page, userid);
+			return this.checkDanliangchaxun(response, request, page, userid);
 		}
 		/*
 		 * if (sign==ModelEnum.FenZhanDaoHuoHuiZong.getValue()) { return
@@ -486,7 +481,7 @@ public class DataStatisticService {
 
 	/**
 	 * 客户发货汇总 报表形式
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -506,20 +501,20 @@ public class DataStatisticService {
 			String servicetype = request.getParameter("servicetype1") == null ? "全部" : request.getParameter("servicetype1").toString();
 			String customers = "";
 			if (customerids.length > 0) {
-				customers = getStrings(customerids);
+				customers = this.getStrings(customerids);
 			}
 			String kufangids = "";
 			if (kufangid.length > 0) {
-				kufangids = getStrings(kufangid);
+				kufangids = this.getStrings(kufangid);
 			}
 			String cwbordertypeids = "";
 			if (cwbordertypeid.length > 0) {
-				cwbordertypeids = getStrings(cwbordertypeid);
+				cwbordertypeids = this.getStrings(cwbordertypeid);
 			}
 			// 验证导出条件是否存在
-			String datajson = setKeHuFaHuoHuiZongJson(begindate, enddate, customers, cwbordertypeids, kufangids, userid, flowordertype, servicetype);
+			String datajson = this.setKeHuFaHuoHuiZongJson(begindate, enddate, customers, cwbordertypeids, kufangids, userid, flowordertype, servicetype);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -532,10 +527,10 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "客户发货汇总_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KeHuFaHuoHuiZong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KeHuFaHuoHuiZong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -576,7 +571,7 @@ public class DataStatisticService {
 
 	/**
 	 * 客户发货统计 导出
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -598,20 +593,20 @@ public class DataStatisticService {
 			String servicetype = request.getParameter("servicetype1") == null ? "全部" : request.getParameter("servicetype1").toString();
 			String customers = "";
 			if (customerids.length > 0) {
-				customers = getStrings(customerids);
+				customers = this.getStrings(customerids);
 			}
 			String kufangids = "";
 			if (kufangid.length > 0) {
-				kufangids = getStrings(kufangid);
+				kufangids = this.getStrings(kufangid);
 			}
 			String cwbordertypeids = "";
 			if (cwbordertypeid.length > 0) {
-				cwbordertypeids = getStrings(cwbordertypeid);
+				cwbordertypeids = this.getStrings(cwbordertypeid);
 			}
 			// 验证导出条件是否存在
-			String datajson = setKeHuFaHuoTongJiJson(begindate, enddate, customers, cwbordertypeids, kufangids, page, mouldfieldids, userid, flowordertype, servicetype);
+			String datajson = this.setKeHuFaHuoTongJiJson(begindate, enddate, customers, cwbordertypeids, kufangids, page, mouldfieldids, userid, flowordertype, servicetype);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -624,19 +619,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "客户发货统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KeHuFaHuoTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KeHuFaHuoTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -667,7 +662,7 @@ public class DataStatisticService {
 
 	/**
 	 * 库房入库统计(云) 导出
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -690,12 +685,12 @@ public class DataStatisticService {
 			String[] customerids = request.getParameterValues("customerids1") == null ? new String[] {} : request.getParameterValues("customerids1");
 			String customers = "";
 			if (customerids.length > 0) {
-				customers = getStrings(customerids);
+				customers = this.getStrings(customerids);
 			}
 			// 验证导出条件是否存在
-			String datajson = setKuFangRuKuJson(isruku, begindate, enddate, emaildatebegin, emaildateend, customers, cwbordertypeid, kufangid, page, mouldfieldids, userid);
+			String datajson = this.setKuFangRuKuJson(isruku, begindate, enddate, emaildatebegin, emaildateend, customers, cwbordertypeid, kufangid, page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -708,19 +703,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "库房入库统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangRuKuTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangRuKuTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -763,7 +758,7 @@ public class DataStatisticService {
 
 	/**
 	 * 库房在途统计
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -785,9 +780,10 @@ public class DataStatisticService {
 			long datetype = request.getParameter("datetype1") == null ? -1 : Long.parseLong(request.getParameter("datetype1").toString());
 
 			// 验证导出条件是否存在
-			String datajson = setKuFangZaiTuJson(datetype, begindate, enddate, getStrings(nextbranchid), getStrings(kufangid), getStrings(cwbordertypeids), page, mouldfieldids, userid);
+			String datajson = this.setKuFangZaiTuJson(datetype, begindate, enddate, this.getStrings(nextbranchid), this.getStrings(kufangid), this.getStrings(cwbordertypeids), page, mouldfieldids,
+					userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -800,19 +796,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "库房在途统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangZaiTuTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangZaiTuTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -841,7 +837,7 @@ public class DataStatisticService {
 
 	/**
 	 * 退货站入库统计
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -861,9 +857,9 @@ public class DataStatisticService {
 			String[] cwbordertypeids = request.getParameterValues("cwbordertypeid1") == null ? new String[] {} : request.getParameterValues("cwbordertypeid1");
 
 			// 验证导出条件是否存在
-			String datajson = setTuiHuoZhanRuKuJson(begindate, enddate, getStrings(customerids), getStrings(branchids), getStrings(cwbordertypeids), page, mouldfieldids, userid);
+			String datajson = this.setTuiHuoZhanRuKuJson(begindate, enddate, this.getStrings(customerids), this.getStrings(branchids), this.getStrings(cwbordertypeids), page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -876,19 +872,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "退货站入库统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TuiHuoZhanRuKuTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TuiHuoZhanRuKuTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -925,9 +921,9 @@ public class DataStatisticService {
 			String[] branchids = request.getParameterValues("branchid1") == null ? new String[] {} : request.getParameterValues("branchid1");
 			long istuihuozhanruku = request.getParameter("istuihuozhanruku1") == null ? -1 : Long.parseLong(request.getParameter("istuihuozhanruku1").toString());
 			// 验证导出条件是否存在
-			String datajson = setTuiHuoChuZhanJson(begindate, enddate, getStrings(customerids), getStrings(branchids), page, istuihuozhanruku, mouldfieldids, userid);
+			String datajson = this.setTuiHuoChuZhanJson(begindate, enddate, this.getStrings(customerids), this.getStrings(branchids), page, istuihuozhanruku, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -940,19 +936,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "退货出站统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TuiHuoChuZhanTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TuiHuoChuZhanTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -976,9 +972,9 @@ public class DataStatisticService {
 			String[] nextbranchid = request.getParameterValues("nextbranchid1") == null ? new String[] {} : request.getParameterValues("nextbranchid1");
 
 			// 验证导出条件是否存在
-			String datajson = setKuFangChuKuHuiZongJson(begindate, enddate, getStrings(customerid), getStrings(kufangid), getStrings(nextbranchid), userid);
+			String datajson = this.setKuFangChuKuHuiZongJson(begindate, enddate, this.getStrings(customerid), this.getStrings(kufangid), this.getStrings(nextbranchid), userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -990,10 +986,10 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				fileName = fileName + lastStr;
 				String cnfilename = "库房出库汇总_" + df.format(new Date()) + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangChuKuHuiZong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangChuKuHuiZong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1022,10 +1018,10 @@ public class DataStatisticService {
 			String[] operationOrderResultTypes = request.getParameterValues("operationOrderResultTypes1") == null ? new String[] {} : request.getParameterValues("operationOrderResultTypes1");
 
 			// 验证导出条件是否存在
-			String datajson = setJuShouJson(begindate, enddate, isaudit, isauditTime, getStrings(customerids), getStrings(cwbordertypeids), getStrings(dispatchbranchid), deliverid,
-					getStrings(operationOrderResultTypes), page, mouldfieldids, userid);
+			String datajson = this.setJuShouJson(begindate, enddate, isaudit, isauditTime, this.getStrings(customerids), this.getStrings(cwbordertypeids), this.getStrings(dispatchbranchid),
+					deliverid, this.getStrings(operationOrderResultTypes), page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1038,19 +1034,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "拒收订单汇总_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.JuShouDingdanhuizong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.JuShouDingdanhuizong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1072,9 +1068,9 @@ public class DataStatisticService {
 			String[] customerids = request.getParameterValues("customerid1") == null ? new String[] {} : request.getParameterValues("customerid1");
 
 			// 验证导出条件是否存在
-			String datajson = setTiHuoJson(begindate, enddate, getStrings(customerids), page, userid);
+			String datajson = this.setTiHuoJson(begindate, enddate, this.getStrings(customerids), page, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1087,19 +1083,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "提货订单统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TiHuoDingDanTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TiHuoDingDanTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1123,9 +1119,9 @@ public class DataStatisticService {
 			String mouldfieldids = request.getParameter("mouldfieldids");
 			String select = request.getParameter("select");
 			// 验证导出条件是否存在
-			String datajson = setDanliang(kufangids, enddate, Integer.valueOf(customeri), page, mouldfieldids, userid, select);
+			String datajson = this.setDanliang(kufangids, enddate, Integer.valueOf(customeri), page, mouldfieldids, userid, select);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1138,19 +1134,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "单量查询_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.DanliangChaxun.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.DanliangChaxun.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1181,10 +1177,10 @@ public class DataStatisticService {
 			// request.getParameterValues("operationOrderResultTypes1")==null?new
 			// String[]{}:request.getParameterValues("operationOrderResultTypes1");
 			// 验证导出条件是否存在
-			String datajson = setZhiLiuJson(begindate, enddate, isaudit, isauditTime, getStrings(customerids), getStrings(cwbordertypeids), getStrings(dispatchbranchid), deliverid, page,
-					mouldfieldids, userid);
+			String datajson = this.setZhiLiuJson(begindate, enddate, isaudit, isauditTime, this.getStrings(customerids), this.getStrings(cwbordertypeids), this.getStrings(dispatchbranchid),
+					deliverid, page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1197,19 +1193,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "滞留订单汇总_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZhiLiuDingdanhuizong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZhiLiuDingdanhuizong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1239,10 +1235,10 @@ public class DataStatisticService {
 			String[] operationOrderResultTypes = request.getParameterValues("operationOrderResultTypes1") == null ? new String[] {} : request.getParameterValues("operationOrderResultTypes1");
 			Integer paybackfeeIsZero = request.getParameter("paybackfeeIsZero1") == null ? -1 : Integer.parseInt(request.getParameter("paybackfeeIsZero1").toString());
 			// 验证导出条件是否存在
-			String datajson = setJson(begindate, enddate, isaudit, isauditTime, getStrings(customerids), getStrings(cwbordertypeids), paywayid, getStrings(dispatchbranchid), deliverid,
-					getStrings(operationOrderResultTypes), page, mouldfieldids, userid, paybackfeeIsZero);
+			String datajson = this.setJson(begindate, enddate, isaudit, isauditTime, this.getStrings(customerids), this.getStrings(cwbordertypeids), paywayid, this.getStrings(dispatchbranchid),
+					deliverid, this.getStrings(operationOrderResultTypes), page, mouldfieldids, userid, paybackfeeIsZero);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1255,19 +1251,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "妥投订单汇总_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TuoTouDingdanhuizong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.TuoTouDingdanhuizong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1293,10 +1289,10 @@ public class DataStatisticService {
 			String[] cwbordertypeid = request.getParameterValues("cwbordertypeid1") == null ? new String[] {} : request.getParameterValues("cwbordertypeid1");
 
 			// 验证导出条件是否存在
-			String datajson = setOutWarehouseDataJson(begindate, enddate, getStrings(kufangid), getStrings(customerid), getStrings(nextbranchid), getStrings(cwbordertypeid), page, mouldfieldids,
-					userid);
+			String datajson = this.setOutWarehouseDataJson(begindate, enddate, this.getStrings(kufangid), this.getStrings(customerid), this.getStrings(nextbranchid), this.getStrings(cwbordertypeid),
+					page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1309,19 +1305,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "库房出库订单统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangChuKuDingdantongji.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KuFangChuKuDingdantongji.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1348,10 +1344,10 @@ public class DataStatisticService {
 			String[] cwbordertypeid = request.getParameterValues("cwbordertypeid1") == null ? new String[] {} : request.getParameterValues("cwbordertypeid1");
 
 			// 验证导出条件是否存在
-			String datajson = setKDKOutWarehouseDataJson(begindate, enddate, getStrings(kufangid), getStrings(customerid), getStrings(nextbranchid), getStrings(cwbordertypeid), page, mouldfieldids,
-					userid);
+			String datajson = this.setKDKOutWarehouseDataJson(begindate, enddate, this.getStrings(kufangid), this.getStrings(customerid), this.getStrings(nextbranchid),
+					this.getStrings(cwbordertypeid), page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1364,19 +1360,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "库对库出库订单统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KDKChuKuDingdantongji.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.KDKChuKuDingdantongji.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1404,9 +1400,10 @@ public class DataStatisticService {
 			String[] cwbordertypeid = request.getParameterValues("cwbordertypeid1") == null ? new String[] {} : request.getParameterValues("cwbordertypeid1");
 
 			// 验证导出条件是否存在
-			String datajson = setDaoHuoDataJson(begindate, enddate, kufangid, customerid, getStrings(currentBranchid), getStrings(cwbordertypeid), isnowdata, page, mouldfieldids, userid);
+			String datajson = this.setDaoHuoDataJson(begindate, enddate, kufangid, customerid, this.getStrings(currentBranchid), this.getStrings(cwbordertypeid), isnowdata, page, mouldfieldids,
+					userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1419,19 +1416,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "分站到货统计_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.FenZhanDaoHuotongji.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.FenZhanDaoHuotongji.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1454,9 +1451,9 @@ public class DataStatisticService {
 			long branchid = request.getParameter("branchid") == null ? -1 : Long.parseLong(request.getParameter("branchid"));
 
 			// 验证导出条件是否存在
-			String datajson = setDaoHuoHuiZongJson(begindate, enddate, branchid, mouldfieldids, userid);
+			String datajson = this.setDaoHuoHuiZongJson(begindate, enddate, branchid, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1481,10 +1478,10 @@ public class DataStatisticService {
 				 */
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "站点到货汇总_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZhanDianDaoHuohuizong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZhanDianDaoHuohuizong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1509,9 +1506,9 @@ public class DataStatisticService {
 			String type = request.getParameter("type1") == null ? "startbranchid" : request.getParameter("type1");
 
 			// 验证导出条件是否存在
-			String datajson = setZhongZhuanTongJiJson(begindate, enddate, branchid, type, getStrings(branchid2s), mouldfieldids, userid);
+			String datajson = this.setZhongZhuanTongJiJson(begindate, enddate, branchid, type, this.getStrings(branchid2s), mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -1536,10 +1533,10 @@ public class DataStatisticService {
 				 */
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "中转订单统计(云)_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZhongZhuanDingDanTongJi.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZhongZhuanDingDanTongJi.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -1554,7 +1551,7 @@ public class DataStatisticService {
 
 	/**
 	 * 公共导出入口。只要在枚举中判断该执行哪个策略
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param page
@@ -1562,68 +1559,72 @@ public class DataStatisticService {
 	 * @param userid
 	 */
 	public void repeatExportExcelMethod(DownloadManager down) {
+		User user = this.getDmpDAO.getUserById(down.getUserid());
+		if (user != null) {
+			this.exportExcelService.setUser(user);
+		}
 		if (down.getModelid() == ModelEnum.TuoTouDingdanhuizong.getValue()) {// 进入妥投订单导出
-			tuotouExcel(down);
+			this.tuotouExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.KuFangChuKuDingdantongji.getValue()) {// 进入库房出库订单统计导出
-			kufangchukuExcel(down);
+			this.kufangchukuExcel(down);
 		}
 
 		if (down.getModelid() == ModelEnum.KDKChuKuDingdantongji.getValue()) {// 进入库对库出库统计导出
-			kdkchukuExcel(down);
+			this.kdkchukuExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.ZhiLiuDingdanhuizong.getValue()) {// 分站滞留汇总
-			zhiliuhuizongExcel(down);
+			this.zhiliuhuizongExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.FenZhanDaoHuotongji.getValue()) {// 进入分站到货统计导出
-			daohuoExcel(down);
+			this.daohuoExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.ZhanDianDaoHuohuizong.getValue()) {// 进入站点到货汇总导出
-			daohuoHuiZongExcel(down);
+			this.daohuoHuiZongExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.TuiHuoChuZhanTongJi.getValue()) {// 进入站点到货汇总导出
-			tuihouchuzhantongjiExcel(down);
+			this.tuihouchuzhantongjiExcel(down);
 		}
 
 		if (down.getModelid() == ModelEnum.ZhongZhuanDingDanTongJi.getValue()) {// 进入中转订单统计导出
-			zhongZhuanTongJiExcel(down);
+			this.zhongZhuanTongJiExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.JuShouDingdanhuizong.getValue()) {// 拒收订单汇总
-			jushouExcel(down);
+			this.jushouExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.TiHuoDingDanTongJi.getValue()) {// 提货订单统计
-			tihuoExcel(down);
+			this.tihuoExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.KuFangChuKuHuiZong.getValue()) {// 库房出库订单汇总
-			kufangchukuhuizongExcel(down);
+			this.kufangchukuhuizongExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.TuiHuoZhanRuKuTongJi.getValue()) {// 退货站入库统计
-			tuihuozhanrukutongjiExcel(down);
+			this.tuihuozhanrukutongjiExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.KuFangZaiTuTongJi.getValue()) {// 退货站入库统计
-			kuFangZaiTuTongJi(down);
+			this.kuFangZaiTuTongJi(down);
 		}
 		if (down.getModelid() == ModelEnum.KuFangRuKuTongJi.getValue()) {// 库房入库统计
-			KuFangRuKuTongJi(down);
+			this.KuFangRuKuTongJi(down);
 		}
 		if (down.getModelid() == ModelEnum.KeHuFaHuoTongJi.getValue()) {// 客户发货统计
-			KeHuFaHuoTongJi(down);
+			this.KeHuFaHuoTongJi(down);
 		}
 		if (down.getModelid() == ModelEnum.KeHuFaHuoHuiZong.getValue()) {// 客户发货统计
-			KeHuFaHuoHuiZong(down);
+			this.KeHuFaHuoHuiZong(down);
 		}
 		if (down.getModelid() == ModelEnum.ZongHeChaXun.getValue()) {// 客户发货统计
-			ZongHeChaXunExcel(down);
+			this.ZongHeChaXunExcel(down);
 		}
 		if (down.getModelid() == ModelEnum.DanliangChaxun.getValue()) {
-			excelDanliangChaxun(down);
+			this.excelDanliangChaxun(down);
 		}
 
 	}
 
 	/**
 	 * 客户发货汇总 报表形式
-	 * 
+	 *
 	 * @param down
 	 */
 	private void KeHuFaHuoHuiZong(DownloadManager down) {
@@ -1638,7 +1639,7 @@ public class DataStatisticService {
 		long flowordertype = json.getLong("flowordertype");
 		String servicetype = json.getString("servicetype");
 		// 库房 供货商 数量
-		Map<Long, Map<Long, Long>> huiZongMap = cwbDAO.getKeHuFaHuoHuiZongMap(begindate, enddate, customers, cwbordertypeids, kufangids, flowordertype, servicetype);
+		Map<Long, Map<Long, Long>> huiZongMap = this.cwbDAO.getKeHuFaHuoHuiZongMap(begindate, enddate, customers, cwbordertypeids, kufangids, flowordertype, servicetype);
 		SXSSFWorkbook wb = new SXSSFWorkbook(); // excel文件,一个excel文件包含多个表
 		Sheet sheet = wb.createSheet(); // 表，一个表包含多个行
 		String filename = "客户发货汇总--报表" + DateTimeUtil.getNowDate() + ".xlsx";
@@ -1659,14 +1660,14 @@ public class DataStatisticService {
 		firstLine[2] = "合    计";
 		List<Long> kufangidSet = new ArrayList<Long>(huiZongMap.keySet());
 		List<Customer> customerList = new ArrayList<Customer>();
-		List<Branch> branchList = getDmpDAO.getAllBranchs();
+		List<Branch> branchList = this.getDmpDAO.getAllBranchs();
 		// 供货商列表
 		if (customers.length() > 0) {
-			customerList = getDmpDAO.getCustomerByIds(customers);
+			customerList = this.getDmpDAO.getCustomerByIds(customers);
 		} else {
-			customerList = getDmpDAO.getAllCustomers();
+			customerList = this.getDmpDAO.getAllCustomers();
 		}
-		if (kufangidSet != null && kufangidSet.size() > 0) {
+		if ((kufangidSet != null) && (kufangidSet.size() > 0)) {
 			sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 1, (short) customerList.size())); // 合并第一行
 																										// 供货商
 																										// 单元格
@@ -1684,27 +1685,27 @@ public class DataStatisticService {
 			Cell countCell = row.createCell(customerList.size() + 1);
 			countCell.setCellStyle(style);
 			countCell.setCellValue(firstLine[2]);// 第一行写入结束
-			for (int j = 1; j < customerList.size() + 1; j++) {
+			for (int j = 1; j < (customerList.size() + 1); j++) {
 				Cell customerCell = secRow.createCell(j);
 				customerCell.setCellStyle(style);
 				customerCell.setCellValue(customerList.get(j - 1).getCustomername());
 			}
 
-			for (int i = 1; i < kufangidSet.size() + 1; i++) {
+			for (int i = 1; i < (kufangidSet.size() + 1); i++) {
 				Row item = sheet.createRow(i + 1);
 				Cell kufangCell = item.createCell(0);
 				kufangCell.setCellStyle(style);
-				kufangCell.setCellValue(getQueryBranchName(branchList, kufangidSet.get(i - 1)));
+				kufangCell.setCellValue(this.getQueryBranchName(branchList, kufangidSet.get(i - 1)));
 				// 开始循环对应站点的 供货商
 				long countForKufang = 0l;
-				for (int k = 1; k < customerList.size() + 1; k++) {
+				for (int k = 1; k < (customerList.size() + 1); k++) {
 					Cell customerCell = item.createCell(k);
 					customerCell.setCellStyle(style);
 					long num = huiZongMap.get(kufangidSet.get(i - 1)).get(customerList.get(k - 1).getCustomerid()) == null ? 0 : huiZongMap.get(kufangidSet.get(i - 1)).get(
 							customerList.get(k - 1).getCustomerid());
 					customerCell.setCellValue(num);
 					countForKufang += num;
-					keHuFaHuoDataDao.creDate(begindate, enddate, kufangidSet.get(i - 1), customerList.get(k - 1).getCustomerid(), num, down.getId());
+					this.keHuFaHuoDataDao.creDate(begindate, enddate, kufangidSet.get(i - 1), customerList.get(k - 1).getCustomerid(), num, down.getId());
 				}
 				Cell countForKufangCell = item.createCell(customerList.size() + 1);
 				countForKufangCell.setCellStyle(style);
@@ -1717,9 +1718,9 @@ public class DataStatisticService {
 			firCell.setCellStyle(style);
 			firCell.setCellValue("合计");
 			long total = 0l;
-			for (int f = 1; f < customerList.size() + 1; f++) {
+			for (int f = 1; f < (customerList.size() + 1); f++) {
 				long countForDownLong = 0l;
-				for (int i = 1; i < kufangidSet.size() + 1; i++) {
+				for (int i = 1; i < (kufangidSet.size() + 1); i++) {
 					long numDown = huiZongMap.get(kufangidSet.get(i - 1)).get(customerList.get(f - 1).getCustomerid()) == null ? 0 : huiZongMap.get(kufangidSet.get(i - 1)).get(
 							customerList.get(f - 1).getCustomerid());
 					countForDownLong += numDown;
@@ -1746,7 +1747,7 @@ public class DataStatisticService {
 			OutputStream os = new FileOutputStream(f2);
 			wb.write(os);
 			os.close();
-			downloadManagerDAO.updateStateById(1, down.getId(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+			this.downloadManagerDAO.updateStateById(1, down.getId(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 			System.out.println("文件写入完成");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1756,7 +1757,7 @@ public class DataStatisticService {
 
 	/**
 	 * 客户发货统计 导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void KeHuFaHuoTongJi(DownloadManager down) {
@@ -1778,8 +1779,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids != null && !"0".equals(mouldfieldids)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
+		if ((mouldfieldids != null) && !"0".equals(mouldfieldids)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -1789,7 +1790,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -1802,14 +1803,14 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportKeHuFaHuoTongJi(page, begindate, enddate, cwbordertypeids, kufangids, customers, flowordertype, servicetype);
+		final String sql = this.cwbDAO.getSQLExportKeHuFaHuoTongJi(page, begindate, enddate, cwbordertypeids, kufangids, customers, flowordertype, servicetype);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 库房入库统计 导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void KuFangRuKuTongJi(DownloadManager down) {
@@ -1832,8 +1833,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids != null && !"0".equals(mouldfieldids)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
+		if ((mouldfieldids != null) && !"0".equals(mouldfieldids)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
 			cloumnName1 = new String[listSetExportField.size() + 1];
 			cloumnName2 = new String[listSetExportField.size() + 1];
 			cloumnName3 = new String[listSetExportField.size() + 1];
@@ -1848,7 +1849,7 @@ public class DataStatisticService {
 			cloumnName3[listSetExportField.size()] = "String";
 
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size() + 1];
 			cloumnName2 = new String[listSetExportField.size() + 1];
 			cloumnName3 = new String[listSetExportField.size() + 1];
@@ -1865,14 +1866,14 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportKuFangRuKuTongJi(page, isruku, begindate, enddate, emaildatebegin, emaildateend, kufangid, cwbordertypeid, customers);
+		final String sql = this.cwbDAO.getSQLExportKuFangRuKuTongJi(page, isruku, begindate, enddate, emaildatebegin, emaildateend, kufangid, cwbordertypeid, customers);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 库房在途统计 导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void kuFangZaiTuTongJi(DownloadManager down) {
@@ -1893,8 +1894,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids != null && !"0".equals(mouldfieldids)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
+		if ((mouldfieldids != null) && !"0".equals(mouldfieldids)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -1904,7 +1905,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -1917,14 +1918,14 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportKuFangZaiTu(page, begindate, enddate, kufangid, nextbranchid, cwbordertypeids, datetype);
+		final String sql = this.cwbDAO.getSQLExportKuFangZaiTu(page, begindate, enddate, kufangid, nextbranchid, cwbordertypeids, datetype);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 退货入库统计 导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void tuihuozhanrukutongjiExcel(DownloadManager down) {
@@ -1943,8 +1944,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids != null && !"0".equals(mouldfieldids)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
+		if ((mouldfieldids != null) && !"0".equals(mouldfieldids)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -1954,7 +1955,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -1967,14 +1968,14 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportTuiHuoZhanRuKu(page, begindate, enddate, branchids, customerids, cwbordertypeids);
+		final String sql = this.cwbDAO.getSQLExportTuiHuoZhanRuKu(page, begindate, enddate, branchids, customerids, cwbordertypeids);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 退货出站统计 导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void tuihouchuzhantongjiExcel(DownloadManager down) {
@@ -1993,8 +1994,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids != null && !"0".equals(mouldfieldids)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
+		if ((mouldfieldids != null) && !"0".equals(mouldfieldids)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2004,7 +2005,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2017,15 +2018,15 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportTuiHuoChuZhan(page, begindate, enddate, branchids, customerids, istuihuozhanruku);
+		final String sql = this.cwbDAO.getSQLExportTuiHuoChuZhan(page, begindate, enddate, branchids, customerids, istuihuozhanruku);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
 	/**
 	 * 拒收 订单汇总的导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void jushouExcel(DownloadManager down) {
@@ -2048,8 +2049,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2059,7 +2060,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2072,14 +2073,14 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportJuShou(page, begindate, enddate, dispatchbranchids, customerids, deliveryid, cwbordertypeids, isauditTime, isaudit, operationOrderResultTypes);
+		final String sql = this.cwbDAO.getSQLExportJuShou(page, begindate, enddate, dispatchbranchids, customerids, deliveryid, cwbordertypeids, isauditTime, isaudit, operationOrderResultTypes);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 提货订单统计
-	 * 
+	 *
 	 * @param down
 	 */
 	private void tihuoExcel(DownloadManager down) {
@@ -2095,18 +2096,18 @@ public class DataStatisticService {
 		String[] cloumnName2 = new String[5]; // 导出的英文列名
 		String[] cloumnName3 = new String[5]; // 导出的数据类型
 
-		exportExcelService.SetTiHuoFields(cloumnName1, cloumnName2, cloumnName3);
+		this.exportExcelService.SetTiHuoFields(cloumnName1, cloumnName2, cloumnName3);
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportTiHuo(page, begindate, enddate, customerids);
+		final String sql = this.cwbDAO.getSQLExportTiHuo(page, begindate, enddate, customerids);
 		final long mapid = down.getId();
-		tiHuoExportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.tiHuoExportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 滞留订单汇总的 导出
-	 * 
+	 *
 	 * @param down
 	 */
 	private void zhiliuhuizongExcel(DownloadManager down) {
@@ -2128,8 +2129,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2139,7 +2140,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2152,14 +2153,14 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportZhiLiu(page, begindate, enddate, dispatchbranchids, customerids, deliveryid, cwbordertypeids, isauditTime, isaudit);
+		final String sql = this.cwbDAO.getSQLExportZhiLiu(page, begindate, enddate, dispatchbranchids, customerids, deliveryid, cwbordertypeids, isauditTime, isaudit);
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 	}
 
 	/**
 	 * 妥投导出方法
-	 * 
+	 *
 	 * @param down
 	 */
 	private void tuotouExcel(DownloadManager down) {
@@ -2184,8 +2185,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2195,7 +2196,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2208,17 +2209,17 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportTuotou(begindate, enddate, isaudit, isauditTime, customerids, cwbordertypeids, paywayid, dispatchbranchid, deliverid, operationOrderResultTypes, page,
-				paybackfeeIsZero);
+		final String sql = this.cwbDAO.getSQLExportTuotou(begindate, enddate, isaudit, isauditTime, customerids, cwbordertypeids, paywayid, dispatchbranchid, deliverid, operationOrderResultTypes,
+				page, paybackfeeIsZero);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
 	/**
 	 * 单量查询
-	 * 
+	 *
 	 * @param down
 	 */
 	private void excelDanliangChaxun(DownloadManager down) {
@@ -2236,8 +2237,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2247,7 +2248,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2262,15 +2263,15 @@ public class DataStatisticService {
 		final String[] cloumnName6 = cloumnName3;
 		String sql1 = "";
 		if (type.equals("1")) {
-			sql1 = cwbDAO.getSQLExportDanLiangChaXun(begindate, enddate, customerids, kufangid);
+			sql1 = this.cwbDAO.getSQLExportDanLiangChaXun(begindate, enddate, customerids, kufangid);
 		} else if (type.equals("2")) {
-			sql1 = cwbDAO.getSQLExportDanLiangChaXunForRuKu(begindate, enddate, customerids, kufangid);
+			sql1 = this.cwbDAO.getSQLExportDanLiangChaXunForRuKu(begindate, enddate, customerids, kufangid);
 		} else {
-			sql1 = cwbDAO.getSQLExportDanLiangChaXunForChuKu(begindate, enddate, customerids, kufangid);
+			sql1 = this.cwbDAO.getSQLExportDanLiangChaXunForChuKu(begindate, enddate, customerids, kufangid);
 		}
 		final String sql = sql1;
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
@@ -2293,8 +2294,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size() + 1];
 			cloumnName2 = new String[listSetExportField.size() + 1];
 			cloumnName3 = new String[listSetExportField.size() + 1];
@@ -2308,7 +2309,7 @@ public class DataStatisticService {
 			cloumnName2[listSetExportField.size()] = "outstoreroomtimeuserid";
 			cloumnName3[listSetExportField.size()] = "String";
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size() + 1];
 			cloumnName2 = new String[listSetExportField.size() + 1];
 			cloumnName3 = new String[listSetExportField.size() + 1];
@@ -2325,10 +2326,10 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportKuFangChuku(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
+		final String sql = this.cwbDAO.getSQLExportKuFangChuku(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
@@ -2351,8 +2352,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2362,7 +2363,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2375,10 +2376,10 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportKDKChuku(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
+		final String sql = this.cwbDAO.getSQLExportKDKChuku(page, begindate, enddate, customerids, kufangids, nextbranchids, cwbordertypeids);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
@@ -2396,23 +2397,23 @@ public class DataStatisticService {
 		String kufangid = json.getString("kufangid");
 		String nextbranchid = json.getString("nextbranchid");
 		long userid = json.getLong("userid");
-		User user = getDmpDAO.getUserById(userid);
+		User user = this.getDmpDAO.getUserById(userid);
 
 		// 加载供货商
 		List<Customer> customerlist = new ArrayList<Customer>();
 		if (customerid.length() > 0) {
-			customerlist = getDmpDAO.getCustomerByIds(customerid);
+			customerlist = this.getDmpDAO.getCustomerByIds(customerid);
 		} else {
-			customerlist = getDmpDAO.getAllCustomers();
+			customerlist = this.getDmpDAO.getAllCustomers();
 		}
 		// 加载站点区域权限
 		List<Branch> branchAllList = new ArrayList<Branch>();
 		String nextbranchids = "";
-		if (user != null && user.getUserid() > 0) {
+		if ((user != null) && (user.getUserid() > 0)) {
 			if (nextbranchid.length() > 0) {
-				branchAllList = getDmpDAO.getBranchByBranchids(nextbranchid);
+				branchAllList = this.getDmpDAO.getBranchByBranchids(nextbranchid);
 			} else {
-				branchAllList = getDmpDAO.getBranchListByUser(user.getUserid());
+				branchAllList = this.getDmpDAO.getBranchListByUser(user.getUserid());
 			}
 
 			for (Branch b : branchAllList) {
@@ -2427,9 +2428,9 @@ public class DataStatisticService {
 		// 下一站id拼串
 		nextbranchids = nextbranchids.length() > 0 ? nextbranchids.substring(0, nextbranchids.length() - 1) : "";
 
-		creChukuDataResultList(customerlist, kufangid, begindate, enddate, nextbranchids, mapid, user.getUserid());
+		this.creChukuDataResultList(customerlist, kufangid, begindate, enddate, nextbranchids, mapid, user.getUserid());
 
-		downloadManagerDAO.updateStateById(1, mapid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));// 完成下载
+		this.downloadManagerDAO.updateStateById(1, mapid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));// 完成下载
 
 	}
 
@@ -2452,8 +2453,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2463,7 +2464,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2476,10 +2477,10 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportDaoHuo(page, begindate, enddate, customerid, kufangid, currentBranchids, cwbordertypeids, isnowdata);
+		final String sql = this.cwbDAO.getSQLExportDaoHuo(page, begindate, enddate, customerid, kufangid, currentBranchids, cwbordertypeids, isnowdata);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
@@ -2497,8 +2498,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2508,7 +2509,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2521,10 +2522,10 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportDaoHuoHuizong(begindate, enddate, branchid);
+		final String sql = this.cwbDAO.getSQLExportDaoHuoHuizong(begindate, enddate, branchid);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
@@ -2556,8 +2557,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2567,7 +2568,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -2580,10 +2581,10 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportZhongZhuanTongJizong(begindate, enddate, nextbranchids, startbranchids);
+		final String sql = this.cwbDAO.getSQLExportZhongZhuanTongJizong(begindate, enddate, nextbranchids, startbranchids);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
@@ -2622,7 +2623,7 @@ public class DataStatisticService {
 			cusCell.setCellValue("合计");
 			// 第一行非第一列，非最后一列
 			long count = 0l;
-			if (customerlist != null && customerlist.size() > 0) {
+			if ((customerlist != null) && (customerlist.size() > 0)) {
 				for (Customer c : customerlist) {
 					// 行，显示供货商
 					Cell firstLine = row.createCell(customerlist.indexOf(c) + 1);
@@ -2631,24 +2632,24 @@ public class DataStatisticService {
 				}
 			}
 
-			if (branchList != null && branchList.size() > 0) {
+			if ((branchList != null) && (branchList.size() > 0)) {
 				// 冻结第一列
 				sheet.createFreezePane(1, 0, branchList.size() + 1, 0);
-				for (int i = 1; i <= branchList.size() + 1; i++) {
+				for (int i = 1; i <= (branchList.size() + 1); i++) {
 					// 列，是站点名称
 					Row rowFir = sheet.createRow(i);
 					Cell deliveryCell = rowFir.createCell(0);
 					deliveryCell.setCellStyle(style);
-					if (i == branchList.size() + 1) {
+					if (i == (branchList.size() + 1)) {
 						deliveryCell.setCellValue("合计");
 					} else {
 						deliveryCell.setCellValue(branchList.get(i - 1).getBranchname());
 					}
-					for (int j = 1; j < customerlist.size() + 1; j++) {
+					for (int j = 1; j < (customerlist.size() + 1); j++) {
 						// 对应站点对应供货商的值
 						Cell cellFir2 = rowFir.createCell(j);
 						cellFir2.setCellStyle(style);
-						if (i == branchList.size() + 1) {
+						if (i == (branchList.size() + 1)) {
 							long countBycustomerid = customerAllMap.get(customerlist.get(j - 1).getCustomerid()) == null ? 0 : customerAllMap.get(customerlist.get(j - 1).getCustomerid());
 							cellFir2.setCellValue(countBycustomerid);
 						} else {
@@ -2660,7 +2661,7 @@ public class DataStatisticService {
 
 					Cell cellFir = rowFir.createCell(customerlist.size() + 1);
 					cellFir.setCellStyle(style);
-					if (i == branchList.size() + 1) {
+					if (i == (branchList.size() + 1)) {
 						// 右下角的总合计
 						cellFir.setCellValue(count);
 					} else {
@@ -2689,7 +2690,7 @@ public class DataStatisticService {
 				e.printStackTrace();
 			}
 
-			logger.info("导出完成:" + fileUrl + fileName);
+			this.logger.info("导出完成:" + fileUrl + fileName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2697,7 +2698,7 @@ public class DataStatisticService {
 
 	/**
 	 * 公共导出方法
-	 * 
+	 *
 	 * @param sql
 	 * @param cloumnName4
 	 * @param cloumnName5
@@ -2713,17 +2714,17 @@ public class DataStatisticService {
 			ExcelUtils excelUtil = new ExcelUtils() { // 生成工具类实例，并实现填充数据的抽象方法
 				@Override
 				public void fillData(final Sheet sheet, final CellStyle style) {
-					final List<User> uList = getDmpDAO.getUserForALL();
-					final Map<Long, Customer> cMap = getDmpDAO.getAllCustomersToMap();
-					final List<Branch> bList = getDmpDAO.getAllBranchs();
-					final List<Common> commonList = getDmpDAO.getAllCommons();
-					final List<CustomWareHouse> cWList = getDmpDAO.getCustomWareHouse();
-					List<Remark> remarkList = getDmpDAO.getAllRemark();
-					final Map<String, Map<String, String>> remarkMap = exportExcelService.getInwarhouseRemarks(remarkList);
-					final List<Reason> reasonList = getDmpDAO.getAllReason();
+					final List<User> uList = DataStatisticService.this.getDmpDAO.getUserForALL();
+					final Map<Long, Customer> cMap = DataStatisticService.this.getDmpDAO.getAllCustomersToMap();
+					final List<Branch> bList = DataStatisticService.this.getDmpDAO.getAllBranchs();
+					final List<Common> commonList = DataStatisticService.this.getDmpDAO.getAllCommons();
+					final List<CustomWareHouse> cWList = DataStatisticService.this.getDmpDAO.getCustomWareHouse();
+					List<Remark> remarkList = DataStatisticService.this.getDmpDAO.getAllRemark();
+					final Map<String, Map<String, String>> remarkMap = DataStatisticService.this.exportExcelService.getInwarhouseRemarks(remarkList);
+					final List<Reason> reasonList = DataStatisticService.this.getDmpDAO.getAllReason();
 					final List<String> cwbList = new ArrayList<String>();
 
-					jdbcTemplate.query(new StreamingStatementCreator(sql), new ResultSetExtractor<Object>() {
+					DataStatisticService.this.jdbcTemplate.query(new StreamingStatementCreator(sql), new ResultSetExtractor<Object>() {
 						private int count = 0;
 
 						public void processRow(ResultSet rs) throws SQLException {
@@ -2732,39 +2733,39 @@ public class DataStatisticService {
 								return;
 							}
 							cwbList.add(rs.getString("cwb"));
-							Row row = sheet.createRow(count + 1);
+							Row row = sheet.createRow(this.count + 1);
 							row.setHeightInPoints(15);
 							for (int i = 0; i < cloumnName4.length; i++) {
 								Cell cell = row.createCell((short) i);
 								cell.setCellStyle(style);
-								Object a = exportExcelService.setObjectA(cloumnName5, rs, i, uList, cMap, bList, commonList, cWList, remarkMap, reasonList);
+								Object a = DataStatisticService.this.exportExcelService.setObjectA(cloumnName5, rs, i, uList, cMap, bList, commonList, cWList, remarkMap, reasonList);
 								if (cloumnName6[i].equals("double")) {
 									cell.setCellValue(a == null ? BigDecimal.ZERO.doubleValue() : a.equals("") ? BigDecimal.ZERO.doubleValue() : Double.parseDouble(a.toString()));
 								} else {
 									cell.setCellValue(a == null ? "" : a.toString());
 								}
 							}
-							count++;
+							this.count++;
 						}
 
 						@Override
 						public Object extractData(ResultSet rs) throws SQLException, DataAccessException {
 							while (rs.next()) {
-								if (!downloadManagerService.checkMap(mapid)) {
-									return downloadManagerService.checkMap(mapid);
+								if (!DataStatisticService.this.downloadManagerService.checkMap(mapid)) {
+									return DataStatisticService.this.downloadManagerService.checkMap(mapid);
 								}
 								this.processRow(rs);
 							}
-							downloadManagerDAO.updateStateById(1, mapid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));// 完成下载
+							DataStatisticService.this.downloadManagerDAO.updateStateById(1, mapid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));// 完成下载
 							return null;
 						}
 
 					});
 				}
 			};
-			excelUtil.excel(cloumnName4, sheetName, fileName, fileUrl, downloadManagerService.checkMap(mapid));
-			logger.info("导出完成:" + fileUrl + fileName);
-			downloadManagerService.down_task();
+			excelUtil.excel(cloumnName4, sheetName, fileName, fileUrl, this.downloadManagerService.checkMap(mapid));
+			this.logger.info("导出完成:" + fileUrl + fileName);
+			this.downloadManagerService.down_task();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2777,10 +2778,10 @@ public class DataStatisticService {
 			ExcelUtils excelUtil = new ExcelUtils() { // 生成工具类实例，并实现填充数据的抽象方法
 				@Override
 				public void fillData(final Sheet sheet, final CellStyle style) {
-					final Map<Long, Customer> cMap = getDmpDAO.getAllCustomersToMap();
+					final Map<Long, Customer> cMap = DataStatisticService.this.getDmpDAO.getAllCustomersToMap();
 					final List<String> cwbList = new ArrayList<String>();
 
-					jdbcTemplate.query(new StreamingStatementCreator(sql), new ResultSetExtractor<Object>() {
+					DataStatisticService.this.jdbcTemplate.query(new StreamingStatementCreator(sql), new ResultSetExtractor<Object>() {
 						private int count = 0;
 
 						public void processRow(ResultSet rs) throws SQLException {
@@ -2789,35 +2790,35 @@ public class DataStatisticService {
 							}
 							cwbList.add(rs.getString("cwb"));
 
-							Row row = sheet.createRow(count + 1);
+							Row row = sheet.createRow(this.count + 1);
 							row.setHeightInPoints(15);
 							for (int i = 0; i < cloumnName4.length; i++) {
 								Cell cell = row.createCell((short) i);
 								cell.setCellStyle(style);
-								Object a = exportExcelService.setTiHuoObject(cloumnName5, rs, i, cMap);
+								Object a = DataStatisticService.this.exportExcelService.setTiHuoObject(cloumnName5, rs, i, cMap);
 								cell.setCellValue(a == null ? "" : a.toString());
 							}
-							count++;
+							this.count++;
 						}
 
 						@Override
 						public Object extractData(ResultSet rs) throws SQLException, DataAccessException {
 							while (rs.next()) {
-								if (!downloadManagerService.checkMap(mapid)) {
-									return downloadManagerService.checkMap(mapid);
+								if (!DataStatisticService.this.downloadManagerService.checkMap(mapid)) {
+									return DataStatisticService.this.downloadManagerService.checkMap(mapid);
 								}
 								this.processRow(rs);
 							}
-							downloadManagerDAO.updateStateById(1, mapid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));// 完成下载
+							DataStatisticService.this.downloadManagerDAO.updateStateById(1, mapid, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));// 完成下载
 							return null;
 						}
 
 					});
 				}
 			};
-			excelUtil.excel(cloumnName4, sheetName, fileName, fileUrl, downloadManagerService.checkMap(mapid));
-			logger.info("导出完成:" + fileUrl + fileName);
-			downloadManagerService.down_task();
+			excelUtil.excel(cloumnName4, sheetName, fileName, fileUrl, this.downloadManagerService.checkMap(mapid));
+			this.logger.info("导出完成:" + fileUrl + fileName);
+			this.downloadManagerService.down_task();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3009,14 +3010,14 @@ public class DataStatisticService {
 		json.put("curquerytimecolumn", FlowOrderColumnMap.ORDER_FLOW_TAIL_MAP.get(tail.getCurquerytimecolumn()).replace("credate_", ""));
 		json.put("cwb", tail.getCwb());
 		json.put("isaudit", tail.getGobackstate());
-		json.put("dispatchbranchids", getStrings(tail.getDispatchbranchids()));
-		json.put("curdispatchbranchids", getStrings(tail.getCurdispatchbranchids()));
-		json.put("nextdispatchbranchids", getStrings(tail.getNextdispatchbranchids()));
-		json.put("deliverystateStr", getStrings(tail.getOperationOrderResultTypes()));
-		json.put("customerid", getStrings(tail.getCustomerids()));
+		json.put("dispatchbranchids", this.getStrings(tail.getDispatchbranchids()));
+		json.put("curdispatchbranchids", this.getStrings(tail.getCurdispatchbranchids()));
+		json.put("nextdispatchbranchids", this.getStrings(tail.getNextdispatchbranchids()));
+		json.put("deliverystateStr", this.getStrings(tail.getOperationOrderResultTypes()));
+		json.put("customerid", this.getStrings(tail.getCustomerids()));
 		json.put("paytype", tail.getPaywayid());
 		json.put("curpaytype", tail.getNewpaywayid());
-		json.put("cwbordertypeid", getStrings(tail.getCwbordertypeids()));
+		json.put("cwbordertypeid", this.getStrings(tail.getCwbordertypeids()));
 		json.put("flowordertype", tail.getFlowordertype());
 		json.put("page", page);
 		json.put("mouldfieldids", mouldfieldids);
@@ -3040,7 +3041,7 @@ public class DataStatisticService {
 
 	public List<CwbOrder> getTuiHuoChuZhanCwbOrderViewCount10(List<CwbOrder> orderlist, List<TuiHuoChuZhanOrder> tlist, List<Customer> customerlist, List<Branch> branchList) {
 		List<CwbOrder> cList = new ArrayList<CwbOrder>();
-		if (tlist.size() > 0 && orderlist.size() > 0) {
+		if ((tlist.size() > 0) && (orderlist.size() > 0)) {
 			for (TuiHuoChuZhanOrder to : tlist) {
 				for (CwbOrder cwbOrder : orderlist) {
 					if (to.getCwb().equals(cwbOrder.getCwb())) {
@@ -3060,7 +3061,7 @@ public class DataStatisticService {
 	public List<CwbOrder> getZhiLiuCwbOrderViewCount10(List<CwbOrder> orderlist, List<DeliveryZhiLiu> dzlList, List<Customer> customerlist, List<Branch> branchList, List<Reason> reasonList) {
 		List<CwbOrder> cList = new ArrayList<CwbOrder>();
 		// 10个字段 cwb 供货商 发货时间 应收金额 订单类型 配送站点 出库时间 滞留原因 再次配送时间 审核状态
-		if (dzlList.size() > 0 && orderlist.size() > 0) {
+		if ((dzlList.size() > 0) && (orderlist.size() > 0)) {
 			for (DeliveryZhiLiu dz : dzlList) {
 				for (CwbOrder cwbOrder : orderlist) {
 					if (dz.getCwb().equals(cwbOrder.getCwb())) {
@@ -3107,7 +3108,7 @@ public class DataStatisticService {
 
 	/**
 	 * 库房出库汇总功能--根据供货商和下一站得到相应的map
-	 * 
+	 *
 	 * @param customerList
 	 * @param branchList
 	 * @param kufangid
@@ -3122,7 +3123,7 @@ public class DataStatisticService {
 				for (int i = 0; i < kufangids.split(",").length; i++) {
 					long kufangid = kufangids.split(",")[i].length() == 0 ? 0 : Long.parseLong(kufangids.split(",")[i]);
 					for (Customer c : customerList) {
-						List<DeliveryChuku> chukuGroupByCustomeridlist = deliveryChukuDAO.getDeliveryChukuByoutstoreroomtimeAndstartbranchid(kufangid, begindate, enddate, c.getCustomerid(),
+						List<DeliveryChuku> chukuGroupByCustomeridlist = this.deliveryChukuDAO.getDeliveryChukuByoutstoreroomtimeAndstartbranchid(kufangid, begindate, enddate, c.getCustomerid(),
 								nextbranchids);
 						JSONArray objArr = new JSONArray();
 
@@ -3140,7 +3141,7 @@ public class DataStatisticService {
 						cdr.setExportid(downid);
 						cdr.setKufangid(kufangid);
 						cdr.setResult(objArr.toString());
-						chukuDataResultDAO.creChukudataResult(cdr);
+						this.chukuDataResultDAO.creChukudataResult(cdr);
 
 					}
 				}
@@ -3210,7 +3211,7 @@ public class DataStatisticService {
 	public List<CwbOrder> getChukuCollectDataCwbOrderViewCount10(List<CwbOrder> clist, List<DeliveryChuku> delList, List<Customer> customerList, List<Branch> branchList,
 			List<CustomWareHouse> customerWareHouseList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (delList.size() > 0 && clist.size() > 0) {
+		if ((delList.size() > 0) && (clist.size() > 0)) {
 			for (DeliveryChuku delChuku : delList) {
 				for (CwbOrder cwborder : clist) {
 					if (cwborder.getCwb().equals(delChuku.getCwb())) {
@@ -3242,7 +3243,7 @@ public class DataStatisticService {
 
 	/**
 	 * 退货站入库 统计
-	 * 
+	 *
 	 * @param orderlist
 	 * @param tuihuoRecordList
 	 * @param customerList
@@ -3251,14 +3252,14 @@ public class DataStatisticService {
 	 */
 	public List<CwbOrder> getTuiHuoZhanRuKuIndex(List<CwbOrder> orderlist, List<TuiHuoZhanRuKuOrder> tuihuoRecordList, List<Customer> customerList, List<Branch> branchList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (tuihuoRecordList != null && tuihuoRecordList.size() > 0) {
+		if ((tuihuoRecordList != null) && (tuihuoRecordList.size() > 0)) {
 
 			for (TuiHuoZhanRuKuOrder to : tuihuoRecordList) {
 				for (CwbOrder cwbOrder : orderlist) {
 					if (to.getCwb().equals(cwbOrder.getCwb())) {
 						CwbOrder co = cwbOrder;
-						co.setCustomername(getQueryCustomerName(customerList, co.getCustomerid()));
-						co.setStartbranchname(getQueryBranchName(branchList, to.getTuihuobranchid()));
+						co.setCustomername(this.getQueryCustomerName(customerList, co.getCustomerid()));
+						co.setStartbranchname(this.getQueryBranchName(branchList, to.getTuihuobranchid()));
 						co.setTuihuozhaninstoreroomtime(to.getRukutime());
 						cwbOrderViewList.add(co);
 					}
@@ -3270,7 +3271,7 @@ public class DataStatisticService {
 
 	/**
 	 * 库房在途统计汇总
-	 * 
+	 *
 	 * @param zaiTuOrders
 	 * @param orderlist
 	 * @param customerList
@@ -3284,14 +3285,14 @@ public class DataStatisticService {
 	public List<CwbOrder> getKuFangZaiTuHuiZongViewIndex(List<KuFangZaiTuOrder> zaiTuOrders, List<CwbOrder> orderlist, List<Customer> customerList, List<CustomWareHouse> customerWareHouseList,
 			List<Branch> branchList, List<User> userList, List<Reason> reasonList, List<Remark> remarkList) {
 		List<CwbOrder> cwbOrderViewList = new ArrayList<CwbOrder>();
-		if (zaiTuOrders.size() > 0 && orderlist.size() > 0) {
+		if ((zaiTuOrders.size() > 0) && (orderlist.size() > 0)) {
 			for (KuFangZaiTuOrder kf : zaiTuOrders) {
 				for (CwbOrder cwborder : orderlist) {
 					if (cwborder.getCwb().equals(kf.getCwb())) {
 						CwbOrder cwbOrderView = cwborder;
-						cwbOrderView.setCustomername(getQueryCustomerName(customerList, kf.getCustomerid()));
+						cwbOrderView.setCustomername(this.getQueryCustomerName(customerList, kf.getCustomerid()));
 						cwbOrderView.setOutstoreroomtime(kf.getOutwarehousetime());
-						cwbOrderView.setDeliverybranch(getQueryBranchName(branchList, kf.getDeliverybranchid()));
+						cwbOrderView.setDeliverybranch(this.getQueryBranchName(branchList, kf.getDeliverybranchid()));
 						cwbOrderViewList.add(cwbOrderView);
 						break;
 					}
@@ -3303,15 +3304,15 @@ public class DataStatisticService {
 
 	public List<CwbOrder> getKuFangRuKuHuiZongViewIndex(List<KuFangRuKuOrder> kuFangRuKuOrders, List<CwbOrder> orderlist, List<Customer> customerList, List<Branch> branchs, List<User> userList) {
 		List<CwbOrder> cwbOrders = new ArrayList<CwbOrder>();
-		if (kuFangRuKuOrders != null && kuFangRuKuOrders.size() > 0) {
+		if ((kuFangRuKuOrders != null) && (kuFangRuKuOrders.size() > 0)) {
 			for (KuFangRuKuOrder kf : kuFangRuKuOrders) {
 				for (CwbOrder co : orderlist) {
 					if (co.getCwb().equals(kf.getCwb())) {
 						CwbOrder cwbOrder = co;
-						cwbOrder.setCustomername(getQueryCustomerName(customerList, co.getCustomerid()));
-						cwbOrder.setDeliverybranch(getQueryBranchName(branchs, co.getDeliverybranchid()));
+						cwbOrder.setCustomername(this.getQueryCustomerName(customerList, co.getCustomerid()));
+						cwbOrder.setDeliverybranch(this.getQueryBranchName(branchs, co.getDeliverybranchid()));
 						cwbOrder.setInstoreroomtime(kf.getIntowarehousetime()); // 入库时间
-						cwbOrder.setOperatorName(getQueryUserName(userList, kf.getIntowarehouseuserid()));// 入库操作人
+						cwbOrder.setOperatorName(this.getQueryUserName(userList, kf.getIntowarehouseuserid()));// 入库操作人
 						cwbOrders.add(cwbOrder);
 
 					}
@@ -3324,11 +3325,11 @@ public class DataStatisticService {
 
 	public List<CwbOrder> getKeHuFaHuoTongJiCwbOrderView(List<CwbOrder> clist, List<Customer> customerList, List<Branch> branchs) {
 		List<CwbOrder> cwbOrders = new ArrayList<CwbOrder>();
-		if (clist != null && clist.size() > 0) {
+		if ((clist != null) && (clist.size() > 0)) {
 			for (CwbOrder cwbOrder : clist) {
 				CwbOrder order = cwbOrder;
-				order.setCustomername(getQueryCustomerName(customerList, order.getCustomerid()));
-				order.setDeliverybranch(getQueryBranchName(branchs, order.getDeliverybranchid()));
+				order.setCustomername(this.getQueryCustomerName(customerList, order.getCustomerid()));
+				order.setDeliverybranch(this.getQueryBranchName(branchs, order.getDeliverybranchid()));
 				cwbOrders.add(order);
 			}
 		}
@@ -3371,9 +3372,9 @@ public class DataStatisticService {
 
 			tail.setGobackstate(request.getParameter("isaudit"));
 
-			String datajson = setZongHeJson(tail, page, mouldfieldids, userid);
+			String datajson = this.setZongHeJson(tail, page, mouldfieldids, userid);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -3386,19 +3387,19 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				long count = Long.parseLong(request.getParameter("count") == null ? "0" : request.getParameter("count").toString());
 				if (count > 0) {
-					if (count / Page.EXCEL_PAGE_NUMBER + (count % Page.EXCEL_PAGE_NUMBER > 0 ? 1 : 0) == 1) {
+					if (((count / Page.EXCEL_PAGE_NUMBER) + ((count % Page.EXCEL_PAGE_NUMBER) > 0 ? 1 : 0)) == 1) {
 						otherName = "1-" + count;
 					} else {
-						otherName = ((page * Page.EXCEL_PAGE_NUMBER + 1 > count) ? count : (page * Page.EXCEL_PAGE_NUMBER + 1)) + "_"
-								+ ((page + 1) * Page.EXCEL_PAGE_NUMBER > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
+						otherName = ((((page * Page.EXCEL_PAGE_NUMBER) + 1) > count) ? count : ((page * Page.EXCEL_PAGE_NUMBER) + 1)) + "_"
+								+ (((page + 1) * Page.EXCEL_PAGE_NUMBER) > count ? count : (page + 1) * Page.EXCEL_PAGE_NUMBER);
 					}
 				}
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "综合查询_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZongHeChaXun.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.ZongHeChaXun.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -3456,8 +3457,8 @@ public class DataStatisticService {
 		String[] cloumnName2 = {}; // 导出的英文列名
 		String[] cloumnName3 = {}; // 导出的数据类型
 
-		if (mouldfieldids2 != null && !"0".equals(mouldfieldids2)) { // 选择模板
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
+		if ((mouldfieldids2 != null) && !"0".equals(mouldfieldids2)) { // 选择模板
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate(mouldfieldids2);
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -3467,7 +3468,7 @@ public class DataStatisticService {
 				cloumnName3[k] = listSetExportField.get(j).getExportdatatype();
 			}
 		} else {
-			List<SetExportField> listSetExportField = getDmpDAO.getSetExportFieldByExportstate("0");
+			List<SetExportField> listSetExportField = this.getDmpDAO.getSetExportFieldByExportstate("0");
 			cloumnName1 = new String[listSetExportField.size()];
 			cloumnName2 = new String[listSetExportField.size()];
 			cloumnName3 = new String[listSetExportField.size()];
@@ -3480,16 +3481,16 @@ public class DataStatisticService {
 		final String[] cloumnName4 = cloumnName1;
 		final String[] cloumnName5 = cloumnName2;
 		final String[] cloumnName6 = cloumnName3;
-		final String sql = cwbDAO.getSQLExportZongHeChaXun(tail, page);
+		final String sql = this.cwbDAO.getSQLExportZongHeChaXun(tail, page);
 		// downloadManagerService.saveXiazaitoMap(down.getId(), 0);//正在下载
 		final long mapid = down.getId();
-		exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
+		this.exportExcel(sql, cloumnName4, cloumnName5, cloumnName6, mapid, sheetName, fileName, fileUrl);
 
 	}
 
 	/**
 	 * 检测分站到货汇总的下载参数是否进入下载模式
-	 * 
+	 *
 	 * @param response
 	 * @param request
 	 * @param userid
@@ -3509,25 +3510,25 @@ public class DataStatisticService {
 
 			String customers = "";
 			if (customerids.length > 0) {
-				customers = getStrings(customerids);
+				customers = this.getStrings(customerids);
 			}
 			String currentbranchids = "";
 			if (currentbranchid.length > 0) {
-				currentbranchids = getStrings(currentbranchid);
+				currentbranchids = this.getStrings(currentbranchid);
 			}
 			String cwbordertypeids = "";
 			if (cwbordertypeid.length > 0) {
-				cwbordertypeids = getStrings(cwbordertypeid);
+				cwbordertypeids = this.getStrings(cwbordertypeid);
 			}
 			String kufangids = "";
 			if (kufangid.length > 0) {
-				kufangids = getStrings(kufangid);
+				kufangids = this.getStrings(kufangid);
 			}
 
 			// 验证导出条件是否存在
-			String datajson = setFenZhanDaoHuoHuiZongJson(begindate, enddate, customers, cwbordertypeids, currentbranchids, kufangids, userid, isnowdata);
+			String datajson = this.setFenZhanDaoHuoHuiZongJson(begindate, enddate, customers, cwbordertypeids, currentbranchids, kufangids, userid, isnowdata);
 
-			DownloadManager down = downloadManagerDAO.getDownloadManagerByJson(datajson);
+			DownloadManager down = this.downloadManagerDAO.getDownloadManagerByJson(datajson);
 
 			if (down != null) {
 				json.put("errorCode", 2);
@@ -3540,10 +3541,10 @@ public class DataStatisticService {
 				String lastStr = ".xlsx";// 文件名后缀
 				fileName = fileName + otherName + lastStr;
 				String cnfilename = "分站到货汇总_" + df.format(new Date()) + "_" + otherName + lastStr;
-				String fileUrl = getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
+				String fileUrl = this.getDmpDAO.getFileUrl() + "download" + System.getProperty("file.separator") + new SimpleDateFormat("yyyy-MM-dd").format(new Date())
 						+ System.getProperty("file.separator");
-				down = setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.FenZhanDaoHuoHuiZong.getValue(), userid);
-				downloadManagerDAO.creDownloadManager(down);
+				down = this.setDownloadManager(datajson, fileName, cnfilename, fileUrl, ModelEnum.FenZhanDaoHuoHuiZong.getValue(), userid);
+				this.downloadManagerDAO.creDownloadManager(down);
 				json.put("errorCode", 0);
 				json.put("remark", "已进入离线导出");
 				return json.toString();
@@ -3558,7 +3559,7 @@ public class DataStatisticService {
 
 	/**
 	 * 分站到货统计（云）生成excel
-	 * 
+	 *
 	 * @author xiaobao
 	 * @param down
 	 */
@@ -3574,7 +3575,7 @@ public class DataStatisticService {
 		String kufangid = json.getString("kufangid");
 		Integer isshow = json.getInt("isshow");
 		// 站点 供货商 数量
-		Map<Long, Map<Long, Long>> huiZongMap = cwbDAO.getFenZhanDaoHuoHuiZongMap(begindate, enddate, customers, cwbordertypeids, currentbranchid, kufangid, isshow);
+		Map<Long, Map<Long, Long>> huiZongMap = this.cwbDAO.getFenZhanDaoHuoHuiZongMap(begindate, enddate, customers, cwbordertypeids, currentbranchid, kufangid, isshow);
 		SXSSFWorkbook wb = new SXSSFWorkbook(); // excel文件,一个excel文件包含多个表
 		Sheet sheet = wb.createSheet(); // 表，一个表包含多个行
 		String filename = "分站到货汇总--报表" + DateTimeUtil.getNowDate() + ".xlsx";
@@ -3595,14 +3596,14 @@ public class DataStatisticService {
 		firstLine[2] = "合    计";
 		List<Long> fenzhanidSet = new ArrayList<Long>(huiZongMap.keySet());
 		List<Customer> customerList = new ArrayList<Customer>();
-		List<Branch> branchList = getDmpDAO.getAllBranchs();
+		List<Branch> branchList = this.getDmpDAO.getAllBranchs();
 		// 供货商列表
-		if (customers.length() > 0 && !customers.trim().equals("0")) {
-			customerList = getDmpDAO.getCustomerByIds(customers);
+		if ((customers.length() > 0) && !customers.trim().equals("0")) {
+			customerList = this.getDmpDAO.getCustomerByIds(customers);
 		} else {
-			customerList = getDmpDAO.getAllCustomers();
+			customerList = this.getDmpDAO.getAllCustomers();
 		}
-		if (fenzhanidSet != null && fenzhanidSet.size() > 0) {
+		if ((fenzhanidSet != null) && (fenzhanidSet.size() > 0)) {
 			sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 1, (short) customerList.size())); // 合并第一行
 																										// 供货商
 																										// 单元格
@@ -3620,20 +3621,20 @@ public class DataStatisticService {
 			Cell countCell = row.createCell(customerList.size() + 1);
 			countCell.setCellStyle(style);
 			countCell.setCellValue(firstLine[2]);// 第一行写入结束
-			for (int j = 1; j < customerList.size() + 1; j++) {
+			for (int j = 1; j < (customerList.size() + 1); j++) {
 				Cell customerCell = secRow.createCell(j);
 				customerCell.setCellStyle(style);
 				customerCell.setCellValue(customerList.get(j - 1).getCustomername());
 			}
 
-			for (int i = 1; i < fenzhanidSet.size() + 1; i++) {
+			for (int i = 1; i < (fenzhanidSet.size() + 1); i++) {
 				Row item = sheet.createRow(i + 1);
 				Cell kufangCell = item.createCell(0);
 				kufangCell.setCellStyle(style);
-				kufangCell.setCellValue(getQueryBranchName(branchList, fenzhanidSet.get(i - 1)));
+				kufangCell.setCellValue(this.getQueryBranchName(branchList, fenzhanidSet.get(i - 1)));
 				// 开始循环对应站点的 供货商
 				long countForFenZhan = 0l;
-				for (int k = 1; k < customerList.size() + 1; k++) {
+				for (int k = 1; k < (customerList.size() + 1); k++) {
 					Cell customerCell = item.createCell(k);
 					customerCell.setCellStyle(style);
 					long num = huiZongMap.get(fenzhanidSet.get(i - 1)).get(customerList.get(k - 1).getCustomerid()) == null ? 0 : huiZongMap.get(fenzhanidSet.get(i - 1)).get(
@@ -3653,9 +3654,9 @@ public class DataStatisticService {
 			firCell.setCellStyle(style);
 			firCell.setCellValue("合计");
 			long total = 0l;
-			for (int f = 1; f < customerList.size() + 1; f++) {
+			for (int f = 1; f < (customerList.size() + 1); f++) {
 				long countForDownLong = 0l;
-				for (int i = 1; i < fenzhanidSet.size() + 1; i++) {
+				for (int i = 1; i < (fenzhanidSet.size() + 1); i++) {
 					long numDown = huiZongMap.get(fenzhanidSet.get(i - 1)).get(customerList.get(f - 1).getCustomerid()) == null ? 0 : huiZongMap.get(fenzhanidSet.get(i - 1)).get(
 							customerList.get(f - 1).getCustomerid());
 					countForDownLong += numDown;
@@ -3682,7 +3683,7 @@ public class DataStatisticService {
 			OutputStream os = new FileOutputStream(f2);
 			wb.write(os);
 			os.close();
-			downloadManagerDAO.updateStateById(1, down.getId(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+			this.downloadManagerDAO.updateStateById(1, down.getId(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 			System.out.println("FenZhanDaoHuoHuiZong(DownloadManager down) 文件写入完成");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3692,7 +3693,7 @@ public class DataStatisticService {
 
 	/**
 	 * 获得指定日期的前一天
-	 * 
+	 *
 	 * @param specifiedDay
 	 * @return
 	 * @throws Exception
@@ -3717,7 +3718,7 @@ public class DataStatisticService {
 
 	/**
 	 * 查询时间大小
-	 * 
+	 *
 	 * @param dat1
 	 * @param dat2
 	 * @return 0=，1<

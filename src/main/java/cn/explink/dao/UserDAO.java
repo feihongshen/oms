@@ -36,7 +36,7 @@ public class UserDAO {
 			user.setUseraddress(StringUtil.nullConvertToEmptyString(rs.getString("useraddress")));
 			user.setUserremark(StringUtil.nullConvertToEmptyString(rs.getString("userremark")));
 			user.setUsersalary(rs.getBigDecimal("usersalary"));
-			user.setShowphoneflag(StringUtil.nullConvertToEmptyString(rs.getString("showphoneflag")));
+			user.setShowphoneflag(rs.getLong("showphoneflag"));
 			user.setUseremail(StringUtil.nullConvertToEmptyString(rs.getString("useremail")));
 			user.setUserwavfile(StringUtil.nullConvertToEmptyString(rs.getString("userwavfile")));
 			user.setRoleid(rs.getLong("roleid"));
@@ -50,39 +50,39 @@ public class UserDAO {
 	private JdbcTemplate jdbcTemplate;
 
 	public List<User> getUsersByUsername(String username) {
-		List<User> userList = jdbcTemplate.query("SELECT * from express_set_user where username=? and userDeleteFlag=1", new UserRowMapper(), username);
+		List<User> userList = this.jdbcTemplate.query("SELECT * from express_set_user where username=? and userDeleteFlag=1", new UserRowMapper(), username);
 		return userList;
 	}
 
 	public List<User> getUsersByRealname(String realname) {
-		List<User> userList = jdbcTemplate.query("SELECT * from express_set_user where realname=? and userDeleteFlag=1", new UserRowMapper(), realname);
+		List<User> userList = this.jdbcTemplate.query("SELECT * from express_set_user where realname=? and userDeleteFlag=1", new UserRowMapper(), realname);
 		return userList;
 	}
 
 	public User getUserByUserid(long userid) {
-		User user = jdbcTemplate.queryForObject("SELECT * from express_set_user where userid=" + userid + " and userDeleteFlag=1", new UserRowMapper());
+		User user = this.jdbcTemplate.queryForObject("SELECT * from express_set_user where userid=" + userid + " and userDeleteFlag=1", new UserRowMapper());
 		return user;
 	}
 
 	public List<User> getUsersByPage(long page, String username, String realname) {
 		String sql = "SELECT * from express_set_user ";
 		sql = this.getUsersByPageWhereSql(sql, username, realname);
-		sql += " order by userid desc limit " + (page - 1) * Page.ONE_PAGE_NUMBER + " ," + Page.ONE_PAGE_NUMBER;
+		sql += " order by userid desc limit " + ((page - 1) * Page.ONE_PAGE_NUMBER) + " ," + Page.ONE_PAGE_NUMBER;
 
-		List<User> userList = jdbcTemplate.query(sql, new UserRowMapper());
+		List<User> userList = this.jdbcTemplate.query(sql, new UserRowMapper());
 		return userList;
 	}
 
 	public long getUserCount(String username, String realname) {
 		String sql = "SELECT count(1) from express_set_user";
 		sql = this.getUsersByPageWhereSql(sql, username, realname);
-		return jdbcTemplate.queryForLong(sql);
+		return this.jdbcTemplate.queryForLong(sql);
 	}
 
 	private String getUsersByPageWhereSql(String sql, String username, String realname) {
-		if (username.length() > 0 || realname.length() > 0) {
+		if ((username.length() > 0) || (realname.length() > 0)) {
 			sql += " where ";
-			if (username.length() > 0 && realname.length() > 0) {
+			if ((username.length() > 0) && (realname.length() > 0)) {
 				sql += " username='" + username + "' and  realname='" + realname + "' and userDeleteFlag=1";
 			} else {
 				if (username.length() > 0) {
@@ -97,7 +97,7 @@ public class UserDAO {
 	}
 
 	public void creUser(final User user) {
-		jdbcTemplate.update("insert into express_set_user (username,password,realname,idcardno," + "employeestatus,branchid,userphone,usermobile,useraddress,userremark,usersalary,"
+		this.jdbcTemplate.update("insert into express_set_user (username,password,realname,idcardno," + "employeestatus,branchid,userphone,usermobile,useraddress,userremark,usersalary,"
 				+ "usercustomerid,showphoneflag,useremail,userwavfile,roleid) " + "values(?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,? )", new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -113,7 +113,7 @@ public class UserDAO {
 				ps.setString(10, user.getUserremark());
 				ps.setBigDecimal(11, user.getUsersalary());
 				ps.setLong(12, user.getUsercustomerid());
-				ps.setString(13, user.getShowphoneflag());
+				ps.setLong(13, user.getShowphoneflag());
 				ps.setString(14, user.getUseremail());
 				ps.setString(15, user.getUserwavfile());
 				ps.setLong(16, user.getRoleid());
@@ -123,7 +123,7 @@ public class UserDAO {
 	}
 
 	public void saveUser(final User user) {
-		jdbcTemplate.update("update express_set_user set username=?,password=?,realname=?,idcardno=?,"
+		this.jdbcTemplate.update("update express_set_user set username=?,password=?,realname=?,idcardno=?,"
 				+ "employeestatus=?,branchid=?,userphone=?,usermobile=?,useraddress=?,userremark=?,usersalary=?," + "usercustomerid=?,showphoneflag=?,useremail=?,userwavfile=?,roleid=? "
 				+ "where userid=? and userDeleteFlag=1", new PreparedStatementSetter() {
 			@Override
@@ -141,7 +141,7 @@ public class UserDAO {
 				ps.setBigDecimal(11, user.getUsersalary());
 
 				ps.setLong(12, user.getUsercustomerid());
-				ps.setString(13, user.getShowphoneflag());
+				ps.setLong(13, user.getShowphoneflag());
 				ps.setString(14, user.getUseremail());
 				ps.setString(15, user.getUserwavfile());
 				ps.setLong(16, user.getRoleid());
@@ -153,30 +153,30 @@ public class UserDAO {
 
 	public List<User> getUserByRole(int roleid) {
 		String sql = "SELECT * FROM express_set_user WHERE roleid=" + roleid + " and userDeleteFlag=1";
-		List<User> userList = jdbcTemplate.query(sql, new UserRowMapper());
+		List<User> userList = this.jdbcTemplate.query(sql, new UserRowMapper());
 		return userList;
 	}
 
 	public User getUsersByRealnameAndRole(String realname, int roleid) {
-		User user = jdbcTemplate.queryForObject("SELECT * from express_set_user where realname=? and roleid=? and userDeleteFlag=1", new UserRowMapper(), realname, roleid);
+		User user = this.jdbcTemplate.queryForObject("SELECT * from express_set_user where realname=? and roleid=? and userDeleteFlag=1", new UserRowMapper(), realname, roleid);
 		return user;
 	}
 
 	public List<User> getAllUser() {
 		String sql = "select * from express_set_user where userDeleteFlag=1 ";
-		List<User> userList = jdbcTemplate.query(sql, new UserRowMapper());
+		List<User> userList = this.jdbcTemplate.query(sql, new UserRowMapper());
 		return userList;
 	}
 
 	public List<User> getUserByRoleAndBranchid(int roleid, long branchid) {
 		String sql = "SELECT * FROM express_set_user WHERE roleid=" + roleid + " and branchid=" + branchid + " and userDeleteFlag=1";
-		return jdbcTemplate.query(sql, new UserRowMapper());
+		return this.jdbcTemplate.query(sql, new UserRowMapper());
 	}
 
 	public User getSingelUsersByRealname(String realname) {
 		try {
 			String sql = "select * from express_set_user where realname='" + realname + "' and userDeleteFlag=1";
-			return jdbcTemplate.queryForObject(sql, new UserRowMapper());
+			return this.jdbcTemplate.queryForObject(sql, new UserRowMapper());
 		} catch (EmptyResultDataAccessException ee) {
 			return null;
 		}
