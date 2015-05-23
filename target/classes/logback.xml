@@ -34,7 +34,7 @@
 	<logger name="cn.explink" level="INFO" />
 
 	<root level="info">
-		 <appender-ref ref="STDOUT" />
-		<!-- <appender-ref ref="logfile" /> -->
+		<!-- <appender-ref ref="STDOUT" /> -->
+		<appender-ref ref="logfile" />
 	</root>
 </configuration>  

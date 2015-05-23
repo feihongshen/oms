@@ -1404,4 +1404,16 @@ src/main/webapp/js/util.js -text
 src/main/webapp/wav/js.js -text
 src/test/java/cn/explink/jms/dto/DmpOrderFlowTest.java -text
 src/test/java/cn/explink/service/b2cdj/ExcelTest.java -text
+target/classes/META-INF/spring/applicationContext-jms.xml -text
+target/classes/META-INF/spring/applicationContext-job.xml -text
+target/classes/META-INF/spring/applicationContext-security.xml -text
+target/classes/META-INF/spring/applicationContext.xml -text
+target/classes/META-INF/spring/db.properties -text
+target/classes/activemq.xml -text
+target/classes/dbsqlserver.properties -text
 target/classes/logback.xml -text
+target/classes/oms.properties -text
+target/db/changelog/changelog.xml -text
+target/db/changelog/oms_init.sql -text
+target/db/changelog/quartz_init.sql -text
+target/db/pom.xml -text
