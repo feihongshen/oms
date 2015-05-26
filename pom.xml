@@ -2338,5 +2338,22 @@
 				<label>GZTL_TEST</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>GZTL_PJ</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.43:3306/oms_pj?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:8081/dmppj</dmpUrl>
+				<label>GZTL_PJ</label>
+			</properties>
+		</profile>
+		
 	</profiles>
 </project>
