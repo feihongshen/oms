@@ -2368,8 +2368,8 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://192.168.70.47:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8081/gztl42</dmpUrl>
-				<label>GZTL</label>
+				<dmpUrl>http://127.0.0.1:8081/gztl_42</dmpUrl>
+				<label>GZTL_42</label>
 			</properties>
 		</profile>
 		
