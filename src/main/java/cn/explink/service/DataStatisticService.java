@@ -71,6 +71,7 @@ import cn.explink.domain.TuiHuoChuZhanOrder;
 import cn.explink.domain.TuiHuoZhanRuKuOrder;
 import cn.explink.domain.User;
 import cn.explink.domain.ZhongZhuan;
+import cn.explink.enumutil.BranchEnum;
 import cn.explink.enumutil.FlowOrderColumnMap;
 import cn.explink.enumutil.ModelEnum;
 import cn.explink.enumutil.UserEmployeestatusEnum;
@@ -596,6 +597,28 @@ public class DataStatisticService {
 				customers = this.getStrings(customerids);
 			}
 			String kufangids = "";
+			Branch branch = this.getDmpDAO.getNowBranch(this.getDmpDAO.getUserById(userid).getBranchid());
+			List<Branch> kufangList = this.getDmpDAO.getQueryBranchByBranchsiteAndUserid(userid,
+					BranchEnum.KuFang.getValue() + "," + BranchEnum.TuiHuo.getValue() + "," + BranchEnum.ZhongZhuan.getValue());
+
+			if ((branch.getSitetype() == BranchEnum.KuFang.getValue()) || (branch.getSitetype() == BranchEnum.TuiHuo.getValue()) || (branch.getSitetype() == BranchEnum.ZhongZhuan.getValue())) {
+				if (kufangList.size() == 0) {
+					kufangList.add(branch);
+				} else {
+					if (!this.checkBranchRepeat(kufangList, branch)) {
+						kufangList.add(branch);
+					}
+				}
+			}
+			if((kufangid.length==0)&&(kufangids.length()==0)){
+				for(Branch kf:kufangList)
+				{
+					kufangids+=kf.getBranchid()+",";
+				}
+				if ((kufangids.length() > 0)&&kufangids.contains(",")) {
+					kufangids = kufangids.substring(0, kufangids.length() - 1);
+				}
+			}
 			if (kufangid.length > 0) {
 				kufangids = this.getStrings(kufangid);
 			}
@@ -3734,10 +3757,10 @@ public class DataStatisticService {
 	/*
 	 * public void ExportExcelMethod(long kufangid,long customerid,String
 	 * timmer,String type ) {
-	 * 
+	 *
 	 * String[] cloumnName1 = {}; // 导出的列名 String[] cloumnName2 = {}; // 导出的英文列名
 	 * String[] cloumnName3 = {}; // 导出的数据类型
-	 * 
+	 *
 	 * List<SetExportField> listSetExportField =
 	 * exportmouldDAO.getSetExportFieldByStrs("0"); cloumnName1 = new
 	 * String[listSetExportField.size()]; cloumnName2 = new
@@ -3752,18 +3775,18 @@ public class DataStatisticService {
 	 * sheet的名称 SimpleDateFormat df = new
 	 * SimpleDateFormat("yyyy-MM-dd_HH-mm-ss"); String fileName = "Order_" +
 	 * df.format(new Date()) + "_"; // 文件名 String otherName = "";
-	 * 
+	 *
 	 * String lastStr = ".xlsx";//文件名后缀
-	 * 
+	 *
 	 * fileName = fileName + timmer + lastStr; try {
-	 * 
+	 *
 	 * final String sql=
 	 * cwbDAO.getcwbOrderByPageIsMyWarehouseSql(customerid,cwb,
 	 * emaildate,CwbOrderAddressCodeEditTypeEnum
 	 * .getText(addressCodeEditType),branchid);
-	 * 
+	 *
 	 * ExcelUtils excelUtil = new ExcelUtils() { // 生成工具类实例，并实现填充数据的抽象方法
-	 * 
+	 *
 	 * @Override public void fillData(final Sheet sheet, final CellStyle style)
 	 * { final List<User> uList = userDAO.getAllUser(); final List<Branch> bList
 	 * = branchDAO.getAllBranches(); jdbcTemplate.query(new
@@ -3771,16 +3794,16 @@ public class DataStatisticService {
 	 * private int count = 0; ColumnMapRowMapper columnMapRowMapper = new
 	 * ColumnMapRowMapper(); private List<Map<String, Object>> recordbatch = new
 	 * ArrayList<Map<String, Object>>();
-	 * 
+	 *
 	 * public void processRow(ResultSet rs) throws SQLException {
-	 * 
-	 * 
+	 *
+	 *
 	 * Map<String, Object> mapRow = columnMapRowMapper.mapRow(rs, count);
 	 * recordbatch.add(mapRow); count++; if(count%100==0){ writeBatch(); }
-	 * 
-	 * 
+	 *
+	 *
 	 * }
-	 * 
+	 *
 	 * private void writeSingle(Map<String, Object> mapRow,TuihuoRecord
 	 * tuihuoRecord,DeliveryState ds ,Map<String, String> allTime,int
 	 * rownum,Map<String, String> cwbspayupidMap,Map<String, String>
@@ -3795,11 +3818,11 @@ public class DataStatisticService {
 	 * BigDecimal.ZERO.doubleValue() : a.equals("") ?
 	 * BigDecimal.ZERO.doubleValue() : Double.parseDouble(a.toString())); } else
 	 * { cell.setCellValue(a == null ? "" : a.toString()); } } }
-	 * 
+	 *
 	 * @Override public Object extractData(ResultSet rs) throws SQLException,
 	 * DataAccessException { while (rs.next()) { this.processRow(rs); }
 	 * writeBatch(); return null; }
-	 * 
+	 *
 	 * public void writeBatch() throws SQLException{ if(recordbatch.size()>0){
 	 * List<String> cwbs=new ArrayList<String>(); for(Map<String, Object>
 	 * mapRow:recordbatch){ cwbs.add(mapRow.get("cwb").toString()); }
@@ -3815,12 +3838,12 @@ public class DataStatisticService {
 	 * i),tuihuorecoredMap.get(cwb),deliveryStates.get
 	 * (cwb),orderflowList.get(cwb),count-size+i,cwbspayupMsp,complaintMap); }
 	 * recordbatch.clear(); } }
-	 * 
+	 *
 	 * private Map<String,TuihuoRecord > getTuihuoRecoredMap(List<String> cwbs){
 	 * Map<String,TuihuoRecord> map=new HashMap<String, TuihuoRecord>(); for
 	 * (TuihuoRecord tuihuoRecord : tuihuoRecordDAO.getTuihuoRecordByCwbs(cwbs))
 	 * { map.put(tuihuoRecord.getCwb(), tuihuoRecord); } return map; }
-	 * 
+	 *
 	 * private Map<String,DeliveryState> getDeliveryListByCwbs(List<String>
 	 * cwbs) { Map<String,DeliveryState> map=new HashMap<String,
 	 * DeliveryState>(); for(DeliveryState
@@ -3837,20 +3860,20 @@ public class DataStatisticService {
 	 * String ispayup = "否"; GotoClassAuditing goclass =
 	 * gotoClassAuditingDAO.getGotoClassAuditingByGcaid
 	 * (deliveryState.getGcaid());
-	 * 
+	 *
 	 * if(goclass!=null&&goclass.getPayupid()!=0){ ispayup = "是"; }
 	 * cwbspayupidMap.put(deliveryState.getCwb(), ispayup); } return
 	 * cwbspayupidMap; } }); jdbcTemplate.query(new
 	 * StreamingStatementCreator(sql), new RowCallbackHandler(){ private int
 	 * count=0;
-	 * 
+	 *
 	 * @Override public void processRow(ResultSet rs) throws SQLException { Row
 	 * row = sheet.createRow(count + 1); row.setHeightInPoints((float) 15);
-	 * 
+	 *
 	 * DeliveryState ds = getDeliveryByCwb(rs.getString("cwb"));
 	 * Map<String,String> allTime =
 	 * getOrderFlowByCredateForDetailAndExportAllTime(rs.getString("cwb"));
-	 * 
+	 *
 	 * for (int i = 0; i < cloumnName4.length; i++) { Cell cell =
 	 * row.createCell((short) i); cell.setCellStyle(style);
 	 * //sheet.setColumnWidth(i, (short) (5000)); //设置列宽 Object a =
@@ -3861,11 +3884,11 @@ public class DataStatisticService {
 	 * a.equals("")?BigDecimal.ZERO.doubleValue()
 	 * :Double.parseDouble(a.toString())); }else{ cell.setCellValue(a == null ?
 	 * "" : a.toString()); } } count++;
-	 * 
+	 *
 	 * }});
-	 * 
+	 *
 	 * } }; excelUtil.excel(response, cloumnName4, sheetName, fileName);
-	 * 
+	 *
 	 * } catch (Exception e) { e.printStackTrace(); } }
 	 */
 }
