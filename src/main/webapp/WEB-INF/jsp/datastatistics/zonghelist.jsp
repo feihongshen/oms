@@ -644,7 +644,7 @@ function clearSelect(){
 			</div>
 		</form>
 	</div>
-	<div style="height: 150px"></div>
+	<div style="height: 160px"></div>
 	<%
 		if(orderlist != null && orderlist.size()>0){
 	%>

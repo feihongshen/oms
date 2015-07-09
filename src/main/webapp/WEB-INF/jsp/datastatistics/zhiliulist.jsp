@@ -361,7 +361,7 @@ function isauditEdit(){
 	</form>
 	</div>
 	<div class="right_title">
-	<div style="height:60px"></div><%if(orderlist != null && orderlist.size()>0){  %>
+	<div style="height:70px"></div><%if(orderlist != null && orderlist.size()>0){  %>
 	<div style="overflow-x:scroll; width:100% " id="scroll">
 	<table width="1500" border="0" cellspacing="1" cellpadding="0" class="table_2" id="gd_table">
 	   <tr class="font_1">
