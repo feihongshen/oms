@@ -41,6 +41,8 @@
 <script src="<%=request.getContextPath()%>/js/jquery.ui.datepicker-zh-CN.js" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/js/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/js/jquery.ui.message.min.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/js/multiSelcet/MyMultiSelect.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		if(<%=request.getAttribute("nouser") != null%>){
@@ -49,6 +51,10 @@
 	   //获取下拉框的值
 	   $("#find").click(function(){
 			if(check()){
+			 	 if($(":checked[name=customerid]").length==0){
+		        	 multiSelectAll('customerid',1,'请选择');}
+	        	 if($(":checked[name=branchid]").length==0){
+		        	 multiSelectAll('branchid',1,'请选择');}
 				$("#isshow").val(1);
 		    	$("#searchForm").submit();
 		    	$("#find").attr("disabled","disabled");

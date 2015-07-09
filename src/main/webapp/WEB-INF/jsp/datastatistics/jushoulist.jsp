@@ -53,6 +53,10 @@ List<User> deliverlist = request.getAttribute("deliverlist")==null?null:( List<U
 	   //获取下拉框的值
 	   $("#find").click(function(){
 	         if(check()){
+	        	 if($(":checked[name=customerid]").length==0){
+		        	 multiSelectAll('customerid',1,'请选择');}
+	        	 if($(":checked[name=dispatchbranchid]").length==0){
+		        	 multiSelectAll('dispatchbranchid',1,'请选择');}
 	            $("#isshow").val(1);
 		    	$("#searchForm").submit();
 		    	$("#find").attr("disabled","disabled");

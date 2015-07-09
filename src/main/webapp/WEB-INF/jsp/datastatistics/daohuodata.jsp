@@ -55,6 +55,10 @@ function gologin(){
 	   //获取下拉框的值
 	   $("#find").click(function(){
 	         if(check()){
+	        	 if($(":checked[name=kufangid]").length==0){
+		        	 multiSelectAll('kufangid',1,'请选择');}
+	        	 if($(":checked[name=currentBranchid]").length==0){
+		        	 multiSelectAll('currentBranchid',1,'请选择');}
 	            $("#isshow").val(1);
 		    	$("#searchForm").submit();
 		    	$("#find").attr("disabled","disabled");
