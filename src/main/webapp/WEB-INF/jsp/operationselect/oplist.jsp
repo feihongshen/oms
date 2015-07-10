@@ -95,7 +95,7 @@ $(function(){
 					操作反馈时间：<input type ="text" name ="begindate" id="strtime"  value="<%=request.getParameter("begindate")==null?"":request.getParameter("begindate") %>"/>　
 					到　<input type ="text" name ="enddate" id="endtime"  value="<%=request.getParameter("enddate")==null?"":request.getParameter("enddate") %>"/>
 						<input type="button" id ="find"  value="查询" class="input_button2" />　
-						<input type="button"  value="清空" onclick="clearSelect();" class="input_button2" />
+						<input type="reset"  value="清空" onclick="clearSelect();" class="input_button2" />
 					
 				</td>
 			</tr>

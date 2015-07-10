@@ -408,7 +408,7 @@ function clearSelect(){
 					</tr>
 					<tr>
 						<td align="left" colspan="2">数据更新时间：${lastupdatetime }&nbsp;&nbsp;&nbsp;<input
-							type="button" id="find" value="查询" class="input_button2" /> &nbsp;&nbsp;<input type="button"
+							type="button" id="find" value="查询" class="input_button2" /> &nbsp;&nbsp;<input type="reset"
 							value="清空" onclick="clearSelect();" class="input_button2" /> &nbsp;&nbsp;&nbsp;&nbsp;<%
  	if(orderlist != null && orderlist.size()>0){
  %> <select name="exportmould" id="exportmould">

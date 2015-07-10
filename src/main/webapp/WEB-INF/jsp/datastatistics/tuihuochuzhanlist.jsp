@@ -164,7 +164,7 @@ function clearSelect(){
 		          <option value ="2" <%if(2==(request.getParameter("istuihuozhanruku")==null?0:Long.parseLong(request.getParameter("istuihuozhanruku")))){ %>selected="selected" <%} %>>否</option>
 			</select>	
 			<input type="button" id="find" onclick="" value="查询" class="input_button2" />
-			&nbsp;&nbsp;<input type="button"  value="清空" onclick="clearSelect();" class="input_button2" />
+			&nbsp;&nbsp;<input type="reset"  value="清空" onclick="clearSelect();" class="input_button2" />
 			<select name ="exportmould" id ="exportmould">
 	          <option value ="0">默认导出模板</option>
 	          <%if(exportmouldlist!=null&&exportmouldlist.size()>0)for(Exportmould e:exportmouldlist){%>

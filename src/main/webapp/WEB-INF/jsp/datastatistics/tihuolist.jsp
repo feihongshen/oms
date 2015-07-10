@@ -155,7 +155,7 @@ function clearSelect(){
 				<input type ="text" name ="enddate" id="endtime"  value="<%=endtime %>"/>
 		    
 			<input type="button" id="find" onclick="" value="查询" class="input_button2" />
-			&nbsp;&nbsp;<input type="button"  value="清空" onclick="clearSelect();" class="input_button2" />
+			&nbsp;&nbsp;<input type="reset"  value="清空" onclick="clearSelect();" class="input_button2" />
 			&nbsp;&nbsp;<input type="button"  value="导出" onclick="exportField('0','0');" class="input_button2" />
 			<br />
 			数据最新更新时间：${lastupdatetime }

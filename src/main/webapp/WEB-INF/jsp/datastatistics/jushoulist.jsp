@@ -304,7 +304,7 @@ function clearSelect(){
 			
 			
 			<input type="button" id="find" onclick="" value="查询" class="input_button2" />
-			&nbsp;&nbsp;<input type="button"  value="清空" onclick="clearSelect();" class="input_button2" />
+			&nbsp;&nbsp;<input type="reset"  value="清空" onclick="clearSelect();" class="input_button2" />
 			<%if(!orderlist.isEmpty()){ %>
 			<select name ="exportmould" id ="exportmould">
 	          <option value ="0">默认导出模板</option>

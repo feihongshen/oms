@@ -222,7 +222,7 @@ function clearSelect(){
 		          <%} %>
 			</select>	
 			<input type="button" id="find" onclick="" value="查询" class="input_button2" />
-			&nbsp;&nbsp;<input type="button"  value="清空" onclick="clearSelect();" class="input_button2" />
+			&nbsp;&nbsp;<input type="reset"  value="清空" onclick="clearSelect();" class="input_button2" />
 			数据最新更新时间：${lastupdatetime }
 			<%if(orderlist != null && orderlist.size()>0){  %>
 			<select name ="exportmould" id ="exportmould">

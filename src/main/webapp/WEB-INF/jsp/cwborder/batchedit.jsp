@@ -78,13 +78,13 @@ $(document).ready(function() {
 					<textarea cols="50" rows="20" id ="cwbarea" name ="cwb" onkeyup="onblurcwb()" ></textarea>
 				</p>
 					<p>
-						<input type="button" onclick="resetcwb()" value ="清空" class="input_button3" />
+						<input type="reset" onclick="resetcwb()" value ="清空" class="input_button3" />
 					</p></td>
 				<td align="center" valign="top" ><p>
 					 <textarea cols="50" rows="20" id ="cwbremark" name ="cwbremark" onkeyup="onblurcwb1()"></textarea>
 				</p>
 					<p>
-						<input type="button" onclick="resetcwbremark()" value ="清空" class="input_button3" />
+						<input type="reset" onclick="resetcwbremark()" value ="清空" class="input_button3" />
 					</p></td>
 			</tr>
 			<tr>

@@ -78,7 +78,7 @@ function dgetViewBox(key){
 							
 						</select>
 							<input type="submit" name="button3" id="submitForm" value="搜索" class="input_button2">
-							<input type="button" name="button4" id="cleanForm" value="清空" class="input_button2"></td>
+							<input type="reset" name="button4" id="cleanForm" value="清空" class="input_button2"></td>
 					</tr>
 					</tbody></table></td>
 			</tr>
