@@ -297,6 +297,7 @@ public class DataStatisticController {
 		model.addAttribute("page", page);
 		model.addAttribute("deliverid", deliverid);
 		model.addAttribute("check", 1);
+		model.addAttribute("enddate", enddate);
 
 		model.addAttribute("branchList", branchnameList);
 		model.addAttribute("customerlist", customerlist);
