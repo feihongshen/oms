@@ -118,11 +118,7 @@ function orderForm(ordername){
 		$("#searchForm").submit();
 	}
 }
-function clearSelect(){
-	$("#strtime").val('');//开始时间
-	$("#endtime").val('');//结束时间
-	$("#isaudit").val(-1);//审核状态
-}
+
 
 var i =<%=request.getAttribute("check")==null?0:Integer.parseInt(request.getAttribute("check").toString())%>;
 function change(){
@@ -170,6 +166,17 @@ function isauditEdit(){
 	}else{
 		$("#isauditLabel").show();
 	}
+}
+function clearSelect(){
+	$("#strtime").val('');//开始时间
+	$("#endtime").val('');//结束时间
+	$("#isaudit").val(-1);//审核状态
+	$("#branchname").val("");
+	multiSelectAll('operationOrderResultType',0,'请选择');
+	multiSelectAll('cwbordertypeid',0,'请选择');
+	multiSelectAll('customerid',0,'请选择供货商');
+	multiSelectAll('dispatchbranchid',0,'请选择配送站点');
+	$("#deliverid").val(-1);
 }
 </script>
 </head>
@@ -390,7 +397,7 @@ function isauditEdit(){
 	</form>
 	</div>
 	<div class="right_title">
-	<div style="height:70px"></div><%if(orderlist != null && orderlist.size()>0){  %>
+	<div style="height:100px"></div><%if(orderlist != null && orderlist.size()>0){  %>
 	<div style="overflow-x:scroll; width:100% " id="scroll">
 	<table width="1500" border="0" cellspacing="1" cellpadding="0" class="table_2" id="gd_table">
 	   <tr class="font_1">

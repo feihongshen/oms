@@ -137,11 +137,11 @@ function clearSelect(){
 	$("#nextbranchname").val('输入站点名称自动匹配');//
 	$("#financeAuditStatus").val(-1);
 	$("#goodsType").val(-1);
-	multiSelectAll('customerid',0,'请选择');
+	multiSelectAll('customerid',0,'请选择供货商');
 	multiSelectAll('cwbordertypeid',0,'请选择');
-	multiSelectAll('dispatchbranchid',0,'请选择');
-	multiSelectAll('curdispatchbranchid',0,'请选择');
-	multiSelectAll('nextdispatchbranchid',0,'请选择');
+	multiSelectAll('dispatchbranchid',0,'请选择配送站点');
+	multiSelectAll('curdispatchbranchid',0,'请选择当前操作站点');
+	multiSelectAll('nextdispatchbranchid',0,'请选择下一站点');
 	multiSelectAll('operationOrderResultType',0,'请选择');
 	
 }
@@ -650,7 +650,7 @@ function clearSelect(){
 			</div>
 		</form>
 	</div>
-	<div style="height: 160px"></div>
+	<div style="height: 200px"></div>
 	<%
 		if(orderlist != null && orderlist.size()>0){
 	%>
