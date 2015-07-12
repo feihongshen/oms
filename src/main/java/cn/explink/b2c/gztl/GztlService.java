@@ -251,7 +251,7 @@ public class GztlService {
 	 * @throws Exception
 	 */
 	private void DealWithBuildXMLAndSending(Gztl gztl, List<B2CData> datalist) throws Exception {
-		
+		String failb2cids="";
 		String b2cidsString = "";
 		StringBuffer subBuffer = new StringBuffer();
 		subBuffer.append("<TMS>");
@@ -263,7 +263,7 @@ public class GztlService {
 			
 			b2cidsString += b2cData.getB2cid() + ",";
 			subBuffer.append("<TMSFeedback>");
-			subBuffer.append("<id>" + note.getId() + "</id>");// 序列号，用于接收成功后返回标识
+			subBuffer.append("<id>" + b2cData.getB2cid() + "</id>");// 序列号，用于接收成功后返回标识
 			subBuffer.append("<myNo>" + note.getMyNo() + "</myNo>");// 运单编号
 			subBuffer.append("<logisticid>" + note.getLogisticid() + "</logisticid>");// 订单号
 			subBuffer.append("<custorderno>" + note.getCustorderno() + "</custorderno>");// 客户订单号
@@ -320,24 +320,38 @@ public class GztlService {
 		//System.out.println(responseString);
 		
 		logger.info("广州通路状态回传返回信息xml={}",responseString);
-		
 		TmsFeedback tmsFeedback = (TmsFeedback) this.xmlToObject(responseString, new TmsFeedback());
 		if (tmsFeedback == null) {
 			this.logger.warn("请求0广州通路0解析xml为空，跳出循环,throw Exception,xml={}", responseString);
 			//System.out.println("请求0广州通路0解析xml为空，跳出循环");
 			return;
 		}
+		logger.info("广州通路状态回传返回信息send表里面的b2cids={}", tmsFeedback.getId());
 		if (tmsFeedback.getSuccess().equals("true")) {
-			this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cidsString);
+			if (b2cidsString.length()>0) {
+				for (String b2cids: b2cidsString.split(",")) {
+					if (tmsFeedback.getId().contains(b2cids)) {
+						this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cids);
+					}else {
+						this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllFaild(b2cids);
+						failb2cids+=b2cids+",";
+					}
+				}
+			}
+		
+			//this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cidsString);
 			//System.out.println("成功");
-			this.logger.info("广州通路状态回传返回成功消息：xml={}" + tmsFeedback.getRemark());
+			this.logger.info("广州通路状态回传返回成功消息：remark={}" + tmsFeedback.getRemark());
+			if (failb2cids.length()>0) {
+				this.logger.info("广州通路状态回传返回失败的send表中的b2cids={}" + failb2cids.substring(0, failb2cids.length()-1));
+			}
 			this.logger.info("广州通路状态回传返回成功消息的cwbs：xml={}" + b2cidsString);
 
 		} else if (tmsFeedback.getSuccess().equals("false")) {
 			this.b2cDataDAO.updateMultiB2cIdSQLResponseStatus_AllFaild(b2cidsString);
 			//System.out.println("失败" + tmsFeedback.getRemark());
-			this.logger.info("广州通路状态回传返回失败消息：xml={}" + tmsFeedback.getRemark());
-			this.logger.info("广州通路状态回传返回失败消息的cwbs：cwbs={}" + b2cidsString);
+			this.logger.info("广州通路状态回传返回失败消息：remark={}" + tmsFeedback.getRemark());
+			this.logger.info("广州通路状态回传返回失败消息的send表里面的信息：b2cids={}" + b2cidsString);
 
 		}
 	}
