@@ -183,7 +183,7 @@ public class BulidVipShopB2cData {
 					sign_man = "本人";
 				}
 				
-				sign_man_phone = deliveryState.getSign_man_phone() != null && !"".equals(deliveryState.getSign_man_phone()) ? deliveryState.getSign_man_phone() : "";
+				sign_man_phone = "";
 				
 			}
 			/*
