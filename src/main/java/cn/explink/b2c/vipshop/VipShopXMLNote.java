@@ -28,23 +28,20 @@ public class VipShopXMLNote {
 	private String station;
 	private String is_unpacked=""; //是否开箱验货 1_客户拒收
 	private String goods_reason; //未退原因
-	private long is_allograph_sign;  //是否代签收 1：待签收.0:为非待签收
-	private String allograph_tel; //待签收电话
-	
+	private long is_allograph_sign;  //是否代 签收 1：他人签收.0:本人签收
+	private String sign_man;
+	private String sign_man_phone=""; //代签收人电话
+
+
+
 	public long getIs_allograph_sign() {
 		return is_allograph_sign;
 	}
+
 	public void setIs_allograph_sign(long is_allograph_sign) {
 		this.is_allograph_sign = is_allograph_sign;
 	}
 
-	public String getAllograph_tel() {
-		return allograph_tel;
-	}
-
-	public void setAllograph_tel(String allograph_tel) {
-		this.allograph_tel = allograph_tel;
-	}
 
 	public String getGoods_reason() {
 		return goods_reason;
@@ -144,8 +141,6 @@ public class VipShopXMLNote {
 		this.deliverMobile = deliverMobile;
 	}
 
-	private String sign_man;
-
 	public String getVersion() {
 		return version;
 	}
@@ -225,5 +220,15 @@ public class VipShopXMLNote {
 	public void setSign_man(String sign_man) {
 		this.sign_man = sign_man;
 	}
+
+	public String getSign_man_phone() {
+		return sign_man_phone;
+	}
+
+	public void setSign_man_phone(String sign_man_phone) {
+		this.sign_man_phone = sign_man_phone;
+	}
+	
+	
 
 }

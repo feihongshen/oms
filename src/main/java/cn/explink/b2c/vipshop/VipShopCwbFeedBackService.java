@@ -119,9 +119,17 @@ public class VipShopCwbFeedBackService {
 
 		try {
 			while (true) {
+				calcCount++;
 				String requestXML = "";
+				
+				if(calcCount>200){
+					logger.warn("当前请求唯品会接口循环次数已超过200，跳出");
+					return 0;
+				}
+				
 				try {
-					List<B2CData> vipshopDataList = this.b2cDataDAO.getDataListByFlowStatus(flowordertype, vipshop.getCustomerids(), vipshop.getSendMaxCount());
+					String lefengCustomerid=vipshop.getLefengCustomerid()==null||vipshop.getLefengCustomerid().isEmpty()?vipshop.getCustomerids():vipshop.getLefengCustomerid();
+					List<B2CData> vipshopDataList = this.b2cDataDAO.getDataListByFlowStatus(flowordertype, vipshop.getCustomerids()+","+lefengCustomerid, vipshop.getSendMaxCount());
 					if ((vipshopDataList == null) || (vipshopDataList.size() == 0)) {
 						this.logger.info("当前没有要推送[vipshop]的数据,状态:flowordertype={}", flowordertype);
 						return 0;
@@ -132,9 +140,11 @@ public class VipShopCwbFeedBackService {
 						this.logger.info("当前没有要推送[vipshop]的数据，判断揽退,状态:flowordertype={}", flowordertype);
 						return 0;
 					}
-					String MD5Str = this.sendCreateMD5Str(vipshopDataList, flowordertype, request_time, vipshop, requestXML);
+					String md5HeplerXML = this.AppendXMLStringMD5Hepler(vipshop, vipshopDataList, flowordertype, request_time);
+					
+					String MD5Str = this.sendCreateMD5Str(vipshopDataList, flowordertype, request_time, vipshop, requestXML,md5HeplerXML);
 
-					this.logger.info("签名字符串：{}", MD5Str);
+					//this.logger.info("签名字符串：{}", MD5Str);
 
 					String Sign = VipShopMD5Util.MD5(MD5Str).toLowerCase();
 					String response_XML = null;
@@ -143,8 +153,7 @@ public class VipShopCwbFeedBackService {
 								VipShopConfig.PEISONG_TYPE);
 					} catch (Exception e) {
 						this.logger.error("推送vipshop状态-异常！推送XML信息：" + response_XML + ",异常原因：" + e, e);
-						e.printStackTrace();
-						return 0;
+						continue;
 					}
 					this.logger.info("vipshop状态反馈XML={},flowordertype={}", ReaderXMLHandler.parseBack(response_XML), flowordertype);
 					Map<String, Object> parseMap = null;
@@ -153,7 +162,6 @@ public class VipShopCwbFeedBackService {
 						this.logger.info("解析后的XML-Map,flowordertype={},parseMap={}", flowordertype, parseMap);
 					} catch (Exception e) {
 						this.logger.error("解析vipshop返回订单信息异常!,异常原因：" + e, e);
-						e.printStackTrace();
 						return 0;
 					}
 					String sys_response_code = parseMap.get("sys_response_code") != null ? parseMap.get("sys_response_code").toString() : ""; // 返回码
@@ -171,7 +179,6 @@ public class VipShopCwbFeedBackService {
 						this.DealWithResponseByVipShop(vipshop, flowordertype, parseMap, sys_response_msg);
 					}
 
-					calcCount += vipshopDataList.size();
 
 				} catch (Exception e) {
 					String exptMessage = "[唯品会]订单状态反馈发送不可预知的异常！当前状态=" + flowordertype + "，当前请求的XML=" + requestXML;
@@ -209,7 +216,10 @@ public class VipShopCwbFeedBackService {
 				vipshopDataList.add(b2cData);
 				String request_time = DateTimeUtil.getNowTime();
 				requestXML = this.AppendXMLString_peisong(vipshop, vipshopDataList, (int) b2cData.getFlowordertype(), request_time);
-				String MD5Str = this.sendCreateMD5Str(vipshopDataList, (int) b2cData.getFlowordertype(), request_time, vipshop, requestXML);
+				
+				String md5HeplerXML = this.AppendXMLStringMD5Hepler(vipshop, vipshopDataList, (int) b2cData.getFlowordertype(), request_time);
+				
+				String MD5Str = this.sendCreateMD5Str(vipshopDataList, (int) b2cData.getFlowordertype(), request_time, vipshop, requestXML,md5HeplerXML);
 				String Sign = VipShopMD5Util.MD5(MD5Str);
 				String response_XML = null;
 				try {
@@ -299,25 +309,14 @@ public class VipShopCwbFeedBackService {
 	/**
 	 * VipShop生成签名字符串
 	 */
-	public String sendCreateMD5Str(List<B2CData> vipshopDataList, int flowordertype, String request_time, VipShop vipshop, String requestXML) {
+	public String sendCreateMD5Str(List<B2CData> vipshopDataList, int flowordertype, String request_time, VipShop vipshop, String requestXML,String md5HeplerXML) {
 		String MD5Str = "";
 
 		String version = "1.0";
 		MD5Str = vipshop.getPrivate_key() + version + request_time + vipshop.getShipper_no();
 		StringBuffer sub = new StringBuffer(MD5Str);
-		requestXML = this.getXMLContentReplace(requestXML);
+		requestXML = this.getXMLContentReplace(requestXML,md5HeplerXML);
 		sub.append(requestXML);
-		// for(B2CData b2cData: vipshopDataList){
-		// String jsoncontent=b2cData.getJsoncontent();
-		// VipShopXMLNote note=getVipShopXMLNoteMethod(jsoncontent);
-		// String order_status_info=note.getOrder_status_info();
-		// if(!note.getOrder_status().equals("33")){
-		// order_status_info=note.getOrder_status_info().length()>50?note.getOrder_status_info().substring(0,49):note.getOrder_status_info();
-		// }
-		//
-		// sub.append(parseStrAdd(b2cData.getB2cid()+"")+note.getOrder_sn()+note.getOrder_status()+
-		// order_status_info+note.getCurrent_city_name()+note.getOrder_status_time()+note.getSign_man());
-		// }
 
 		return sub.toString().replaceAll("null", "");
 	}
@@ -337,6 +336,9 @@ public class VipShopCwbFeedBackService {
 		for (B2CData b2cData : vipshopDataList) {
 			String jsoncontent = b2cData.getJsoncontent();
 			VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
+			if(note== null){
+				continue;
+			}
 
 			if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue()) {
 				this.logger.info("当前推送唯品会{}过滤揽退单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
@@ -347,6 +349,12 @@ public class VipShopCwbFeedBackService {
 			if (!note.getOrder_status().equals("33")) {
 				order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
 			}
+			
+			String sub2="";
+			if (note.getOrder_status().equals("33")) {
+				sub2="<delivery_name>" + note.getDeliverUser() + "</delivery_name>"
+					+"<delivery_phone>" + note.getDeliverMobile() + "</delivery_phone>";
+			}
 
 			sub1.append("<trace>");
 			sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
@@ -356,7 +364,10 @@ public class VipShopCwbFeedBackService {
 			sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 			sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 			sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+			sub1.append(sub2);
 			sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
+			sub1.append("<is_allograph_sign>" + note.getIs_allograph_sign()+ "</is_allograph_sign>");
+			sub1.append("<allograph_tel>" + note.getSign_man_phone() + "</allograph_tel>");
 			sub1.append("</trace>");
 
 			if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
@@ -366,11 +377,13 @@ public class VipShopCwbFeedBackService {
 				sub1.append("<trace>");
 				sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
 				sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
-				sub1.append("<order_status>" + VipShopFlowEnum.FenZhanDaoHuo.getVipshop_state() + "</order_status>");
+				sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
 				sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
 				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 				sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+				sub1.append("<delivery_name>" + note.getDeliverUser() + "</delivery_name>");
+				sub1.append("<delivery_phone>" + note.getDeliverMobile() + "</delivery_phone>");
 				sub1.append("<is_unpacked></is_unpacked>");
 				sub1.append("</trace>");
 			}
@@ -385,6 +398,75 @@ public class VipShopCwbFeedBackService {
 		this.logger.info("请求vipshop:状态[" + flowordertype + "],推送vipshop-XML：{}", returnStr);
 		return returnStr.replaceAll("null", "");
 	}
+	
+	
+	
+	
+	// 拼接XML,MD5加密使用
+		private String AppendXMLStringMD5Hepler(VipShop vipshop, List<B2CData> vipshopDataList, int flowordertype, String request_time) {
+
+			String version = "1.0";
+			StringBuffer sub1 = new StringBuffer();
+			sub1.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			sub1.append("<request>");
+			sub1.append("<head>");
+			sub1.append("<version>" + version + "</version>");
+			sub1.append("<request_time>" + request_time + "</request_time>");
+			sub1.append("<cust_code>" + vipshop.getShipper_no() + "</cust_code>");
+			sub1.append("</head>");
+			sub1.append("<traces>");
+			for (B2CData b2cData : vipshopDataList) {
+				String jsoncontent = b2cData.getJsoncontent();
+				VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
+
+				if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue()) {
+					this.logger.info("当前推送唯品会{}过滤揽退单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
+					continue;
+				}
+
+				String order_status_info = note.getOrder_status_info();
+				if (!note.getOrder_status().equals("33")) {
+					order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
+				}
+
+				sub1.append("<trace>");
+				sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
+				sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
+				sub1.append("<order_status>" + note.getOrder_status() + "</order_status>");
+				sub1.append("<order_status_info>" + order_status_info + "</order_status_info>");
+				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
+				sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
+				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+				
+				sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
+				sub1.append("</trace>");
+
+				if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
+
+					String order_status_msg = "货物已达[" + note.getDeliverBranch() + "]由派送员[" + note.getDeliverUser() + "]开始派送，投递员电话：[" + note.getDeliverMobile() + "]";
+					note.setOrder_status_info_temp(order_status_msg);
+					sub1.append("<trace>");
+					sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
+					sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
+					sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
+					sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
+					sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
+					sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
+					sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+					sub1.append("<is_unpacked></is_unpacked>");
+					sub1.append("</trace>");
+				}
+			}
+			sub1.append("</traces>");
+			sub1.append("</request>");
+			String returnStr = sub1.toString();
+			if (returnStr.contains("<traces></traces>")) {
+				return null;
+			}
+
+			return returnStr.replaceAll("null", "");
+			
+		}
 
 	// 拼接XML
 	private String AppendXMLString_lantui(VipShop vipshop, List<B2CData> vipshopDataList, int flowordertype, String request_time) {
@@ -499,30 +581,16 @@ public class VipShopCwbFeedBackService {
 	 * 
 	 * @return
 	 */
-	private String getXMLContentReplace(String xml) {
+	private String getXMLContentReplace(String xml,String md5HeplerXML) {
 
-		xml = xml.substring(xml.indexOf("<traces>") + 8, xml.indexOf("</traces>"));
-		xml = xml.replaceAll("<trace>", "").replaceAll("</trace>", "").replaceAll("<cust_data_id>", "").replaceAll("</cust_data_id>", "").replaceAll("<order_sn>", "").replaceAll("</order_sn>", "")
+		md5HeplerXML = md5HeplerXML.substring(md5HeplerXML.indexOf("<traces>") + 8, md5HeplerXML.indexOf("</traces>"));
+		md5HeplerXML = md5HeplerXML.replaceAll("<trace>", "").replaceAll("</trace>", "").replaceAll("<cust_data_id>", "").replaceAll("</cust_data_id>", "").replaceAll("<order_sn>", "").replaceAll("</order_sn>", "")
 				.replaceAll("<order_status>", "").replaceAll("</order_status>", "").replaceAll("<order_status_info>", "").replaceAll("</order_status_info>", "").replaceAll("<current_city_name>", "")
 				.replaceAll("</current_city_name>", "").replaceAll("<order_status_time>", "").replaceAll("</order_status_time>", "").replaceAll("<sign_man>", "").replaceAll("</sign_man>", "")
 				.replaceAll("<is_unpacked></is_unpacked>", "").replaceAll("<is_unpacked>0</is_unpacked>", "").replaceAll("<is_unpacked>1</is_unpacked>", "")
-			
-		// .replaceAll("<deliver_name>","").replaceAll("</deliver_name>","")
-		// //不参与签名
-		// .replaceAll("<delivery_phone>","").replaceAll("</delivery_phone>","")
-		;
-		if (xml.contains("<delivery_name>") && xml.contains("</delivery_name>")) {
-
-			xml = xml.substring(0, xml.indexOf("<delivery_name>"));
-		}
-		//	.replaceAll("<is_unpacked>", "").replaceAll("</is_unpacked>", "") 不参与签名
-//		if (xml.contains("<is_unpacked>") && xml.contains("</is_unpacked>")) {
-//
-//			xml = xml.substring(0, xml.indexOf("<is_unpacked>"));
-//		}
+				.replaceAll("<is_unpacked>0</is_unpacked>", "").replaceAll("<is_unpacked>1</is_unpacked>", "");
 		
-		
-		return xml;
+		return md5HeplerXML;
 	}
 
 	public String getVipShopFlowEnum(long flowordertype, long delivery_state, long cwbordertypeid) {
@@ -642,6 +710,7 @@ public class VipShopCwbFeedBackService {
 
 		try {
 			while (true) {
+				calcCount++;
 				String requestXML = "";
 				try {
 					List<B2CData> vipshopDataList = this.b2cDataDAO.getDataListByFlowStatus(flowordertype, vipshop.getCustomerids(), vipshop.getSendMaxCount());
@@ -693,8 +762,6 @@ public class VipShopCwbFeedBackService {
 					if ("S00".equals(sys_response_code)) {
 						this.DealWithResponseByVipShop(vipshop, flowordertype, parseMap, sys_response_msg);
 					}
-
-					calcCount += vipshopDataList.size();
 
 				} catch (Exception e) {
 					String exptMessage = "[唯品会]订单状态反馈发送不可预知的异常！当前状态=" + flowordertype + "，当前请求的XML=" + requestXML;
