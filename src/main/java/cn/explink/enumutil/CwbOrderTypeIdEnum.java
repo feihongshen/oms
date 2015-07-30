@@ -1,7 +1,9 @@
 package cn.explink.enumutil;
 
 public enum CwbOrderTypeIdEnum {
-	Peisong(1, "配送"), Shangmentui(2, "上门退"), Shangmenhuan(3, "上门换");
+	Peisong(1, "配送"), Shangmentui(2, "上门退"), Shangmenhuan(3, "上门换"), 
+	// dmp_v4.2 OXO项目  by jinghui.pan@pjbest.com on 20150725
+	OXO(4,"OXO"), OXO_JIT(5,"OXO_JIT");
 
 	private int value;
 	private String text;
