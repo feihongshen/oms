@@ -209,7 +209,7 @@ public class CwbOrderTailDao {
 					public void setValues(PreparedStatement ps) throws SQLException {
 						ps.setString(1, del.getCwb());
 						ps.setLong(2, del.getPaywayid());
-						ps.setString(3, del.getNewpaywayid());
+						ps.setString(3, del.getNewpaywayid()== null ?"0":del.getNewpaywayid());
 						ps.setLong(4, del.getCustomerid());
 						ps.setString(5, del.getCwbordertypeid());
 						ps.setBigDecimal(6, del.getReceivablefee());
