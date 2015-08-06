@@ -2307,6 +2307,23 @@
 				<label>version_pj</label>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>version_pj_out</id>
+			<properties>
+				<tomcat.manager.url>http://192.168.0.222:8082/manager</tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.0.222:3306/oms_42?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>pj</expressurl.user>
+				<expressurl.password>pjexplink</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase>false</expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://explink.wicp.net:1199/dmp_pj</dmpUrl>
+				<label>version_pj</label>
+			</properties>
+		</profile>
+		
 		<profile>
 			<id>GZTL</id>
 			<properties>
