@@ -761,6 +761,9 @@ public class GztlServiceFeedback {
 		return buffer.toString();
 	}
 	public static String  parseDate(String date){
+		if(date.equals("")){
+			return "";
+		}
 		String date5="";
 		try {
 			SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
