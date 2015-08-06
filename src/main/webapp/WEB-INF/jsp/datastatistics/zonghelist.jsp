@@ -59,9 +59,9 @@ $(function() {
 	   //获取下拉框的值
 	   $("#find").click(function(){
 	         if(check()){
-	        	 if($(":checked[name=dispatchbranchid]").length==0){
+	        	 /*if($(":checked[name=dispatchbranchid]").length==0){
 		        	 multiSelectAll('dispatchbranchid',1,'请选择');}
-	        	/*  if($(":checked[name=curdispatchbranchid]").length==0){
+	        	  if($(":checked[name=curdispatchbranchid]").length==0){
 		        	 multiSelectAll('curdispatchbranchid',1,'请选择');} */
 	        	/*  if($(":checked[name=nextdispatchbranchid]").length==0){
 		        	 multiSelectAll('nextdispatchbranchid',1,'请选择');} */
