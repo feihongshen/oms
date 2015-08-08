@@ -10,7 +10,8 @@ public enum ShipperIdAndShipperCode {
 	jxfyorder(5,"jxfyorder","江西站"),
 	hbfyorder(6,"hbfyorder","湖北站"),
 	ZSRB(10,"ZSRB","中山火炬站"),
-	GZTL(1,"GZTL","浙江站");
+	GZTL(1,"GZTL","浙江站"),
+	DGBY(11,"DGBY","东莞东站");
 	private long  logisticproviderid;
 	private String  shipped_code;
 	private String explain;
