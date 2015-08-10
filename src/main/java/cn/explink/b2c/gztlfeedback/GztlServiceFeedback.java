@@ -69,6 +69,10 @@ import com.fyps.web.webservice.monternet.TraceArgs;
 @Service
 public class GztlServiceFeedback {
 	private Logger logger = LoggerFactory.getLogger(MaisikeService_Send2LvBranch.class);
+	private static final String FUJIANZHAN="fjFeiYuan";
+	private static final String ZHEJIANGZHAN="zjabc";
+	private static final String JIANGXIZHAN="jxfy";
+	private static final String HUBEIZHAN="hbFeiYuan";
 	@Autowired
 	private GetDmpDAO getDmpDAO;
 	@Autowired
@@ -474,8 +478,20 @@ public class GztlServiceFeedback {
 
 					int flowordertype = this.getFlowordertype(orderFeedback.getStatus());// 流程状态
 					long deliverystate = this.getDeliveryState(orderFeedback.getStatus());// 接收状态
+					String logisticProviderId="";
+					if(GztlServiceFeedback.FUJIANZHAN.equals(orderFeedback.getLogisticProviderId())){
+						logisticProviderId="fjabc";
+					}else if(GztlServiceFeedback.HUBEIZHAN.equals(orderFeedback.getLogisticProviderId())){
+						logisticProviderId="hbfyorder";
+					}else if(GztlServiceFeedback.JIANGXIZHAN.equals(orderFeedback.getLogisticProviderId())){
+						logisticProviderId="jxfyorder";
+					}else if(GztlServiceFeedback.ZHEJIANGZHAN.equals(orderFeedback.getLogisticProviderId())){
+						logisticProviderId="GZTL";
+					}else{
+						logisticProviderId=orderFeedback.getLogisticProviderId();
+					}
 					// 验证是否有重发订单插入
-					long isrepeatFlag = this.commonSendDataDAO.isExistsCwbFlag1(willOrder, orderFeedback.getLogisticProviderId(), orderFeedback.getOperatorTime(), String.valueOf(flowordertype),deliverystate);
+					long isrepeatFlag = this.commonSendDataDAO.isExistsCwbFlag1(willOrder, logisticProviderId, orderFeedback.getOperatorTime(), String.valueOf(flowordertype),deliverystate);
 					if (isrepeatFlag > 0) {
 						repeatCwbs.append("," + cwb);
 						continue;
@@ -484,7 +500,7 @@ public class GztlServiceFeedback {
 					OrderFlowDto orderFlowDto = this.buildOrderFlowDto(orderFeedback, flowordertype, deliverystate);
 					String jsonContent = JacksonMapper.getInstance().writeValueAsString(orderFlowDto);
 					// 插入上游OMS临时表
-					this.commonSendDataDAO.creCommenSendData(willOrder, 0, orderFeedback.getLogisticProviderId().toUpperCase(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), jsonContent, deliverystate,flowordertype,
+					this.commonSendDataDAO.creCommenSendData(willOrder, 0, logisticProviderId.toUpperCase(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), jsonContent, deliverystate,flowordertype,
 							 "0");// 倒数第一个与倒数第二个分别为deliverystate与flowordertype不知道
 					// 自动补审核
 					if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue()) {
@@ -492,7 +508,7 @@ public class GztlServiceFeedback {
 						orderFlowDto.setFlowordertype("36");
 						String content = JacksonMapper.getInstance().writeValueAsString(orderFlowDto);
 						// 插入上游OMS临时表
-						this.commonSendDataDAO.creCommenSendData(willOrder, 0, orderFeedback.getLogisticProviderId().toUpperCase(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), content, deliverystate,
+						this.commonSendDataDAO.creCommenSendData(willOrder, 0, logisticProviderId.toUpperCase(), DateTimeUtil.getNowTime(), orderFeedback.getOperatorTime(), content, deliverystate,
 								flowordertype, "0");
 
 					}
