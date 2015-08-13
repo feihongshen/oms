@@ -176,6 +176,7 @@ public class CwbDAO {
 			cwbOrder.setBackreason(StringUtil.nullConvertToEmptyString(rs.getString("backreason")));
 			cwbOrder.setPodremarkStr(StringUtil.nullConvertToEmptyString(rs.getString("podremarkStr")));
 			cwbOrder.setLeavedreasonid(rs.getLong("leavedreasonid"));
+			cwbOrder.setFirstleavedreasonid(rs.getLong("firstleavedreasonid"));
 			cwbOrder.setBackreasonid(rs.getLong("backreasonid"));
 
 			cwbOrder.setDelivername(StringUtil.nullConvertToEmptyString(rs.getString("delivername")));
