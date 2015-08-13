@@ -44,7 +44,8 @@ public class CwbOrder {
 	String podfeetoheadtime = "";// 站点上交款时间
 	String podfeetoheadchecktime = "";// 站点交款总部审核时
 	String podfeetoheadcheckflag = "";// 总部交款审核状态
-	long leavedreasonid;// 滞留原因id
+	long firstleavedreasonid = 0l;//一级滞留原因
+	long leavedreasonid = 0l;// 滞留原因id
 	String deliversubscribeday = "";// 滞留预约派送日
 	String customerwarehouseid = "";// 客户发货仓库id
 
@@ -1860,4 +1861,14 @@ public class CwbOrder {
 		this.insitebranchname = insitebranchname;
 	}
 
+	public long getFirstleavedreasonid() {
+		return firstleavedreasonid;
+	}
+
+	public void setFirstleavedreasonid(long firstleavedreasonid) {
+		this.firstleavedreasonid = firstleavedreasonid;
+	}
+
+	
+	
 }

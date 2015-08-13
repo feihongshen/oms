@@ -410,9 +410,9 @@ public class CwbDAO {
 				+ " consigneeno, " + " consigneepostcode, " + " cwbremark, " + " transway, " + " cwbprovince, " + " cwbcity, " + " cwbcounty," + " receivablefee, " + " paybackfee, " + " shipperid, "
 				+ " cwbordertypeid, " + " consigneemobile," + " transcwb," + " destination," + " cwbdelivertypeid, " + " exceldeliver," + " excelbranch," + " excelimportuserid," + " state,"
 				+ " emaildateid," + " remark1," + " remark2," + " remark3," + " remark4," + " remark5," + "startbranchname," + " nextbranchname,carwarehousename,"
-				+ "customerwarehousename,paytype_old,paytype,targetcarwarehouse,targetcarwarehouseName,nowtime,multi_shipcwb,tuihuoid,zhongzhuanid,deliverybranchid,currentbranchid) "
+				+ "customerwarehousename,paytype_old,paytype,targetcarwarehouse,targetcarwarehouseName,nowtime,multi_shipcwb,tuihuoid,zhongzhuanid,deliverybranchid,currentbranchid,firstleavedreasonid) "
 				+ "values(?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?"
-				+ ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?)";
+				+ ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?)";
 		jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -500,6 +500,7 @@ public class CwbDAO {
 				ps.setLong(81, co.getZhongzhuanid());
 				ps.setLong(82, co.getDeliverybranchid());
 				ps.setLong(83, co.getCurrentbranchid());
+				ps.setLong(84, co.getFirstleavedreasonid());
 			}
 		});
 
@@ -518,7 +519,7 @@ public class CwbDAO {
 				+ " tuihuoid=?,zhongzhuanid=?,deliverybranchid=?,currentbranchid=?,resendtime=?,auditstate=?," + " packagecode=?,weishuakareasonid=?,weishuakareason=?,losereasonid=?,"
 				+ " losereason=?,paytype_old=?,paytype=?," + " fdeliverid=?,receivedfee=?,returnedfee=?,businessfee=?,deliverystate=?" + ",cash=?,pos=?,posremark=?,checkfee=?,checkremark=?,"
 				+ "otherfee=?,podremarkid=?,deliverstateremark=?"
-				+ ",customerbrackhouseremark=?,signintime=?,signinman=?,backreasonid=?,backreason=?,payupbranchid=?,historybranchname=?  where cwb=? and state=1 ";
+				+ ",customerbrackhouseremark=?,signintime=?,signinman=?,backreasonid=?,backreason=?,payupbranchid=?,historybranchname=?,firstleavedreasonid=?  where cwb=? and state=1 ";
 		try {
 			jdbcTemplate.update(sql, new PreparedStatementSetter() {
 				@Override
@@ -636,9 +637,10 @@ public class CwbDAO {
 					ps.setLong(106, co.getBackreasonid());
 					ps.setString(107, co.getBackreason());
 					ps.setLong(108, co.getPayupbranchid());
-					ps.setString(109, co.getHistorybranchname());
+					ps.setLong(109, co.getFirstleavedreasonid());
+					ps.setString(110, co.getHistorybranchname());
 
-					ps.setString(110, co.getCwb());
+					ps.setString(111, co.getCwb());
 
 				}
 			});

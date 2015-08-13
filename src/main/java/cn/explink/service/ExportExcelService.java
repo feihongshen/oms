@@ -347,6 +347,35 @@ public class ExportExcelService {
 						break;
 					}
 				}
+			//应收派费
+			}else if("Shouldfare".equals(cloumname)){
+				a = rs.getObject("shouldfare");
+			
+			//实收派费
+			}else if("Infactfare".equals(cloumname)){
+				a = rs.getObject("infactfare");
+				
+			//滞留一级原因
+			}else if("stayFirstLevel".equals(cloumname)){
+				a = "";
+				if (reasonList.size() > 0) {
+					for (Reason reason : reasonList) {
+						if (Long.parseLong(rs.getObject("firstleavedreasonid") == null ? "0" : rs.getObject("firstleavedreasonid").toString()) == reason.getReasonid()) {
+							a = reason.getReasoncontent();
+						}
+					}
+				}
+				
+			//滞留二级原因
+			}else if("staySecondLevel".equals(cloumname)){
+				a = "";
+				if (reasonList.size() > 0) {
+					for (Reason reason : reasonList) {
+						if (Long.parseLong(rs.getObject("leavedreasonid") == null ? "0" : rs.getObject("leavedreasonid").toString()) == reason.getReasonid()) {
+							a = reason.getReasoncontent();
+						}
+					}
+				}
 			}
 
 			else {

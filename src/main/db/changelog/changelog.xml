@@ -1053,6 +1053,13 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 		</sql>
 	</changeSet>
 	
+	<!-- 主表添加一二级滞留原因字段 -->
+	<changeSet id="" author="">
+		<sql>
+			ALTER TABLE  `express_ops_cwb_detail` ADD COLUMN `firstleavedreasonid` BIGINT(11) COMMENT '滞留一级原因' DEFAULT 0 AFTER `leavedreasonid`;
+		</sql>
+	</changeSet>
+	
 	
 	
 </databaseChangeLog>

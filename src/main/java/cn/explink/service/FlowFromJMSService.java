@@ -408,8 +408,13 @@ public class FlowFromJMSService {
 			cwborder.setPodfeetoheadchecktime(order.getPodfeetoheadchecktime());
 		}
 		cwborder.setPodfeetoheadcheckflag(order.getPodfeetoheadcheckflag());
+		//滞留二级原因
 		if (order.getLeavedreasonid() != 0) {
 			cwborder.setLeavedreasonid(order.getLeavedreasonid());
+		}
+		//滞留一级原因
+		if (order.getFirstleavedreasonid() != 0) {
+			cwborder.setFirstleavedreasonid(order.getFirstleavedreasonid());
 		}
 		if (order.getDeliversubscribeday() != null && !"".equals(order.getDeliversubscribeday())) {
 			cwborder.setDeliversubscribeday(order.getDeliversubscribeday());
