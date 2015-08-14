@@ -416,6 +416,8 @@ public class FlowFromJMSService {
 		if (order.getFirstleavedreasonid() != 0) {
 			cwborder.setFirstleavedreasonid(order.getFirstleavedreasonid());
 		}
+		cwborder.setShouldfare(order.getShouldfare());
+		cwborder.setInfactfare(order.getInfactfare());
 		if (order.getDeliversubscribeday() != null && !"".equals(order.getDeliversubscribeday())) {
 			cwborder.setDeliversubscribeday(order.getDeliversubscribeday());
 		}
