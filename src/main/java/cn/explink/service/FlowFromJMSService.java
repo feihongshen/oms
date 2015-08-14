@@ -413,8 +413,8 @@ public class FlowFromJMSService {
 			cwborder.setLeavedreasonid(order.getLeavedreasonid());
 		}
 		//滞留一级原因
-		if (order.getFirstleavedreasonid() != 0) {
-			cwborder.setFirstleavedreasonid(order.getFirstleavedreasonid());
+		if (order.getFirstlevelid() != 0) {
+			cwborder.setFirstleavedreasonid(order.getFirstlevelid());
 		}
 		cwborder.setShouldfare(order.getShouldfare());
 		cwborder.setInfactfare(order.getInfactfare());

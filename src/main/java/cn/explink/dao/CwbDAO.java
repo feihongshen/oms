@@ -640,8 +640,8 @@ public class CwbDAO {
 					ps.setLong(106, co.getBackreasonid());
 					ps.setString(107, co.getBackreason());
 					ps.setLong(108, co.getPayupbranchid());
-					ps.setLong(109, co.getFirstleavedreasonid());
-					ps.setString(110, co.getHistorybranchname());
+					ps.setString(109, co.getHistorybranchname());
+					ps.setLong(110, co.getFirstleavedreasonid());
 					ps.setBigDecimal(111, co.getShouldfare());
 					ps.setBigDecimal(112, co.getInfactfare());
 

@@ -39,7 +39,7 @@ public class DmpCwbOrder {
 	private String podfeetoheadchecktime;// 站点交款总部审核时
 	private String podfeetoheadcheckflag;// 总部交款审核状态
 	private long leavedreasonid = 0l;// 滞留原因id
-	private long firstleavedreasonid = 0l;// 一级滞留原因id
+	private long firstlevelid = 0l;// 一级滞留原因id
 	private String deliversubscribeday;// 滞留预约派送日
 	private String customerwarehouseid;// 客户发货仓库id
 	long emaildateid;// 发货时间Id
@@ -907,12 +907,12 @@ public class DmpCwbOrder {
 		this.losereason = losereason;
 	}
 
-	public long getFirstleavedreasonid() {
-		return firstleavedreasonid;
+	public long getFirstlevelid() {
+		return firstlevelid;
 	}
 
-	public void setFirstleavedreasonid(long firstleavedreasonid) {
-		this.firstleavedreasonid = firstleavedreasonid;
+	public void setFirstlevelid(long firstlevelid) {
+		this.firstlevelid = firstlevelid;
 	}
 
 	public BigDecimal getShouldfare() {
