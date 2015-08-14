@@ -411,7 +411,7 @@ public class CwbDAO {
 				+ " consigneeno, " + " consigneepostcode, " + " cwbremark, " + " transway, " + " cwbprovince, " + " cwbcity, " + " cwbcounty," + " receivablefee, " + " paybackfee, " + " shipperid, "
 				+ " cwbordertypeid, " + " consigneemobile," + " transcwb," + " destination," + " cwbdelivertypeid, " + " exceldeliver," + " excelbranch," + " excelimportuserid," + " state,"
 				+ " emaildateid," + " remark1," + " remark2," + " remark3," + " remark4," + " remark5," + "startbranchname," + " nextbranchname,carwarehousename,"
-				+ "customerwarehousename,paytype_old,paytype,targetcarwarehouse,targetcarwarehouseName,nowtime,multi_shipcwb,tuihuoid,zhongzhuanid,deliverybranchid,currentbranchid,firstleavedreasonid) "
+				+ "customerwarehousename,paytype_old,paytype,targetcarwarehouse,targetcarwarehouseName,nowtime,multi_shipcwb,tuihuoid,zhongzhuanid,deliverybranchid,currentbranchid,firstleavedreasonid,shouldfare,infactfare) "
 				+ "values(?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?"
 				+ ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?)";
 		jdbcTemplate.update(sql, new PreparedStatementSetter() {
@@ -502,6 +502,8 @@ public class CwbDAO {
 				ps.setLong(82, co.getDeliverybranchid());
 				ps.setLong(83, co.getCurrentbranchid());
 				ps.setLong(84, co.getFirstleavedreasonid());
+				ps.setBigDecimal(85, co.getShouldfare());
+				ps.setBigDecimal(86, co.getInfactfare());
 			}
 		});
 
@@ -520,7 +522,7 @@ public class CwbDAO {
 				+ " tuihuoid=?,zhongzhuanid=?,deliverybranchid=?,currentbranchid=?,resendtime=?,auditstate=?," + " packagecode=?,weishuakareasonid=?,weishuakareason=?,losereasonid=?,"
 				+ " losereason=?,paytype_old=?,paytype=?," + " fdeliverid=?,receivedfee=?,returnedfee=?,businessfee=?,deliverystate=?" + ",cash=?,pos=?,posremark=?,checkfee=?,checkremark=?,"
 				+ "otherfee=?,podremarkid=?,deliverstateremark=?"
-				+ ",customerbrackhouseremark=?,signintime=?,signinman=?,backreasonid=?,backreason=?,payupbranchid=?,historybranchname=?,firstleavedreasonid=?  where cwb=? and state=1 ";
+				+ ",customerbrackhouseremark=?,signintime=?,signinman=?,backreasonid=?,backreason=?,payupbranchid=?,historybranchname=?,firstleavedreasonid=?,shouldfare=?,infactfare=?  where cwb=? and state=1 ";
 		try {
 			jdbcTemplate.update(sql, new PreparedStatementSetter() {
 				@Override
@@ -640,8 +642,10 @@ public class CwbDAO {
 					ps.setLong(108, co.getPayupbranchid());
 					ps.setLong(109, co.getFirstleavedreasonid());
 					ps.setString(110, co.getHistorybranchname());
+					ps.setBigDecimal(111, co.getShouldfare());
+					ps.setBigDecimal(112, co.getInfactfare());
 
-					ps.setString(111, co.getCwb());
+					ps.setString(113, co.getCwb());
 
 				}
 			});
@@ -2119,7 +2123,7 @@ public class CwbDAO {
 		if (tail.getFlowordertype() != -1) {
 			sql = sql + " and ds.flowordertype=" + tail.getFlowordertype() + "";
 		}
-
+		
 		sql += " limit " + page * Page.EXCEL_PAGE_NUMBER + " ," + Page.EXCEL_PAGE_NUMBER;
 
 		System.out.println("sql:" + sql);

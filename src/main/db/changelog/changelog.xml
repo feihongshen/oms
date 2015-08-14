@@ -1054,12 +1054,19 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 	</changeSet>
 	
 	<!-- 主表添加一二级滞留原因字段 -->
-	<changeSet id="" author="">
+	<changeSet id="gaoliangliang-2015-08-13-01" author="gaoliangliang">
 		<sql>
 			ALTER TABLE  `express_ops_cwb_detail` ADD COLUMN `firstleavedreasonid` BIGINT(11) COMMENT '滞留一级原因' DEFAULT 0 AFTER `leavedreasonid`;
 		</sql>
 	</changeSet>
 	
+	<!-- 应收运费，实收运费 -->
+	<changeSet id="gaoliangliang-2015-08-14-01" author="gaoliangliang">
+		<sql>
+			ALTER TABLE  `express_ops_cwb_detail` ADD COLUMN `shouldfare` DECIMAL(19,2) COMMENT '应收运费' DEFAULT 0.00 ;
+			ALTER TABLE  `express_ops_cwb_detail` ADD COLUMN `infactfare` DECIMAL(19,2) COMMENT '实收运费' DEFAULT 0.00 ;
+		</sql>
+	</changeSet>
 	
 	
 </databaseChangeLog>

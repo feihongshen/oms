@@ -121,7 +121,10 @@ public class CwbOrder {
 	String paytype = "";// 支付方式
 	String carwarehousename = "";// 入库仓库名称
 	String customerwarehousename = "";// 客户发货仓库名称
-
+	
+	BigDecimal shouldfare;//应收运费
+	BigDecimal infactfare;//实收运费
+	
 	// -------------加字段 反馈表---------------------、、
 
 	private long fdeliverid; // 反馈小件员id
@@ -1867,6 +1870,22 @@ public class CwbOrder {
 
 	public void setFirstleavedreasonid(long firstleavedreasonid) {
 		this.firstleavedreasonid = firstleavedreasonid;
+	}
+
+	public BigDecimal getShouldfare() {
+		return shouldfare;
+	}
+
+	public void setShouldfare(BigDecimal shouldfare) {
+		this.shouldfare = shouldfare;
+	}
+
+	public BigDecimal getInfactfare() {
+		return infactfare;
+	}
+
+	public void setInfactfare(BigDecimal infactfare) {
+		this.infactfare = infactfare;
 	}
 
 	

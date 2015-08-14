@@ -116,6 +116,8 @@ public class DmpCwbOrder {
 	private String consigneemobileOfkf;
 	private String consigneephoneOfkf;
 	
+	private BigDecimal shouldfare;
+	private BigDecimal infactfare;
 	
 
 	public String getConsigneenameOfkf() {
@@ -912,7 +914,21 @@ public class DmpCwbOrder {
 	public void setFirstleavedreasonid(long firstleavedreasonid) {
 		this.firstleavedreasonid = firstleavedreasonid;
 	}
-	
-	
+
+	public BigDecimal getShouldfare() {
+		return shouldfare;
+	}
+
+	public void setShouldfare(BigDecimal shouldfare) {
+		this.shouldfare = shouldfare;
+	}
+
+	public BigDecimal getInfactfare() {
+		return infactfare;
+	}
+
+	public void setInfactfare(BigDecimal infactfare) {
+		this.infactfare = infactfare;
+	}
 
 }
