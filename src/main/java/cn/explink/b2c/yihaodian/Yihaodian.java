@@ -11,6 +11,15 @@ public class Yihaodian {
 	private long warehouseid; // 订单入库库房Id
 	private String updatePayResult_URL; // 订单支付信息修改URL
 	private long callBackCount; // 每次回调数量
+	private String ywcustomerid; //一号店药网customerid,如果 ywcustomerid=customerids,则指定同一个供货商
+
+	public String getYwcustomerid() {
+		return ywcustomerid;
+	}
+
+	public void setYwcustomerid(String ywcustomerid) {
+		this.ywcustomerid = ywcustomerid;
+	}
 
 	public long getCallBackCount() {
 		return callBackCount;

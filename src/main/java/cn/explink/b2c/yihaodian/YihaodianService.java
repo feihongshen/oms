@@ -95,7 +95,10 @@ public class YihaodianService {
 		long calcCount = 0;
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		try {
-			List<B2CData> datalist = b2cDataDAO.getDataListByFlowStatus(FlowOrderTypeEnum.YiShenHe.getValue(), yihaodian.getCustomerids(), yihaodian.getCallBackCount());
+			
+			String ywcustomerid=yihaodian.getYwcustomerid()==null||yihaodian.getYwcustomerid().isEmpty()?"0":yihaodian.getYwcustomerid();
+			
+			List<B2CData> datalist = b2cDataDAO.getDataListByFlowStatus(FlowOrderTypeEnum.YiShenHe.getValue(), yihaodian.getCustomerids()+","+ywcustomerid, yihaodian.getCallBackCount());
 			if (datalist == null || datalist.size() == 0) {
 				return 0;
 			}
