@@ -288,12 +288,15 @@ public class GztlServiceFeedback {
 					
 					Customer customer = this.cacheBaseListener.getCustomer(orderDto.getCustomerid());
 					
-					CuscodeAndCustomerNameEnum	customerCodeEnum = getCustomerEnum(customer);
+			/*		CuscodeAndCustomerNameEnum	customerCodeEnum = getCustomerEnum(customer);
 					
 					
 					sData.setCustCode(customerCodeEnum.getCuscode());
 					sData.setCustName(customerCodeEnum.getCustomerName());// 客户名称???
-				
+				*/
+					sData.setCustCode(customer.getCustomercode());
+					sData.setCustName(customer.getCustomername());// 客户名称???
+					
 					
 					sData.setOrderType(orderDto.getCwbordertypeid() + "");
 					sData.setOrderDate(comenMap.get(orderDto.getCwb()).getCredate());// 订单日期
