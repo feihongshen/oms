@@ -340,7 +340,7 @@ public class VipShopCwbFeedBackService {
 				continue;
 			}
 
-			if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue()) {
+			if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue() && note.getCwbordertypeid() != CwbOrderTypeIdEnum.OXO.getValue()) {
 				this.logger.info("当前推送唯品会{}过滤揽退单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
 				continue;
 			}
@@ -419,7 +419,7 @@ public class VipShopCwbFeedBackService {
 				String jsoncontent = b2cData.getJsoncontent();
 				VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
 
-				if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue()) {
+				if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue() && note.getCwbordertypeid() != CwbOrderTypeIdEnum.OXO.getValue()) {
 					this.logger.info("当前推送唯品会{}过滤揽退单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
 					continue;
 				}
