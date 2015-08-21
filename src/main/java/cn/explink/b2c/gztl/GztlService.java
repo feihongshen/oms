@@ -113,13 +113,14 @@ public class GztlService {
 
 			if ((deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenJuTui.getValue())) {
 				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(0, cwbOrder.getBackreasonid(), String.valueOf(-2), delivery_state);
-				
-				String reasonString = exptReason.getExpt_code();
-				
+				if(exptReason.getExpt_code()!=null){
+					String reasonString = exptReason.getExpt_code();
+					
 					//System.out.println(reasonString);
 					String[] reason = reasonString.split("_");
 					//System.out.println(exptReason.getExpt_msg());
 					GztlEnum.Peisongshibai.setReturnMsg(reason[reason.length - 1]);
+				}
 				
 				return GztlEnum.Peisongshibai;
 			}
@@ -127,8 +128,9 @@ public class GztlService {
 			if (deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
 
 				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(-2), delivery_state);
-				String reasonString = exptReason.getExpt_code();
-				
+				if(exptReason.getExpt_code()!=null){
+					String reasonString = exptReason.getExpt_code();
+					
 					//System.out.println(reasonString);
 					String[] reason = reasonString.split("_");
 					if (reason[0].equals(GztlEnum.KehuYanqi.getState())) {
@@ -140,9 +142,10 @@ public class GztlService {
 						GztlEnum.Peisongyanchi.setReturnMsg(reason[reason.length - 1]);
 						return GztlEnum.Peisongyanchi;
 					}
+				}
+				
+				return GztlEnum.KehuYanqi;
 
-				
-				
 			}
 
 		}
