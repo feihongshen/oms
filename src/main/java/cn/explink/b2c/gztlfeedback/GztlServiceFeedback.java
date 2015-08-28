@@ -326,9 +326,9 @@ public class GztlServiceFeedback {
 					sData.setWeight(orderDto.getCargorealweight() + "");
 					String receiveable="";
 					if (orderDto.getReceivablefee().toString().equals("0.00")) {
-						receiveable=orderDto.getPaybackfee().toString();
+						receiveable=orderDto.getPaybackfee().add(orderDto.getShouldfare()).toString();
 					}else {
-						receiveable=orderDto.getReceivablefee().toString();
+						receiveable=orderDto.getReceivablefee().add(orderDto.getShouldfare()).toString();
 					}
 					sData.setReceivable(receiveable);// 应收款
 					
