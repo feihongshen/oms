@@ -607,7 +607,7 @@ public class GztlServiceFeedback {
 		
 		//orderFlowDto.setExptmsg("");//异常原因
 		
-		if (orderFeedback.getPayMethod() == null) {
+		if (orderFeedback.getPayMethod() == null||"".equals(orderFeedback.getPayMethod())) {
 			orderFlowDto.setPaytype(1); // 支付方式 待定义??
 		} else if (orderFeedback.getPayMethod().equals("现金") || orderFeedback.getPayMethod().equals("0")) {
 			orderFlowDto.setPaytype(1);
