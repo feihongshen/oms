@@ -127,58 +127,65 @@ public class GztlServiceFeedback {
 	 * 推送出库二级站信息广州通路
 	 */
 	public long sendTwoLeavelBranch() {
+		for(int i=0;i<50;i++){
+			long excuteCount = feedbackToWaifadan();
+			if(excuteCount==0){
+				return 0;
+			}
+		}
+		
+		return 0;
+	}
+
+	private long feedbackToWaifadan() {
 		List<WarehouseToCommen> datalist = new ArrayList<WarehouseToCommen>();
-		long calcCount = 0;
 		int b2cenum = B2cEnum.GuangzhoutongluWaifadan.getKey();
 
 		if (!this.b2ctools.isB2cOpen(b2cenum)) {
 			this.logger.info("未开出库0外发广州通路0的对接!");
-			return -1;
+			return 0;
 		}
 		GztlFeedback gztl = this.getGztlFeedback(b2cenum);
 
 		long maxCount = gztl.getSearch_number();
 
-		for (int i = 0; i < 1; i++) {
-			try {
-				long loopcount = gztl.getLoopCount() == 0 ? 5 : gztl.getLoopCount(); // 重发次数5
+		
+		try {
+			long loopcount = gztl.getLoopCount() == 0 ? 3 : gztl.getLoopCount(); // 重发次数3
 
-				for (ShipperIdAndShipperCode temp : ShipperIdAndShipperCode.values()) {
-					String shippercode=temp.getShipped_code();
-					String logisticproviderid = String.valueOf(temp.getLogisticproviderid());
-					List<WarehouseToCommen> datalist01 = this.WarehouseCommenDAO.getCommenCwbListByCommon(shippercode, maxCount, loopcount); // 查询所有未推送数据
-					datalist.addAll(datalist01);
-				}
-				if ((datalist == null) || (datalist.size() == 0)) {
-					this.logger.info("当前没有待发送下游的数据-外发广州通路");
-					return 0;
-				}
-
-				Map<String, WarehouseToCommen> sss = new HashMap<String, WarehouseToCommen>();
-				for (WarehouseToCommen ss : datalist) {
-					sss.put(ss.getCwb(), ss);
-				}
-
-				calcCount += datalist.size();
-				String requestCwbs = this.getRequestDMPCwbArrs(datalist); // 封装为-上游oms请求dmp的参数.
-				String responseJson = this.getDmpDAO.getDMPOrdersByCwbs(requestCwbs); // 根据订单号批量
-																						// 请求dmp，返回订单集合
-
-				List<OrderDto> respOrders = JacksonMapper.getInstance().readValue(responseJson, new TypeReference<List<OrderDto>>() {
-				});
-				if ((respOrders == null) || (respOrders.size() == 0)) {
-					this.logger.info("当前没有待发送的广州通路数据");
-					return 1;
-				}
-				this.excuteSendGztl_forward(gztl, datalist, respOrders, sss); // 正向物流配送
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				this.logger.error("处理发送外发广州通路数据发生未知异常", e);
+			for (ShipperIdAndShipperCode temp : ShipperIdAndShipperCode.values()) {
+				String shippercode=temp.getShipped_code();
+				String logisticproviderid = String.valueOf(temp.getLogisticproviderid());
+				List<WarehouseToCommen> datalist01 = this.WarehouseCommenDAO.getCommenCwbListByCommon(shippercode, maxCount, loopcount); // 查询所有未推送数据
+				datalist.addAll(datalist01);
+			}
+			if ((datalist == null) || (datalist.size() == 0)) {
+				this.logger.info("当前没有待发送下游的数据-外发广州通路");
+				return 0;
 			}
 
+			Map<String, WarehouseToCommen> sss = new HashMap<String, WarehouseToCommen>();
+			for (WarehouseToCommen ss : datalist) {
+				sss.put(ss.getCwb(), ss);
+			}
+
+			String requestCwbs = this.getRequestDMPCwbArrs(datalist); // 封装为-上游oms请求dmp的参数.
+			String responseJson = this.getDmpDAO.getDMPOrdersByCwbs(requestCwbs); // 根据订单号批量
+																					// 请求dmp，返回订单集合
+
+			List<OrderDto> respOrders = JacksonMapper.getInstance().readValue(responseJson, new TypeReference<List<OrderDto>>() {
+			});
+			if ((respOrders == null) || (respOrders.size() == 0)) {
+				this.logger.info("当前没有待发送的广州通路数据");
+				return 0;
+			}
+			this.excuteSendGztl_forward(gztl, datalist, respOrders, sss); // 正向物流配送
+			return 1;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			this.logger.error("处理发送外发广州通路数据发生未知异常", e);
+			return 1;
 		}
-		return calcCount;
 	}
 
 	private String getRequestDMPCwbArrs(List<WarehouseToCommen> datalist) {
