@@ -313,6 +313,7 @@ public class GztlService {
 		traceArgs.setCode(gztl.getCode());
 		traceArgs.setInvokeMethod(gztl.getInvokeMethod());
 		String sign = MD5Util.md5(subBuffer.toString() + gztl.getPrivate_key());
+		this.logger.info("发送广州通路状态回传的key：{}", sign);
 		//System.out.println(gztl.getPrivate_key());
 		//System.out.println(sign);
 		traceArgs.setSign(sign);

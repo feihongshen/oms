@@ -236,7 +236,7 @@ public class GztlServiceFeedback {
 			//System.out.println(gztl.getInvokeMethod());
 			//System.out.println(gztl.getPrivate_key());
 			String sign = MD5Util.md5(xmlString + gztl.getPrivate_key());
-			this.logger.info("广州通路key信息={}", sign);
+			this.logger.info("广州通路反馈兄弟推送出库key信息={}", sign);
 			traceArgs.setSign(sign);
 			traceArgs.setXml(URLEncoder.encode(xmlString,"utf-8"));
 			this.logger.info("广州通路反馈兄弟推送出库xml信息={}",xmlString);

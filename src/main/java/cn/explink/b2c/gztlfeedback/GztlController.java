@@ -55,7 +55,7 @@ public class GztlController {
 			String MD5 = request.getParameter("MD5");
 			xml = URLDecoder.decode(xml, "UTF-8");
 			System.out.println(xml);
-			this.logger.info("外发单订单反馈推送接口推送参数xml={},MD5={}", xml, MD5);
+			this.logger.info("外发单订单反馈推送接口接收参数xml={},MD5={}", xml, MD5);
 			String localSignString = MD5Util.md5(xml + gztl.getPrivate_key());
 			System.out.println(localSignString);
 
