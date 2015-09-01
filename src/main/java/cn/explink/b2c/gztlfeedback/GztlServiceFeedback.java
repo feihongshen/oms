@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -223,7 +224,6 @@ public class GztlServiceFeedback {
 			sendFeedbackDatas.setTmsSendOrders(orders);
 			String xmlString = this.beanToXml(sendFeedbackDatas);
 			
-			System.out.println(xmlString);
 			// kk
 			//String url = "http://119.145.78.171:8086/ECIS-INF/services/EcisService";
 			String url = gztl.getSearch_url();
@@ -239,7 +239,7 @@ public class GztlServiceFeedback {
 			this.logger.info("广州通路key信息={}", sign);
 			traceArgs.setSign(sign);
 			traceArgs.setXml(URLEncoder.encode(xmlString,"utf-8"));
-			this.logger.info("广州通路反馈兄弟推送出库xml信息={}",URLEncoder.encode(xmlString,"utf-8"));
+			this.logger.info("广州通路反馈兄弟推送出库xml信息={}",xmlString);
 			String responseData = URLDecoder.decode(ce.orderAndFeedbackApi(traceArgs), "UTF-8");
 			this.logger.info("广州通路反馈兄弟推送出库返回来的响应：={}",responseData);
 			//System.out.println(responseData);
@@ -332,10 +332,10 @@ public class GztlServiceFeedback {
 					sData.setDeliveryAmount("");// 配送合计
 					sData.setWeight(orderDto.getCargorealweight() + "");
 					String receiveable="";
-					if (orderDto.getReceivablefee().toString().equals("0.00")) {
+					if (orderDto.getCwbordertypeid()==CwbOrderTypeIdEnum.Shangmentui.getValue()) {
 						receiveable=orderDto.getPaybackfee().add(orderDto.getShouldfare()).toString();
 					}else {
-						receiveable=orderDto.getReceivablefee().add(orderDto.getShouldfare()).toString();
+						receiveable=orderDto.getReceivablefee().toString();
 					}
 					sData.setReceivable(receiveable);// 应收款
 					
