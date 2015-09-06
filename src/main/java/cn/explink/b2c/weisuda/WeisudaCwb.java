@@ -3,6 +3,7 @@ package cn.explink.b2c.weisuda;
 public class WeisudaCwb {
 	private String id;
 	private String cwb;
+	private int cwbordertypeid;
 	private String courier_code;
 	private String bound_time;
 	private String istuisong;
@@ -11,11 +12,11 @@ public class WeisudaCwb {
 	private String operationTime;
 
 	public String getCwb() {
-		return cwb;
+		return this.cwb;
 	}
 
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(String id) {
@@ -26,8 +27,22 @@ public class WeisudaCwb {
 		this.cwb = cwb;
 	}
 
+	/**
+	 * @return the cwbordertypeid
+	 */
+	public int getCwbordertypeid() {
+		return this.cwbordertypeid;
+	}
+
+	/**
+	 * @param cwbordertypeid the cwbordertypeid to set
+	 */
+	public void setCwbordertypeid(int cwbordertypeid) {
+		this.cwbordertypeid = cwbordertypeid;
+	}
+
 	public String getCourier_code() {
-		return courier_code;
+		return this.courier_code;
 	}
 
 	public void setCourier_code(String courier_code) {
@@ -35,7 +50,7 @@ public class WeisudaCwb {
 	}
 
 	public String getBound_time() {
-		return bound_time;
+		return this.bound_time;
 	}
 
 	public void setBound_time(String bound_time) {
@@ -43,7 +58,7 @@ public class WeisudaCwb {
 	}
 
 	public String getIstuisong() {
-		return istuisong;
+		return this.istuisong;
 	}
 
 	public void setIstuisong(String istuisong) {
@@ -51,7 +66,7 @@ public class WeisudaCwb {
 	}
 
 	public String getIsqianshou() {
-		return isqianshou;
+		return this.isqianshou;
 	}
 
 	public void setIsqianshou(String isqianshou) {
@@ -59,7 +74,7 @@ public class WeisudaCwb {
 	}
 
 	public String getRemark() {
-		return remark;
+		return this.remark;
 	}
 
 	public void setRemark(String remark) {
@@ -67,7 +82,7 @@ public class WeisudaCwb {
 	}
 
 	public String getOperationTime() {
-		return operationTime;
+		return this.operationTime;
 	}
 
 	public void setOperationTime(String operationTime) {

@@ -57,9 +57,31 @@ public class WeisudaController {
 			return "未开启[唯速达]查询接口";
 		}
 		this.weisudaService.getUnVerifyOrders();
+		this.weisudaService.getback_getAppOrders();
 
 		return "";
 
 	}
 
+	@RequestMapping("/delete")
+	public @ResponseBody
+	String deleteData(HttpServletRequest request, HttpServletResponse response) {
+
+		int nums = this.weisudaService.deleteData();
+
+		return "唯速达_删除过期订单信息,总共删除" + nums + "条记录";
+	}
+	@RequestMapping("/updatebranch")
+	public @ResponseBody
+	String updataAllBranch(HttpServletRequest request, HttpServletResponse response) {
+
+
+		return "<textarea rows='60' cols='100'>"+this.weisudaService.updataAllBranch()+"</textarea>";
+	}
+	@RequestMapping("/updateuser")
+	public @ResponseBody
+	String updataAlluser(HttpServletRequest request, HttpServletResponse response) {
+
+		return "<textarea rows='60' cols='100'>"+this.weisudaService.updataAlluser()+"</textarea>";
+	}
 }
