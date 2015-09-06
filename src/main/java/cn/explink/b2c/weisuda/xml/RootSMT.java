@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package cn.explink.b2c.weisuda.xml;
 
 import java.util.List;
@@ -5,17 +8,21 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author Administrator
+ *
+ */
 @XmlRootElement(name = "root")
-public class PushOrders_Root {
+public class RootSMT{
 
-	private List<PushOrders_Item> item;
+	private List<Getback_Item> item;
 
 	@XmlElement(name = "item")
-	public List<PushOrders_Item> getItem() {
-		return item;
+	public List<Getback_Item> getItem() {
+		return this.item;
 	}
 
-	public void setItem(List<PushOrders_Item> item) {
+	public void setItem(List<Getback_Item> item) {
 		this.item = item;
 	}
 }
