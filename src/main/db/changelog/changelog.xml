@@ -1067,6 +1067,11 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 			ALTER TABLE  `express_ops_cwb_detail` ADD COLUMN `infactfare` DECIMAL(19,2) COMMENT '实收运费' DEFAULT 0.00 ;
 		</sql>
 	</changeSet>
-	
-	
+	<!-- 唯速达增加订单类型字段 -->
+	<changeSet id="wangyonghe-2015-09-06"  author="wangyonghe">
+		<sql>
+			ALTER TABLE `express_b2cdata_weisuda`
+			ADD COLUMN `cwbordertypeid`  varchar(11) NULL DEFAULT '1' COMMENT '订单类型' AFTER `cwb`;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
