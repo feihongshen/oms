@@ -343,6 +343,9 @@ public class GetDmpDAO {
 				branch.setBranchaddress(jSONArray.getJSONObject(i).getString("branchaddress"));
 				branch.setSitetype(jSONArray.getJSONObject(i).getInt("sitetype"));
 				branch.setBindmsksid(jSONArray.getJSONObject(i).getInt("bindmsksid"));
+				branch.setBranchprovince(jSONArray.getJSONObject(i).getString("branchprovince"));
+				branch.setBranchcity(jSONArray.getJSONObject(i).getString("branchcity"));
+				branch.setBrancharea(jSONArray.getJSONObject(i).getString("brancharea"));
 				list.add(branch);
 			}
 
@@ -1578,7 +1581,7 @@ public class GetDmpDAO {
 				JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 				exptReason.setExpt_code((jparm.get("expt_code") != null) && !"".equals(jparm.getString("expt_code")) ? jparm.getString("expt_code") : "");//广州通路对应我们系统中的原因
 				exptReason.setExpt_msg((jparm.get("expt_type") != null) && !"".equals(jparm.getString("expt_type")) ? jparm.getString("expt_type") : "");//广州通路发来的异常类型在我们系统中的异常类型
-				exptReason.setReasonid(jparm.get("reasonid")!=null&&!"".equals(jparm.getString("reasonid"))?jparm.getString("reasonid"):"");//在dmp里面查询出来的对应我们系统的原因所在表的id
+				exptReason.setReasonid((jparm.get("reasonid")!=null)&&!"".equals(jparm.getString("reasonid"))?jparm.getString("reasonid"):"");//在dmp里面查询出来的对应我们系统的原因所在表的id
 			}
 		} catch (Exception e) {
 			this.logger.error("获取指定getExptCodeJointByB2c异常",e);
