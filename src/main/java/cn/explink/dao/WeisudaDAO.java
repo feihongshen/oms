@@ -24,6 +24,7 @@ public class WeisudaDAO {
 			WeisudaCwb weisudaCwb = new WeisudaCwb();
 			weisudaCwb.setId(StringUtil.nullConvertToEmptyString(rs.getString("id")));
 			weisudaCwb.setCwb(StringUtil.nullConvertToEmptyString(rs.getString("cwb")));
+			weisudaCwb.setCwbordertypeid(Integer.parseInt(StringUtil.nullConvertToEmptyString(rs.getString("cwbordertypeid"))));
 			weisudaCwb.setBound_time(StringUtil.nullConvertToEmptyString(rs.getString("bound_time")));
 			weisudaCwb.setCourier_code(StringUtil.nullConvertToEmptyString(rs.getString("courier_code")));
 			weisudaCwb.setIsqianshou(StringUtil.nullConvertToEmptyString(rs.getString("isqianshou")));
@@ -35,13 +36,13 @@ public class WeisudaDAO {
 	}
 
 	public void insertWeisuda(WeisudaCwb weisudaCwb) {
-		jdbcTemplate.update("INSERT INTO express_b2cdata_weisuda (cwb,courier_code,bound_time,operationTime)" + " VALUES(?,?,?,?)", weisudaCwb.getCwb(), weisudaCwb.getCourier_code(),
-				weisudaCwb.getBound_time(), weisudaCwb.getOperationTime());
+		this.jdbcTemplate.update("INSERT INTO express_b2cdata_weisuda (cwb,cwbordertypeid,courier_code,operationTime)" + " VALUES(?,?,?,?)", weisudaCwb.getCwb(), weisudaCwb.getCwbordertypeid(),
+				weisudaCwb.getCourier_code(), weisudaCwb.getOperationTime());
 	}
 
 	public List<WeisudaCwb> getWeisudaCwb(String istuisong) {
 		try {
-			return jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? limit 0,500", new WSMapper(), istuisong);
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and operationTime  IS NOT NULL limit 0,500", new WSMapper(), istuisong);
 		} catch (Exception e) {
 			return null;
 		}
@@ -50,7 +51,7 @@ public class WeisudaDAO {
 	public WeisudaCwb getWeisudaCwbIstuisong(String cwb) {
 		try {
 
-			return jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=?  limit 1", new WSMapper(), cwb);
+			return this.jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=?  limit 1", new WSMapper(), cwb);
 
 		} catch (Exception e) {
 			return null;
@@ -60,7 +61,7 @@ public class WeisudaDAO {
 	public WeisudaCwb getWeisudaCwb(String cwb, String orderTime) {
 		try {
 
-			return jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=? and operationTime=? limit 1", new WSMapper(), cwb, orderTime);
+			return this.jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=? and operationTime=? limit 1", new WSMapper(), cwb, orderTime);
 
 		} catch (Exception e) {
 			return null;
@@ -70,7 +71,7 @@ public class WeisudaDAO {
 	public WeisudaCwb getWeisudaCwbByOrder(String cwb) {
 		try {
 
-			return jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=?  limit 1", new WSMapper(), cwb);
+			return this.jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=?  ORDER BY operationTime desc limit 1", new WSMapper(), cwb);
 
 		} catch (Exception e) {
 			return null;
@@ -79,11 +80,35 @@ public class WeisudaDAO {
 
 	public void updateWeisuda(String cwb, String flag, String remark) {
 
-		jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "' where cwb='" + cwb + "'");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
 	}
 
 	public void updataWeisudaCwbIsqianshou(String cwb, String flag, String remark) {
-		jdbcTemplate.update("update express_b2cdata_weisuda set isqianshou='" + flag + "' ,remark='" + remark + "' where  cwb='" + cwb + "'");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set isqianshou='" + flag + "' ,remark='" + remark + "' where  cwb='" + cwb + "'");
 
+	}
+
+	public WeisudaCwb getWeisudaCwbByOrderAndIsTuisong(String cwb, int istuisong) {
+		try {
+
+			return this.jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=? and istuisong=?  ORDER BY operationTime desc limit 1", new WSMapper(), cwb, istuisong);
+
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public void deleteWeisudaCwbNotuisong(String cwb, String flag) {
+		this.jdbcTemplate.update("delete from express_b2cdata_weisuda  where  cwb='" + cwb + "' and istuisong='" + flag + "'");
+
+	}
+
+	public int deleteData(String opreationTime) {
+		try {
+			return this.jdbcTemplate.update(" DELETE FROM express_b2cdata_weisuda WHERE  `operationTime`<='" + opreationTime + "' ");
+
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 }

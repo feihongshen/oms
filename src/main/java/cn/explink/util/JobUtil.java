@@ -765,7 +765,9 @@ public class JobUtil {
 		try {
 
 			this.weisudaService.selectWeisudaCwb();
-			this.weisudaService.getUnVerifyOrders();
+			this.weisudaService.getUnVerifyOrdersOfCount();
+			this.weisudaService.getback_getAppOrdersCounts();
+
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达定时器异常!", e);
 		}
@@ -844,5 +846,14 @@ public class JobUtil {
 		}
 		this.logger.info("执行了0一级站出库外发广州通路订单0推送的定时器!");
 	}
+	public void getWeisudadelete_Task() {
+		try {
 
+			this.weisudaService.deleteData();
+		} catch (Exception e) {
+			this.logger.error("执行了唯速达删除过期信息异常!", e);
+		}
+
+		this.logger.info("执行了唯速达删除过期信息定时器!");
+	}
 }

@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * 下游存储易派信息发送上游的json格式
- * 
+ *
  * @author Administrator
  *
  */
@@ -26,9 +26,23 @@ public class OrderFlowDto {
 	private String custid; // 唯一不重复的记录标识,用于异步回传下游最终的状态。
 	private String deliverymobile; // 派送员电话
 	private String deliveryname; // 派送员
-	
+	private String reamrk1;
+
+	/**
+	 * @return the reamrk1
+	 */
+	public String getReamrk1() {
+		return this.reamrk1;
+	}
+
+	/**
+	 * @param reamrk1 the reamrk1 to set
+	 */
+	public void setReamrk1(String reamrk1) {
+		this.reamrk1 = reamrk1;
+	}
 	public String getDeliverymobile() {
-		return deliverymobile;
+		return this.deliverymobile;
 	}
 
 	public void setDeliverymobile(String deliverymobile) {
@@ -36,7 +50,7 @@ public class OrderFlowDto {
 	}
 
 	public String getDeliveryname() {
-		return deliveryname;
+		return this.deliveryname;
 	}
 
 	public void setDeliveryname(String deliveryname) {
@@ -44,7 +58,7 @@ public class OrderFlowDto {
 	}
 
 	public String getUserCode() {
-		return userCode;
+		return this.userCode;
 	}
 
 	public void setUserCode(String userCode) {
@@ -52,7 +66,7 @@ public class OrderFlowDto {
 	}
 
 	public String getRequestTime() {
-		return requestTime;
+		return this.requestTime;
 	}
 
 	public void setRequestTime(String requestTime) {
@@ -60,7 +74,7 @@ public class OrderFlowDto {
 	}
 
 	public String getSign() {
-		return sign;
+		return this.sign;
 	}
 
 	public void setSign(String sign) {
@@ -68,7 +82,7 @@ public class OrderFlowDto {
 	}
 
 	public String getCwb() {
-		return cwb;
+		return this.cwb;
 	}
 
 	public void setCwb(String cwb) {
@@ -76,7 +90,7 @@ public class OrderFlowDto {
 	}
 
 	public String getOperatortime() {
-		return operatortime;
+		return this.operatortime;
 	}
 
 	public void setOperatortime(String operatortime) {
@@ -84,7 +98,7 @@ public class OrderFlowDto {
 	}
 
 	public String getFlowordertype() {
-		return flowordertype;
+		return this.flowordertype;
 	}
 
 	public void setFlowordertype(String flowordertype) {
@@ -92,7 +106,7 @@ public class OrderFlowDto {
 	}
 
 	public long getDeliverystate() {
-		return deliverystate;
+		return this.deliverystate;
 	}
 
 	public void setDeliverystate(long deliverystate) {
@@ -100,7 +114,7 @@ public class OrderFlowDto {
 	}
 
 	public int getPaytype() {
-		return paytype;
+		return this.paytype;
 	}
 
 	public void setPaytype(int paytype) {
@@ -108,7 +122,7 @@ public class OrderFlowDto {
 	}
 
 	public String getPayremark() {
-		return payremark;
+		return this.payremark;
 	}
 
 	public void setPayremark(String payremark) {
@@ -116,7 +130,7 @@ public class OrderFlowDto {
 	}
 
 	public String getFloworderdetail() {
-		return floworderdetail;
+		return this.floworderdetail;
 	}
 
 	public void setFloworderdetail(String floworderdetail) {
@@ -124,7 +138,7 @@ public class OrderFlowDto {
 	}
 
 	public String getExptcode() {
-		return exptcode;
+		return this.exptcode;
 	}
 
 	public void setExptcode(String exptcode) {
@@ -132,7 +146,7 @@ public class OrderFlowDto {
 	}
 
 	public String getCustid() {
-		return custid;
+		return this.custid;
 	}
 
 	public void setCustid(String custid) {

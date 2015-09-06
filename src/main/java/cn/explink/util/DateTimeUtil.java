@@ -18,11 +18,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Test;
-
 /**
  * Utility to date time
- * 
+ *
  * @version 0.1
  * @author Super Zhao
  */
@@ -30,7 +28,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 由java.util.Date到java.sql.Date的类型转换
-	 * 
+	 *
 	 * @param date
 	 * @return Date
 	 */
@@ -40,12 +38,12 @@ public class DateTimeUtil {
 
 	public static Date nowDate() {
 		Calendar calendar = Calendar.getInstance();
-		return getSqlDate(calendar.getTime());
+		return DateTimeUtil.getSqlDate(calendar.getTime());
 	}
 
 	/**
 	 * 转换时间格式
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -55,13 +53,13 @@ public class DateTimeUtil {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return getNowTime();
+			return DateTimeUtil.getNowTime();
 		}
 	}
 
 	/**
 	 * 转换时间格式
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -71,13 +69,13 @@ public class DateTimeUtil {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return getNowTime();
+			return DateTimeUtil.getNowTime();
 		}
 	}
 
 	/**
 	 * 转换时间格式
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -95,7 +93,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 转换时间格式 yyyyMMddHHmmss
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -105,7 +103,7 @@ public class DateTimeUtil {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return getNowTime();
+			return DateTimeUtil.getNowTime();
 		}
 	}
 
@@ -120,7 +118,7 @@ public class DateTimeUtil {
 	// 获取当前日期某一天前的数据
 	public static String getDateBefore(int day) {
 		long currentMillis = System.currentTimeMillis();
-		long beforeSS = currentMillis / 1000 - (24 * 60 * 60 * day);
+		long beforeSS = (currentMillis / 1000) - (24 * 60 * 60 * day);
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(beforeSS * 1000));
 	}
 
@@ -128,14 +126,14 @@ public class DateTimeUtil {
 	public static String getDateBeforeHours(int hours, Date date) {
 		long currentMillis = date.getTime();
 
-		long beforeSS = currentMillis / 1000 - (60 * 60 * hours);
+		long beforeSS = (currentMillis / 1000) - (60 * 60 * hours);
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(beforeSS * 1000));
 	}
 
 	// 获取时间加5分钟
 	public static String getDate5min(Timestamp date, int min) {
 		long currentMillis = date.getTime();
-		long beforeSS = currentMillis / 1000 + (60 * min);
+		long beforeSS = (currentMillis / 1000) + (60 * min);
 		return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(beforeSS * 1000));
 	}
 
@@ -170,7 +168,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 获得某一日期的后一天
-	 * 
+	 *
 	 * @param date
 	 * @return Date
 	 */
@@ -179,12 +177,12 @@ public class DateTimeUtil {
 		calendar.setTime(date);
 		int day = calendar.get(Calendar.DATE);
 		calendar.set(Calendar.DATE, day + 1);
-		return getSqlDate(calendar.getTime());
+		return DateTimeUtil.getSqlDate(calendar.getTime());
 	}
 
 	/**
 	 * 获得某一日期的后一天
-	 * 
+	 *
 	 * @param date
 	 * @return Date
 	 */
@@ -204,7 +202,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 获得某一日期的前一天
-	 * 
+	 *
 	 * @param date
 	 * @return Date
 	 */
@@ -213,12 +211,12 @@ public class DateTimeUtil {
 		calendar.setTime(date);
 		int day = calendar.get(Calendar.DATE);
 		calendar.set(Calendar.DATE, day - 1);
-		return getSqlDate(calendar.getTime());
+		return DateTimeUtil.getSqlDate(calendar.getTime());
 	}
 
 	/**
 	 * 获得某年某月第一天的日期
-	 * 
+	 *
 	 * @param year
 	 * @param month
 	 * @return Date
@@ -228,12 +226,12 @@ public class DateTimeUtil {
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month - 1);
 		calendar.set(Calendar.DATE, 1);
-		return getSqlDate(calendar.getTime());
+		return DateTimeUtil.getSqlDate(calendar.getTime());
 	}
 
 	/**
 	 * 获得某年某月最后一天的日期
-	 * 
+	 *
 	 * @param year
 	 * @param month
 	 * @return Date
@@ -243,26 +241,26 @@ public class DateTimeUtil {
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
 		calendar.set(Calendar.DATE, 1);
-		return getPreviousDate(getSqlDate(calendar.getTime()));
+		return DateTimeUtil.getPreviousDate(DateTimeUtil.getSqlDate(calendar.getTime()));
 	}
 
 	/**
 	 * 获取相差指定秒钟后的时间
-	 * 
+	 *
 	 * @param min
 	 *            int
 	 * @return String
 	 */
 	public static String getNeedSecondDate(int second) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date now2 = new Date(System.currentTimeMillis() + 1000 * second);
+		Date now2 = new Date(System.currentTimeMillis() + (1000 * second));
 		String time2 = formatter.format(now2);
 		return time2;
 	}
 
 	/**
 	 * 获取指定日期相差指定天数的日期
-	 * 
+	 *
 	 * @param strDate
 	 *            格式 yyyy-MM-dd
 	 * @param nCount
@@ -271,7 +269,7 @@ public class DateTimeUtil {
 	 */
 	public static String getNeedDate(String strDate, int nCount) {
 		GregorianCalendar worldTour = new GregorianCalendar(Integer.parseInt(strDate.substring(0, 4)), Integer.parseInt(strDate.substring(5, 7)) - 1, Integer.parseInt(strDate.substring(8)));
-		worldTour.add(GregorianCalendar.DATE, nCount);
+		worldTour.add(Calendar.DATE, nCount);
 		java.util.Date d = worldTour.getTime();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		return df.format(d);
@@ -279,7 +277,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 获取指定日期相差指定小时数的日期
-	 * 
+	 *
 	 * @param strDate
 	 *            格式 yyyy-MM-dd
 	 * @param hours
@@ -289,7 +287,7 @@ public class DateTimeUtil {
 	public static String getNeedHours(String strDate, int hours) {
 		GregorianCalendar worldTour = new GregorianCalendar(Integer.parseInt(strDate.substring(0, 4)), Integer.parseInt(strDate.substring(5, 7)), Integer.parseInt(strDate.substring(8, 10)),
 				Integer.parseInt(strDate.substring(11, 13)), Integer.parseInt(strDate.substring(14, 16)), Integer.parseInt(strDate.substring(17, 19)));
-		worldTour.add(GregorianCalendar.HOUR, -hours);
+		worldTour.add(Calendar.HOUR, -hours);
 
 		java.util.Date d = worldTour.getTime();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -298,7 +296,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 由年月日构建java.sql.Date类型
-	 * 
+	 *
 	 * @param year
 	 * @param month
 	 * @param date
@@ -307,12 +305,12 @@ public class DateTimeUtil {
 	public static Date buildDate(int year, int month, int date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(year, month - 1, date);
-		return getSqlDate(calendar.getTime());
+		return DateTimeUtil.getSqlDate(calendar.getTime());
 	}
 
 	/**
 	 * 取得某月的天数
-	 * 
+	 *
 	 * @param year
 	 * @param month
 	 * @return int
@@ -327,7 +325,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 获得某年某季度的最后一天的日期
-	 * 
+	 *
 	 * @param year
 	 * @param quarter
 	 * @return Date
@@ -339,13 +337,13 @@ public class DateTimeUtil {
 		} else {
 			month = quarter * 3;
 		}
-		return getLastDayOfMonth(year, month);
+		return DateTimeUtil.getLastDayOfMonth(year, month);
 
 	}
 
 	/**
 	 * 获得某年某季度的第一天的日期
-	 * 
+	 *
 	 * @param year
 	 * @param quarter
 	 * @return Date
@@ -355,34 +353,34 @@ public class DateTimeUtil {
 		if (quarter > 4) {
 			return null;
 		} else {
-			month = (quarter - 1) * 3 + 1;
+			month = ((quarter - 1) * 3) + 1;
 		}
-		return getFirstDayOfMonth(year, month);
+		return DateTimeUtil.getFirstDayOfMonth(year, month);
 	}
 
 	/**
 	 * 获得某年的第一天的日期
-	 * 
+	 *
 	 * @param year
 	 * @return Date
 	 */
 	public static Date getFirstDayOfYear(int year) {
-		return getFirstDayOfMonth(year, 1);
+		return DateTimeUtil.getFirstDayOfMonth(year, 1);
 	}
 
 	/**
 	 * 获得某年的最后一天的日期
-	 * 
+	 *
 	 * @param year
 	 * @return Date
 	 */
 	public static Date getLastDayOfYear(int year) {
-		return getLastDayOfMonth(year, 12);
+		return DateTimeUtil.getLastDayOfMonth(year, 12);
 	}
 
 	/**
 	 * String到java.sql.Date的类型转换
-	 * 
+	 *
 	 * @param param
 	 * @return Date
 	 */
@@ -401,12 +399,12 @@ public class DateTimeUtil {
 
 	/**
 	 * 计算两个时间相差的小时数
-	 * 
+	 *
 	 * @return long
 	 */
 	public static double getHourFromToTime(String time1, String time2) {
 		double hour = 0;
-		if (!time1.equals("") && time1.length() == 19 && !time2.equals("") && time2.length() == 19) {
+		if (!time1.equals("") && (time1.length() == 19) && !time2.equals("") && (time2.length() == 19)) {
 			GregorianCalendar gc1 = new GregorianCalendar(Integer.parseInt(time1.substring(0, 4)), Integer.parseInt(time1.substring(5, 7)) - 1, Integer.parseInt(time1.substring(8, 10)),
 					Integer.parseInt(time1.substring(11, 13)), Integer.parseInt(time1.substring(14, 16)), Integer.parseInt(time1.substring(17, 19)));
 
@@ -430,18 +428,18 @@ public class DateTimeUtil {
 
 	// 两个时间差的天数
 	public static double getDaysFromToTime(String time1, String time2) {
-		double hour = getHourFromToTime(time1, time2);
-		return hour / 24 < 0.01 ? 1 : hour / 24;
+		double hour = DateTimeUtil.getHourFromToTime(time1, time2);
+		return (hour / 24) < 0.01 ? 1 : hour / 24;
 	}
 
 	/**
 	 * 计算两个时间相差的小时数
-	 * 
+	 *
 	 * @return string
 	 */
 	public static String getHourFromToTimeforString(String time1, String time2) {
 		double hour = 0;
-		if (!time1.equals("") && time1.length() == 19 && !time2.equals("") && time2.length() == 19) {
+		if (!time1.equals("") && (time1.length() == 19) && !time2.equals("") && (time2.length() == 19)) {
 			GregorianCalendar gc1 = new GregorianCalendar(Integer.parseInt(time1.substring(0, 4)), Integer.parseInt(time1.substring(5, 7)) - 1, Integer.parseInt(time1.substring(8, 10)),
 					Integer.parseInt(time1.substring(11, 13)), Integer.parseInt(time1.substring(14, 16)), Integer.parseInt(time1.substring(17, 19)));
 
@@ -469,7 +467,7 @@ public class DateTimeUtil {
 		} else if ((month.equals("04") || month.equals("06") || month.equals("09") || month.equals("11")) && day.equals("31")) {
 			day = "30";
 		} else if (month.equals("02") && ((day.equals("29") || day.equals("30") || day.equals("31")))) {
-			if (runNian(Integer.parseInt(year))) {// 闰年
+			if (DateTimeUtil.runNian(Integer.parseInt(year))) {// 闰年
 				day = "29";
 			} else {// 非闰年
 				day = "28";
@@ -481,10 +479,10 @@ public class DateTimeUtil {
 
 	static boolean runNian(int year) { // 判断是否为闰年的方法
 		boolean t = false;
-		if (year % 4 == 0) {
-			if (year % 100 != 0) {
+		if ((year % 4) == 0) {
+			if ((year % 100) != 0) {
 				t = true;
-			} else if (year % 400 == 0) {
+			} else if ((year % 400) == 0) {
 				t = true;
 			}
 		}
@@ -567,16 +565,16 @@ public class DateTimeUtil {
 
 	// 当前日期的前90天内数据
 	public static String getIndexStartDayZeroTime() {
-		String currentdate = getNowDate();
-		String last20date = getNeedDate(currentdate, -90);
+		String currentdate = DateTimeUtil.getNowDate();
+		String last20date = DateTimeUtil.getNeedDate(currentdate, -90);
 		System.out.println("====时间索引起始时间:====" + last20date + " 00:00:00");
 		return last20date + " 00:00:00";
 	}
 
 	// 当前日期的时间 20091221 改成了90天内的数据
 	public static String getCurrentDayZeroTime() {
-		String currentdate = getNowDate();
-		String last20date = getNeedDate(currentdate, -90);
+		String currentdate = DateTimeUtil.getNowDate();
+		String last20date = DateTimeUtil.getNeedDate(currentdate, -90);
 		System.out.println("====时间索引起始时间:====" + last20date + " 00:00:00");
 		return last20date + " 00:00:00";
 		// return currentdate + " 00:00:00";
@@ -584,7 +582,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 输出自定义格式的日期格式
-	 * 
+	 *
 	 * @param formatstring
 	 * @return
 	 */
@@ -608,7 +606,7 @@ public class DateTimeUtil {
 	public static String getNeedSecondDate_ByDate(String strDateTime, int second) {
 		GregorianCalendar worldTour = new GregorianCalendar(Integer.parseInt(strDateTime.substring(0, 4)), Integer.parseInt(strDateTime.substring(5, 7)) - 1, Integer.parseInt(strDateTime.substring(8,
 				10)), Integer.parseInt(strDateTime.substring(11, 13)), Integer.parseInt(strDateTime.substring(14, 16)), Integer.parseInt(strDateTime.substring(17, 19)));
-		worldTour.add(GregorianCalendar.SECOND, second);
+		worldTour.add(Calendar.SECOND, second);
 		java.util.Date d = worldTour.getTime();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return df.format(d);
@@ -627,7 +625,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 获取文件的创建时间
-	 * 
+	 *
 	 * @param filepath
 	 * @return
 	 */
@@ -645,7 +643,7 @@ public class DateTimeUtil {
 					Date date = new Date(modifiedTime);
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM");
 					String dd = sdf.format(date);
-					System.out.println("File name:" + Ifile.getName() + " \tFile size: " + (double) ((double) fis.available() / 1024 / 1024) + "M" + " \tFile create Time: " + dd);
+					System.out.println("File name:" + Ifile.getName() + " \tFile size: " + ((double) fis.available() / 1024 / 1024) + "M" + " \tFile create Time: " + dd);
 
 				}
 			}
@@ -715,7 +713,7 @@ public class DateTimeUtil {
 
 	/**
 	 * 获取当前时间点 小时
-	 * 
+	 *
 	 * @return
 	 */
 	public static long getNowHours() {
@@ -726,13 +724,13 @@ public class DateTimeUtil {
 
 	/**
 	 * 判断两个日期大小，如日期1小于日期2，返回true，否则返回false
-	 * 
+	 *
 	 * @param one
 	 * @param two
 	 * @return
 	 */
 	public static boolean isBefore(java.util.Date one, java.util.Date two) {
-		if (one == null || two == null) {
+		if ((one == null) || (two == null)) {
 			return false;
 		}
 		return one.getTime() < two.getTime();
@@ -740,13 +738,13 @@ public class DateTimeUtil {
 
 	/**
 	 * 判断两个日期大小，如日期1大于日期2，返回true，否则返回false
-	 * 
+	 *
 	 * @param one
 	 * @param two
 	 * @return
 	 */
 	public static boolean isAfter(java.util.Date one, java.util.Date two) {
-		if (one == null || two == null) {
+		if ((one == null) || (two == null)) {
 			return false;
 		}
 		return one.getTime() > two.getTime();
@@ -763,5 +761,24 @@ public class DateTimeUtil {
 		cal.add(Calendar.DATE, day);
 		return cal.getTime();
 	}
+	public static java.util.Date formatToDate(String time) {
+		try {
+			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			java.util.Date d = sim.parse(time);
+			return d;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new java.util.Date();
+		}
+	}
 
+	// 获取当前日期前一个月的日期
+		public static String getMonthBefore() {
+			java.util.Date date = new java.util.Date();
+			Calendar calendar = Calendar.getInstance();// 日历对象
+			calendar.setTime(date);// 设置当前日期
+			calendar.add(Calendar.MONTH, -1);// 月份减一
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+		}
 }
