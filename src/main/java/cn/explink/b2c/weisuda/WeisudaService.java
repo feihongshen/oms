@@ -1020,7 +1020,7 @@ public class WeisudaService {
 			payremark = "快刷MPOS";
 			paytype = PaytypeEnum.Qita.getValue();
 		} else if ("15".equals(item.getPaymethod())) {
-			payremark = "唯宝支付";
+			payremark = "快钱pos支付";
 			paytype = PaytypeEnum.Qita.getValue();
 		} else if ("16".equals(item.getPaymethod())) {
 			payremark = "通联pos支付";
