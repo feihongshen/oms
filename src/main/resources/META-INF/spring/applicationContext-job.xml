@@ -64,6 +64,7 @@
 							  <ref bean="doTime_smiled"/>
 							  <ref bean="doTime_sfxhm"/>
 							  <ref bean="doTime_weisuda"/>
+							  <ref bean="doTime_weisudadelete"/>
 							  <ref bean="doTime_zhongliang"/>
 							  <ref bean="doTime_gztlOutbranch"/>
 							  <ref bean="doTime_gztl"/>
@@ -748,7 +749,25 @@
              <value>getWeisuda_Task</value>
          </property>
      </bean>
-     
+     <bean id="doTime_weisudadelete" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getweisudadelete" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 12 * * ? </value>
+		</property>
+	</bean>
+
+	<bean id="getweisudadelete" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getWeisudadelete_Task</value>
+		</property>
+	</bean>
      
       <bean id="doTime_homegobj" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
