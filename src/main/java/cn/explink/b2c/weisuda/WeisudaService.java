@@ -235,8 +235,11 @@ public class WeisudaService {
 	private void updateUnVerifyOrders(String orderid) {
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String send = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<order_id>" + orderid + "</order_id>" + "</item>" + "</root>";
-		this.check(weisuda, "data", send, WeisudsInterfaceEnum.updateUnVerifyOrders.getValue());
 		this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口 发送报文,userMessage={}", send);
+		String response = this.check(weisuda, "data", send, WeisudsInterfaceEnum.updateUnVerifyOrders.getValue());
+		this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口返回报文,response={}", response);
+		
+		
 	}
 
 	/**
@@ -1083,9 +1086,12 @@ public class WeisudaService {
 		String data = "<root>";
 		for (Branch bch : branchs) {
 			if (bch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
+				String branchProvince = bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
+				String branchCity = bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
+				String branchArea = bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
 				data += "<item>" + "<code>" + bch.getBranchid() + "</code>" + "<old_code></old_code>" + "<name>" + bch.getBranchname() + "</name>" + "<province>"
-						+ (bch.getBranchprovince() == null ? "" : bch.getBranchprovince()) + "</province>" + "<city>" + (bch.getBranchcity() == null ? "" : bch.getBranchcity()) + "</city>" + "<zone>"
-						+ (bch.getBrancharea() == null ? "" : bch.getBrancharea()) + "</zone>" + "<password></password>" + "</item>";
+						+ (branchProvince) + "</province>" + "<city>" + (branchCity) + "</city>" + "<zone>"
+						+ (branchArea) + "</zone>" + "<password></password>" + "</item>";
 
 			}
 		}
@@ -1098,25 +1104,50 @@ public class WeisudaService {
 	}
 
 	public String updataAlluser() {
-		List<User> users = this.getDmpDAO.getAllUsers();
-		String data = "<root>";
+		String responStrAll="";
+		List<Branch> branchs = this.getDmpDAO.getAllBranchs();
+		for(Branch b:branchs){
+			if (b.getSitetype() == BranchEnum.ZhanDian.getValue()) {
+				List<User> users = this.getDmpDAO.getAllUserbybranchid(b.getBranchid());
+				String responStr = synUserInfoToApp(users,b.getBranchname());
+				responStrAll+=responStr+"  \n";
+			}
+		}
 
+		return "同步员工信息成功:\n"+responStrAll;
+	}
+	
+	public String updataAlluserById(long branchid) {
+		String responStrAll="";
+		List<User> users = this.getDmpDAO.getAllUserbybranchid(branchid);
+		String responStr = synUserInfoToApp(users,branchid+"");
+		responStrAll+=responStr+"  \n";
+
+		return "同步员工信息成功:\n"+responStrAll;
+	}
+
+	private String synUserInfoToApp(List<User> users,String branchname) {
+		String data = "<root>";
 		for (User user : users) {
 			if ((user.getRoleid() == 4) || (user.getRoleid() == 2)) {
 
 				long branchid = user.getBranchid();
 				Branch branch = this.getDmpDAO.getNowBranch(branchid);
-
-				data += "<item>" + "<code>" + user.getUsername().toUpperCase() + "</code>" + "<old_code></old_code>" + "<name>" + user.getRealname() + "</name>" + "<site_code>"
-						+ branch.getBranchcode() + "</site_code>" + "<mobile>" + user.getUsermobile() + "</mobile>" + "<password>" + (user.getPassword() == null ? "" : user.getPassword())
-						+ "</password>" + "</item>";
+				data += "<item>" 
+							 + "<code>" + user.getUsername().toUpperCase() + "</code>" 
+							 + "<old_code></old_code>" 
+							 + "<name>" + user.getRealname() + "</name>" 
+							 + "<site_code>"+ branch.getBranchcode() + "</site_code>" 
+							 + "<mobile>" + user.getUsermobile() + "</mobile>" 
+							 + "<password>" + (user.getPassword() == null ? "" : user.getPassword())+ "</password>" 
+						 + "</item>";
 			}
 		}
 		data += "</root>";
-		this.logger.info("唯速达_同步所有快递员发送报文,data={}", data);
+		this.logger.info("唯速达_同步所有快递员发送报文,branchname={},data={}",branchname, data);
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.courierUpdate.getValue());
-
+		this.logger.info("唯速达_同步所有快递员返回报文,branchname={},data={}",branchname, response);
 		return response;
 	}
 

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -81,7 +82,12 @@ public class WeisudaController {
 	@RequestMapping("/updateuser")
 	public @ResponseBody
 	String updataAlluser(HttpServletRequest request, HttpServletResponse response) {
-
 		return "<textarea rows='60' cols='100'>"+this.weisudaService.updataAlluser()+"</textarea>";
+	}
+	
+	@RequestMapping("/updateuserbyId/{branchid}")
+	public @ResponseBody
+	String updateuserbyId(HttpServletRequest request, HttpServletResponse response,@PathVariable("branchid") long branchid) {
+		return "<textarea rows='60' cols='100'>"+this.weisudaService.updataAlluserById(branchid)+"</textarea>";
 	}
 }

@@ -432,6 +432,7 @@ public class GetDmpDAO {
 			branch.setBranchprovince(jsonObject.getString("branchprovince"));
 			branch.setBranchcity(jsonObject.getString("branchcity"));
 			branch.setBrancharea(jsonObject.getString("brancharea"));
+			branch.setBranchcode(jsonObject.getString("branchcode"));
 		} catch (IOException e) {
 			branch = null;
 			this.logger.error("获取当前站点的详细信息异常", e);
