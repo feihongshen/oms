@@ -972,6 +972,7 @@ public class GetDmpDAO {
 				user.setRealname(jSONArray.getJSONObject(i).getString("realname"));
 				user.setUsermobile(jSONArray.getJSONObject(i).getString("usermobile"));
 				user.setUserphone(jSONArray.getJSONObject(i).getString("userphone"));
+				user.setRoleid(jSONArray.getJSONObject(i).getLong("roleid")) ;
 				list.add(user);
 			}
 
