@@ -1089,9 +1089,15 @@ public class WeisudaService {
 				String branchProvince = bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
 				String branchCity = bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
 				String branchArea = bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
-				data += "<item>" + "<code>" + bch.getBranchid() + "</code>" + "<old_code></old_code>" + "<name>" + bch.getBranchname() + "</name>" + "<province>"
-						+ (branchProvince) + "</province>" + "<city>" + (branchCity) + "</city>" + "<zone>"
-						+ (branchArea) + "</zone>" + "<password></password>" + "</item>";
+				data += "<item>" 
+							+ "<code>" + bch.getBranchid() + "</code>" 
+							+ "<old_code></old_code>" 
+							+ "<name>" + bch.getBranchname() + "</name>" 
+							+ "<province>"+ (branchProvince) + "</province>" 
+							+ "<city>" + (branchCity) + "</city>"
+							+ "<zone>"+ (branchArea) + "</zone>" 
+							+ "<password></password>" 
+						+ "</item>";
 
 			}
 		}
