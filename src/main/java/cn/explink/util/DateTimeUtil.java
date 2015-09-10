@@ -392,7 +392,7 @@ public class DateTimeUtil {
 			date = sdf.parse(param);
 			return new Date(date.getTime());
 		} catch (ParseException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			return null;
 		}
 	}
