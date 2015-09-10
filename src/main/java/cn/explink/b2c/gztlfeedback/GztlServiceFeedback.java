@@ -602,14 +602,17 @@ public class GztlServiceFeedback {
 		orderFlowDto.setDeliverymobile(orderFeedback.getDeliverymanMobile());//小件员电话
 		long customerid=this.WarehouseCommenDAO.getCommenCwbBycwb(orderFeedback.getWaybillNo()).getCustomerid();
 		if (flowordertype==35||flowordertype==36) {
-			String except_code=orderFeedback.getStatus()+"_"+orderFeedback.getReason();
+			/*String except_code=orderFeedback.getStatus()+"_"+orderFeedback.getReason();
 			ExptReason exptReason=this.b2ctools.getGztlExptReason(-2,except_code);
-			String content="";
-			if (exptReason!=null) {
-				content=exptReason.getExpt_code();//我们系统里面的信息异常原因
-				orderFlowDto.setExptcode(exptReason.getReasonid());//异常编码
-				
-		}
+			String content="";*/
+			/*	if (exptReason!=null) {
+			content=exptReason.getExpt_code();//我们系统里面的信息异常原因
+			orderFlowDto.setExptcode(exptReason.getReasonid());//异常编码
+			
+	        }*/
+			String reasonid=orderFeedback.getReason();
+		    orderFlowDto.setExptcode(reasonid);//异常编码
+		
 		}
 		
 		//orderFlowDto.setExptmsg("");//异常原因
