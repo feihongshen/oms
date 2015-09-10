@@ -2210,6 +2210,21 @@
 			</properties>
 		</profile>
 		
+		<profile>
+			<id>HBPJ_OXO</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.32:3306/hbpj_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://172.20.200.28:61616</jms.brokerURL>
+				<dmpUrl>http://172.20.200.25:8081/hbpjoxo</dmpUrl>
+				<label>HBPJ_OXO</label>
+			</properties>
+		</profile>	
 		
 		<profile>
 			<id>JLPJ</id>
