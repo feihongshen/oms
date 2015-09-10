@@ -24,6 +24,7 @@ import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WarehouseCommenDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.Common;
+import cn.explink.domain.CwbOrderType;
 import cn.explink.domain.User;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -154,7 +155,7 @@ public class BulidVipShopB2cData {
 			/*
 			 * vip 分站滞留
 			 */
-			else if (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue()) { 
+			else if (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue()&&Long.valueOf(cwbOrder.getCwbordertypeid())==CwbOrderTypeIdEnum.Peisong.getValue()) { 
 				/**
 				 * 20131105
 				 * 唯品会新增
@@ -183,7 +184,7 @@ public class BulidVipShopB2cData {
 					sign_man = "本人";
 				}
 				
-				sign_man_phone = "";
+				sign_man_phone = deliveryState.getSign_man_phone() != null && !"".equals(deliveryState.getSign_man_phone()) ? deliveryState.getSign_man_phone() : "";
 				
 			}
 			/*

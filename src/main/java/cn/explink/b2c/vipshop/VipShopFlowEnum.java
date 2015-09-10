@@ -27,7 +27,8 @@ public enum VipShopFlowEnum {
 	FenZhanLingHuo_t(32, FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "指定快递员"), 
 	ShangMenLanJian_t(34, FlowOrderTypeEnum.YiShenHe.getValue(), "上门揽件"), // 和审核一起
 	ShangMenTuiChengGong_t(35, FlowOrderTypeEnum.YiShenHe.getValue(), "揽件成功-揽件入站"), // 揽件成功
-	ShengMenJuTui_t(36, FlowOrderTypeEnum.YiShenHe.getValue(), "揽件失败"), ;
+	ShengMenJuTui_t(36, FlowOrderTypeEnum.YiShenHe.getValue(), "揽件失败"), 
+	FenZhanZhiLiu_t(4, FlowOrderTypeEnum.YiShenHe.getValue(), "揽件失败-滞留"), ;
 
 	public int getVipshop_state() {
 		return this.vipshop_state;
