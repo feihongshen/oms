@@ -71,6 +71,7 @@
  		<intercept-url pattern="/weisuda/**" access="permitAll" />
  		<intercept-url pattern="/zhongliang/**" access="permitAll" />
 	   <intercept-url pattern="/gztlfeedback/**" access="permitAll"/>
+	   <intercept-url pattern="/jiuye/**" access="permitAll" />
 	   
 	  <intercept-url pattern="/commonemail/**" access="permitAll"/>
 

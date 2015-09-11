@@ -226,6 +226,10 @@ src/main/java/cn/explink/b2c/jiuxian/JiuxianService.java -text
 src/main/java/cn/explink/b2c/jiuxian/JiuxianWang.java -text
 src/main/java/cn/explink/b2c/jiuxian/JiuxianWangFlowEunm.java -text
 src/main/java/cn/explink/b2c/jiuxian/JiuxianXMLNote.java -text
+src/main/java/cn/explink/b2c/jiuye/BuildJiuyeB2cData.java -text
+src/main/java/cn/explink/b2c/jiuye/JiuYe.java -text
+src/main/java/cn/explink/b2c/jiuye/JiuyeFlowEnum.java -text
+src/main/java/cn/explink/b2c/jiuye/JiuyeService.java -text
 src/main/java/cn/explink/b2c/jumeiyoupin/BulidJuMeiB2cData.java -text
 src/main/java/cn/explink/b2c/jumeiyoupin/JuMeiInterfaceController.java -text
 src/main/java/cn/explink/b2c/jumeiyoupin/JuMeiYouPin.java -text

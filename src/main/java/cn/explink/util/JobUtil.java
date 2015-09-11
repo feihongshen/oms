@@ -33,6 +33,7 @@ import cn.explink.b2c.huitongtx.HuitongtxService;
 import cn.explink.b2c.hxgdms.HxgdmsService;
 import cn.explink.b2c.hzabc.HangZhouABCService;
 import cn.explink.b2c.jiuxian.JiuxianService;
+import cn.explink.b2c.jiuye.JiuyeService;
 import cn.explink.b2c.jumeiyoupin.JumeiService;
 import cn.explink.b2c.jumeiyoupin.JumeiYoupinService;
 import cn.explink.b2c.lechong.LechongService;
@@ -191,6 +192,8 @@ public class JobUtil {
 	GztlService gztlService;
 	@Autowired
 	GztlServiceFeedback gztlServiceFeedback;
+	@Autowired
+	JiuyeService jiuyeService;
 
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	long time = 2 * 60 * 60 * 1000;
@@ -856,4 +859,19 @@ public class JobUtil {
 
 		this.logger.info("执行了唯速达删除过期信息定时器!");
 	}
+	
+	/**
+	 * 九曳
+	 */
+	public void getJiuYe_Task() {
+		try {
+
+			this.jiuyeService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了九曵定时器异常!", e);
+		}
+
+		this.logger.info("执行了推送九曵定时器!");
+	}
+	
 }

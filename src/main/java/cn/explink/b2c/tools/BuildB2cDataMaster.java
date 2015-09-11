@@ -19,6 +19,7 @@ import cn.explink.b2c.homegou.BuildHomegouB2cData;
 import cn.explink.b2c.huitongtx.BulidHuitongtxB2cData;
 import cn.explink.b2c.hxgdms.BulidHxgdmsB2cData;
 import cn.explink.b2c.hzabc.BuildHangZhouABCB2cData;
+import cn.explink.b2c.jiuye.BuildJiuyeB2cData;
 import cn.explink.b2c.jumeiyoupin.BulidJuMeiB2cData;
 import cn.explink.b2c.lechong.BuildLeChongB2cData;
 import cn.explink.b2c.lefeng.BuildLefengB2cData;
@@ -117,6 +118,18 @@ public class BuildB2cDataMaster {
 	@Autowired
 	BuildHomegobjB2cData buildHomegobjB2cData;
 	
+	@Autowired
+	BuildJiuyeB2cData buildJiuyeB2cData;
+	
+	
+	public BuildJiuyeB2cData getBuildJiuyeB2cData() {
+		return buildJiuyeB2cData;
+	}
+
+	public void setBuildJiuyeB2cData(BuildJiuyeB2cData buildJiuyeB2cData) {
+		this.buildJiuyeB2cData = buildJiuyeB2cData;
+	}
+
 	public BuildSfxhmB2cData getBuildSfxhmB2cData() {
 		return this.buildSfxhmB2cData;
 	}

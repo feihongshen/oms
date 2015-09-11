@@ -20,6 +20,7 @@ import cn.explink.domain.orderflow.OrderFlow;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
+import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 
@@ -144,6 +145,86 @@ public class B2cDataOrderFlowDetail {
 		return null;
 	}
 
+	public String getJiuYeDetail(DmpOrderFlow orderFlow,DmpCwbOrder cwbOrder) {
+		try {
+			//User operatorUser=getUserById(orderFlow.getUserid());
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.DaoRuShuJu.getValue()) {
+				return MessageFormat.format("从[{0}]导入数据", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.RuKu.getValue()){
+				return MessageFormat.format("已揽收[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.ChuKuSaoMiao.getValue()){
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				Branch nextBranch=getBranchById(cwbOrderWithDeliveryState.getCwbOrder().getNextbranchid());
+				return MessageFormat.format("离开[{0}]发往[{1}]", getBranchById(orderFlow.getBranchid()).getBranchname(),nextBranch.getBranchname());
+			}
+			
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.CheXiaoFanKui.getValue()) {
+				return MessageFormat.format("货物由[{0}]撤销反馈", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.KuDuiKuTuiHuoChuKu.getValue()) {
+				return MessageFormat.format("货物已由[{0}]进行库对库退货出库", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ErJiFenBo.getValue()) {
+				return MessageFormat.format("货物从[{0}]进行二级分拨操作", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.EeJiZhanTuiHuoChuZhan.getValue()) {
+				return MessageFormat.format("货物已由二级站[{0}]退货出站", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()){
+				return MessageFormat.format("到达[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
+				
+				String comment = orderFlow.getComment();
+				if(comment!=null&&!comment.isEmpty()&&comment.contains("正在派件")&&comment.contains("派件人")){
+					return MessageFormat.format("货物已从[{0}]"+comment,getBranchById(orderFlow.getBranchid()).getBranchname());
+				}else{
+					return MessageFormat.format("离开[{0}]正在配送中,派件人:[{1}] 手机:[{2}]", getBranchById(orderFlow.getBranchid()).getBranchname(),deliverUser.getRealname(),deliverUser.getUsermobile());
+				}
+			}
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				DmpDeliveryState deliverstate=cwbOrderWithDeliveryState.getDeliveryState();
+				if(deliverstate.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()
+					||deliverstate.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue()
+					||deliverstate.getDeliverystate()==DeliveryStateEnum.ShangMenHuanChengGong.getValue()
+				){
+					return MessageFormat.format("订单已签收,签收人:{0}", cwbOrder.getConsigneename());//收件人姓名(默认传收件人姓名)
+				}
+				if(deliverstate.getDeliverystate()==DeliveryStateEnum.QuanBuTuiHuo.getValue()||deliverstate.getDeliverystate()==DeliveryStateEnum.BuFenTuiHuo.getValue()){
+					//exptMsg=""+cwbOrderWithDeliveryState.getCwbOrder().getBackreason();
+					return MessageFormat.format("拒收原因:{0}",cwbOrderWithDeliveryState.getCwbOrder().getBackreason());
+
+				}
+				if(deliverstate.getDeliverystate()==DeliveryStateEnum.FenZhanZhiLiu.getValue()){
+					//exptMsg=",原因:"+cwbOrderWithDeliveryState.getCwbOrder().getBackreason()+""+cwbOrderWithDeliveryState.getCwbOrder().getLeavedreason();
+					return MessageFormat.format("滞留原因:{0}",cwbOrderWithDeliveryState.getCwbOrder().getLeavedreason());
+				}
+				if(deliverstate.getDeliverystate()==DeliveryStateEnum.HuoWuDiuShi.getValue()){
+					return MessageFormat.format("原因:{0}",DeliveryStateEnum.HuoWuDiuShi.getText());
+				}
+			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue()) {
+				return MessageFormat.format("货物已从[{0}]进行中转出库", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanRuKu.getValue()) {
+				return MessageFormat.format("货物已到中转站[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) {
+				return MessageFormat.format("货物已从[{0}]进行中转站出库", getBranchById(orderFlow.getBranchid()).getBranchname());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
 	public String getDetailByOrderFlow(OrderFlow orderFlow) {
 		try {
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.DaoRuShuJu.getValue()) {

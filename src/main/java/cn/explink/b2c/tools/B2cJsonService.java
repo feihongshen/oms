@@ -282,6 +282,12 @@ public class B2cJsonService {
 			return this.buildB2cDataMaster.getBuildGztlB2cData().buildGztlMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), customer,this.objectMapper);
 		}
+		
+		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "jiuye_"))) {
+			return this.buildB2cDataMaster.getBuildJiuyeB2cData().buildJiuYeMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
+					delivery_state, this.objectMapper);
+		}
+		
 		return null;
 
 	}

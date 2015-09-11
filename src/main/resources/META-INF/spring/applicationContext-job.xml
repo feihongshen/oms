@@ -62,6 +62,7 @@
 							  <ref bean="doTime_lechong"/>
 							  <ref bean="doTime_homegobj"/>
 							  <ref bean="doTime_smiled"/>
+							   <ref bean="doTime_jiuye"/>
 							  <ref bean="doTime_sfxhm"/>
 							  <ref bean="doTime_weisuda"/>
 							  <ref bean="doTime_weisudadelete"/>
@@ -827,6 +828,25 @@
              <value>getSfxhm_Task</value>
          </property>
      </bean>
-     
+    
+     <bean id="doTime_jiuye" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getJiuye" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="getJiuye" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getJiuYe_Task</value>
+		</property>
+	</bean> 
+	     
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>

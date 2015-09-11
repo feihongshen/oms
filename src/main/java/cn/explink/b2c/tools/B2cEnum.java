@@ -60,9 +60,12 @@ public enum B2cEnum {
 	Wangjiu(20083, "网酒网", "wangjiu"),
 
 	HomegoBJ(20084, "家有购物（北京）", "homegoubj"), LeChong(20085, "乐宠（科捷）", "lechong"),
-	Smiled(20086, "思迈下游", "smiled"), SFexpressXHM(20087, "顺丰快递(小红帽)", "sfexpressxhm"), Zhongliang(20088, "顺丰快递(小红帽)", "Zhongliang"), Lefeng(20093, "乐蜂网-回传", "lefeng"), Guangzhoutonglu(20095, "广州通路",
+	Smiled(20086, "思迈下游", "smiled"), SFexpressXHM(20087, "顺丰快递(小红帽)", "sfexpressxhm"), Zhongliang(20088, "顺丰快递(小红帽)", "Zhongliang"), JiuYe(20089, "九曳", "jiuye"),
+	Lefeng(20093, "乐蜂网-回传", "lefeng"), Guangzhoutonglu(20095, "广州通路",
 			"guangzhoutonglu"), GuangzhoutongluWaifadan(20096, "广州通路对接_外发单", "guangzhoutongluwaifadanduijie"),
-			VipShop_OXO(20090, "唯品会_oxo", "vipshop_OXO"); // 唯品会OXO vipshop_oxo
+			VipShop_OXO(20090, "唯品会_oxo", "vipshop_OXO"),
+			JiuYe1(20101, "九曵1", "jiuye_1"),JiuYe2(20102, "九曵2", "jiuye_2"),JiuYe3(20103, "九曵3", "jiuye_3"),JiuYe4(20104, "九曵4", "jiuye_4"),JiuYe5(20105, "九曵5", "jiuye_5")
+			; // 唯品会OXO vipshop_oxo
 	private int key;
 	private String text;
 	private String method;

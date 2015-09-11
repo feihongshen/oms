@@ -31,6 +31,7 @@ import cn.explink.b2c.homegou.HomegouService_Message;
 import cn.explink.b2c.huitongtx.HuitongtxService;
 import cn.explink.b2c.hxgdms.HxgdmsService;
 import cn.explink.b2c.hzabc.HangZhouABCService;
+import cn.explink.b2c.jiuye.JiuyeService;
 import cn.explink.b2c.jumeiyoupin.JumeiService;
 import cn.explink.b2c.jumeiyoupin.JumeiYoupinService;
 import cn.explink.b2c.lechong.LechongService;
@@ -156,6 +157,8 @@ public class HandFeedBackController {
 	GztlService gztlService;
 	@Autowired
 	CoreExcutorService coreExcutorService;
+	@Autowired
+	JiuyeService jiuyeService;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -469,6 +472,10 @@ public class HandFeedBackController {
 		return "手动执行反馈广州通路成功";
 	}
 	
-	
+	@RequestMapping("/jiuye_test")
+	public @ResponseBody String jiuye_test(HttpServletRequest request){
+		jiuyeService.feedback_status();
+		return "手动执行反馈九曳北京完成";
+	}
 
 }
