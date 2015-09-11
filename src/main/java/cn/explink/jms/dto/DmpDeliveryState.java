@@ -37,6 +37,15 @@ public class DmpDeliveryState {
 	private int sign_typeid; // 是否签收 0未签收，1已签收
 	private String sign_man; // 签收人
 	private String sign_time; // 签收时间
+	private String sign_man_phone; //签收人（代签）手机
+
+	public String getSign_man_phone() {
+		return sign_man_phone;
+	}
+
+	public void setSign_man_phone(String sign_man_phone) {
+		this.sign_man_phone = sign_man_phone;
+	}
 
 	private long deliverybranchid;// 配送站点
 	private String deliverystateStr;
