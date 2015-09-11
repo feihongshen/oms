@@ -484,10 +484,11 @@ public class GztlServiceFeedback {
 				String willOrder=orderFeedback.getWaybillNo();
 				// 在commen_cwb_order表中验证是否存在该订单的信息，在出库到广西飞远的站点时，会在里面生成信息
 				long isexistscwbflag = this.warehouseCommenDAO.getCountByCwb(willOrder);
-				if (isexistscwbflag > 0) {
+				HuojuFlowEnum huojuFlowEnum=HuojuFlowEnum.getHuoJuFlowEnum(orderFeedback.getStatus());
+				if (isexistscwbflag > 0&&huojuFlowEnum!=null) {
 
-					int flowordertype = this.getFlowordertype(orderFeedback.getStatus());// 流程状态
-					long deliverystate = this.getDeliveryState(orderFeedback.getStatus());// 接收状态
+					int flowordertype = this.getFlowordertype(huojuFlowEnum.getDescribe());// 流程状态
+					long deliverystate = this.getDeliveryState(huojuFlowEnum.getDescribe());// 接收状态
 					String logisticProviderId="";
 					if(GztlServiceFeedback.FUJIANZHAN.equals(orderFeedback.getLogisticProviderId())){
 						logisticProviderId="fjabc";
@@ -547,7 +548,7 @@ public class GztlServiceFeedback {
 				for (String temp : noString) {
 					SendOrder sendOrder = new SendOrder();
 					sendOrder.setId(temp);
-					sendOrder.setRemark("数据库中无此订单");
+					sendOrder.setRemark("数据库中无此订单或者状态不一致");
 					sendOrder.setResult("F");
 					sendOrders.add(sendOrder);
 				}
