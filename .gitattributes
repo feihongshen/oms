@@ -230,6 +230,9 @@ src/main/java/cn/explink/b2c/jiuye/BuildJiuyeB2cData.java -text
 src/main/java/cn/explink/b2c/jiuye/JiuYe.java -text
 src/main/java/cn/explink/b2c/jiuye/JiuyeFlowEnum.java -text
 src/main/java/cn/explink/b2c/jiuye/JiuyeService.java -text
+src/main/java/cn/explink/b2c/jiuye/jsondto/JiuYe_request.java -text
+src/main/java/cn/explink/b2c/jiuye/jsondto/JiuYe_response.java -text
+src/main/java/cn/explink/b2c/jiuye/jsondto/JiuyeXMLNote.java -text
 src/main/java/cn/explink/b2c/jumeiyoupin/BulidJuMeiB2cData.java -text
 src/main/java/cn/explink/b2c/jumeiyoupin/JuMeiInterfaceController.java -text
 src/main/java/cn/explink/b2c/jumeiyoupin/JuMeiYouPin.java -text
