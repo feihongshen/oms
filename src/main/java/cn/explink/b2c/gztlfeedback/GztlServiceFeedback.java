@@ -796,7 +796,7 @@ public class GztlServiceFeedback {
 		}
 		String date5="";
 		try {
-			SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date date2=dateFormat.parse(date);
 			SimpleDateFormat dateFormat2=new SimpleDateFormat("yyyy-MM-dd");
 			date5=dateFormat2.format(date2);

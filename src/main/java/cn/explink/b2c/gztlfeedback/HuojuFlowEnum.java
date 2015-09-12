@@ -3,7 +3,7 @@ package cn.explink.b2c.gztlfeedback;
 public enum HuojuFlowEnum {
 	BaoGuoDiuShi("包裹丢失","SC07"),
 	KeHuYanQi("客户延期","SC04"),
-	DaoJianQueRen("到件确认","SC01"),
+	DaoJianQueRen("到件","SC01"),
 	PeiSongChengGong("配送成功","SC13"),
 	TuiGongYingShang("退供应商","SC08"),
 	PeiSongChengGongH("配送成功","SC03"),
