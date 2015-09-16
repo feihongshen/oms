@@ -1,5 +1,6 @@
 package cn.explink.b2c.weisuda;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import cn.explink.b2c.explink.xmldto.OrderFlowDto;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.weisuda.xml.GetUnVerifyOrders_back_Item;
 import cn.explink.b2c.weisuda.xml.Getback_Item;
@@ -69,6 +72,8 @@ public class WeisudaService {
 	private CamelContext camelContext;
 	@Autowired
 	private BranchDAO branchDAO;
+	@Autowired
+	CacheBaseListener cacheBaseListener;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -102,7 +107,13 @@ public class WeisudaService {
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
 		if ((cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()) || (cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue())) {
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
-			Customer customer = this.getDmpDAO.getCustomer(customerid);
+			
+			Customer customer = this.cacheBaseListener.getCustomer(customerid);
+			if (customer == null) {
+				this.logger.info("Customer对象在缓存中没有获取到，唯速达请求dmp..cwb={}", orderFlow.getCwb());
+				customer = this.getDmpDAO.getCustomer(customerid);
+			}
+			 
 			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
 				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
 				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
@@ -174,56 +185,51 @@ public class WeisudaService {
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String response = this.check(weisuda, "nums", weisuda.getNums(), WeisudsInterfaceEnum.getUnVerifyOrders.getValue());
 		this.logger.info("唯速达_02_APP包裹签收信息同步接口下载数据,{}", response);
-		if (response != null) {
-			if (response.contains("<error><code>")) {
-				this.logger.info("唯速达_02包裹签收信息同步接口验证失败！userMessage={}", response);
-				return;
-			}
-			if (response.contains("<root>") && response.contains("<courier_code>")) {
-				try {
-					RootPS back_Root = (RootPS) ObjectUnMarchal.XmltoPOJO(response, new RootPS());
+		if(response==null){
+			this.logger.info("唯速达_02_APP包裹签收信息同步接口下载数据为空");
+			return;
+		}
+		
+		if (response.contains("<error><code>")) {
+			return;
+		}
+		if (response.contains("<root>") && response.contains("<courier_code>")) {
+			try {
+				RootPS back_Root = (RootPS) ObjectUnMarchal.XmltoPOJO(response, new RootPS());
 
-					for (GetUnVerifyOrders_back_Item item : back_Root.getItem()) {
-						WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
+				for (GetUnVerifyOrders_back_Item item : back_Root.getItem()) {
+					WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
+					if (weisudaCwbs == null) {
+						continue;
+					}
+					String json = this.buliderJson(item, weisudaCwbs);
 
-						if (weisudaCwbs == null) {
-							continue;
-						}
-						String json = this.buliderJson(item, weisudaCwbs);
+					this.logger.info("唯速达_02请求dmp-json={}", json);
 
-						this.logger.info("唯速达_02请求dmp-json={}", json);
+					String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
 
-						String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
-
-						if ("SUCCESS".equals(result)) {
-							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息通过_手机_签收成功");
-							this.updateUnVerifyOrders(item.getOrder_id());
-						} else if (result.contains("处理唯速达反馈请求异") && result.contains("不允许进行反馈")) {
-							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息已经通过_其它方式_签收成功");
-							this.updateUnVerifyOrders(item.getOrder_id());
-						}
-						/*
-						 * if(item.getOrder_status().equals("0")) {
-						 * weisudaDAO.updataWeisudaCwbIsqianshou
-						 * (item.getOrder_id(),"0","订单状态已重置！");
-						 * logger.info("订单状态已重置！cwb={}",item.getOrder_id()); }
-						 */
-						else {
-							this.logger.info("唯速达_02请求dmp唯速达信息异常{},cwb={}", result, item.getOrder_id());
-							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "2", result);
-							continue;
-						}
+					if ("SUCCESS".equals(result)) {
+						this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息通过_手机_签收成功");
+						this.updateUnVerifyOrders(item.getOrder_id());
+					} else if (result.contains("处理唯速达反馈请求异") && result.contains("不允许进行反馈")) {
+						this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息已经通过_其它方式_签收成功");
+						this.updateUnVerifyOrders(item.getOrder_id());
+					}else {
+						this.logger.info("唯速达_02请求dmp唯速达信息异常{},cwb={}", result, item.getOrder_id());
+						this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "2", result);
+						this.updateUnVerifyOrders(item.getOrder_id());
+						continue;
 					}
 				}
-
-				catch (Exception e) {
-					this.logger.error("唯速达_02请求dmp唯速达信息异常" + response, e);
-				}
 			}
 
-			else {
-				this.logger.info("唯速达_02返回订单失败！{}", response);
+			catch (Exception e) {
+				this.logger.error("唯速达_02请求dmp唯速达信息异常" + response, e);
 			}
+		}
+
+		else {
+			this.logger.info("唯速达_02返回订单失败！{}", response);
 		}
 	}
 
@@ -235,7 +241,7 @@ public class WeisudaService {
 	private void updateUnVerifyOrders(String orderid) {
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String send = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<order_id>" + orderid + "</order_id>" + "</item>" + "</root>";
-		this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口 发送报文,userMessage={}", send);
+		this.logger.info("唯速达_03APP包裹签收信息同步结果 发送报文,userMessage={}", send);
 		String response = this.check(weisuda, "data", send, WeisudsInterfaceEnum.updateUnVerifyOrders.getValue());
 		this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口返回报文,response={}", response);
 		
@@ -254,7 +260,11 @@ public class WeisudaService {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			this.logger.info("唯速达_04进入唯速达对接cwb={}", orderFlow.getCwb());
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
-			Customer customer = this.getDmpDAO.getCustomer(customerid);
+			Customer customer = this.cacheBaseListener.getCustomer(customerid);
+			if (customer == null) {
+				this.logger.info("Customer对象在缓存中没有获取到，唯速达请求dmp..cwb={}", orderFlow.getCwb());
+				customer = this.getDmpDAO.getCustomer(customerid);
+			}
 			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
 				String cwb = cwbOrderWithDeliveryState.getCwbOrder().getCwb();
 				try {
@@ -315,7 +325,8 @@ public class WeisudaService {
 							if (version == 1) {
 								if (response.contains("<error><code>")) {
 									this.logger.info("唯速达_04包裹修改信息接口验证失败！userMessage={}", response);
-									return;
+									String remark=response.length()>80?response.substring(0, 80):response;
+									this.weisudaDAO.updataWeisudaCwbIsqianshou(cwb, "2", "包裹签收信息修改_失败！" +remark);
 								}
 
 								else if (response.contains(cwb)) {
@@ -366,26 +377,21 @@ public class WeisudaService {
 		try {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			Branch bch = JsonUtil.readValue(branch, Branch.class);
-			String data = "<root>" + "<item>" + "<code>" + bch.getBranchid() + "</code>" + "<old_code></old_code>" + "<name>" + bch.getBranchname() + "</name>" + "<province>"
-					+ bch.getBranchprovince() + "</province>" + "<city>" + bch.getBranchcity() + "</city>" + "<zone>" + bch.getBrancharea() + "</zone>" + "<password></password>" + "</item>"
+			String data = "<root>" 
+							+ "<item>" 
+								+ "<code>" + bch.getBranchid() + "</code>" 
+								+ "<old_code></old_code>" 
+								+ "<name>" + bch.getBranchname() + "</name>" 
+								+ "<province>"+ bch.getBranchprovince() + "</province>" 
+								+ "<city>" + bch.getBranchcity() + "</city>" 
+								+ "<zone>" + bch.getBrancharea() + "</zone>" 
+								+ "<password></password>" 
+							+ "</item>"
 					+ "</root>";
 			this.logger.info("唯速达_05站点更新接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteUpdate.getValue());
-			int version = this.GetWeisuda_Version();
-			if (version == 1) {
-				if (response.contains(bch.getBranchid() + "")) {
-					this.logger.info("唯速达_05站点更新成功！response={}", response);
-				} else {
-					this.logger.info("唯速达_05站点更新失败！response={}", response);
-				}
-			} else if (version == 2) {
-				// 暂时保持一致
-				if (response.contains(bch.getBranchid() + "")) {
-					this.logger.info("唯速达_05站点更新成功version2.0！response={}", response);
-				} else {
-					this.logger.info("唯速达_05站点更新失败version2.0！response={}", response);
-				}
-			}
+			this.logger.info("唯速达_05站点更新返回response={}", response);
+			
 		} catch (Exception e) {
 			this.logger.error("唯速达_05更新站点信息出错" + branch, e);
 		}
@@ -402,25 +408,16 @@ public class WeisudaService {
 		}
 		try {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" + "<item>" + "<del_code>" + branchid + "</del_code>" + "<rec_code></rec_code>" + "</item>" + "</root>";
+			String data = "<root>" 
+							+ "<item>" 
+								+ "<del_code>" + branchid + "</del_code>" 
+								+ "<rec_code></rec_code>" 
+							+ "</item>"
+						+ "</root>";
 			this.logger.info("唯速达_06站点撤销接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteDel.getValue());
-			int version = this.GetWeisuda_Version();
-			if (version == 1) {
-				if (response.contains(branchid)) {
-					this.logger.info("唯速达_06站点撤销成功version2.0！response={}", response);
-				} else {
-					this.logger.info("唯速达_06站点撤销失败version2.0！response={}", response);
-				}
-			} else if (version == 2) {
-				// 暂时保持一致
-				if (response.contains(branchid)) {
-					this.logger.info("唯速达_06站点撤销成功！response={}", response);
-				} else {
-					this.logger.info("唯速达_06站点撤销失败！response={}", response);
-				}
-
-			}
+			this.logger.info("唯速达_06站点撤销返回response={}", response);
+			
 		} catch (Exception e) {
 			this.logger.error("站点撤销信息出错" + branchid, e);
 		}
@@ -460,26 +457,21 @@ public class WeisudaService {
 			 * " 快递员登陆密码:" + user.getPassword();
 			 */
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" + "<item>" + "<code>" + user.getUsername().toUpperCase() + "</code>" + "<old_code>" + oldusername.toUpperCase() + "</old_code>" + "<name>" + user.getRealname()
-					+ "</name>" + "<site_code>" + user.getBranchid() + "</site_code>" + "<mobile>" + user.getUsermobile() + "</mobile>" + "<password>" + user.getPassword() + "</password>" + "</item>"
+			String data = "<root>" 
+							+ "<item>" 
+								+ "<code>" + user.getUsername().toUpperCase() + "</code>" 
+								+ "<old_code>" + oldusername.toUpperCase() + "</old_code>" 
+								+ "<name>" + user.getRealname()+ "</name>" 
+								+ "<site_code>" + user.getBranchid() + "</site_code>" 
+								+ "<mobile>" + user.getUsermobile() + "</mobile>"
+								+ "<password>" + user.getPassword() + "</password>"
+							+ "</item>"
 					+ "</root>";
 			this.logger.info("唯速达_07快递员更新接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.courierUpdate.getValue());
-			int version = this.GetWeisuda_Version();
-			if (version == 1) {
-				if (response.contains(user.getUsername().toUpperCase())) {
-					this.logger.info("唯速达_07快递员更新成功！response={}", response);
-				} else {
-					this.logger.info("唯速达_07快递员更新失败！response={}", response);
-				}
-			} else if (version == 2) {
-				// 暂时保持一致
-				if (response.contains(user.getUsername().toUpperCase())) {
-					this.logger.info("唯速达_07快递员更新成功！response={}", response);
-				} else {
-					this.logger.info("唯速达_07快递员更新失败！response={}", response);
-				}
-			}
+			
+			this.logger.info("唯速达_07快递员更新接口返回response={}", response);
+			
 		} catch (Exception e) {
 			this.logger.error("唯速达_07快递员更新信息出错 ！jsonUser=" + jsonUser, e);
 		}
@@ -502,25 +494,16 @@ public class WeisudaService {
 			 * user.getPassword();
 			 */
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" + "<item>" + "<del_code>" + user.getUsername().toUpperCase() + "</del_code>" + "</item>" + "</root>";
+			String data = "<root>" 
+								+ "<item>" 
+									+ "<del_code>" + user.getUsername().toUpperCase() + "</del_code>" 
+								+ "</item>" 
+							+ "</root>";
 			this.logger.info("唯速达_08快递员删除接口发送报文,userMessage={}", data);
 			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.carrierDel.getValue());
-			int version = this.GetWeisuda_Version();
-			if (version == 1) {
-				if (response.contains(user.getUsername().toUpperCase())) {
-					this.logger.info("唯速达_08快递员删除成功！response={}", response);
-				} else {
-					this.logger.info("唯速达_08快递员删除失败！response={}", response);
-				}
-			} else if (version == 2) {
-				// 暂时保持一致
-				if (response.contains(user.getUsername().toUpperCase())) {
-					this.logger.info("唯速达_08快递员删除成功version2.0！response={}", response);
-				} else {
-					this.logger.info("唯速达_08快递员删除失败version2.0！response={}", response);
-				}
-
-			}
+			
+			this.logger.info("唯速达_08快递员删除返回response={}", response);
+			
 		} catch (Exception e) {
 			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
 		}
@@ -547,14 +530,13 @@ public class WeisudaService {
 						String data = "<root><item><order_id>" + cwb + "</order_id></item></root>";
 						this.logger.info("唯速达_09快递员解绑接口发送报文,userMessage={}", data);
 						String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.unboundOrders.getValue());
+						this.logger.info("唯速达_09快递员解绑接返回,response={}", response);
 						int version = this.GetWeisuda_Version();
 						if (version == 1) {
 							if (response.contains(cwb)) {
 								this.weisudaDAO.updateWeisuda(cwb, "3", "快递员解绑成功！");
-								this.logger.info("唯速达_09快递员解绑接成功,response={}", response);
 							} else {
 								this.weisudaDAO.updateWeisuda(cwb, "2", "快递员解绑失败！");
-								this.logger.info("唯速达_09快递员解绑接失败,response={}", response);
 							}
 						} else if (version == 2) {
 							RootOrder root = (RootOrder) ObjectUnMarchal.XmltoPOJO(response, new RootOrder());
@@ -564,10 +546,8 @@ public class WeisudaService {
 									if (order.getOrder_id().equals(cwb)) {
 										if (order.getHandleCode().equals(HandleCodeEnum.SUCCESS.getText())) {
 											this.weisudaDAO.updateWeisuda(cwb, "3", "快递员解绑成功！");
-											this.logger.info("唯速达_09快递员解绑接成功,response={}", response);
 										} else {
 											this.weisudaDAO.updateWeisuda(cwb, "2", "快递员解绑失败！");
-											this.logger.info("唯速达_09快递员解绑接失败,response={}", response);
 										}
 									}
 								}
@@ -627,22 +607,15 @@ public class WeisudaService {
 						} else if (result.contains("处理唯速达反馈请求异") && result.contains("已审核的订单不允许进行反馈")) {
 							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "上门退订单信息已经通过_其它方式_签收成功");
 							this.getback_confirmAppOrders(item.getOrder_id());
-						}
-						/*
-						 * if(item.getOrder_status().equals("0")) {
-						 * weisudaDAO.updataWeisudaCwbIsqianshou
-						 * (item.getOrder_id(),"0","订单状态已重置！");
-						 * logger.info("订单状态已重置！cwb={}",item.getOrder_id()); }
-						 */
-						else {
+						}else {
 							this.logger.info("唯速达_11请求dmp唯速达信息异常{},cwb={}", result, item.getOrder_id());
-							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "2", result);
+							String remark=result!=null&&result.length()>80?result.substring(0, 80):result;
+							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "2", remark);
+							this.getback_confirmAppOrders(item.getOrder_id());
 							continue;
 						}
 					}
-				}
-
-				catch (Exception e) {
+				}catch (Exception e) {
 					this.logger.error("唯速达_11请求dmp唯速达信息异常" + response, e);
 				}
 			}
@@ -661,8 +634,10 @@ public class WeisudaService {
 	private void getback_confirmAppOrders(String orderid) {
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String send = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<order_id>" + orderid + "</order_id>" + "</item>" + "</root>";
-		this.check(weisuda, "data", send, WeisudsInterfaceEnum.getback_confirmAppOrders.getValue());
 		this.logger.info("唯速达_12APP上门退签收信息同步结果反馈接口 发送报文,userMessage={}", send);
+		String response = this.check(weisuda, "data", send, WeisudsInterfaceEnum.getback_confirmAppOrders.getValue());
+		this.logger.info("唯速达_12APP上门退签收信息同步结果反馈接口 返回response={}", response);
+		
 	}
 
 	/**
@@ -813,44 +788,54 @@ public class WeisudaService {
 					upflagString = "唯速达_10上门退订单";
 					url = WeisudsInterfaceEnum.getback_boundOrders.getValue();
 				}
-				String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<courier_code>" + courier_code.toUpperCase() + "</courier_code>" + "<order_id>" + cwb
-						+ "</order_id>" + "<bound_time>" + timestamp + "</bound_time>" + "</item>" + "</root>";
+				String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" 
+							+ "<root>" 
+								+ "<item>" 
+									+ "<courier_code>" + courier_code.toUpperCase() + "</courier_code>" 
+									+ "<order_id>" + cwb+ "</order_id>" 
+									+ "<bound_time>" + timestamp + "</bound_time>" 
+								+ "</item>" 
+							+ "</root>";
 				this.logger.info(upflagString + "快递员绑定接口接口发送报文,userMessage={}", xml);
 				response = this.check(weisuda, "data", xml, url);
-
 				this.logger.info(upflagString + "快递员绑定接口返回：{},cwb={}", response, cwb);
 				int version = this.GetWeisuda_Version();
-				if (version == 1) {
-					if (response.contains(cwb)) {
-						this.weisudaDAO.updateWeisuda(cwb, "1", "快递员绑定成功!");
-						this.logger.info(upflagString + "快递员绑定接口成功!response={},cwb={}", response, cwb);
-					} else {
-
-						this.weisudaDAO.updateWeisuda(cwb, "2", response);
-						this.logger.info(upflagString + "快递员绑定失败! response={},cwb={}", response, cwb);
-					}
-				} else if (version == 2) {
-					RootOrder root = (RootOrder) ObjectUnMarchal.XmltoPOJO(response, new RootOrder());
-					if ((root != null) && (root.getOrders() != null)) {
-						for (Order order : root.getOrders().getOrder()) {
-							if (order.getOrder_id().equals(cwb)) {
-								if (order.getHandleCode().equals(HandleCodeEnum.SUCCESS.getText())) {
-									this.weisudaDAO.updateWeisuda(cwb, "1", "快递员绑定成功!");
-									this.logger.info(upflagString + "快递员绑定接口成功!response={},cwb={}", response, cwb);
-								} else {
-									this.weisudaDAO.updateWeisuda(cwb, "2", order.getMsg());
-									this.logger.info(upflagString + "快递员绑定失败! response={},cwb={}", response, cwb);
-								}
-							}
-						}
-					}
-				}
+				updateDeliveryUserBound(cwb, response, upflagString, version);
 
 			} catch (Exception e) {
 				this.logger.error(upflagString + "异常：" + e.getMessage() + "cwb=" + cwb + "返回：" + response, e);
 			}
 		}
 
+	}
+
+	private void updateDeliveryUserBound(String cwb, String response,
+			String upflagString, int version) throws JAXBException,
+			UnsupportedEncodingException {
+		if (version == 1) {
+			if (response.contains(cwb)) {
+				this.weisudaDAO.updateWeisuda(cwb, "1", "快递员绑定成功!");
+				this.logger.info(upflagString + "快递员绑定接口成功!response={},cwb={}", response, cwb);
+			} else {
+				this.weisudaDAO.updateWeisuda(cwb, "2", response);
+				this.logger.info(upflagString + "快递员绑定失败! response={},cwb={}", response, cwb);
+			}
+		} else if (version == 2) {
+			RootOrder root = (RootOrder) ObjectUnMarchal.XmltoPOJO(response, new RootOrder());
+			if ((root != null) && (root.getOrders() != null)) {
+				for (Order order : root.getOrders().getOrder()) {
+					if (order.getOrder_id().equals(cwb)) {
+						if (order.getHandleCode().equals(HandleCodeEnum.SUCCESS.getText())) {
+							this.weisudaDAO.updateWeisuda(cwb, "1", "快递员绑定成功!");
+							this.logger.info(upflagString + "快递员绑定接口成功!response={},cwb={}", response, cwb);
+						} else {
+							this.weisudaDAO.updateWeisuda(cwb, "2", order.getMsg());
+							this.logger.info(upflagString + "快递员绑定失败! response={},cwb={}", response, cwb);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	// 获取配置信息
@@ -1143,7 +1128,7 @@ public class WeisudaService {
 							 + "<code>" + user.getUsername().toUpperCase() + "</code>" 
 							 + "<old_code></old_code>" 
 							 + "<name>" + user.getRealname() + "</name>" 
-							 + "<site_code>"+ branch.getBranchcode() + "</site_code>" 
+							 + "<site_code>"+ branch.getBranchid() + "</site_code>" 
 							 + "<mobile>" + user.getUsermobile() + "</mobile>" 
 							 + "<password>" + (user.getPassword() == null ? "" : user.getPassword())+ "</password>" 
 						 + "</item>";
