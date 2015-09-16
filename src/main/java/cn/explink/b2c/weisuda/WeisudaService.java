@@ -200,6 +200,7 @@ public class WeisudaService {
 				for (GetUnVerifyOrders_back_Item item : back_Root.getItem()) {
 					WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
 					if (weisudaCwbs == null) {
+						this.updateUnVerifyOrders(item.getOrder_id());
 						continue;
 					}
 					String json = this.buliderJson(item, weisudaCwbs);
@@ -593,6 +594,7 @@ public class WeisudaService {
 						WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
 
 						if (weisudaCwbs == null) {
+							this.getback_confirmAppOrders(item.getOrder_id());
 							continue;
 						}
 						String json = this.buliderJson(item, weisudaCwbs);
