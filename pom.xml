@@ -1534,7 +1534,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://192.168.70.21/pxwl</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/pxwl</dmpUrl>
 				<label>PXWL</label>
 			</properties>
 		</profile>
