@@ -600,7 +600,7 @@ public class VipShopCwbFeedBackService {
 
 	public String getVipShopFlowEnum(long flowordertype, long delivery_state, long cwbordertypeid) {
 
-		if (cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()) {
+		if (cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()||cwbordertypeid == CwbOrderTypeIdEnum.OXO.getValue()) {
 
 			if (flowordertype == FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue()) {
 				return null;
