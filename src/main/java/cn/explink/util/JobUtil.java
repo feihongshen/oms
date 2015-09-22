@@ -1,6 +1,8 @@
 package cn.explink.util;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,7 @@ import cn.explink.b2c.telecomsc.TelecomshopService;
 import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
+import cn.explink.b2c.tools.JobUtil;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
@@ -195,6 +198,31 @@ public class JobUtil {
 	@Autowired
 	JiuyeService jiuyeService;
 
+	
+	public static Map<String, Integer> threadMap;
+	static { // 静态初始化 以下变量,用于判断线程是否在执行
+
+		JobUtil.threadMap = new HashMap<String, Integer>();
+		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
+		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
+	}
+
+	/**
+	 * 手动初始化
+	 */
+	public void updateBatcnitialThreadMap() {
+		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
+		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
+		
+		this.logger.info("系统自动初始化定时器完成");
+	}
+
+	
+	
+	
+	
+	
+	
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	long time = 2 * 60 * 60 * 1000;
 
@@ -764,19 +792,47 @@ public class JobUtil {
 		this.logger.info("执行了推送家有购物北京定时器!");
 	}
 
-	public void getWeisuda_Task() {
+	public  void getWeisuda_Task() {
+		
+		if (JobUtil.threadMap.get("weisudaDeliveryBound") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryBound");
+			return;
+		}
+		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
 		try {
-
 			this.weisudaService.selectWeisudaCwb();
+
+		} catch (Exception e) {
+			this.logger.error("执行了唯速达定时器异常!", e);
+		}finally{
+			JobUtil.threadMap.put("weisudaDeliveryBound", 0);
+		}
+		this.logger.info("执行了推送唯速快递单绑定达定时器!");
+	}
+	
+	/**
+	 * 签收结果同步
+	 */
+	public void getWeisudaDeliveryResult_Task() {
+		
+		if (JobUtil.threadMap.get("weisudaDeliveryResult") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryResult");
+			return;
+		}
+		JobUtil.threadMap.put("weisudaDeliveryResult", 1);
+		try {
 			this.weisudaService.getUnVerifyOrdersOfCount();
 			this.weisudaService.getback_getAppOrdersCounts();
 
 		} catch (Exception e) {
-			this.logger.error("执行了唯速达定时器异常!", e);
+			this.logger.error("执行了唯速达签收结果同步定时器异常!", e);
+		}finally{
+			JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		}
-
-		this.logger.info("执行了推送唯速达定时器!");
+		this.logger.info("执行了推送唯速达签收结果同步定时器!");
 	}
+	
+	
 
 	/**
 	 * 思迈下游

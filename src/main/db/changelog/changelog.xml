@@ -1068,10 +1068,12 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 		</sql>
 	</changeSet>
 	<!-- 唯速达增加订单类型字段 -->
-	<changeSet id="wangyonghe-2015-09-06"  author="wangyonghe">
+	<changeSet id="zhangpengkai-2015-09-16"  author="zhangpengkai">
 		<sql>
-			ALTER TABLE `express_b2cdata_weisuda`
-			ADD COLUMN `cwbordertypeid`  varchar(11) NULL DEFAULT '1' COMMENT '订单类型' AFTER `cwb`;
+			ALTER TABLE `express_b2cdata_weisuda` ADD INDEX `operatorTime_idx` (`operationTime`);
 		</sql>
 	</changeSet>
+	
+	
+	
 </databaseChangeLog>

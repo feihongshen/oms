@@ -48,6 +48,7 @@ import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wanxiang.WanxiangService;
+import cn.explink.b2c.weisuda.WeisudaService;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
@@ -159,6 +160,7 @@ public class HandFeedBackController {
 	CoreExcutorService coreExcutorService;
 	@Autowired
 	JiuyeService jiuyeService;
+
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 

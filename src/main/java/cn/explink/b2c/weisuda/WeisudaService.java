@@ -956,6 +956,7 @@ public class WeisudaService {
 
 			} else if ("7".equals(status)) {
 				deliverystate = DeliveryStateEnum.QuanBuTuiHuo.getValue();
+				dto.setExptmsg(item.getReason());
 			} else if ("4".equals(status)) {
 				deliverystate = DeliveryStateEnum.FenZhanZhiLiu.getValue();
 				dto.setStrandedrReason(itemps.getDelay_reason());
@@ -1120,10 +1121,11 @@ public class WeisudaService {
 	}
 
 	private String synUserInfoToApp(List<User> users,String branchname) {
+		boolean isHave=false; //是否存在
 		String data = "<root>";
 		for (User user : users) {
 			if ((user.getRoleid() == 4) || (user.getRoleid() == 2)) {
-
+				isHave=true;
 				long branchid = user.getBranchid();
 				Branch branch = this.getDmpDAO.getNowBranch(branchid);
 				data += "<item>" 
@@ -1135,6 +1137,9 @@ public class WeisudaService {
 							 + "<password>" + (user.getPassword() == null ? "" : user.getPassword())+ "</password>" 
 						 + "</item>";
 			}
+		}
+		if(!isHave){
+			return "不存在待同步员工";
 		}
 		data += "</root>";
 		this.logger.info("唯速达_同步所有快递员发送报文,branchname={},data={}",branchname, data);

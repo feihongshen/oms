@@ -69,6 +69,7 @@
 							  <ref bean="doTime_zhongliang"/>
 							  <ref bean="doTime_gztlOutbranch"/>
 							  <ref bean="doTime_gztl"/>
+							  <ref bean="doTime_weisudaDeliveryResult"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -750,6 +751,32 @@
              <value>getWeisuda_Task</value>
          </property>
      </bean>
+     
+     
+     
+     
+      <bean id="doTime_weisudaDeliveryResult" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+           <property name="jobDetail">
+               <ref bean="getweisudaDeliveryResult" />
+           </property>
+             <property name="cronExpression">
+               <value>0 */10 * * * ?</value>
+           </property>
+      </bean>
+     
+     <bean id="getweisudaDeliveryResult" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+      <property name="targetBean">
+             <value>updateEMS</value>
+         </property>
+         <property name="targetMethod">
+             <value>getWeisudaDeliveryResult_Task</value>
+         </property>
+     </bean>
+     
+     
+     
+     
+     
      <bean id="doTime_weisudadelete" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
