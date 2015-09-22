@@ -2531,6 +2531,20 @@
 				<label>SXPJ</label>
 			</properties>
 		</profile>		
-		
+		<profile>
+			<id>PJ_TEST</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://10.199.247.161:3306/dmp_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>dmpdmp1555</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://10.199.247.161:61616</jms.brokerURL>
+				<dmpUrl>http://10.199.247.159:8080/dmp</dmpUrl>
+				<label>PJ_TEST</label>
+			</properties>
+		</profile>
 	</profiles>
 </project>
