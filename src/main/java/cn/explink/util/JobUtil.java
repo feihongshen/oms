@@ -1,6 +1,7 @@
 package cn.explink.util;
 
 import java.text.SimpleDateFormat;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,6 @@ import cn.explink.b2c.telecomsc.TelecomshopService;
 import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
-import cn.explink.b2c.tools.JobUtil;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
