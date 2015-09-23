@@ -105,6 +105,7 @@ public class BulidVipShopB2cData {
 					vipshopXMLNote.setDeliver_name(delivername);
 					vipshopXMLNote.setDeliver_mobile(usermobile);
 				}
+				
 
 			}
 			
@@ -155,7 +156,11 @@ public class BulidVipShopB2cData {
 			/*
 			 * vip 分站滞留
 			 */
-			else if (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue()&&Long.valueOf(cwbOrder.getCwbordertypeid())==CwbOrderTypeIdEnum.Peisong.getValue()) { 
+			else if (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue()&&
+					(Long.valueOf(cwbOrder.getCwbordertypeid())==CwbOrderTypeIdEnum.Peisong.getValue()
+					||Long.valueOf(cwbOrder.getCwbordertypeid())==CwbOrderTypeIdEnum.Shangmentui.getValue()
+					)
+					) { 
 				/**
 				 * 20131105
 				 * 唯品会新增
@@ -171,6 +176,27 @@ public class BulidVipShopB2cData {
 				vipshopXMLNote.setOrder_status_info(expt_msg);
 				vipshopXMLNote.setOrder_status(expt_code);
 
+			}
+			
+			
+			//上门拒退
+			else if (delivery_state == DeliveryStateEnum.ShangMenJuTui.getValue())
+			{ 
+				/**
+				 * 20131105
+				 * 唯品会新增
+				 * 滞留状态一定要存储编码，拒收不需要
+				 */
+				ExptReason exptReason = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+				String expt_msg = exptReason.getExpt_msg();
+				String expt_code = exptReason.getExpt_code();
+				if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
+					vipshopXMLNote.setOrder_status_info("其它原因");
+					vipshopXMLNote.setOrder_status("3610");
+				}else{
+					vipshopXMLNote.setOrder_status_info(expt_msg);
+					vipshopXMLNote.setOrder_status(expt_code);
+				}
 			}
 			/*
 			 * vip 配送成功
