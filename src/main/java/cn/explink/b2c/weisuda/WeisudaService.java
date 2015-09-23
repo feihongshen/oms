@@ -1000,25 +1000,25 @@ public class WeisudaService {
 			paytype = PaytypeEnum.CodPos.getValue();
 		} else if ("11".equals(item.getPaymethod())) {
 			payremark = "微信APP支付";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.CodPos.getValue();
 		} else if ("12".equals(item.getPaymethod())) {
 			payremark = "支付宝APP支付";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.CodPos.getValue();
 		} else if ("13".equals(item.getPaymethod())) {
 			payremark = "工行MPOS";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.Pos.getValue();
 		} else if ("14".equals(item.getPaymethod())) {
 			payremark = "快刷MPOS";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.Pos.getValue();
 		} else if ("15".equals(item.getPaymethod())) {
 			payremark = "快钱pos支付";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.Pos.getValue();
 		} else if ("16".equals(item.getPaymethod())) {
 			payremark = "通联pos支付";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.Pos.getValue();
 		} else if ("17".equals(item.getPaymethod())) {
 			payremark = "唯宝支付";
-			paytype = PaytypeEnum.Qita.getValue();
+			paytype = PaytypeEnum.CodPos.getValue();
 		}
 		dto.setCwbremark(item.getMemo());
 		dto.setPayremark(payremark);
