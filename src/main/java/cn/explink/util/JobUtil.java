@@ -807,7 +807,7 @@ public class JobUtil {
 		}finally{
 			JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		}
-		this.logger.info("执行了推送唯速快递单绑定达定时器!");
+		this.logger.info("执行了推送唯速达快递单绑定达定时器!");
 	}
 	
 	/**
