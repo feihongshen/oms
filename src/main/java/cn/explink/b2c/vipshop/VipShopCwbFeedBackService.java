@@ -100,6 +100,19 @@ public class VipShopCwbFeedBackService {
 		} catch (Exception e) {
 			logger.error("揽退单推送异常",e);
 		}
+		
+		try {
+			// OXO
+			calcCount += this.sendCwbStatus_To_VipShop_OXO(vipshop, FlowOrderTypeEnum.RuKu.getValue()); // code：4-配送中(库房入库)
+			calcCount += this.sendCwbStatus_To_VipShop_OXO(vipshop, FlowOrderTypeEnum.ChuKuSaoMiao.getValue()); // code：4-配送中(库房出库)
+			calcCount += this.sendCwbStatus_To_VipShop_OXO(vipshop, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()); // code：4-配送中(分站到货)
+			calcCount += this.sendCwbStatus_To_VipShop_OXO(vipshop, FlowOrderTypeEnum.FenZhanLingHuo.getValue()); // code:4-配送中(分站投递)
+			calcCount += this.sendCwbStatus_To_VipShop_OXO(vipshop, FlowOrderTypeEnum.YiShenHe.getValue()); // 已审核
+			calcCount += this.sendCwbStatus_To_VipShop_OXO(vipshop, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()); // 已审核
+																												// -包括各种状态
+		} catch (Exception e) {
+			logger.error("OXO订单推送异常",e);
+		}
 
 		String nowdateHours = DateTimeUtil.getNowTime("HH");
 		int hours = Integer.valueOf(nowdateHours);
@@ -539,9 +552,90 @@ public class VipShopCwbFeedBackService {
 			return null;
 		}
 
-		this.logger.info("请求vipshop:状态[" + flowordertype + "],推送vipshop-XML：{}", returnStr);
+		this.logger.info("请求vipshop:状态[" + flowordertype + "],推送vipshop-XML-OXO：{}", returnStr);
 		return returnStr.replaceAll("null", "");
 	}
+	
+	
+	
+	
+	// 拼接XML
+		private String AppendXMLString_OXO(VipShop vipshop, List<B2CData> vipshopDataList, int flowordertype, String request_time) {
+			String version = "1.0";
+			StringBuffer sub1 = new StringBuffer();
+			sub1.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			sub1.append("<request>");
+			sub1.append("<head>");
+			sub1.append("<version>" + version + "</version>");
+			sub1.append("<request_time>" + request_time + "</request_time>");
+			sub1.append("<cust_code>" + vipshop.getShipper_no() + "</cust_code>");
+			sub1.append("</head>");
+			sub1.append("<traces>");
+			for (B2CData b2cData : vipshopDataList) {
+				String jsoncontent = b2cData.getJsoncontent();
+				VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
+				if(note== null){
+					continue;
+				}
+
+				if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.OXO.getValue()) {
+					this.logger.info("当前推送唯品会{}过滤非OXO订单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
+					continue;
+				}
+
+				String order_status_info = note.getOrder_status_info();
+				if (!note.getOrder_status().equals("33")) {
+					order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
+				}
+				
+				String sub2="";
+				if (note.getOrder_status().equals("33")) {
+					sub2="<delivery_name>" + note.getDeliverUser() + "</delivery_name>"
+						+"<delivery_phone>" + note.getDeliverMobile() + "</delivery_phone>";
+				}
+
+				sub1.append("<trace>");
+				sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
+				sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
+				sub1.append("<order_status>" + note.getOrder_status() + "</order_status>");
+				sub1.append("<order_status_info>" + order_status_info + "</order_status_info>");
+				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
+				sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
+				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+				sub1.append(sub2);
+				sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
+				sub1.append("<is_allograph_sign>" + note.getIs_allograph_sign()+ "</is_allograph_sign>");
+				sub1.append("<allograph_tel>" + note.getSign_man_phone() + "</allograph_tel>");
+				sub1.append("</trace>");
+
+				if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
+
+					String order_status_msg = "货物已达[" + note.getDeliverBranch() + "]由派送员[" + note.getDeliverUser() + "]开始派送，投递员电话：[" + note.getDeliverMobile() + "]";
+					note.setOrder_status_info_temp(order_status_msg);
+					sub1.append("<trace>");
+					sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
+					sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
+					sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
+					sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
+					sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
+					sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
+					sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+					sub1.append("<delivery_name>" + note.getDeliverUser() + "</delivery_name>");
+					sub1.append("<delivery_phone>" + note.getDeliverMobile() + "</delivery_phone>");
+					sub1.append("<is_unpacked></is_unpacked>");
+					sub1.append("</trace>");
+				}
+			}
+			sub1.append("</traces>");
+			sub1.append("</request>");
+			String returnStr = sub1.toString();
+			if (returnStr.contains("<traces></traces>")) {
+				return null;
+			}
+
+			this.logger.info("请求vipshop:状态[" + flowordertype + "],推送vipshop-XML-OXO：{}", returnStr);
+			return returnStr.replaceAll("null", "");
+		}
 
 	private String buildOrderGoods(VipShopXMLNote note) {
 
@@ -747,7 +841,7 @@ public class VipShopCwbFeedBackService {
 						e.printStackTrace();
 						return 0;
 					}
-					this.logger.info("vipshop状态反馈XML={},flowordertype={}", ReaderXMLHandler.parseBack(response_XML), flowordertype);
+					this.logger.info("vipshop状态反馈XML-OXO={},flowordertype={}", ReaderXMLHandler.parseBack(response_XML), flowordertype);
 					Map<String, Object> parseMap = null;
 					try {
 						parseMap = this.readXMLHandler.parseGetCwbInfo_VipShopXml(response_XML);
@@ -788,6 +882,107 @@ public class VipShopCwbFeedBackService {
 
 	}
 
+	
+	
+	/**
+	 * 反馈的处理方法 OXO 业务
+	 * 
+	 * @param vipshop
+	 * @param vip_code
+	 * @param flowordertype
+	 */
+	/**
+	 * 反馈的处理方法
+	 * 
+	 * @param vipshop
+	 * @param vip_code
+	 * @param flowordertype
+	 */
+	private long sendCwbStatus_To_VipShop_OXO(VipShop vipshop, int flowordertype) {
+
+		long calcCount = 0;
+
+		try {
+			while (true) {
+				calcCount++;
+				String requestXML = "";
+				
+				if(calcCount>200){
+					logger.warn("当前请求唯品会接口循环次数已超过200，跳出");
+					return 0;
+				}
+				
+				try {
+					String lefengCustomerid=vipshop.getLefengCustomerid()==null||vipshop.getLefengCustomerid().isEmpty()?vipshop.getCustomerids():vipshop.getLefengCustomerid();
+					List<B2CData> vipshopDataList = this.b2cDataDAO.getDataListByFlowStatus(flowordertype, vipshop.getCustomerids()+","+lefengCustomerid, vipshop.getSendMaxCount());
+					if ((vipshopDataList == null) || (vipshopDataList.size() == 0)) {
+						this.logger.info("当前没有要推送[vipshop]的数据,状态:flowordertype={}", flowordertype);
+						return 0;
+					}
+					String request_time = DateTimeUtil.getNowTime();
+					requestXML = this.AppendXMLString_OXO(vipshop, vipshopDataList, flowordertype, request_time);
+					if (requestXML == null) {
+						this.logger.info("当前没有要推送[vipshop]的数据，判断揽退,状态:flowordertype={}", flowordertype);
+						return 0;
+					}
+					String md5HeplerXML = this.AppendXMLStringMD5Hepler(vipshop, vipshopDataList, flowordertype, request_time);
+					
+					String MD5Str = this.sendCreateMD5Str(vipshopDataList, flowordertype, request_time, vipshop, requestXML,md5HeplerXML);
+
+					//this.logger.info("签名字符串：{}", MD5Str);
+
+					String Sign = VipShopMD5Util.MD5(MD5Str).toLowerCase();
+					String response_XML = null;
+					try {
+						response_XML = this.soapHandler.HTTPInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
+								VipShopConfig.PEISONG_TYPE);
+					} catch (Exception e) {
+						this.logger.error("推送vipshop状态-异常！推送XML信息：" + response_XML + ",异常原因：" + e, e);
+						continue;
+					}
+					this.logger.info("vipshop状态反馈XML-OXO={},flowordertype={}", ReaderXMLHandler.parseBack(response_XML), flowordertype);
+					Map<String, Object> parseMap = null;
+					try {
+						parseMap = this.readXMLHandler.parseGetCwbInfo_VipShopXml(response_XML);
+						this.logger.info("解析后的XML-Map,flowordertype={},parseMap={}", flowordertype, parseMap);
+					} catch (Exception e) {
+						this.logger.error("解析vipshop返回订单信息异常!,异常原因：" + e, e);
+						return 0;
+					}
+					String sys_response_code = parseMap.get("sys_response_code") != null ? parseMap.get("sys_response_code").toString() : ""; // 返回码
+					String sys_response_msg = parseMap.get("sys_respnose_msg") != null ? parseMap.get("sys_respnose_msg").toString() : ""; // 返回说明
+
+					try {
+						VipShopExceptionHandler.respValidateMessage(sys_response_code, sys_response_msg, vipshop);
+					} catch (Exception e) {
+						this.logger.error("返回vipshop订单查询信息验证失败！", e);
+						e.printStackTrace();
+						return 0;
+					}
+
+					if ("S00".equals(sys_response_code)) {
+						this.DealWithResponseByVipShop(vipshop, flowordertype, parseMap, sys_response_msg);
+					}
+
+
+				} catch (Exception e) {
+					String exptMessage = "[唯品会]订单状态反馈发送不可预知的异常！当前状态=" + flowordertype + "，当前请求的XML=" + requestXML;
+					this.logger.error(exptMessage, e);
+					return 0;
+				}
+
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return calcCount;
+
+	}
+	
+	
+	
 	/**
 	 * VipShop生成签名字符串
 	 */
