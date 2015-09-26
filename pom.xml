@@ -2594,6 +2594,53 @@
 				<label>HBFY</label>
 			</properties>
 		</profile>
+		<profile>
+			<id>HEBEIPJ</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.36:3306/hebeipj_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://172.20.200.28:61616</jms.brokerURL>
+				<dmpUrl>http://localhost:8080/hebeipj</dmpUrl>
+				<label>HEBEIPJ</label>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>TJPJ</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.53:3306/tjpj_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://172.20.200.28:61616</jms.brokerURL>
+				<dmpUrl>http://localhost:8080/tjpj</dmpUrl>
+				<label>TJPJ</label>
+			</properties>
+		</profile>
+		
+		  <profile>
+			<id>SDPJ</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://172.20.200.53:3306/sdpj_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://172.20.200.28:61616</jms.brokerURL>
+				<dmpUrl>http://localhost:8080/sdpj</dmpUrl>
+				<label>SDPJ</label>
+			</properties>
+		</profile>
 		
 	</profiles>
 </project>
