@@ -169,12 +169,20 @@ public class BulidVipShopB2cData {
 				ExptReason exptReason = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
 				String expt_msg = exptReason.getExpt_msg();
 				String expt_code = exptReason.getExpt_code();
+				
+				if (expt_code != null && !expt_code.isEmpty()){
+					vipshopXMLNote.setOrder_status_info(expt_msg);
+					vipshopXMLNote.setOrder_status(expt_code);
+				}
 				if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
-					return null;
+					if(Long.valueOf(cwbOrder.getCwbordertypeid())!=CwbOrderTypeIdEnum.Peisong.getValue()){
+						return null;
+					}
+					vipshopXMLNote.setOrder_status(VipShopReceiveStatus);
+					vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "成功" : orderFlowDetail.getDetail(orderFlow));
 				}
 
-				vipshopXMLNote.setOrder_status_info(expt_msg);
-				vipshopXMLNote.setOrder_status(expt_code);
+				
 
 			}
 			
