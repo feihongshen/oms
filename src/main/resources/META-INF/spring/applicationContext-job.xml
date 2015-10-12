@@ -70,6 +70,7 @@
 							  <ref bean="doTime_gztlOutbranch"/>
 							  <ref bean="doTime_gztl"/>
 							  <ref bean="doTime_weisudaDeliveryResult"/>
+							  <ref bean="doTime_sysInit"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -874,6 +875,25 @@
 			<value>getJiuYe_Task</value>
 		</property>
 	</bean> 
+	
+	
+	  <bean id="doTime_sysInit" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+           <property name="jobDetail">
+               <ref bean="getSystemInitTask" />
+           </property>
+             <property name="cronExpression">
+               <value>0 */30 * * * ?</value>
+           </property>
+      </bean>
+     
+     <bean id="getSystemInitTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+      <property name="targetBean">
+             <value>excuteTimmer</value>
+         </property>
+         <property name="targetMethod">
+             <value>updateBatcnitialThreadMap</value>
+         </property>
+     </bean>
 	     
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>
