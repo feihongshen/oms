@@ -522,6 +522,11 @@ src/main/java/cn/explink/b2c/yonghuics/YonghuiExpEmum.java -text
 src/main/java/cn/explink/b2c/yonghuics/YonghuiFlowEnum.java -text
 src/main/java/cn/explink/b2c/yonghuics/YonghuiJSONnote.java -text
 src/main/java/cn/explink/b2c/yonghuics/YonghuiService.java -text
+src/main/java/cn/explink/b2c/zhemeng/BulidZhemengB2cData.java -text
+src/main/java/cn/explink/b2c/zhemeng/Zhemeng.java -text
+src/main/java/cn/explink/b2c/zhemeng/ZhemengFlowEnum.java -text
+src/main/java/cn/explink/b2c/zhemeng/ZhemengService.java -text
+src/main/java/cn/explink/b2c/zhemeng/ZhemengXMLNote.java -text
 src/main/java/cn/explink/b2c/zhongliang/BuildZhongliangB2cData.java -text
 src/main/java/cn/explink/b2c/zhongliang/VerifyDataUtil.java -text
 src/main/java/cn/explink/b2c/zhongliang/Zhongliang.java -text

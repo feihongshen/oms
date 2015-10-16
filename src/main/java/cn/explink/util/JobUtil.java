@@ -1,7 +1,6 @@
 package cn.explink.util;
 
 import java.text.SimpleDateFormat;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +64,7 @@ import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
 import cn.explink.b2c.yonghuics.YonghuiService;
+import cn.explink.b2c.zhemeng.ZhemengService;
 import cn.explink.b2c.zhongliang.ZhongliangService;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.ExpressSysMonitorDAO;
@@ -197,7 +197,8 @@ public class JobUtil {
 	GztlServiceFeedback gztlServiceFeedback;
 	@Autowired
 	JiuyeService jiuyeService;
-
+	@Autowired
+	ZhemengService zhemengService;
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -929,5 +930,17 @@ public class JobUtil {
 
 		this.logger.info("执行了推送九曵定时器!");
 	}
+	
+	public void getZhemeng_Task() {
+		try {
+
+			this.zhemengService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了哲盟定时器异常!", e);
+		}
+
+		this.logger.info("执行了推送哲盟定时器!");
+	}
+}
 	
 }

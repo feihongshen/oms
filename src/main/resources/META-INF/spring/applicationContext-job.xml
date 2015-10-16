@@ -71,6 +71,7 @@
 							  <ref bean="doTime_gztl"/>
 							  <ref bean="doTime_weisudaDeliveryResult"/>
 							  <ref bean="doTime_sysInit"/>
+							   <ref bean="doTime_zhemeng"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
