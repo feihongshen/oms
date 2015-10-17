@@ -12,7 +12,6 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -23,13 +22,7 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.hxgdms.Hxgdms;
 import cn.explink.b2c.hxgdms.HxgdmsJsonError;
-import cn.explink.b2c.hxgdms.HxgdmsJsonNote;
 import cn.explink.b2c.hxgdms.HxgdmsJsonTrack;
-import cn.explink.b2c.tmall.TmallXMLNote;
-import cn.explink.b2c.tmallqlk.jsondto.Traces;
-import cn.explink.b2c.tmallqlk.jsondto.TracesShell;
-import cn.explink.b2c.tmallqlk.jsondto.response.Response;
-import cn.explink.b2c.tmallqlk.jsondto.response.Responses;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
 import cn.explink.b2c.tools.B2cEnum;

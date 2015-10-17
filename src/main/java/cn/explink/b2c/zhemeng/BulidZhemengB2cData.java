@@ -1,8 +1,6 @@
 package cn.explink.b2c.zhemeng;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -12,18 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.explink.b2c.tmallqlk.jsondto.Trace;
-import cn.explink.b2c.tmallqlk.jsondto.Traces;
-import cn.explink.b2c.tmallqlk.jsondto.TracesShell;
-import cn.explink.b2c.tmallqlk.jsondto.response.Response;
-import cn.explink.b2c.tmallqlk.jsondto.response.Responses;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
-import cn.explink.b2c.tools.B2cEnum;
-import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.User;
-import cn.explink.enumutil.BranchEnum;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
