@@ -427,6 +427,7 @@ src/main/java/cn/explink/b2c/vipshop/VipShop.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopConfig.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopCwbFeedBackService.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopExceptionHandler.java -text
+src/main/java/cn/explink/b2c/vipshop/VipShopExptCodeEnum.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopFlowEnum.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopMD5Util.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopXMLNote.java -text

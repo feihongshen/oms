@@ -26,6 +26,7 @@ import cn.explink.domain.Branch;
 import cn.explink.domain.Common;
 import cn.explink.domain.CwbOrderType;
 import cn.explink.domain.User;
+import cn.explink.enumutil.CwbOrderTypeEnum;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
@@ -78,35 +79,13 @@ public class BulidVipShopB2cData {
 			logger.info("订单号：{}封装成唯品会所需要的json----开始,状态：{}", cwbOrder.getCwb(), flowOrdertype);
 
 			VipShopXMLNote vipshopXMLNote = new VipShopXMLNote();
+			vipshopXMLNote.setVersion("1.0");
 			vipshopXMLNote.setOrder_sn(cwbOrder.getCwb());
 			vipshopXMLNote.setOrder_status(VipShopReceiveStatus);
 			vipshopXMLNote.setCwbordertypeid(Long.valueOf(cwbOrder.getCwbordertypeid()));
 
 			if (Long.valueOf(cwbOrder.getCwbordertypeid()) == CwbOrderTypeIdEnum.Shangmentui.getValue()) {
-				if (VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShangMenTuiChengGong_t.getVipshop_state()))
-						|| VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))) {
-					String details = filterGoodDetails(cwbOrder, delivery_state);
-					vipshopXMLNote.setDetails(details);
-					
-					 if(VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))){
-						 vipshopXMLNote.setGoods_reason(cwbOrder.getBackreason());
-					 }
-					
-				}
-				vipshopXMLNote.setShangmenlanshoutime(deliveryState != null ? deliveryState.getShangmenlanshoutime() : "");
-
-				if (VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.FenZhanLingHuo_t.getVipshop_state()))) {
-					// User
-					// deliverUser=getDmpdao.getUserById(cwbOrder.getDeliverid());
-					User deliverUser = cacheBaseListener.getUser(cwbOrder.getDeliverid());
-
-					String delivername = deliverUser.getRealname();
-					String usermobile = deliverUser.getUsermobile();
-					vipshopXMLNote.setDeliver_name(delivername);
-					vipshopXMLNote.setDeliver_mobile(usermobile);
-				}
-				
-
+				extraShangMenTuiExtends(cwbOrder, deliveryState,delivery_state, VipShopReceiveStatus, vipshopXMLNote);
 			}
 			
 			/*
@@ -122,36 +101,16 @@ public class BulidVipShopB2cData {
 					logger.error("唯品会提前时间未知异常", e);
 					shouldtime = currenttime;
 				}
-
 				vipshopXMLNote.setOrder_status_time(shouldtime);
 			} else {
 				vipshopXMLNote.setOrder_status_time(DateTimeUtil.formatDate(orderFlow.getCredate()));
 			}
-			vipshopXMLNote.setVersion("1.0");
-
 			
 			/*
 			 * vip 全部退货、部分退货
 			 */
 			if ((delivery_state == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (delivery_state == DeliveryStateEnum.BuFenTuiHuo.getValue())) {
-				ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-				String expt_msg = ((exptReason.getExpt_msg() == null) || exptReason.getExpt_msg().equals("")) ? "其他原因" : exptReason.getExpt_msg();
-				
-				String is_unpacked ="0";
-				VipShop vipshop = this.vipshopService.getVipShopSettingMethod(Integer.valueOf(b2cenum)); // 获取配置信息
-				if(vipshop.getResuseReasonFlag()==1){ //回传拒收状态为空
-					vipshopXMLNote.setOrder_status_info("");
-				}else{
-					try {
-						 is_unpacked =expt_msg.contains("_")?expt_msg.substring(0,1):"0";
-						 vipshopXMLNote.setOrder_status_info(expt_msg.substring(expt_msg.indexOf("_")+1));
-					} catch (Exception e) {
-						logger.error("vipshop拒收单维护错误cwb="+orderFlow.getCwb()+",expt_msg="+expt_msg,e);
-						vipshopXMLNote.setOrder_status_info(expt_msg);
-					}
-				}
-				
-				vipshopXMLNote.setIs_unpacked(is_unpacked);  //是否开箱验货(0未开箱、1已开箱) 格式： 0_拒收不要   1_不喜欢
+				extraJuShouExtended(b2cenum, orderFlow, cwbOrder,delivery_state, vipshopXMLNote);
 			}  
 			/*
 			 * vip 分站滞留
@@ -161,28 +120,7 @@ public class BulidVipShopB2cData {
 					||Long.valueOf(cwbOrder.getCwbordertypeid())==CwbOrderTypeIdEnum.Shangmentui.getValue()
 					)
 					) { 
-				/**
-				 * 20131105
-				 * 唯品会新增
-				 * 滞留状态一定要存储编码，拒收不需要
-				 */
-				ExptReason exptReason = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-				String expt_msg = exptReason.getExpt_msg();
-				String expt_code = exptReason.getExpt_code();
-				
-				if (expt_code != null && !expt_code.isEmpty()){
-					vipshopXMLNote.setOrder_status_info(expt_msg);
-					vipshopXMLNote.setOrder_status(expt_code);
-				}
-				if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
-					if(Long.valueOf(cwbOrder.getCwbordertypeid())!=CwbOrderTypeIdEnum.Peisong.getValue()){
-						return null;
-					}
-					vipshopXMLNote.setOrder_status(VipShopReceiveStatus);
-					vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "成功" : orderFlowDetail.getDetail(orderFlow));
-				}
-
-				
+				extraFenZhanZhiLiuExtended(orderFlow, cwbOrder, delivery_state,VipShopReceiveStatus, vipshopXMLNote);
 
 			}
 			
@@ -190,21 +128,7 @@ public class BulidVipShopB2cData {
 			//上门拒退
 			else if (delivery_state == DeliveryStateEnum.ShangMenJuTui.getValue())
 			{ 
-				/**
-				 * 20131105
-				 * 唯品会新增
-				 * 滞留状态一定要存储编码，拒收不需要
-				 */
-				ExptReason exptReason = b2ctools.getExptReasonByB2c(0, cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-				String expt_msg = exptReason.getExpt_msg();
-				String expt_code = exptReason.getExpt_code();
-				if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
-					vipshopXMLNote.setOrder_status_info("其它原因");
-					vipshopXMLNote.setOrder_status("3610");
-				}else{
-					vipshopXMLNote.setOrder_status_info(expt_msg);
-					vipshopXMLNote.setOrder_status(expt_code);
-				}
+				extraJuTuiExtended(cwbOrder, delivery_state, vipshopXMLNote);
 			}
 			/*
 			 * vip 配送成功
@@ -227,8 +151,8 @@ public class BulidVipShopB2cData {
 			else {
 				vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "成功" : orderFlowDetail.getDetail(orderFlow));
 			}
+			
 			String currentCityName = cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchname() == null ? "分站" : cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchname();
-
 			vipshopXMLNote.setCurrent_city_name(currentCityName);
 			vipshopXMLNote.setSign_man("5".equals(VipShopReceiveStatus) ? sign_man : "");
 			vipshopXMLNote.setSign_man_phone("5".equals(VipShopReceiveStatus) ? sign_man_phone : "");
@@ -236,27 +160,7 @@ public class BulidVipShopB2cData {
 			// 33状态
 
 			if ("33".equals(VipShopReceiveStatus)) {
-				// User
-				// deliverUser=getDmpdao.getUserById(cwbOrder.getDeliverid());
-				User deliverUser = cacheBaseListener.getUser(cwbOrder.getDeliverid());
-				String delivername = deliverUser.getRealname();
-				String usermobile = deliverUser.getUsermobile();
-				try {
-					if (delivername != null && delivername.length() > 4) {
-						delivername = delivername.substring(0, 4);
-					}
-					if (usermobile != null && usermobile.length() > 12) {
-						usermobile = usermobile.substring(0, 12);
-					}
-				} catch (Exception e) {
-				}
-
-				String message = "您的订单:" + cwbOrder.getCwb() + "已到配送站点。详情请联系配送员：" + delivername + "，电话：" + usermobile + "。请留意收件";
-				vipshopXMLNote.setOrder_status_info(message);
-				vipshopXMLNote.setDeliverUser(deliverUser.getRealname());
-				vipshopXMLNote.setDeliverMobile(deliverUser.getUsermobile());
-				vipshopXMLNote.setDeliverBranch(getBranchById(orderFlow.getBranchid()).getBranchname());
-
+				extra33StatusExtends(orderFlow, cwbOrder, vipshopXMLNote);
 			}
 			
 			if (flowOrdertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {
@@ -291,6 +195,195 @@ public class BulidVipShopB2cData {
 		}
 	}
 
+	private void extra33StatusExtends(DmpOrderFlow orderFlow,
+			DmpCwbOrder cwbOrder, VipShopXMLNote vipshopXMLNote) {
+		// User
+		// deliverUser=getDmpdao.getUserById(cwbOrder.getDeliverid());
+		User deliverUser = cacheBaseListener.getUser(cwbOrder.getDeliverid());
+		String delivername = deliverUser.getRealname();
+		String usermobile = deliverUser.getUsermobile();
+		try {
+			if (delivername != null && delivername.length() > 4) {
+				delivername = delivername.substring(0, 4);
+			}
+			if (usermobile != null && usermobile.length() > 12) {
+				usermobile = usermobile.substring(0, 12);
+			}
+		} catch (Exception e) {
+		}
+
+		String message = "您的订单:" + cwbOrder.getCwb() + "已到配送站点。详情请联系配送员：" + delivername + "，电话：" + usermobile + "。请留意收件";
+		vipshopXMLNote.setOrder_status_info(message);
+		vipshopXMLNote.setDeliverUser(deliverUser.getRealname());
+		vipshopXMLNote.setDeliverMobile(deliverUser.getUsermobile());
+		vipshopXMLNote.setDeliverBranch(getBranchById(orderFlow.getBranchid()).getBranchname());
+	}
+
+	private void extraShangMenTuiExtends(DmpCwbOrder cwbOrder,
+			DmpDeliveryState deliveryState, long delivery_state,
+			String VipShopReceiveStatus, VipShopXMLNote vipshopXMLNote)
+			throws IOException, JsonParseException, JsonMappingException,
+			JsonGenerationException {
+		if (VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShangMenTuiChengGong_t.getVipshop_state()))
+				|| VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))) {
+			String details = filterGoodDetails(cwbOrder, delivery_state);
+			vipshopXMLNote.setDetails(details);
+			
+			 if(VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state()))){
+				 vipshopXMLNote.setGoods_reason(cwbOrder.getBackreason());
+			 }
+			
+		}
+		vipshopXMLNote.setShangmenlanshoutime(deliveryState != null ? deliveryState.getShangmenlanshoutime() : "");
+
+		if (VipShopReceiveStatus.equals(String.valueOf(VipShopFlowEnum.FenZhanLingHuo_t.getVipshop_state()))) {
+			// User
+			// deliverUser=getDmpdao.getUserById(cwbOrder.getDeliverid());
+			User deliverUser = cacheBaseListener.getUser(cwbOrder.getDeliverid());
+
+			String delivername = deliverUser.getRealname();
+			String usermobile = deliverUser.getUsermobile();
+			vipshopXMLNote.setDeliver_name(delivername);
+			vipshopXMLNote.setDeliver_mobile(usermobile);
+		}
+	}
+
+	private void extraJuShouExtended(String b2cenum, DmpOrderFlow orderFlow,
+			DmpCwbOrder cwbOrder, long delivery_state,
+			VipShopXMLNote vipshopXMLNote) {
+		ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+		String expt_msg = ((exptReason.getExpt_msg() == null) || exptReason.getExpt_msg().equals("")) ? "其他原因" : exptReason.getExpt_msg();
+		
+		String is_unpacked ="0";
+		VipShop vipshop = this.vipshopService.getVipShopSettingMethod(Integer.valueOf(b2cenum)); // 获取配置信息
+		if(vipshop.getResuseReasonFlag()==1){ //回传拒收状态为空
+			vipshopXMLNote.setOrder_status_info("");
+		}else{
+			try {
+				 is_unpacked =expt_msg.contains("_")?expt_msg.substring(0,1):"0";
+				 vipshopXMLNote.setOrder_status_info(expt_msg.substring(expt_msg.indexOf("_")+1));
+			} catch (Exception e) {
+				logger.error("vipshop拒收单维护错误cwb="+orderFlow.getCwb()+",expt_msg="+expt_msg,e);
+				vipshopXMLNote.setOrder_status_info(expt_msg);
+			}
+		}
+		
+		vipshopXMLNote.setIs_unpacked(is_unpacked);  //是否开箱验货(0未开箱、1已开箱) 格式： 0_拒收不要   1_不喜欢
+	}
+
+	private void extraJuTuiExtended(DmpCwbOrder cwbOrder, long delivery_state,
+			VipShopXMLNote vipshopXMLNote) {
+		/**
+		 * 20131105
+		 * 唯品会新增
+		 * 滞留状态一定要存储编码，拒收不需要
+		 */
+		ExptReason exptReason = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+		String expt_msg = exptReason.getExpt_msg();
+		String expt_code = exptReason.getExpt_code();
+		if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
+			vipshopXMLNote.setOrder_status_info("其它原因");
+			vipshopXMLNote.setOrder_status("3610");
+		}else{
+			if(Long.valueOf(cwbOrder.getCwbordertypeid())!=CwbOrderTypeIdEnum.Peisong.getValue()){
+				
+				VipShopExptCodeEnum matchEnum =	this.getJuShouMatchPeisongLanTui(expt_code,expt_msg);
+				vipshopXMLNote.setOrder_status_info(matchEnum.getLantuiMsg());
+				vipshopXMLNote.setOrder_status(matchEnum.getLantuiCode());
+				
+			}else{
+				vipshopXMLNote.setOrder_status_info(expt_msg);
+				vipshopXMLNote.setOrder_status(expt_code);
+			}
+			
+			
+		}
+	}
+
+	/**
+	 * 滞留原因推送扩展
+	 * @param orderFlow
+	 * @param cwbOrder
+	 * @param delivery_state
+	 * @param VipShopReceiveStatus
+	 * @param vipshopXMLNote
+	 * @return
+	 */
+	private void extraFenZhanZhiLiuExtended(DmpOrderFlow orderFlow,
+			DmpCwbOrder cwbOrder, long delivery_state,
+			String VipShopReceiveStatus, VipShopXMLNote vipshopXMLNote) {
+		/**
+		 * 20131105
+		 * 唯品会新增
+		 * 滞留状态一定要存储编码，拒收不需要
+		 */
+		ExptReason exptReason = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+		String expt_msg = exptReason.getExpt_msg();
+		String expt_code = exptReason.getExpt_code();
+		
+		if (expt_code != null && !expt_code.isEmpty()){
+			if(Long.valueOf(cwbOrder.getCwbordertypeid())!=CwbOrderTypeIdEnum.Peisong.getValue()){
+				VipShopExptCodeEnum matchEnum = getZhiLiuMatchPeisongLanTui(expt_code);
+				vipshopXMLNote.setOrder_status_info(matchEnum.getLantuiMsg());
+				vipshopXMLNote.setOrder_status(matchEnum.getLantuiCode());
+			}else{
+				vipshopXMLNote.setOrder_status_info(expt_msg);
+				vipshopXMLNote.setOrder_status(expt_code);
+			}
+			
+		}
+		if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
+			
+			vipshopXMLNote.setOrder_status(VipShopReceiveStatus);
+			vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "成功" : orderFlowDetail.getDetail(orderFlow));
+		}
+		
+	}
+
+	/**
+	 * 获取滞留类型，配送和揽退的匹配
+	 * @param expt_code
+	 * @return
+	 */
+	private VipShopExptCodeEnum getZhiLiuMatchPeisongLanTui(String expt_code) {
+		for(VipShopExptCodeEnum em:VipShopExptCodeEnum.values()){
+			if(em.getType()==1){
+				continue;
+			}
+			if(expt_code.equals(em.getLantuiCode())){ //选择异常原因恰好是揽退单
+				return em;
+			}
+			
+			if(em.getPeisongCode().equals(expt_code)){
+				return em;
+			}
+		}
+		return VipShopExptCodeEnum.defaultZhiLiu; //如果未命中异常码，则默认
+	}
+
+	
+	/**
+	 * 获取拒收类型，配送和揽退的匹配
+	 * @param expt_code
+	 * @return
+	 */
+	private VipShopExptCodeEnum getJuShouMatchPeisongLanTui(String expt_code,String expt_msg) {
+		for(VipShopExptCodeEnum em:VipShopExptCodeEnum.values()){
+			if(em.getType()==0){
+				continue;
+			}
+			if(expt_code.equals(em.getLantuiCode())){
+				return em;
+			}
+			
+			if(em.getPeisongMsg().equals(expt_msg)){
+				return em;
+			}
+		}
+		return VipShopExptCodeEnum.detfaultJuShou;
+	}
+	
+	
 	private String filterGoodDetails(DmpCwbOrder cwbOrder, long delivery_state) throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
 		String goodDetails = getDmpdao.getOrderGoods(cwbOrder.getCwb());
 
