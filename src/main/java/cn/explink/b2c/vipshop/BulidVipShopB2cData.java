@@ -278,7 +278,7 @@ public class BulidVipShopB2cData {
 		 * 唯品会新增
 		 * 滞留状态一定要存储编码，拒收不需要
 		 */
-		ExptReason exptReason = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), 0, String.valueOf(cwbOrder.getCustomerid()), delivery_state);
+		ExptReason exptReason = b2ctools.getExptReasonByB2c(0, cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
 		String expt_msg = exptReason.getExpt_msg();
 		String expt_code = exptReason.getExpt_code();
 		if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
