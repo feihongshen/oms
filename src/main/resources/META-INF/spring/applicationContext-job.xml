@@ -895,6 +895,26 @@
              <value>updateBatcnitialThreadMap</value>
          </property>
      </bean>
+     
+     	<bean id="doTime_zhemeng" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getZhemeng" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getZhemeng" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getZhemeng_Task</value>
+		</property>
+	</bean>
 	     
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>
