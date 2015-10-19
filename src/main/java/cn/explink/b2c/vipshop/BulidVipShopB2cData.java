@@ -379,9 +379,6 @@ public class BulidVipShopB2cData {
 			if(em.getPeisongMsg().equals(expt_msg)){
 				return em;
 			}
-			VipShopExptCodeEnum ssssenum = VipShopExptCodeEnum.detfaultJuShou;
-			ssssenum.setLantuiCode(expt_code);
-			ssssenum.setLantuiMsg(expt_msg);
 		}
 		return VipShopExptCodeEnum.detfaultJuShou;
 	}
