@@ -131,7 +131,7 @@ public class BulidVipShopB2cData {
 				extraJuTuiExtended(cwbOrder, delivery_state, vipshopXMLNote);
 			}
 			/*
-			 * vip 配送成功
+			 * vip 配送配送在途
 			 */
 			else if(delivery_state == DeliveryStateEnum.PeiSongChengGong.getValue()){
 				
@@ -149,7 +149,7 @@ public class BulidVipShopB2cData {
 			 * vip 公共情况
 			 */
 			else {
-				vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "成功" : orderFlowDetail.getDetail(orderFlow));
+				vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "配送在途" : orderFlowDetail.getDetail(orderFlow));
 			}
 			
 			String currentCityName = cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchname() == null ? "分站" : cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchname();
@@ -335,7 +335,7 @@ public class BulidVipShopB2cData {
 		if (expt_code == null || expt_code.isEmpty()) { // 如果不满足匹配条件
 			
 			vipshopXMLNote.setOrder_status(VipShopReceiveStatus);
-			vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "成功" : orderFlowDetail.getDetail(orderFlow));
+			vipshopXMLNote.setOrder_status_info(orderFlowDetail.getDetail(orderFlow) == null ? "配送在途" : orderFlowDetail.getDetail(orderFlow));
 		}
 		
 	}
@@ -379,10 +379,20 @@ public class BulidVipShopB2cData {
 			if(em.getPeisongMsg().equals(expt_msg)){
 				return em;
 			}
+			VipShopExptCodeEnum ssssenum = VipShopExptCodeEnum.detfaultJuShou;
+			ssssenum.setLantuiCode(expt_code);
+			ssssenum.setLantuiMsg(expt_msg);
 		}
 		return VipShopExptCodeEnum.detfaultJuShou;
 	}
 	
+	public static void main(String[] args) {
+		VipShopExptCodeEnum ssssenum = VipShopExptCodeEnum.detfaultJuShou;
+		ssssenum.setLantuiCode("1111");
+		ssssenum.setLantuiMsg("2222");
+		System.out.println(ssssenum.getLantuiCode()+"==="+ssssenum.getLantuiMsg());
+		
+	}
 	
 	private String filterGoodDetails(DmpCwbOrder cwbOrder, long delivery_state) throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
 		String goodDetails = getDmpdao.getOrderGoods(cwbOrder.getCwb());
