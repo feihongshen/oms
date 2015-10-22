@@ -129,7 +129,7 @@ public class YihaodianService {
 			flowFromJMSB2cService.sendTodmp(b2cids);
 
 			if (datalist != null && datalist.size() > 0) {
-				DeliveryResultByYiHaoDian(yhd_key);
+				DeliveryResultByYiHaoDian(yhd_key,customerid,url);
 			}
 
 			calcCount += datalist.size();
