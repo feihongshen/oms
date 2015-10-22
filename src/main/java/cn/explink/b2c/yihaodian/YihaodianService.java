@@ -90,7 +90,7 @@ public class YihaodianService {
 			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getCustomerids(),yihaodian.getDeliveryResult_URL()); //一号店
 			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getYwcustomerid(),yihaodian.getYwdeliveryResult_URL()); //一号店 药网
 		}else{
-			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getYwcustomerid()+","+yihaodian.getCustomerids(),yihaodian.getDeliveryResult_URL()); //一号店 和药网
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,(yihaodian.getYwcustomerid()+","+yihaodian.getCustomerids()),yihaodian.getDeliveryResult_URL()); //一号店 和药网
 		}
 		
 		return calcCount;
