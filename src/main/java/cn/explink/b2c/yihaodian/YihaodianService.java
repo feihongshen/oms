@@ -84,28 +84,34 @@ public class YihaodianService {
 			logger.info("未开启[一号店]对接,yhd_key={}", yhd_key);
 			return -1;
 		}
-		calcCount = DeliveryResultByYiHaoDian(yhd_key);
+		
+		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
+		if(yihaodian.getIsopenywaddressflag()==1){//开启
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getCustomerids(),yihaodian.getDeliveryResult_URL()); //一号店
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getYwcustomerid(),yihaodian.getYwdeliveryResult_URL()); //一号店 药网
+		}else{
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getYwcustomerid()+","+yihaodian.getCustomerids(),yihaodian.getDeliveryResult_URL()); //一号店 和药网
+		}
+		
 		return calcCount;
 	}
 
 	/**
 	 * 投递结果反馈 只推送结果为 0 send_b2c_flag=0
 	 */
-	public long DeliveryResultByYiHaoDian(int yhd_key) {
+	public long DeliveryResultByYiHaoDian(int yhd_key,String customerid,String url) {
 		long calcCount = 0;
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		try {
 			
-			String ywcustomerid=yihaodian.getYwcustomerid()==null||yihaodian.getYwcustomerid().isEmpty()?"0":yihaodian.getYwcustomerid();
-			
-			List<B2CData> datalist = b2cDataDAO.getDataListByFlowStatus(FlowOrderTypeEnum.YiShenHe.getValue(), yihaodian.getCustomerids()+","+ywcustomerid, yihaodian.getCallBackCount());
+			List<B2CData> datalist = b2cDataDAO.getDataListByFlowStatus(FlowOrderTypeEnum.YiShenHe.getValue(), customerid, yihaodian.getCallBackCount());
 			if (datalist == null || datalist.size() == 0) {
 				return 0;
 			}
 			String b2cids = "";
 			for (B2CData b2cdata : datalist) {
 				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata);
-				ReturnDto returnDto = restTemplate.DeliveryResult(yihaodian.getDeliveryResult_URL(), condto); // 返回dto
+				ReturnDto returnDto = restTemplate.DeliveryResult(url, condto); // 返回dto
 				if (!returnDto.getErrCode().equals(YihaodianExpEmum.Success.getErrCode())) {
 
 					b2cDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), 2, returnDto.getErrMsg());
@@ -166,11 +172,17 @@ public class YihaodianService {
 	 * @param delivery_state
 	 * @return
 	 */
-	public void DeliveryLogFeedBack(DmpOrderFlow orderFlow, long delivery_state, long flowOrdertype, int yhd_key) {
+	public void DeliveryLogFeedBack(DmpOrderFlow orderFlow, long delivery_state, long flowOrdertype, int yhd_key,long customerid) {
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		if (!b2ctools.isB2cOpen(yhd_key)) {
 			logger.info("未开Yihaodian的对接,yhd_key={}", yhd_key);
 			return;
+		}
+		String url=yihaodian.getTrackLog_URL();
+		if(yihaodian.getIsopenywaddressflag()==1){ //开启使用新地址药网
+			if(customerid==Long.valueOf(yihaodian.getYwcustomerid())){
+				url=yihaodian.getYwtrackLog_URL();
+			}
 		}
 		OrderDeliveryLogDto logdto = new OrderDeliveryLogDto();
 		logdto.setUserCode(yihaodian.getUserCode());
@@ -185,7 +197,7 @@ public class YihaodianService {
 		logdto.setOperator(getDmpdao.getUserById(orderFlow.getUserid()).getRealname());
 		logdto.setRemark(orderFlowDetail.getDetail(orderFlow));
 
-		ReturnDto returnDto = restTemplate.orderDeliveryLog(yihaodian.getTrackLog_URL(), logdto); // 返回dto
+		ReturnDto returnDto = restTemplate.orderDeliveryLog(url, logdto); // 返回dto
 		if (returnDto == null) {
 			logger.info("跟踪日志反馈，发送超时。。yhd_key={},cwb={}", yhd_key, orderFlow.getCwb());
 		}

@@ -40,7 +40,7 @@ public class BulidYihaodianB2cData {
 			return null;
 		}
 		// 一号店的跟踪日志
-		yidaodianService.DeliveryLogFeedBack(orderFlow, delivery_state, flowOrdertype, Integer.valueOf(yihaodian_key));
+		yidaodianService.DeliveryLogFeedBack(orderFlow, delivery_state, flowOrdertype, Integer.valueOf(yihaodian_key),cwbOrder.getCustomerid());
 
 		// 配送结果的封装
 		if (flowOrdertype == FlowOrderTypeEnum.YiShenHe.getValue() && delivery_state != DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
