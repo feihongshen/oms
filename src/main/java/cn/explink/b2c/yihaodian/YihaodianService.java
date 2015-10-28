@@ -273,7 +273,7 @@ public class YihaodianService {
 	/**
 	 * 投递结果反馈 只推送结果为 2 send_b2c_flag=2 每 1 个小时 推送一次 最多能推送 100次
 	 */
-	public void DeliveryResultByYiHaoDianAgain(int yhd_key,String userCode) {
+	public void DeliveryResultByYiHaoDianAgain(int yhd_key) {
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		try {
 			String remarklike = "06"; // 模糊关键词 ，确保只识别 存在的订单且是反馈为 拒收的。 06 表明拒收异常的
@@ -283,7 +283,7 @@ public class YihaodianService {
 			}
 
 			for (B2CData b2cdata : datalist) {
-				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata,userCode);
+				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata,yihaodian.getUserCode());
 				ReturnDto returnDto = restTemplate.DeliveryResult(yihaodian.getDeliveryResult_URL(), condto); // 返回dto
 
 				if (!returnDto.getErrCode().equals(YihaodianExpEmum.Success.getErrCode())) {
