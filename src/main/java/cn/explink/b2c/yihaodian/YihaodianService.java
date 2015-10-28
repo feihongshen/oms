@@ -87,10 +87,10 @@ public class YihaodianService {
 		
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		if(yihaodian.getIsopenywaddressflag()==1){//开启
-			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getCustomerids(),yihaodian.getDeliveryResult_URL()); //一号店
-			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getYwcustomerid(),yihaodian.getYwdeliveryResult_URL()); //一号店 药网
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getCustomerids(),yihaodian.getDeliveryResult_URL(),yihaodian.getUserCode()); //一号店
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,yihaodian.getYwcustomerid(),yihaodian.getYwdeliveryResult_URL(),yihaodian.getYwUserCode()); //一号店 药网
 		}else{
-			calcCount = DeliveryResultByYiHaoDian(yhd_key,(yihaodian.getYwcustomerid()+","+yihaodian.getCustomerids()),yihaodian.getDeliveryResult_URL()); //一号店 和药网
+			calcCount = DeliveryResultByYiHaoDian(yhd_key,(yihaodian.getYwcustomerid()+","+yihaodian.getCustomerids()),yihaodian.getDeliveryResult_URL(),yihaodian.getUserCode()); //一号店 和药网
 		}
 		
 		return calcCount;
@@ -99,7 +99,7 @@ public class YihaodianService {
 	/**
 	 * 投递结果反馈 只推送结果为 0 send_b2c_flag=0
 	 */
-	public long DeliveryResultByYiHaoDian(int yhd_key,String customerid,String url) {
+	public long DeliveryResultByYiHaoDian(int yhd_key,String customerid,String url,String userCode) {
 		long calcCount = 0;
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		try {
@@ -110,7 +110,7 @@ public class YihaodianService {
 			}
 			String b2cids = "";
 			for (B2CData b2cdata : datalist) {
-				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata);
+				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata,userCode);
 				ReturnDto returnDto = restTemplate.DeliveryResult(url, condto); // 返回dto
 				if (!returnDto.getErrCode().equals(YihaodianExpEmum.Success.getErrCode())) {
 
@@ -129,7 +129,7 @@ public class YihaodianService {
 			flowFromJMSB2cService.sendTodmp(b2cids);
 
 			if (datalist != null && datalist.size() > 0) {
-				DeliveryResultByYiHaoDian(yhd_key,customerid,url);
+				DeliveryResultByYiHaoDian(yhd_key,customerid,url,userCode);
 			}
 
 			calcCount += datalist.size();
@@ -147,13 +147,13 @@ public class YihaodianService {
 	 * @param b2cdata
 	 * @return
 	 */
-	private OrderDeliveryResultDto getOrderDeliverResultDto(Yihaodian yihaodian, B2CData b2cdata) {
+	private OrderDeliveryResultDto getOrderDeliverResultDto(Yihaodian yihaodian, B2CData b2cdata,String userCode) {
 		OrderDeliveryResultDto condto = new OrderDeliveryResultDto();
 		YihaodianXMLNote note = getYihaodianXMLNoteMethod(b2cdata.getJsoncontent());
-		condto.setUserCode(yihaodian.getUserCode());
+		condto.setUserCode(userCode);
 		String nowtime = DateTimeUtil.getNowTime();
 		condto.setRequestTime(nowtime);
-		condto.setSign(MD5Util.md5(yihaodian.getUserCode() + b2cdata.getCwb() + note.getDeliverystate() + note.getAmount() + nowtime + yihaodian.getPrivate_key()));
+		condto.setSign(MD5Util.md5(userCode + b2cdata.getCwb() + note.getDeliverystate() + note.getAmount() + nowtime + yihaodian.getPrivate_key()));
 		condto.setShipmentCode(b2cdata.getCwb());
 		condto.setAmount(note.getAmount());
 		condto.setPayTime(note.getPayTime());
@@ -179,17 +179,19 @@ public class YihaodianService {
 			return;
 		}
 		String url=yihaodian.getTrackLog_URL();
+		String userCode=yihaodian.getUserCode();
 		if(yihaodian.getIsopenywaddressflag()==1){ //开启使用新地址药网
 			if(customerid==Long.valueOf(yihaodian.getYwcustomerid())){
 				url=yihaodian.getYwtrackLog_URL();
+				userCode=yihaodian.getYwUserCode();
 			}
 		}
 		OrderDeliveryLogDto logdto = new OrderDeliveryLogDto();
-		logdto.setUserCode(yihaodian.getUserCode());
+		logdto.setUserCode(userCode);
 		String nowtime = DateTimeUtil.getNowTime();
 		YihaodianFlowEnum yihaodianEnum = getYihaodianFlowEnum(flowOrdertype, delivery_state);
 		logdto.setRequestTime(nowtime);
-		logdto.setSign(MD5Util.md5(yihaodian.getUserCode() + orderFlow.getCwb() + yihaodianEnum.getYihaodian_state() + nowtime + yihaodian.getPrivate_key()));
+		logdto.setSign(MD5Util.md5(userCode + orderFlow.getCwb() + yihaodianEnum.getYihaodian_state() + nowtime + yihaodian.getPrivate_key()));
 		logdto.setShipmentCode(orderFlow.getCwb());
 		logdto.setOperationTypeEnumValue(yihaodianEnum.getYihaodian_state());
 		logdto.setOperationType(getYihaodianFlowEnum(flowOrdertype, delivery_state).getText());
@@ -271,7 +273,7 @@ public class YihaodianService {
 	/**
 	 * 投递结果反馈 只推送结果为 2 send_b2c_flag=2 每 1 个小时 推送一次 最多能推送 100次
 	 */
-	public void DeliveryResultByYiHaoDianAgain(int yhd_key) {
+	public void DeliveryResultByYiHaoDianAgain(int yhd_key,String userCode) {
 		Yihaodian yihaodian = getYihaodianSettingMethod(yhd_key);
 		try {
 			String remarklike = "06"; // 模糊关键词 ，确保只识别 存在的订单且是反馈为 拒收的。 06 表明拒收异常的
@@ -281,7 +283,7 @@ public class YihaodianService {
 			}
 
 			for (B2CData b2cdata : datalist) {
-				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata);
+				OrderDeliveryResultDto condto = getOrderDeliverResultDto(yihaodian, b2cdata,userCode);
 				ReturnDto returnDto = restTemplate.DeliveryResult(yihaodian.getDeliveryResult_URL(), condto); // 返回dto
 
 				if (!returnDto.getErrCode().equals(YihaodianExpEmum.Success.getErrCode())) {

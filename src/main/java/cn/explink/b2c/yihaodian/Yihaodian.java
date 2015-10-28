@@ -13,7 +13,15 @@ public class Yihaodian {
 	private long callBackCount; // 每次回调数量
 	private int isopenDataDownload; // 是否开启订单导入接口 0关闭 1打开
 	private String ywcustomerid; //一号店药网customerid,如果 ywcustomerid=customerids,则指定同一个供货商
-	
+	private String ywUserCode;
+	public String getYwUserCode() {
+		return ywUserCode;
+	}
+
+	public void setYwUserCode(String ywUserCode) {
+		this.ywUserCode = ywUserCode;
+	}
+
 	private int isopenywaddressflag; //是否开启药网专用地址下载   0关闭 默认  1开启
 	private String ywexportCwb_URL;
 	private String ywexportSuccess_URL; // 订单数据导出成功后回调URL，告知一号店已经获取成功
