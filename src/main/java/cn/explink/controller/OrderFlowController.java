@@ -697,4 +697,47 @@ public class OrderFlowController {
 		return "/common/httpCommunicationResult";
 	}
 
+	@RequestMapping("/createDelete")
+	public String createDelete(Model model, @RequestParam(value = "name", required = false, defaultValue = "") String name,
+			@RequestParam(value = "cwbs", required = false, defaultValue = "") String cwbs) {
+
+		String sqlarray[] = { "DELETE FROM `name_dmp`.`express_ops_operation_time`", "DELETE FROM `name_dmp`.`express_ops_order_flow`", "DELETE FROM `name_dmp`.`express_ops_delivery_state`",
+				"DELETE FROM `name_dmp`.`express_ops_cwb_detail`", "DELETE FROM `name_dmp`.`express_ops_operation_time`", "DELETE FROM `name_dmp`.`express_ops_deliver_cash`",
+				"DELETE FROM `name_dmp`.`express_ops_warehouse_to_branch`", "DELETE FROM `name_dmp`.`express_ops_groupdetail`", "DELETE FROM `name_dmp`.`express_ops_complaint`",
+				"DELETE FROM `name_dmp`.`edit_delivery_state_detail`", "DELETE FROM `name_dmp`.`edit_shixiao`", "DELETE FROM `name_dmp`.`express_ops_pos_paydetail`",
+				"DELETE FROM `name_dmp`.`commen_cwb_order`", "DELETE FROM `name_dmp`.`express_ops_applyeditdeliverystate`", "DELETE FROM `name_dmp`.`express_ops_branch_histerylog`",
+				"DELETE FROM `name_dmp`.`express_ops_cwb_error`", "DELETE FROM `name_dmp`.`express_ops_cwb_temp`", "DELETE FROM `name_dmp`.`express_ops_delivery_percent`",
+				"DELETE FROM `name_dmp`.`express_ops_exception_cwb`", "DELETE FROM `name_dmp`.`express_ops_stock_detail`", "DELETE FROM `name_dmp`.`express_ops_transcwb`",
+				"DELETE FROM `name_dmp`.`express_ops_transcwb_orderflow`", "DELETE FROM `name_dmp`.`express_ops_pos_paydetail`", "DELETE FROM `name_dmp`.`express_saohuobang_information`",
+				"DELETE FROM `name_dmp`.`express_save_b2cdata`", "DELETE FROM `name_dmp`.`express_set_remark`", "DELETE FROM `name_dmp`.`express_sys_scan`",
+				"DELETE FROM `name_dmp`.`finance_audit_temp`", "DELETE FROM `name_dmp`.`ops_returncwbs`", "DELETE FROM `name_dmp`.`ops_tuihuorecord`", "DELETE FROM `name_dmp`.`ops_returncwbs`",
+				"DELETE FROM `name_dmp`.`ops_ypdjhandlerecord`", "DELETE FROM `name_dmp`.`set_onetranscwb_to_morecwbs`", "DELETE FROM `name_dmp`.`sms_manage`",
+				"DELETE FROM `name_oms`.`express_ops_order_flow`", "DELETE FROM `name_oms`.`express_ops_delivery_state`", "DELETE FROM `name_oms`.`express_ops_cwb_detail`",
+				"DELETE FROM `name_oms`.`ops_delivery_chuku`", "DELETE FROM `name_oms`.`ops_delivery_jushou`", "DELETE FROM `name_oms`.`ops_delivery_daohuo`",
+				"DELETE FROM `name_oms`.`ops_delivery_successful`", "DELETE FROM `name_oms`.`ops_delivery_zhiliu`", "DELETE FROM `name_oms`.`ops_zhongzhuan`",
+				"DELETE FROM `name_oms`.`ops_delivery_zhiliu`", "DELETE FROM `name_oms`.`express_b2cdata_liantong`", "DELETE FROM `name_oms`.`express_b2cdata_search`",
+				"DELETE FROM `name_oms`.`express_b2cdata_search_happygo`", "DELETE FROM `name_oms`.`express_b2cdata_search_saohuobang`", "DELETE FROM `name_oms`.`express_send_b2c_cod`",
+				"DELETE FROM `name_oms`.`express_send_b2c_data`", "DELETE FROM `name_dmp`.`ops_account_cwb_detail`", "DELETE FROM `name_dmp`.`ops_account_deduct_detail`",
+				"DELETE FROM `name_dmp`.`ops_account_deduct_record`", "DELETE FROM `name_dmp`.`express_ops_abnormal_order`", "DELETE FROM `name_dmp`.`express_ops_abnormal_write_back`",
+				"DELETE FROM `name_dmp`.`orders_goods`" };
+		String sqls = "";
+		if ((cwbs.length() != 0) && (name.length() != 0)) {
+			String cwbarray[] = cwbs.split("\r\n");
+			String cwbin = "  where cwb in (";
+			for (String cwb : cwbarray) {
+				cwbin += ",'" + cwb.trim() + "'";
+			}
+			cwbin = cwbin.replace("(,", "(");
+			cwbin += ");<br>";
+
+			for (String del : sqlarray) {
+
+				sqls += del.replace("name_", name + "_");
+				sqls += cwbin;
+			}
+		}
+		model.addAttribute("sqls", sqls);
+
+		return "/xiufu/tools";
+	}
 }

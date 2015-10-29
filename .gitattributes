@@ -1181,6 +1181,7 @@ src/main/webapp/WEB-INF/jsp/xiufu/codxiufu.jsp -text
 src/main/webapp/WEB-INF/jsp/xiufu/explinkinterface_test.jsp -text
 src/main/webapp/WEB-INF/jsp/xiufu/gomelist.jsp -text
 src/main/webapp/WEB-INF/jsp/xiufu/gomexiufu.jsp -text
+src/main/webapp/WEB-INF/jsp/xiufu/tools.jsp -text
 src/main/webapp/WEB-INF/jsp/xiufu/userinsert.jsp -text
 src/main/webapp/WEB-INF/jsp/xiufu/xiufu.jsp -text
 src/main/webapp/WEB-INF/jsp/xiufu/yhdxiufu.jsp -text
