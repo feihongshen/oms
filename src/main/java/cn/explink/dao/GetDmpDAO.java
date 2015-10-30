@@ -966,20 +966,25 @@ public class GetDmpDAO {
 			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
-			for (int i = 0; i < jSONArray.size(); i++) {
-				User user = new User();
-				user.setUserid(jSONArray.getJSONObject(i).getLong("userid"));
-				user.setUsername(jSONArray.getJSONObject(i).getString("username"));
-				user.setRealname(jSONArray.getJSONObject(i).getString("realname"));
-				user.setUsermobile(jSONArray.getJSONObject(i).getString("usermobile"));
-				user.setUserphone(jSONArray.getJSONObject(i).getString("userphone"));
-				user.setRoleid(jSONArray.getJSONObject(i).getLong("roleid")) ;
-				list.add(user);
+			User user=null;
+			try {
+				for (int i = 0; i < jSONArray.size(); i++) {
+					 user = new User();
+					user.setUserid(jSONArray.getJSONObject(i).getLong("userid"));
+					user.setUsername(jSONArray.getJSONObject(i).getString("username"));
+					user.setRealname(jSONArray.getJSONObject(i).getString("realname"));
+					user.setUsermobile(jSONArray.getJSONObject(i).getString("usermobile"));
+					user.setUserphone(jSONArray.getJSONObject(i).getString("userphone"));
+					user.setRoleid(jSONArray.getJSONObject(i).getLong("roleid")) ;
+					list.add(user);
+				}
+			} catch (Exception e) {
+				logger.error("获取指定user对象异常"+(user!=null?user.getUserid():""),e);
 			}
 
 		} catch (Exception e) {
 			list = null;
-			this.logger.error("获取指定getAllUsers异常");
+			this.logger.error("获取指定getAllUsers异常",e);
 		}
 		return list;
 	}
