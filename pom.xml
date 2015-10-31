@@ -2431,8 +2431,8 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://192.168.70.47:61616</jms.brokerURL>
-				<dmpUrl>http://192.168.70.49:8081/gztlfbzx</dmpUrl>
+				<jms.brokerURL>tcp://172.20.200.83:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:8080/gztlfbzx</dmpUrl>
 				<label>GZTLFBZX</label>
 			</properties>
 		</profile>
@@ -2447,8 +2447,8 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://192.168.70.47:61616</jms.brokerURL>
-				<dmpUrl>http://192.168.70.46:8080/gztl</dmpUrl>
+				<jms.brokerURL>tcp://172.20.200.83:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:8080/gztl</dmpUrl>
 				<label>GZTL</label>
 			</properties>
 		</profile>
