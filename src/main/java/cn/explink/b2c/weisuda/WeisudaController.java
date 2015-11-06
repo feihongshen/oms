@@ -26,11 +26,12 @@ public class WeisudaController {
 	private B2cTools b2ctools;
 	@Autowired
 	WeisudaService weisudaService;
-
+	@Autowired
+	WeisudaServiceExtends weisudaServiceExtends;
 	/**
-	 * 提供口查询
+	 * 唯速达手动绑定
 	 */
-	@RequestMapping("/select")
+	@RequestMapping("/bound")
 	public @ResponseBody
 	String requestCwbSearch(HttpServletRequest request, HttpServletResponse response) {
 
@@ -47,6 +48,23 @@ public class WeisudaController {
 
 	}
 
+	/**
+	 * 唯速达手动绑定 批量
+	 */
+	@RequestMapping("/bounds")
+	public @ResponseBody
+	String bounds(HttpServletRequest request, HttpServletResponse response) {
+
+		response.setCharacterEncoding("UTF-8");
+
+		this.logger.info("进入唯速达_01数据对接Controller");
+		this.weisudaServiceExtends.boundDeliveryToApp();
+
+		return "";
+
+	}
+	
+	
 	@RequestMapping("/update")
 	public @ResponseBody
 	String getUnVerifyOrders(HttpServletRequest request, HttpServletResponse response) {

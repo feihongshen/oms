@@ -777,7 +777,8 @@ public class WeisudaService {
 	private void DealWithBuildXMLAndSending(List<WeisudaCwb> weisudaCwbs, Weisuda weisuda) {
 		String cwb = "";
 		String response = "";
-		String upflagString = "唯速达_01";
+		int version = this.GetWeisuda_Version();
+		String upflagString="";
 		for (WeisudaCwb data : weisudaCwbs) {
 			try {
 				String courier_code = data.getCourier_code();
@@ -785,6 +786,7 @@ public class WeisudaService {
 				Date datetime = DateTimeUtil.formatToDate(data.getOperationTime());
 				String timestamp = (datetime.getTime() / 1000) + "";
 
+				upflagString = "唯速达_01";
 				int url = WeisudsInterfaceEnum.pushOrders.getValue();
 				if (data.getCwbordertypeid() == CwbOrderTypeIdEnum.Shangmentui.getValue()) {
 					upflagString = "唯速达_10上门退订单";
@@ -801,7 +803,7 @@ public class WeisudaService {
 				this.logger.info(upflagString + "快递员绑定接口接口发送报文,userMessage={}", xml);
 				response = this.check(weisuda, "data", xml, url);
 				this.logger.info(upflagString + "快递员绑定接口返回：{},cwb={}", response, cwb);
-				int version = this.GetWeisuda_Version();
+				
 				updateDeliveryUserBound(cwb, response, upflagString, version);
 
 			} catch (Exception e) {
@@ -1161,4 +1163,5 @@ public class WeisudaService {
 		}
 		return version;
 	}
+	
 }

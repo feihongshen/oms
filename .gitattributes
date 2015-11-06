@@ -459,6 +459,7 @@ src/main/java/cn/explink/b2c/weisuda/Weisuda.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaController.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaCwb.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaService.java -text
+src/main/java/cn/explink/b2c/weisuda/WeisudaServiceExtends.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudsInterfaceEnum.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/Delivery.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/GetUnVerifyOrders_back_Item.java -text
@@ -478,6 +479,8 @@ src/main/java/cn/explink/b2c/weisuda/xml/RootSMT.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/RootSite.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/Site.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/Sites.java -text
+src/main/java/cn/explink/b2c/weisuda/xml/bound/RespOrder.java -text
+src/main/java/cn/explink/b2c/weisuda/xml/bound/RespRootOrder.java -text
 src/main/java/cn/explink/b2c/yangguang/BulidYangGuangB2cData.java -text
 src/main/java/cn/explink/b2c/yangguang/FileUtils.java -text
 src/main/java/cn/explink/b2c/yangguang/YangGuang.java -text

@@ -42,7 +42,15 @@ public class WeisudaDAO {
 
 	public List<WeisudaCwb> getWeisudaCwb(String istuisong) {
 		try {
-			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and operationTime  IS NOT NULL limit 0,500", new WSMapper(), istuisong);
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? limit 0,500", new WSMapper(), istuisong);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public List<WeisudaCwb> getBoundWeisudaCwbs(String istuisong,long cwbordertypeid,int maxcount) {
+		try {
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=?  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid);
 		} catch (Exception e) {
 			return null;
 		}
@@ -83,6 +91,12 @@ public class WeisudaDAO {
 		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
 	}
 
+	public void updateBoundState(String cwbs, String flag,String remark) {
+
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW() where cwb in ("+cwbs+") ");
+	}
+	
+	
 	public void updataWeisudaCwbIsqianshou(String cwb, String flag, String remark) {
 		this.jdbcTemplate.update("update express_b2cdata_weisuda set isqianshou='" + flag + "' ,remark='" + remark + "' where  cwb='" + cwb + "'");
 
