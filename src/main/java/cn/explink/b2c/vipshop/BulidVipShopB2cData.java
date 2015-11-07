@@ -252,7 +252,7 @@ public class BulidVipShopB2cData {
 			DmpCwbOrder cwbOrder, long delivery_state,
 			VipShopXMLNote vipshopXMLNote) {
 		ExptReason exptReason = this.b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), cwbOrder.getBackreasonid(), String.valueOf(cwbOrder.getCustomerid()), delivery_state);
-		String expt_msg = ((exptReason.getExpt_msg() == null) || exptReason.getExpt_msg().equals("")) ? "其他原因" : exptReason.getExpt_msg();
+		String expt_msg = ((exptReason.getExpt_msg() == null) || exptReason.getExpt_msg().equals("")) ? "其它原因" : exptReason.getExpt_msg();
 		
 		String is_unpacked ="0";
 		VipShop vipshop = this.vipshopService.getVipShopSettingMethod(Integer.valueOf(b2cenum)); // 获取配置信息
