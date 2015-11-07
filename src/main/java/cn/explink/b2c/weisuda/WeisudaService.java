@@ -140,14 +140,19 @@ public class WeisudaService {
 	 * 订单与快递员绑定关系同步接口
 	 */
 
-	public void selectWeisudaCwb() {
+	public void boundDeliveryToApp() {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_01未开启[唯速达]接口");
 			return;
 		}
+		
+		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+		if(weisuda.getOpenbatchflag()==1){ //开启批量之后退出
+			return;
+		}
+		
 		try {
-			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-
+			
 			int i = 0;
 			while (true) {
 				List<WeisudaCwb> weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0");

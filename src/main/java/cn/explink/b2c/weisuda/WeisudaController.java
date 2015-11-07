@@ -42,7 +42,7 @@ public class WeisudaController {
 			return "未开启[唯速达]查询接口";
 		}
 		this.logger.info("进入唯速达_01数据对接Controller");
-		this.weisudaService.selectWeisudaCwb();
+		this.weisudaService.boundDeliveryToApp();
 
 		return "";
 
@@ -58,7 +58,7 @@ public class WeisudaController {
 		response.setCharacterEncoding("UTF-8");
 
 		this.logger.info("进入唯速达_01数据对接Controller");
-		this.weisudaServiceExtends.boundDeliveryToApp();
+		this.weisudaServiceExtends.boundsDeliveryToApp();
 
 		return "";
 

@@ -60,6 +60,7 @@ import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
 import cn.explink.b2c.wanxiang.WanxiangService;
 import cn.explink.b2c.weisuda.WeisudaService;
+import cn.explink.b2c.weisuda.WeisudaServiceExtends;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
@@ -178,6 +179,8 @@ public class JobUtil {
 	LechongService lechongService;
 	@Autowired
 	WeisudaService weisudaService;
+	@Autowired
+	WeisudaServiceExtends weisudaServiceExtends;
 
 	@Autowired
 	HomegobjService homegobjService;
@@ -801,7 +804,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
 		try {
-			this.weisudaService.selectWeisudaCwb();
+			this.weisudaService.boundDeliveryToApp(); //单票
+			this.weisudaServiceExtends.boundsDeliveryToApp();//批量
 
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达定时器异常!", e);

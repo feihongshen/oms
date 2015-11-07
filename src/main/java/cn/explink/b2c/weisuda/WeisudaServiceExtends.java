@@ -84,9 +84,19 @@ public class WeisudaServiceExtends {
 
 	/**
 	 * 订单与快递员绑定关系同步接口
+	 * 批量推送
 	 */
 
-	public void boundDeliveryToApp() {
+	public void boundsDeliveryToApp() {
+		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+			this.logger.info("唯速达_01未开启[唯速达]接口");
+			return;
+		}
+		
+		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+		if(weisuda.getOpenbatchflag()==0){ //开启批量之后退出
+			return;
+		}
 		
 		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Peisong.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_01");
 		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Shangmentui.getValue(),WeisudsInterfaceEnum.getback_boundOrders.getValue(),"唯速达_10");
@@ -97,9 +107,10 @@ public class WeisudaServiceExtends {
 		try {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 
+			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
 			int i = 0;
 			while (true) {
-				List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0",cwbordertypeid,100);
+				List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0",cwbordertypeid,maxBounds);
 				i++;
 				if (i > 100) {
 					String warning = "查询0唯速达0状态反馈已经超过100次循环，可能存在程序未知异常,请及时查询并处理!";
@@ -188,7 +199,10 @@ public class WeisudaServiceExtends {
 		
 		if (version == 1) {
 			this.weisudaDAO.updateBoundState(cwbs, "1","成功");
-			this.weisudaDAO.updateBoundState(failCwbs, "2","失败");
+			if(failCwbs!=null&&!failCwbs.isEmpty()){
+				this.weisudaDAO.updateBoundState(failCwbs, "2","失败");
+			}
+			
 		} 
 	}
 
