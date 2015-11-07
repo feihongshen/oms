@@ -61,6 +61,7 @@ import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
 import cn.explink.b2c.wanxiang.WanxiangService;
 import cn.explink.b2c.weisuda.WeisudaService;
+import cn.explink.b2c.weisuda.WeisudaServiceDeliveryResult;
 import cn.explink.b2c.weisuda.WeisudaServiceExtends;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
@@ -203,8 +204,13 @@ public class JobUtil {
 	JiuyeService jiuyeService;
 	@Autowired
 	ZhemengService zhemengService;
+
+	@Autowired
+	WeisudaServiceDeliveryResult weisudaServiceDeliveryResult;
+
 	@Autowired
 	HYGService hygService;
+
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -831,6 +837,8 @@ public class JobUtil {
 		try {
 			this.weisudaService.getUnVerifyOrdersOfCount();
 			this.weisudaService.getback_getAppOrdersCounts();
+			
+			this.weisudaServiceDeliveryResult.getDeliveryResult();
 
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达签收结果同步定时器异常!", e);

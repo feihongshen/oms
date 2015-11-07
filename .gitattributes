@@ -468,8 +468,11 @@ src/main/java/cn/explink/b2c/weisuda/Weisuda.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaController.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaCwb.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaService.java -text
+src/main/java/cn/explink/b2c/weisuda/WeisudaServiceDeliveryResult.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaServiceExtends.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudsInterfaceEnum.java -text
+src/main/java/cn/explink/b2c/weisuda/threadpool/SubExcuteWeisudaTask.java -text
+src/main/java/cn/explink/b2c/weisuda/threadpool/WeisudaExcutorService.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/Delivery.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/GetUnVerifyOrders_back_Item.java -text
 src/main/java/cn/explink/b2c/weisuda/xml/Getback_Item.java -text

@@ -28,6 +28,9 @@ public class WeisudaController {
 	WeisudaService weisudaService;
 	@Autowired
 	WeisudaServiceExtends weisudaServiceExtends;
+	@Autowired
+	WeisudaServiceDeliveryResult weisudaServiceDeliveryResult;
+	
 	/**
 	 * 唯速达手动绑定
 	 */
@@ -65,9 +68,25 @@ public class WeisudaController {
 	}
 	
 	
+	@RequestMapping("/getDeliveryResult")
+	public @ResponseBody String getDeliveryResult(HttpServletRequest request, HttpServletResponse response) {
+
+		response.setCharacterEncoding("UTF-8");
+
+		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+			this.logger.info("未开启[唯速达]查询接口");
+			return "未开启[唯速达]查询接口";
+		}
+		this.weisudaServiceDeliveryResult.getDeliveryResult();
+//		this.weisudaServiceDeliveryResult.getback_getAppOrders();
+
+		return "";
+
+	}
+	
 	@RequestMapping("/update")
 	public @ResponseBody
-	String getUnVerifyOrders(HttpServletRequest request, HttpServletResponse response) {
+	String update(HttpServletRequest request, HttpServletResponse response) {
 
 		response.setCharacterEncoding("UTF-8");
 

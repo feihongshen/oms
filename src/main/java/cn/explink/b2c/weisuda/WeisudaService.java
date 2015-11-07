@@ -381,16 +381,22 @@ public class WeisudaService {
 			return;
 		}
 		try {
+			
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			Branch bch = JsonUtil.readValue(branch, Branch.class);
+			
+			String province=bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
+			String city=bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
+			String zone=bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
+			
 			String data = "<root>" 
 							+ "<item>" 
 								+ "<code>" + bch.getBranchid() + "</code>" 
 								+ "<old_code></old_code>" 
 								+ "<name>" + bch.getBranchname() + "</name>" 
-								+ "<province>"+ bch.getBranchprovince() + "</province>" 
-								+ "<city>" + bch.getBranchcity() + "</city>" 
-								+ "<zone>" + bch.getBrancharea() + "</zone>" 
+								+ "<province>"+ province + "</province>" 
+								+ "<city>" + city + "</city>" 
+								+ "<zone>" + zone + "</zone>" 
 								+ "<password></password>" 
 							+ "</item>"
 					+ "</root>";
@@ -1050,6 +1056,9 @@ public class WeisudaService {
 	 */
 	public void getUnVerifyOrdersOfCount() {
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+		if(weisuda.getOpenbatchflag()==1){ //开启批量之后退出
+			return;
+		}
 
 		int count = weisuda.getCount().length() > 0 ? Integer.parseInt(weisuda.getCount()) : 1;
 		for (int i = 0; i < count; i++) {
