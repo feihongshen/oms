@@ -23,7 +23,7 @@
 	<!-- ===================================自动生成HTML定时器 开始========================================== -->
 	 <bean id="updateEMS" class="cn.explink.util.JobUtil">
 	 </bean>
-	  <bean lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	 <bean lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	               <property name="triggers">        
 			           <list>                 
 			              	 <ref bean="doTime4"/>	
@@ -43,35 +43,36 @@
 			              	 <ref bean="doTime19"/>
 			              	 <ref bean="doTime20"/>
 			              	 <ref bean="doTime21"/>
-			              	  <ref bean="doTime_epaiUp"/>
+			              	 <ref bean="doTime_epaiUp"/>
 			              	 <ref bean="doTime_epaiDown"/>
 			              	 <ref bean="doTime_outbranchMsk"/>
 			              	 <ref bean="dowholeLine_down"/> 
 			              	 <ref bean="doTransmigration_wholeline"/>
 			              	 <ref bean="doTime_getLiantong"/>
-			              	  <ref bean="doTime_getLetv"/>
-			              	  <ref bean="doTime_chinamobile"/>
-							  <ref bean="doTime_getMmb"/>
-							  <ref bean="doTime_letv"/>
-							  <ref bean="doTime_yonghuics"/>
-							  <ref bean="doTime_hxgdms"/>
-							  <ref bean="doTime_sfexpress"/>
-							  <ref bean="doTime_homegou"/>
-							  <ref bean="schedulerTimer" />
-							  <ref bean="doTime_wangjiu"/>
-							  <ref bean="doTime_lechong"/>
-							  <ref bean="doTime_homegobj"/>
-							  <ref bean="doTime_smiled"/>
-							   <ref bean="doTime_jiuye"/>
-							  <ref bean="doTime_sfxhm"/>
-							  <ref bean="doTime_weisuda"/>
-							  <ref bean="doTime_weisudadelete"/>
-							  <ref bean="doTime_zhongliang"/>
-							  <ref bean="doTime_gztlOutbranch"/>
-							  <ref bean="doTime_gztl"/>
-							  <ref bean="doTime_weisudaDeliveryResult"/>
-							  <ref bean="doTime_sysInit"/>
-							   <ref bean="doTime_zhemeng"/>
+			              	 <ref bean="doTime_getLetv"/>
+			              	 <ref bean="doTime_chinamobile"/>
+							 <ref bean="doTime_getMmb"/>
+							 <ref bean="doTime_letv"/>
+							 <ref bean="doTime_yonghuics"/>
+							 <ref bean="doTime_hxgdms"/>
+							 <ref bean="doTime_sfexpress"/>
+							 <ref bean="doTime_homegou"/>
+							 <ref bean="schedulerTimer" />
+							 <ref bean="doTime_wangjiu"/>
+							 <ref bean="doTime_lechong"/>
+							 <ref bean="doTime_homegobj"/>
+							 <ref bean="doTime_smiled"/>
+							 <ref bean="doTime_jiuye"/>
+							 <ref bean="doTime_sfxhm"/>
+							 <ref bean="doTime_weisuda"/>
+							 <ref bean="doTime_weisudadelete"/>
+							 <ref bean="doTime_zhongliang"/>
+							 <ref bean="doTime_gztlOutbranch"/>
+							 <ref bean="doTime_gztl"/>
+							 <ref bean="doTime_weisudaDeliveryResult"/>
+							 <ref bean="doTime_sysInit"/>
+							 <ref bean="doTime_zhemeng"/>
+							 <ref bean="doTime_haoyigou"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -90,7 +91,7 @@
 					</props>
 		            </property>  
 	  </bean>
-	   <bean id="doTime4" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+	  <bean id="doTime4" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
                <ref bean="getDangDangTask" />
            </property>
@@ -169,7 +170,7 @@
       </bean>
      
      <bean id="getJuMeiTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
+      	<property name="targetBean">
              <value>updateEMS</value>
          </property>
          <property name="targetMethod">
@@ -915,6 +916,25 @@
 			<value>getZhemeng_Task</value>
 		</property>
 	</bean>
-	     
+	<!-- 好易购定时任务配置信息 --> 
+	<bean id="doTime_haoyigou" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="haoyigou" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="haoyigou" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>hygtoFTP</value>
+		</property>
+	</bean>     
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>

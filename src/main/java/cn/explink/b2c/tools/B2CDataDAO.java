@@ -533,6 +533,23 @@ public class B2CDataDAO {
 
 	}
 
+	/**
+	 * 根据 多个 b2cIds修改信息 修改为成功的
+	 *
+	 * @param paralist
+	 * @param status
+	 */
+	public void updateMultiB2cIdSQLResponseStatus_AllFailure(String b2cids) {
+
+		String sql = " update express_send_b2c_data set  send_b2c_flag=2 where  b2cid in (" + b2cids + ") and send_b2c_flag=0 ";
+		try {
+			this.jdbcTemplate.update(sql);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void updateTimebyId(long b2cid, String state) {
 
 		String sql = " update express_send_b2c_data set  send_b2c_flag=?,remark='' where  b2cid =? ";

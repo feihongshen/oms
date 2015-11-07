@@ -12,6 +12,7 @@ import cn.explink.b2c.gome.BulidGomeB2cData;
 import cn.explink.b2c.gzabc.BuildGuangZhouABCB2cData;
 import cn.explink.b2c.gztl.BuildGztlB2cData;
 import cn.explink.b2c.haoxgou.BuildHaoXiangGouB2cData;
+import cn.explink.b2c.haoyigou.BuildHYGsenddata;
 import cn.explink.b2c.happygo.BuildHappyGoB2cData;
 import cn.explink.b2c.happygo.BuildHappyGoMethodForYishenhe;
 import cn.explink.b2c.homegobj.BuildHomegobjB2cData;
@@ -120,8 +121,17 @@ public class BuildB2cDataMaster {
 	
 	@Autowired
 	BuildJiuyeB2cData buildJiuyeB2cData;
+	@Autowired
+	BuildHYGsenddata buildHYGsenddata;
 	
-	
+	public BuildHYGsenddata getBuildHYGsenddata() {
+		return buildHYGsenddata;
+	}
+
+	public void setBuildHYGsenddata(BuildHYGsenddata buildHYGsenddata) {
+		this.buildHYGsenddata = buildHYGsenddata;
+	}
+
 	public BuildJiuyeB2cData getBuildJiuyeB2cData() {
 		return buildJiuyeB2cData;
 	}

@@ -27,6 +27,7 @@ import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.gztlfeedback.GztlServiceFeedback;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
+import cn.explink.b2c.haoyigou.HYGService;
 import cn.explink.b2c.happygo.HappyGoService;
 import cn.explink.b2c.homegobj.HomegobjService;
 import cn.explink.b2c.homegou.HomegouService_Delivery;
@@ -202,6 +203,8 @@ public class JobUtil {
 	JiuyeService jiuyeService;
 	@Autowired
 	ZhemengService zhemengService;
+	@Autowired
+	HYGService hygService;
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -937,13 +940,24 @@ public class JobUtil {
 	
 	public void getZhemeng_Task() {
 		try {
-
 			this.zhemengService.feedback_status();
 		} catch (Exception e) {
 			this.logger.error("执行了哲盟定时器异常!", e);
 		}
 
 		this.logger.info("执行了推送哲盟定时器!");
+	}
+	
+	/**
+	 * 好易购定时任务方法调用
+	 */
+	public void hygtoFTP(){
+		try{
+			this.hygService.feedback_status();
+		}catch(Exception e){
+			this.logger.error("执行了好易购定时器异常!异常原因:{}",e);
+		}
+		this.logger.info("执行了【好易购】定时器任务!");
 	}
 }
 	

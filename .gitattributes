@@ -157,6 +157,15 @@ src/main/java/cn/explink/b2c/haoxgou/HXGFlowEnum.java -text
 src/main/java/cn/explink/b2c/haoxgou/HaoXiangGou.java -text
 src/main/java/cn/explink/b2c/haoxgou/HaoXiangGouService.java -text
 src/main/java/cn/explink/b2c/haoxgou/HaoXiangGouXMLNote.java -text
+src/main/java/cn/explink/b2c/haoyigou/BuildHYGsenddata.java -text
+src/main/java/cn/explink/b2c/haoyigou/FeedbackEnum.java -text
+src/main/java/cn/explink/b2c/haoyigou/HYGController.java -text
+src/main/java/cn/explink/b2c/haoyigou/HYGFTPUtils.java -text
+src/main/java/cn/explink/b2c/haoyigou/HYGService.java -text
+src/main/java/cn/explink/b2c/haoyigou/PSEnum.java -text
+src/main/java/cn/explink/b2c/haoyigou/THEnum.java -text
+src/main/java/cn/explink/b2c/haoyigou/dto/HaoYiGou.java -text
+src/main/java/cn/explink/b2c/haoyigou/dto/PeisongAndTuihuoData.java -text
 src/main/java/cn/explink/b2c/happygo/BuildHappyGoB2cData.java -text
 src/main/java/cn/explink/b2c/happygo/BuildHappyGoMethodForYishenhe.java -text
 src/main/java/cn/explink/b2c/happygo/FunctionForHappy.java -text

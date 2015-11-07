@@ -288,6 +288,11 @@ public class B2cJsonService {
 					delivery_state, this.objectMapper);
 		}
 		
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.HaoYiGou.getKey()))) {
+			return this.buildB2cDataMaster.getBuildHYGsenddata().buildSendData(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), 
+					delivery_state, this.objectMapper);
+		}
+		
 		return null;
 
 	}

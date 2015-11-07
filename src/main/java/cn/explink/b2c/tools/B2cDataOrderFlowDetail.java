@@ -17,6 +17,7 @@ import cn.explink.domain.CwbOrderCopyForDmp;
 import cn.explink.domain.DeliveryState;
 import cn.explink.domain.User;
 import cn.explink.domain.orderflow.OrderFlow;
+import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
@@ -327,6 +328,57 @@ public class B2cDataOrderFlowDetail {
 			return YihaodianFlowEnum.BuFenShiBai.getText();
 		}
 		return "";
-
 	}
+	
+	//【好易购】需要的流程描述信息
+		public String getHYGDetail(DmpOrderFlow orderFlow,DmpCwbOrder cwbOrder) {
+			try {
+				if(String.valueOf(CwbOrderTypeIdEnum.Peisong.getValue()).equals(cwbOrder.getCwbordertypeid())){
+					if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
+						CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+						User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
+						String comment = orderFlow.getComment();
+						if(comment!=null&&!comment.isEmpty()&&comment.contains("正在派件")&&comment.contains("派件人")){
+							return MessageFormat.format("货物已从[{0}]"+comment,getBranchById(orderFlow.getBranchid()).getBranchname());
+						}else{
+							return MessageFormat.format("离开[{0}],派件员:[{1}] 派件员手机:[{2}]", getBranchById(orderFlow.getBranchid()).getBranchname(),deliverUser.getRealname(),deliverUser.getUsermobile());
+						}
+					}
+					if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
+						CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+						DmpDeliveryState deliverstate=cwbOrderWithDeliveryState.getDeliveryState();
+						User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
+						if(deliverstate.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()
+						){
+							return MessageFormat.format("送货完成,派件员:{},派件员手机:{},派件站点:{},签收人:{}",deliverUser.getRealname(),deliverUser.getUsermobile(),deliverstate.getDeliverybranchid(),cwbOrder.getConsigneename());//收件人姓名(默认传收件人姓名)
+						}
+						if(deliverstate.getDeliverystate()==DeliveryStateEnum.QuanBuTuiHuo.getValue()||deliverstate.getDeliverystate()==DeliveryStateEnum.BuFenTuiHuo.getValue()){
+							return MessageFormat.format("客户拒收,派件员:{},派件员手机:{},派件站点:{},拒收原因:{}",deliverUser.getRealname(),deliverUser.getUsermobile(),deliverstate.getDeliverybranchid(),cwbOrderWithDeliveryState.getCwbOrder().getBackreason());
+							//exptMsg=""+cwbOrderWithDeliveryState.getCwbOrder().getBackreason();
+							//return MessageFormat.format("拒收原因:{0}",cwbOrderWithDeliveryState.getCwbOrder().getBackreason());
+	
+						}
+						if(deliverstate.getDeliverystate()==DeliveryStateEnum.FenZhanZhiLiu.getValue()){
+							return MessageFormat.format("货物滞留,派件员:{},派件员手机:{},派件站点:{},滞留原因:{}",deliverUser.getRealname(),deliverUser.getUsermobile(),deliverstate.getDeliverybranchid(),cwbOrderWithDeliveryState.getCwbOrder().getLeavedreason());
+							//exptMsg=",原因:"+cwbOrderWithDeliveryState.getCwbOrder().getBackreason()+""+cwbOrderWithDeliveryState.getCwbOrder().getLeavedreason();
+							//return MessageFormat.format("滞留原因:{0}",cwbOrderWithDeliveryState.getCwbOrder().getLeavedreason());
+						}
+						if(deliverstate.getDeliverystate()==DeliveryStateEnum.HuoWuDiuShi.getValue()){
+							return MessageFormat.format("原因:{0}",DeliveryStateEnum.HuoWuDiuShi.getText());
+						}
+					}
+				}else if(String.valueOf(CwbOrderTypeIdEnum.Shangmentui.getValue()).equals(cwbOrder.getCwbordertypeid())){
+					CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+					DmpDeliveryState deliverstate=cwbOrderWithDeliveryState.getDeliveryState();
+					User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
+					if((orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue())&&(deliverstate.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue())){
+						return MessageFormat.format("上门退取件,派件员:{},派件员手机:{}",deliverUser.getRealname(),deliverUser.getUsermobile());
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			return null;
+		}
 }
