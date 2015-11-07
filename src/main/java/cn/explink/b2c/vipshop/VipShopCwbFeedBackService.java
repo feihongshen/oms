@@ -117,7 +117,8 @@ public class VipShopCwbFeedBackService {
 		String nowdateHours = DateTimeUtil.getNowTime("HH");
 		int hours = Integer.valueOf(nowdateHours);
 		if ((hours % 2) == 0) { // 每隔2的倍数来执行
-			this.updateVipShopByGanXianHuiDan(vipshop.getCustomerids()); // 定时执行干线回单的脚本
+			this.updateVipShopByGanXianHuiDan(vipshop.getCustomerids()); // 定时执行干线回单的脚本 唯品
+			this.updateVipShopByGanXianHuiDan(vipshop.getLefengCustomerid()); // 定时执行干线回单的脚本 乐蜂
 		}
 
 		this.logger.info("=========VipShop状态反馈任务调度结束==========");
