@@ -42,7 +42,7 @@ public class WeisudaExcutorService {
             threadCounts=totalSize;//采用一个线程处理List中的一个元素   
             len=totalSize/(threadCounts==0?1:threadCounts);//重新平均分割List   
          }   
-         CyclicBarrier  barrier=new CyclicBarrier(threadCounts+1);   
+         //CyclicBarrier  barrier=new CyclicBarrier(threadCounts+1);   
          for(int i=0;i<threadCounts;i++){     //创建线程任务   
         	 
         	List<GetUnVerifyOrders_back_Item> sublist = null;

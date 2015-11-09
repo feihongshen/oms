@@ -46,6 +46,8 @@ public class WeisudaServiceDeliveryResult {
 	/**
 	 * APP包裹签收信息同步接口
 	 */
+	
+	
 	public void getDeliveryResult() {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_02未开启[唯速达]接口");
@@ -57,6 +59,16 @@ public class WeisudaServiceDeliveryResult {
 			return;
 		}
 		
+		int count = weisuda.getCount().length() > 0 ? Integer.parseInt(weisuda.getCount()) : 1;
+		for (int i = 0; i < count; i++) {
+			excuteDeliveryResult(weisuda);
+		}
+		
+		
+	}
+
+
+	private void excuteDeliveryResult(Weisuda weisuda) {
 		String response = this.check(weisuda, "nums", weisuda.getNums(), WeisudsInterfaceEnum.getUnVerifyOrders.getValue());
 		
 		this.logger.info("唯速达_02_APP包裹签收信息同步接口下载数据,{}", response);
@@ -83,8 +95,6 @@ public class WeisudaServiceDeliveryResult {
 		}catch (Exception e) {
 			this.logger.error("唯速达_02请求dmp唯速达信息异常" + response, e);
 		}
-		
-		
 	}
 
 
