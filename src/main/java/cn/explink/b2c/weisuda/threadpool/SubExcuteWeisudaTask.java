@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +42,20 @@ public class SubExcuteWeisudaTask implements Runnable{
 	private WeisudaDAO weisudaDAO;
 	private Weisuda weisuda;
 	private GetDmpDAO getDmpDAO;
+	private CyclicBarrier  barrier;
 	
 	private List<GetUnVerifyOrders_back_Item> tasklist;
-	public SubExcuteWeisudaTask(List<GetUnVerifyOrders_back_Item> list,WeisudaDAO weisudaDAO,Weisuda weisuda,GetDmpDAO getDmpDAO){
+	public SubExcuteWeisudaTask(List<GetUnVerifyOrders_back_Item> list,WeisudaDAO weisudaDAO,Weisuda weisuda,GetDmpDAO getDmpDAO,CyclicBarrier  barrier){
 		this.tasklist=list;
 		this.weisudaDAO=weisudaDAO;
 		this.weisuda=weisuda;
 		this.getDmpDAO=getDmpDAO;
+		this.barrier=barrier;
 	}
 	
 	
+
+
 	@Override
 	public void run() {
 		if(tasklist==null || tasklist.size() == 0){
@@ -74,6 +79,7 @@ public class SubExcuteWeisudaTask implements Runnable{
 				String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
 
 				dealWithDmpFeedbackResult(item, result,weisuda);
+				barrier.await();
 			} catch (Exception e) {
 				logger.error("唯速达签收结果处理单个数据异常"+cwb,e);
 			}

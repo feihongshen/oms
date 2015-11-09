@@ -42,7 +42,7 @@ public class WeisudaExcutorService {
             threadCounts=totalSize;//采用一个线程处理List中的一个元素   
             len=totalSize/(threadCounts==0?1:threadCounts);//重新平均分割List   
          }   
-         //CyclicBarrier  barrier=new CyclicBarrier(threadCounts+1);   
+         CyclicBarrier  barrier=new CyclicBarrier(threadCounts+1);   
          for(int i=0;i<threadCounts;i++){     //创建线程任务   
         	 
         	List<GetUnVerifyOrders_back_Item> sublist = null;
@@ -53,11 +53,11 @@ public class WeisudaExcutorService {
                 sublist = items.subList(i*len, len*(i+1)>totalSize?totalSize:len*(i+1));
             }   
             
-            executor.execute(new SubExcuteWeisudaTask(sublist,weisudaDAO,weisuda,getDmpDAO));   
+            executor.execute(new SubExcuteWeisudaTask(sublist,weisudaDAO,weisuda,getDmpDAO,barrier));   
          }
          
          try {   
-            // barrier.await();//关键，使该线程在障栅处等待，直到所有的线程都到达障栅处   
+             barrier.await();//关键，使该线程在障栅处等待，直到所有的线程都到达障栅处   
          } catch (Exception e) {   
         	 logger.error("多线程执行异常:"+Thread.currentThread().getName(),e);
          }  
