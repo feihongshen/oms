@@ -1,6 +1,7 @@
 package cn.explink.b2c.weisuda;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -95,6 +96,8 @@ public class WeisudaService {
 		}
 	}
 
+	
+	
 	/**
 	 * 插入唯速达订单数据
 	 *

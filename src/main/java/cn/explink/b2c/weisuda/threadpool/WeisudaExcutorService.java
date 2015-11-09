@@ -57,9 +57,9 @@ public class WeisudaExcutorService {
          }
          
          try {   
-             barrier.await();//关键，使该线程在障栅处等待，直到所有的线程都到达障栅处   
+            // barrier.await();//关键，使该线程在障栅处等待，直到所有的线程都到达障栅处   
          } catch (Exception e) {   
-        	 logger.error(Thread.currentThread().getName(),e);
+        	 logger.error("多线程执行异常:"+Thread.currentThread().getName(),e);
          }  
          executor.shutdown();   
 				
