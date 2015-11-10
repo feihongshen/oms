@@ -55,6 +55,7 @@ import cn.explink.b2c.yihaodian.YihaodianService;
 import cn.explink.b2c.yixun.YiXunService;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.util.JobUtil;
 
 /**
  * 提供一个手动反馈给各个已对接的供货商订单状态，相当于定时器调用。 如果不想等待定时器自动反馈，可以使用此功能
@@ -160,7 +161,9 @@ public class HandFeedBackController {
 	CoreExcutorService coreExcutorService;
 	@Autowired
 	JiuyeService jiuyeService;
-
+	@Autowired
+	JobUtil jobUtil;
+	
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -174,7 +177,9 @@ public class HandFeedBackController {
 
 		// b2cJsonService.initCustomerList();
 		this.cacheBaseListener.initAll();
+		jobUtil.updateBatcnitialThreadMap();
 		this.logger.info("dmp供货商设置表发生改变，重新加载成功");
+		
 
 		return "SUCCESS";
 
@@ -479,5 +484,6 @@ public class HandFeedBackController {
 		jiuyeService.feedback_status();
 		return "手动执行反馈九曳北京完成";
 	}
+	
 
 }
