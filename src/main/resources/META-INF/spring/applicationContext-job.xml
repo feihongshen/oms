@@ -890,7 +890,7 @@
      
      <bean id="getSystemInitTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
       <property name="targetBean">
-             <value>excuteTimmer</value>
+             <value>updateEMS</value>
          </property>
          <property name="targetMethod">
              <value>updateBatcnitialThreadMap</value>
