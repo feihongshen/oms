@@ -1,12 +1,6 @@
 package cn.explink.b2c.haoyigou;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +22,7 @@ public class BuildHYGsenddata {
 	@Autowired
 	B2cDataOrderFlowDetail b2cDataOrderFlowDetail;
 	@Autowired
-	HYGService hygService;
+	HyGService hygService;
 	@Autowired
 	UserDAO userDao;
 	
@@ -90,6 +84,7 @@ public class BuildHYGsenddata {
 		pstd.setDeliverystaus(deliverystateStr);//描述标记
 		String deliveryName = "";
 		String deliveryPhone = "";
+		
 		long deliveryid = deliveryState.getDeliveryid();
 		if(deliveryid==0){
 			deliveryid = cwbOrder.getDeliverid();

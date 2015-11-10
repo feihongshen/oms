@@ -161,7 +161,7 @@ src/main/java/cn/explink/b2c/haoyigou/BuildHYGsenddata.java -text
 src/main/java/cn/explink/b2c/haoyigou/FeedbackEnum.java -text
 src/main/java/cn/explink/b2c/haoyigou/HYGController.java -text
 src/main/java/cn/explink/b2c/haoyigou/HYGFTPUtils.java -text
-src/main/java/cn/explink/b2c/haoyigou/HYGService.java -text
+src/main/java/cn/explink/b2c/haoyigou/HyGService.java -text
 src/main/java/cn/explink/b2c/haoyigou/PSEnum.java -text
 src/main/java/cn/explink/b2c/haoyigou/THEnum.java -text
 src/main/java/cn/explink/b2c/haoyigou/dto/HaoYiGou.java -text

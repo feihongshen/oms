@@ -47,7 +47,8 @@ public class HaoYiGou {
 	private String charencode; // 编码方式
 	
 	//===========服务器以及FTP文件存储位置============
-	private String upload_remotePath; // 远程服务器文件夹 ^上传订单文件夹（上传到FTP）
+	private String upload_remotePathps; // 远程服务器文件夹 ^上传订单文件夹（上传到FTP）配送文件夹
+	private String upload_remotePathth; // 远程服务器文件夹 ^上传订单文件夹（上传到FTP）退货文件夹
 	private String uploadPath; // 状态反馈上传地址
 	private String uploadPath_bak; // 状态反馈上传地址 备份
 	//标识供货商
@@ -60,11 +61,18 @@ public class HaoYiGou {
 	public void setPartener(String partener) {
 		this.partener = partener;
 	}
-	public String getUpload_remotePath() {
-		return upload_remotePath;
+	
+	public String getUpload_remotePathps() {
+		return upload_remotePathps;
 	}
-	public void setUpload_remotePath(String upload_remotePath) {
-		this.upload_remotePath = upload_remotePath;
+	public void setUpload_remotePathps(String upload_remotePathps) {
+		this.upload_remotePathps = upload_remotePathps;
+	}
+	public String getUpload_remotePathth() {
+		return upload_remotePathth;
+	}
+	public void setUpload_remotePathth(String upload_remotePathth) {
+		this.upload_remotePathth = upload_remotePathth;
 	}
 	public String getUploadPath() {
 		return uploadPath;

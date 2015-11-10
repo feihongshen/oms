@@ -6,7 +6,7 @@ public enum FeedbackEnum {
 	failure("5","客户拒收"),
 	linghuo("7","派件员已领货,派件中"),
 	//============================
-	SMTsuccess("","上门退货成功");//TODO ====待确认
+	SMTsuccess("1","上门退货成功");//TODO ====待确认
 	private String value;
 	private String text;
 	public String getValue() {

@@ -27,7 +27,7 @@ import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.gztlfeedback.GztlServiceFeedback;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
-import cn.explink.b2c.haoyigou.HYGService;
+import cn.explink.b2c.haoyigou.HyGService;
 import cn.explink.b2c.happygo.HappyGoService;
 import cn.explink.b2c.homegobj.HomegobjService;
 import cn.explink.b2c.homegou.HomegouService_Delivery;
@@ -204,12 +204,10 @@ public class JobUtil {
 	JiuyeService jiuyeService;
 	@Autowired
 	ZhemengService zhemengService;
-
 	@Autowired
 	WeisudaServiceDeliveryResult weisudaServiceDeliveryResult;
-
 	@Autowired
-	HYGService hygService;
+	HyGService hygService;
 
 	
 	public static Map<String, Integer> threadMap;

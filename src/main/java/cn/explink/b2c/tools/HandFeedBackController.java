@@ -25,6 +25,7 @@ import cn.explink.b2c.explink.core.threadpool.CoreExcutorService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
+import cn.explink.b2c.haoyigou.HyGService;
 import cn.explink.b2c.homegobj.HomegobjService;
 import cn.explink.b2c.homegou.HomegouService_Delivery;
 import cn.explink.b2c.homegou.HomegouService_Message;
@@ -163,6 +164,8 @@ public class HandFeedBackController {
 	JiuyeService jiuyeService;
 	@Autowired
 	JobUtil jobUtil;
+	@Autowired
+	HyGService hygService;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -483,6 +486,12 @@ public class HandFeedBackController {
 	public @ResponseBody String jiuye_test(HttpServletRequest request){
 		jiuyeService.feedback_status();
 		return "手动执行反馈九曳北京完成";
+	}
+	
+	@RequestMapping("/intoFTP")
+	public @ResponseBody String intoFTP_test(HttpServletRequest request){
+		this.hygService.feedback_status();
+		return "手动执行【好易购】北京完成";
 	}
 	
 

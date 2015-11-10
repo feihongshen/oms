@@ -19,6 +19,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +55,9 @@ public class HYGFTPUtils {
 	}
 
 	public HYGFTPUtils() {
-
+		
 	}
-
+	
 	public static void main(String[] args) throws Exception {
 		// DongFangCJ cj=new DongFangCJ();
 		// cj.setFtp_host("221.204.213.42");
@@ -76,7 +77,19 @@ public class HYGFTPUtils {
 		// String localPath="F:\\doc1";
 		//
 		// downloadFileforFTP(remotePath,localPath);
+		HYGFTPUtils ht = new HYGFTPUtils("ftp.best1.com","abc_input_qa","abc_input_qa@1",21,"GBK",false);
+		boolean isconnect = ht.connectServer();
+		System.out.println(isconnect);
 	}
+	
+	//测试是否能够连接到FTP
+	@Test
+	public void test() throws Exception{
+		HYGFTPUtils ht = new HYGFTPUtils("ftp.best1.com","abc_input_qa","abc_input_qa@1",21,"GBK",false);
+		boolean isconnect = ht.connectServer();
+		System.out.println(isconnect);
+	}
+	
 
 	/**
 	 * 从FTP下载文件
@@ -258,39 +271,40 @@ public class HYGFTPUtils {
 	 * 连接到服务器
 	 *
 	 * @return true 连接服务器成功，false 连接服务器失败
+	 * @throws Exception 
 	 */
-	public boolean connectServer() {
+	public boolean connectServer() throws Exception {
 		boolean flag = true;
 		int reply = 0;
-		try {
-			ftpClient = new FTPClient();
-			ftpClient.setControlEncoding(charencode);
-			ftpClient.configure(getFtpConfig());
-			ftpClient.connect(ftp_host);
-			ftpClient.login(ftp_username, ftp_password);
-
-			ftpClient.setDefaultPort(ftp_port);
-
-			// ftpClient.enterRemotePassiveMode(); //20130528新增
-			ftpClient.enterLocalPassiveMode();
-
-			reply = ftpClient.getReplyCode();
-
-			ftpClient.setDataTimeout(120000);
-
-			if (!FTPReply.isPositiveCompletion(reply)) {
-				ftpClient.disconnect();
-				logger.warn("FTP 服务拒绝连接！");
-				flag = false;
-			}
-			sssssss++;
-			logger.info("登录FTP服务器[{}]成功!", ftp_host);
+		ftpClient = new FTPClient();
+		ftpClient.setControlEncoding(charencode);
+		ftpClient.configure(getFtpConfig());
+		ftpClient.connect(ftp_host);
+		ftpClient.login(ftp_username, ftp_password);
+		
+		ftpClient.setDefaultPort(ftp_port);
+		
+		// ftpClient.enterRemotePassiveMode(); 
+		ftpClient.enterLocalPassiveMode();
+		
+		reply = ftpClient.getReplyCode();
+		
+		ftpClient.setDataTimeout(120000);
+		
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftpClient.disconnect();
+			logger.warn("FTP 服务拒绝连接！");
+			flag = false;
+		}
+		sssssss++;
+		logger.info("登录FTP服务器[{}]成功!", ftp_host);
+		/*try {
 
 		} catch (Exception e) {
 			flag = false;
 			logger.error("登录ftp服务器 " + ftp_host + " 失败,连接超时！", e);
 			e.printStackTrace();
-		}
+		}*/
 
 		return flag;
 	}
@@ -301,7 +315,7 @@ public class HYGFTPUtils {
 	 * @return ftpConfig
 	 */
 	private static FTPClientConfig getFtpConfig() {
-		FTPClientConfig ftpConfig = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
+		FTPClientConfig ftpConfig = new FTPClientConfig(FTPClientConfig.SYST_NT);
 		ftpConfig.setServerLanguageCode(FTP.DEFAULT_CONTROL_ENCODING);
 		return ftpConfig;
 	}
@@ -349,7 +363,7 @@ public class HYGFTPUtils {
 	 *            本地下载文件的路径
 	 * @param localdownload_bak
 	 *            本地下载文件路径备份
-	 */
+	 *//*
 	public List<Map<String, String>> getCJdataListMultiDays(String localdownload, String localdownload_bak, int days) {
 		File MyDir = new File(localdownload);
 		String[] filelist = MyDir.list();
@@ -367,7 +381,7 @@ public class HYGFTPUtils {
 		return showfilelist;
 	}
 
-	/**
+	*//**
 	 * 装载本地路径文件 ，备份文件
 	 * 
 	 * @param localdownload
@@ -375,7 +389,7 @@ public class HYGFTPUtils {
 	 * @param days
 	 * @param filelist
 	 * @return
-	 */
+	 *//*
 	private List BuildFileNameListAndMoveBak(String localdownload, String localdownload_bak, int days, String[] filelist) {
 		// 把按顺序排好的文件装载到List中，显示在页面上
 		List<Map<String, String>> showfilelist = new ArrayList<Map<String, String>>();
@@ -398,7 +412,7 @@ public class HYGFTPUtils {
 			}
 		}
 		return showfilelist;
-	}
+	}*/
 
 	/**
 	 * 根据创建时间排序 按时间的降序排序
@@ -448,8 +462,8 @@ public class HYGFTPUtils {
 	 * @param newPath
 	 *            String 如：d:/fqf.txt
 	 */
-	public static void moveFile(String oldPathFile, String newPathFile) {
-		copyFile(oldPathFile, newPathFile);
+	public static void moveFile(String oldPathFile, String newPathFile, HaoYiGou hyg) {
+		copyFile(oldPathFile, newPathFile, hyg);
 		delFile(oldPathFile);
 	}
 
@@ -462,13 +476,14 @@ public class HYGFTPUtils {
 	 *            String 复制后路径 如：f:/fqf.txt
 	 * @return boolean
 	 */
-	public static void copyFile(String oldPath, String newPath) {
+	public static void copyFile(String oldPath, String newPath ,HaoYiGou hyg) {
 		try {
 			int bytesum = 0;
 			int byteread = 0;
 			File oldfile = new File(oldPath);
 			if (oldfile.exists()) { // 文件存在时
 				InputStream inStream = new FileInputStream(oldPath); // 读入原文件
+				ifInExistsFileDirCreate(hyg.getUploadPath_bak());
 				FileOutputStream fs = new FileOutputStream(newPath);
 				byte[] buffer = new byte[1444];
 				// int length;
@@ -486,6 +501,13 @@ public class HYGFTPUtils {
 
 		}
 
+	}
+	//不存在时就创建文件夹（路径）
+	private static void ifInExistsFileDirCreate(String uploadPath_bak) {
+		File Fupload_bak = new File(uploadPath_bak);
+		if (!Fupload_bak.exists()) {
+			Fupload_bak.mkdirs();
+		}
 	}
 
 	/**
@@ -518,10 +540,10 @@ public class HYGFTPUtils {
 	 * @throws IOException
 	 */
 	public void uploadFileToFTPByHYG(String dirupload, String diruploadbak, String filename, HaoYiGou hyg) throws Exception {
-		String[] files = { filename };
+		String[] files = filename.split(",");
 		if (files != null && files.length > 0) {
 			for (int i = 0; i < files.length; i++) {
-				moveFile(dirupload + files[i], diruploadbak + files[i]);
+				moveFile(dirupload + files[i], diruploadbak + files[i],hyg);
 				logger.info("移动本地【好易购】文件[{}]到备份文件夹[{}]中...", files[i], diruploadbak);
 			}
 			// 移到bak文件夹之后再上传
@@ -533,7 +555,7 @@ public class HYGFTPUtils {
 				boolean flag = connectServer();
 
 				if (flag) {
-					uploadFile(localpathfile, files, hyg.getUpload_remotePath()); // 上传完毕
+					uploadFile(localpathfile, files, hyg); // 上传完毕
 					closeConnect();
 				}
 			}
@@ -551,11 +573,14 @@ public class HYGFTPUtils {
 	 *            FTP 服务器目录(/text) 如果ftp服务器text目录不存在，将会自动创建
 	 * @return
 	 */
-	public boolean uploadFile(String[] localFilePath, String[] remoteFileName, String remoteDir) {
+	public boolean uploadFile(String[] localFilePath, String[] remoteFileName,HaoYiGou hyg /*String remoteDir*/) {
 
 		boolean flag = openFtpConnection();
-		if (!"".equals(remoteDir)) {
-			makeDirs(remoteDir);
+		if (!"".equals(hyg.getUpload_remotePathps())) {
+			makeDirs(hyg.getUpload_remotePathps());
+		}
+		if (!"".equals(hyg.getUpload_remotePathth())) {
+			makeDirs(hyg.getUpload_remotePathth());
 		}
 		BufferedInputStream inStream = null;
 		boolean success = false;
@@ -565,8 +590,14 @@ public class HYGFTPUtils {
 				for (int i = 0; i < localFilePath.length; i++) {
 					inStream = new BufferedInputStream(new FileInputStream(localFilePath[i]));
 					logger.info("===================本地文件localFilePath==" + localFilePath[i]);
-					if (!"".equals(remoteDir)) {
-						changeWorkingDirectory(remoteDir);
+					if(i == 0){
+						if (!"".equals(hyg.getUpload_remotePathps())) {
+							changeWorkingDirectory(hyg.getUpload_remotePathps());
+						}
+					}else if(i == 1){
+						if (!"".equals(hyg.getUpload_remotePathth())) {
+							changeWorkingDirectory(hyg.getUpload_remotePathth());
+						}
 					}
 					success = ftpClient.storeFile(remoteFileName[i], inStream);
 					logger.info("====================【好易购】 反馈txt文件" + remoteFileName[i] + " 上传FTP完毕 返回" + success);
