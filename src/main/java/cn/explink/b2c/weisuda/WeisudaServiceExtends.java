@@ -188,9 +188,12 @@ public class WeisudaServiceExtends {
 		RespRootOrder respOrders=(RespRootOrder) ObjectUnMarchal.XmltoPOJO(response, new RespRootOrder());
 		List<String> orderIds=respOrders.getOrder_id();
 		String cwbs="";
-		for(String orderId:orderIds){
-			cwbs+="'"+orderId+"',";
+		if(respOrders!=null&&orderIds!=null){
+			for(String orderId:orderIds){
+				cwbs+="'"+orderId+"',";
+			}
 		}
+		
 		if(cwbs.length()>0){
 			cwbs=cwbs.substring(0,cwbs.length()-1);
 		}
