@@ -201,7 +201,9 @@ public class WeisudaServiceExtends {
 	   String failCwbs =getFailCwbs(boundList, cwbs);
 		
 		if (version == 1) {
-			this.weisudaDAO.updateBoundState(cwbs, "1","成功");
+			if(cwbs.length()>0){
+				this.weisudaDAO.updateBoundState(cwbs, "1","成功");
+			}
 			if(failCwbs!=null&&!failCwbs.isEmpty()){
 				this.weisudaDAO.updateBoundState(failCwbs, "2","失败");
 			}
