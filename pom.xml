@@ -2715,7 +2715,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
-				<dmpUrl>http://localhost:8080/sxcl</dmpUrl>
+				<dmpUrl>http://localhost:8081/sxcl</dmpUrl>
 				<label>SXCL</label>
 			</properties>
 		</profile>
