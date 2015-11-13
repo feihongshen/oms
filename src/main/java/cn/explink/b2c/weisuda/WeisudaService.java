@@ -307,9 +307,9 @@ public class WeisudaService {
 								consignee = deliveryState.getSign_man();
 								pay_status = "1";
 							}
-							if (cwbOrder.getPaywayid() == PaytypeEnum.Xianjin.getValue()) {
+							if (Long.valueOf(cwbOrder.getNewpaywayid()) == PaytypeEnum.Xianjin.getValue()) {
 								paymethod = "2";
-							} else if (cwbOrder.getPaywayid() == PaytypeEnum.Pos.getValue()) {
+							} else if (Long.valueOf(cwbOrder.getNewpaywayid()) == PaytypeEnum.Pos.getValue()) {
 								paymethod = "3";
 							}
 							Long bound_times = null;
