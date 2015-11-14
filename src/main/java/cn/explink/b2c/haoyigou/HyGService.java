@@ -194,9 +194,10 @@ public class HyGService {
 				}
 				if(pwdcps!=null){
 					pwdcps.flush();
-					pwdcps.flush();
+					pwdcps.close();
 				}
 				if(filePS!=null){
+					logger.info("删除空文件配送");
 					filePS.delete(); // 删除文件
 				}
 			}
@@ -212,6 +213,7 @@ public class HyGService {
 					pwdcth.close();
 				}
 				if(fileTH!=null){
+					logger.info("删除空文件退货");
 					fileTH.delete();
 				}
 			}

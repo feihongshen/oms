@@ -544,7 +544,7 @@ public class HYGFTPUtils {
 		if (files != null && files.length > 0) {
 			for (int i = 0; i < files.length; i++) {
 				moveFile(dirupload + files[i], diruploadbak + files[i],hyg);
-				logger.info("移动本地【好易购】文件[{}]到备份文件夹[{}]中...", files[i], diruploadbak);
+				logger.info("移动本地【好易购】文件[{}]到备份文件夹[{}]中...", (dirupload + files[i]), diruploadbak);
 			}
 			// 移到bak文件夹之后再上传
 			String[] localpathfile = new String[files.length];
