@@ -142,20 +142,32 @@ public class HyGService {
 			
 			
 			if(lines>0){
-				pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
-				pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
-				pw_dcps.close();//========然后关闭流======
-				pw_dcth.close();//========然后关闭流======
+				if(peisongflag!=0){
+					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
+					pw_dcps.close();//========然后关闭流======
+				}
+				if(tuihuoflag!=0){
+					pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
+					pw_dcth.close();//========然后关闭流======
+				}
+				
 				// 文件上传
 				HYGFTPUtils ftp = new HYGFTPUtils(hyg.getFtp_host(), hyg.getFtp_username(), hyg.getFtp_password(), hyg.getFtp_port(), hyg.getCharencode(), false);
 				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishps+","+filename_finishth, hyg);
 				/*this.b2CDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cids.substring(0, b2cids.length() - 1));*/
 				//file.delete();//上传完成后删除所在服务器文件
 			}else{
-				pw_dcps.close();
-				pw_dcth.close();
-				filePS.delete();
-				fileTH.delete();
+				if(peisongflag!=0){
+					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
+					pw_dcps.close();//========然后关闭流======
+					filePS.delete();
+				}
+				if(tuihuoflag!=0){
+					pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
+					pw_dcth.close();//========然后关闭流======
+					fileTH.delete();
+				}
+				
 			}
 			// 修改反馈结果为成功
 			if(b2cids.length()>0){
