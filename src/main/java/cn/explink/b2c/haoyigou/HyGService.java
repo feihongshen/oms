@@ -176,19 +176,32 @@ public class HyGService {
 			BufferedWriter pw_dcth, int peisongflag,int tuihuoflag) throws IOException {
 		try {
 			if(peisongflag==0){
-				pw_dcps.flush();
-				pw_dcps.close();
-				pwdcps.flush();
-				pwdcps.close();
-				filePS.delete(); // 删除文件
+				if(pw_dcps!=null){
+					pw_dcps.flush();
+					pw_dcps.close();
+				}
+				if(pwdcps!=null){
+					pwdcps.flush();
+					pwdcps.flush();
+				}
+				if(filePS!=null){
+					filePS.delete(); // 删除文件
+				}
 			}
 			
 			if(tuihuoflag==0){
-				pw_dcth.flush();
-				pw_dcth.close();
-				pwdcth.flush();
-				pwdcth.close();
-				fileTH.delete();
+				
+				if(pw_dcth!=null){
+					pw_dcth.flush();
+					pw_dcth.close();
+				}
+				if(pwdcth!=null){
+					pwdcth.flush();
+					pwdcth.close();
+				}
+				if(fileTH!=null){
+					fileTH.delete();
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
