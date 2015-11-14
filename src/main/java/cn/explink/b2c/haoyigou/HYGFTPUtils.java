@@ -289,7 +289,7 @@ public class HYGFTPUtils {
 		
 		reply = ftpClient.getReplyCode();
 		
-		ftpClient.setDataTimeout(120000);
+		ftpClient.setDataTimeout(300000);
 		
 		if (!FTPReply.isPositiveCompletion(reply)) {
 			ftpClient.disconnect();
