@@ -95,7 +95,7 @@ public class HyGService {
 			String partener = hyg.getPartener(); // 好易购标识
 			String filetime = DateTimeUtil.getNowTime("yyyyMMdd");
 			String filename_finishps = partener+"S"+"_"+ filetime + "_" + b2cdataid+ ".txt";//配送位置
-			String filename_finishth = partener+"R"+"_"+ filetime + "_" + b2cdataid+ ".txt";//退货位置
+			String filename_finishth = partener+"R"+"_"+ filetime + "_" + (b2cdataid+"t")+ ".txt";//退货位置
 			String uploadPath = hyg.getUploadPath();
 
 			ifInExistsFileDirCreate(uploadPath); // 不存在则创建
@@ -111,6 +111,8 @@ public class HyGService {
 			OutputStreamWriter pwdcth = new OutputStreamWriter(new FileOutputStream(fileTH), "UTF-8");
 			BufferedWriter pw_dcps = new BufferedWriter(pwdcps);
 			BufferedWriter pw_dcth = new BufferedWriter(pwdcth);
+			int peisongflag=0;
+			int tuihuoflag=0;
 			for (B2CData b2cData : datalist) {
 				PeisongAndTuihuoData psthdata = null; 
 				try{
@@ -124,14 +126,21 @@ public class HyGService {
 						lines ++;
 						b2cids += b2cData.getB2cid() + ",";
 						pw_dcps.newLine();
-					}else{//此时抓取退货单数据
+						peisongflag++;
+					}else{  //此时抓取退货单数据
 						pw_dcth.write(getTH_Strings(b2cData,hyg,psthdata).toString());
 						lines ++;
 						b2cids += b2cData.getB2cid() + ",";
 						pw_dcth.newLine();
+						tuihuoflag++;
 					}
 				}
 			}
+			
+			//如果文件生成是空的，则delete
+			isDelete(filePS, fileTH, pwdcps, pwdcth, pw_dcps, pw_dcth,peisongflag,tuihuoflag);
+			
+			
 			if(lines>0){
 				pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
 				pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
@@ -160,6 +169,31 @@ public class HyGService {
 			}
 		}
 		return lines;
+	}
+
+	private void isDelete(File filePS, File fileTH, OutputStreamWriter pwdcps,
+			OutputStreamWriter pwdcth, BufferedWriter pw_dcps,
+			BufferedWriter pw_dcth, int peisongflag,int tuihuoflag) throws IOException {
+		try {
+			if(peisongflag==0){
+				pw_dcps.flush();
+				pw_dcps.close();
+				pwdcps.flush();
+				pwdcps.close();
+				filePS.delete(); // 删除文件
+			}
+			
+			if(tuihuoflag==0){
+				pw_dcth.flush();
+				pw_dcth.close();
+				pwdcth.flush();
+				pwdcth.close();
+				fileTH.delete();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
