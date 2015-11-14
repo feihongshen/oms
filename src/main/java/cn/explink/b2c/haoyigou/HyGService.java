@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.explink.b2c.dongfangcj.DongFangCJFTPUtils;
 import cn.explink.b2c.haoyigou.dto.HaoYiGou;
 import cn.explink.b2c.haoyigou.dto.PeisongAndTuihuoData;
 import cn.explink.b2c.tools.B2CDataDAO;
@@ -35,36 +36,44 @@ public class HyGService {
 	private Logger logger =LoggerFactory.getLogger(this.getClass());
 	
 	
-	//获取配置信息
-	public HaoYiGou getHYGSettingMethod(int key) {
-		HaoYiGou hyg = null;
-		//b2ctools.getObjectMethod(key)为获取b2c 配置信息的接口
-		String objectMethod=b2ctools.getObjectMethod(key).getJoint_property();
-		if (objectMethod!=null) {
-			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
-			hyg = (HaoYiGou) JSONObject.toBean(jsonObj, HaoYiGou.class);//将json对象转化为bean
-		} else {
-			hyg = new HaoYiGou();
-		}
-		return hyg;
-	}
-	
+
 		
 	public void feedback_status(){
 		//订单配送信息提交接口
 		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
 		SubmitDeliveryInfo(FlowOrderTypeEnum.YiShenHe.getValue());
 	}
+	
+	//获取配置信息
+		public HaoYiGou getHYGSettingMethod(int key) {
+			HaoYiGou hyg = null;
+			//b2ctools.getObjectMethod(key)为获取b2c 配置信息的接口
+			String objectMethod=b2ctools.getObjectMethod(key).getJoint_property();
+			if (objectMethod!=null) {
+				JSONObject jsonObj = JSONObject.fromObject(objectMethod);
+				hyg = (HaoYiGou) JSONObject.toBean(jsonObj, HaoYiGou.class);//将json对象转化为bean
+			} else {
+				hyg = new HaoYiGou();
+			}
+			return hyg;
+		}
+	
+	
 	/**
 	 * 订单配送流程反馈
 	 */
 	public long SubmitDeliveryInfo(long flowordertype){
+		
 		HaoYiGou hyg=getHYGSettingMethod(B2cEnum.HaoYiGou.getKey());
+		
+		if (!this.b2ctools.isB2cOpen(B2cEnum.HaoYiGou.getKey())) {
+			this.logger.info("未开好易购的对接");
+			return -1;
+		}
+		
 		long lines = createHYGTxtFileAndUpload(flowordertype,hyg);
 		
-		if(lines == -1){
-			this.logger.info("未开启【好易购】反馈接口!");
-		}if(lines == 0){
+		if(lines == 0){
 			this.logger.info("当前没有需要回传给【好易购】的信息!");
 		}
 		else{
@@ -74,10 +83,7 @@ public class HyGService {
 	}
 	public long createHYGTxtFileAndUpload(long flowordertype,HaoYiGou hyg) {
 		long lines = 0;
-		/*if (!b2ctools.isB2cOpen(B2cEnum.HaoYiGou.getKey())) {
-			logger.info("未开启0好易购0反馈接口");
-			return -1;
-		}*/
+	
 		String b2cids = "";
 		try{
 			List<B2CData> datalist = b2CDataDAO.getDataListByFlowStatus(flowordertype,hyg.getCustomerid(), hyg.getMaxcount());
@@ -258,17 +264,16 @@ public class HyGService {
 	}
 	
 	//测试空格长度
-	public static void main(String[] args) {
-		String st = "explink";
-		String str =st+ "                  ";
-		System.out.println(str.substring(0, 7));
-		int lines = 0;
-		lines++;
-		System.out.println(lines);
+	public static void main(String[] args) throws Exception {
+//		DongFangCJFTPUtils ftp = new DongFangCJFTPUtils("ftp.best1.com", "abc_input_qa","abc_input_qa@1", 21, "GBK", false);
+		HYGFTPUtils ftp = new HYGFTPUtils("ftp.best1.com", "abc_input_qa", "abc_input_qa@1",21, "GBK", false);
+		ftp.uploadFileToFTPByHYG("D:/ftp", "D:/ftpbak", "test"+","+"111", new HaoYiGou());
+		
 		
 	}
 	//解析send_b2c_data 存储字段jsoncontent 
 	public PeisongAndTuihuoData getPSObjectsMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
 		return new ObjectMapper().readValue(jsoncontent, PeisongAndTuihuoData.class);
 	}
+	
 }
