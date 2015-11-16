@@ -239,7 +239,7 @@ public class HyGService {
 		StringBuffer line = new StringBuffer("");
 		line.append(getNeedZeroBackStr(hyg.getSendCode(),PSEnum.DISPATCHERID.getLength(),null));
 		line.append(getNeedZeroBackStr("",PSEnum.BLANK1.getLength(),null));
-		line.append(getNeedZeroBackStr(hyg.getCustomercode(),PSEnum.CUSTOMERID.getLength(),null));
+		line.append(getNeedZeroBackStr(xmlnote.getCustomerid(),PSEnum.CUSTOMERID.getLength(),null));
 		line.append(getNeedZeroBackStr(xmlnote.getShiporderno(),PSEnum.SHIPORDERNO.getLength(),null));
 		line.append(getNeedZeroBackStr("",PSEnum.BLANK2.getLength(),null));
 		line.append(getNeedZeroStr(xmlnote.getDeliveryorderno(),PSEnum.DELIVERYORDERNO.getLength(),null));

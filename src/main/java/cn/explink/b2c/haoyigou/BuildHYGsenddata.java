@@ -82,12 +82,14 @@ public class BuildHYGsenddata {
 			String deliverystateStr, ObjectMapper objectMapper,HaoYiGou hyg) throws Exception{
 		PeisongAndTuihuoData pstd = new PeisongAndTuihuoData();
 		pstd.setDispatchid(hyg.getSendCode());//货运公司自定义code
-		pstd.setCustomerid(cwbOrder.getRemark2());//导入时存入remark2字段中
-		pstd.setShiporderno(cwbOrder.getRemark1());//电商订单表主键id===TODO(出库单号==需要导入到remark1字段)
+		pstd.setCustomerid(cwbOrder.getRemark2());//导入时存入remark2字段中 
+		String shiporderno=cwbOrder.getRemark1().substring(0,cwbOrder.getRemark1().length()-2)+"_"+cwbOrder.getRemark1().substring(cwbOrder.getRemark1().length()-2);
+		
+		pstd.setShiporderno(shiporderno);//电商订单表主键id===TODO(出库单号==需要导入到remark1字段),需要截取后两位
 		pstd.setDeliveryorderno(cwbOrder.getCwb());//本系统cwb
 		pstd.setReceivername(cwbOrder.getConsigneename());//收件人姓名
 		pstd.setDeliverydate(orderFlow.getCredate().toString());//当前配送节点时间
-		pstd.setNumberofcartons(String.valueOf(orderFlow.getFlowordertype()));//当前流程阶段
+		pstd.setNumberofcartons("001");//当前流程阶段
 		pstd.setDeliverystatusdescription(getOrderFlow(orderFlow,cwbOrder));//当前操作流程面熟
 		pstd.setDeliverystaus(deliverystateStr);//描述标记
 		String deliveryName = "";
@@ -102,8 +104,13 @@ public class BuildHYGsenddata {
 
 		pstd.setDeliveryperson(deliveryName);
 		pstd.setDeliverypersonphone(deliveryPhone);
+		if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
+			pstd.setReceipttime(DateTimeUtil.formatDate(orderFlow.getCredate()));//反馈或者审核时间
+		}else{
+			pstd.setReceipttime("");
+		}
 		
-		pstd.setReceipttime(DateTimeUtil.formatDate(orderFlow.getCredate()));//反馈或者审核时间
+		
 		pstd.setLongitude("");
 		pstd.setDimensionvalue("");
 		pstd.setUndefinedone("");
