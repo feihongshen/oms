@@ -10,7 +10,7 @@ public class PeisongAndTuihuoData {
 	private String deliverydate;
 	private String numberofcartons;
 	private String deliverystatusdescription;
-	private String deliverystaus;
+	
 	private String deliveryperson;
 	private String deliverypersonphone;
 	private String receipttime;
@@ -116,12 +116,7 @@ public class PeisongAndTuihuoData {
 	public void setBlank4(String blank4) {
 		this.blank4 = blank4;
 	}
-	public String getDeliverystaus() {
-		return deliverystaus;
-	}
-	public void setDeliverystaus(String deliverystaus) {
-		this.deliverystaus = deliverystaus;
-	}
+	
 	public String getBlank5() {
 		return blank5;
 	}
