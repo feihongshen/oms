@@ -47,9 +47,7 @@ public class BuildHYGsenddata {
 		
 		String deliverystateStr = "";
 		String cwbordertypeid = cwbOrder.getCwbordertypeid();
-		if((flowOrdertype != FlowOrderTypeEnum.FenZhanLingHuo.getValue())&&(flowOrdertype != FlowOrderTypeEnum.YiShenHe.getValue())){
-			return null;
-		}
+		
 		if(String.valueOf(CwbOrderTypeIdEnum.Peisong.getValue()).equals(cwbordertypeid)){
 			deliverystateStr = getHaoyigouCode(flowOrdertype,delivery_state, deliverystateStr);
 			if(deliverystateStr.isEmpty()){
