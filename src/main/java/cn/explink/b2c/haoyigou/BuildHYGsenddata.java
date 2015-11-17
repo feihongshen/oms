@@ -1,6 +1,8 @@
 package cn.explink.b2c.haoyigou;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import cn.explink.b2c.haoyigou.dto.HaoYiGou;
 import cn.explink.b2c.haoyigou.dto.PeisongAndTuihuoData;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
 import cn.explink.b2c.tools.B2cEnum;
+import cn.explink.b2c.tools.B2cJsonService;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.domain.User;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
@@ -26,6 +29,8 @@ public class BuildHYGsenddata {
 	@Autowired
 	CacheBaseListener cacheBaseListener;
 	
+	private Logger logger = LoggerFactory.getLogger(BuildHYGsenddata.class);
+	
 	public String buildSendData(DmpOrderFlow orderFlow, long flowOrdertype,DmpCwbOrder cwbOrder,DmpDeliveryState deliveryState,
 			long delivery_state, ObjectMapper objectMapper) throws Exception{
 		HaoYiGou hyg = this.hygService.getHYGSettingMethod(B2cEnum.HaoYiGou.getKey());
@@ -37,6 +42,9 @@ public class BuildHYGsenddata {
 	//创建需要推送给好易购的数据
 	public String buildData(DmpOrderFlow orderFlow, long flowOrdertype,DmpCwbOrder cwbOrder,DmpDeliveryState deliveryState,
 			long delivery_state, ObjectMapper objectMapper,HaoYiGou hyg) throws Exception{
+		logger.info("进入好易购对接,cwb={},flowOrdertype={}",orderFlow.getCwb(),flowOrdertype);
+		
+		
 		String deliverystateStr = "";
 		String cwbordertypeid = cwbOrder.getCwbordertypeid();
 		if((flowOrdertype != FlowOrderTypeEnum.FenZhanLingHuo.getValue())&&(flowOrdertype != FlowOrderTypeEnum.YiShenHe.getValue())){
@@ -116,6 +124,7 @@ public class BuildHYGsenddata {
 		pstd.setUndefinedone("");
 		pstd.setUndefinedtwo("");
 		pstd.setWhichone(1);
+		logger.info("好易购对接封装完成,cwb={},flowOrdertype={}",orderFlow.getCwb(),orderFlow.getFlowordertype());
 		return objectMapper.writeValueAsString(pstd);
 	}
 	//封装上门退订单数据
