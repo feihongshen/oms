@@ -91,7 +91,12 @@ public class BuildHYGsenddata {
 		PeisongAndTuihuoData pstd = new PeisongAndTuihuoData();
 		pstd.setDispatchid(hyg.getSendCode());//货运公司自定义code
 		pstd.setCustomerid(cwbOrder.getRemark2());//导入时存入remark2字段中 
-		String shiporderno=cwbOrder.getRemark1().substring(0,cwbOrder.getRemark1().length()-2)+"_"+cwbOrder.getRemark1().substring(cwbOrder.getRemark1().length()-2);
+		String shiporderno="";
+		try {
+			shiporderno = cwbOrder.getRemark1().substring(0,cwbOrder.getRemark1().length()-2)+"_"+cwbOrder.getRemark1().substring(cwbOrder.getRemark1().length()-2);
+		} catch (Exception e) {
+			logger.error("出货单号格式不正确"+orderFlow.getCwb(),e);
+		}
 		
 		pstd.setShiporderno(shiporderno);//电商订单表主键id===TODO(出库单号==需要导入到remark1字段),需要截取后两位
 		pstd.setDeliveryorderno(cwbOrder.getCwb());//本系统cwb
