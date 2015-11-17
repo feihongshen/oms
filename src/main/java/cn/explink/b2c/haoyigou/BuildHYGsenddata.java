@@ -71,7 +71,10 @@ public class BuildHYGsenddata {
 
 	private String getHaoyigouCode(long flowOrdertype, long delivery_state,
 			String deliverystateStr) {
-		if(flowOrdertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
+		if(flowOrdertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()
+				||flowOrdertype == FlowOrderTypeEnum.RuKu.getValue()
+				||flowOrdertype == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()
+			||flowOrdertype == FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()){
 			deliverystateStr = FeedbackEnum.linghuo.getValue(); 
 		}else if(flowOrdertype == FlowOrderTypeEnum.YiShenHe.getValue()){
 			if(delivery_state == DeliveryStateEnum.PeiSongChengGong.getValue()){
