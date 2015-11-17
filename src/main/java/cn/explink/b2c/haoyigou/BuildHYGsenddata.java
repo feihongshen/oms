@@ -104,7 +104,7 @@ public class BuildHYGsenddata {
 		pstd.setReceivername(cwbOrder.getConsigneename());//收件人姓名
 		pstd.setDeliverydate(DateTimeUtil.formatDate(orderFlow.getCredate(),"yyyy/MM/dd"));//当前配送节点时间
 		pstd.setNumberofcartons("001");//当前流程阶段
-		pstd.setDeliverystatusdescription(getOrderFlow(orderFlow,cwbOrder));//当前操作流程面熟
+		pstd.setDeliverystatusdescription(b2cDataOrderFlowDetail.getDetail(orderFlow));
 		pstd.setDeliverystatus(deliverystateStr);//描述标记
 		String deliveryName = "";
 		String deliveryPhone = "";
@@ -144,7 +144,7 @@ public class BuildHYGsenddata {
 		pstd.setEdidate(edidate);//产生日期，暂处理为 销退单建立的时间(存在remark1中)
 		pstd.setNumberofcartons(cwbOrder.getBackcarnum()==0?"1":(String.valueOf(cwbOrder.getBackcarnum())));//默认为发货件数
 		pstd.setStatusupdatedate(DateTimeUtil.formatDate(orderFlow.getCredate()));//收回日期
-		pstd.setDeliverystatusdescription(getOrderFlow(orderFlow,cwbOrder));
+		pstd.setDeliverystatusdescription(b2cDataOrderFlowDetail.getDetail(orderFlow));
 		pstd.setClosuredate("");//默认空
 		pstd.setDeliverystatus(deliverystateStr);
 		pstd.setPickupperson(cwbOrder.getConsigneename());//收件人
