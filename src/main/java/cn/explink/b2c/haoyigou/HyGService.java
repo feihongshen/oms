@@ -40,6 +40,9 @@ public class HyGService {
 		
 	public void feedback_status(){
 		//订单配送信息提交接口
+		SubmitDeliveryInfo(FlowOrderTypeEnum.RuKu.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
 		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
 		SubmitDeliveryInfo(FlowOrderTypeEnum.YiShenHe.getValue());
 	}
