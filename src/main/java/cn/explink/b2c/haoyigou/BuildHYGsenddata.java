@@ -127,7 +127,7 @@ public class BuildHYGsenddata {
 		pstd.setCompanyid(hyg.getCompanyid());//默认好易购，基础设置中配置
 		String edidate = cwbOrder.getRemark1();//excel导入时存入remark1字段
 		pstd.setEdidate(edidate);//产生日期，暂处理为 销退单建立的时间(存在remark1中)
-		pstd.setNumberofcartons(cwbOrder.getSendcarnum()==0?"1":(String.valueOf(cwbOrder.getSendcarnum())));//默认为发货件数
+		pstd.setNumberofcartons(cwbOrder.getBackcarnum()==0?"1":(String.valueOf(cwbOrder.getBackcarnum())));//默认为发货件数
 		pstd.setStatusupdatedate(DateTimeUtil.formatDate(orderFlow.getCredate()));//收回日期
 		pstd.setDeliverystatusdescription(getOrderFlow(orderFlow,cwbOrder));
 		pstd.setClosuredate("");//默认空
