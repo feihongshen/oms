@@ -539,7 +539,7 @@ public class HYGFTPUtils {
 	 * @param filename
 	 * @throws IOException
 	 */
-	public void uploadFileToFTPByHYG(String dirupload, String diruploadbak, String filename, HaoYiGou hyg) throws Exception {
+	public void uploadFileToFTPByHYG(String dirupload, String diruploadbak, String filename, HaoYiGou hyg,String remoteFile) throws Exception {
 		String[] files = {filename};
 		if (files != null && files.length > 0) {
 			for (int i = 0; i < files.length; i++) {
@@ -555,7 +555,7 @@ public class HYGFTPUtils {
 				boolean flag = connectServer();
 
 				if (flag) {
-					uploadFile(localpathfile, files, hyg); // 上传完毕
+					uploadFile(localpathfile, files, remoteFile); // 上传完毕
 					closeConnect();
 				}
 			}
@@ -573,15 +573,13 @@ public class HYGFTPUtils {
 	 *            FTP 服务器目录(/text) 如果ftp服务器text目录不存在，将会自动创建
 	 * @return
 	 */
-	public boolean uploadFile(String[] localFilePath, String[] remoteFileName,HaoYiGou hyg /*String remoteDir*/) {
+	public boolean uploadFile(String[] localFilePath, String[] remoteFileName,String remoteFile/*String remoteDir*/) {
 
 		boolean flag = openFtpConnection();
-		if (!"".equals(hyg.getUpload_remotePathps())) {
-			makeDirs(hyg.getUpload_remotePathps());
+		if (!"".equals(remoteFile)) {
+			makeDirs(remoteFile);
 		}
-		if (!"".equals(hyg.getUpload_remotePathth())) {
-			makeDirs(hyg.getUpload_remotePathth());
-		}
+		
 		BufferedInputStream inStream = null;
 		boolean success = false;
 
@@ -590,14 +588,8 @@ public class HYGFTPUtils {
 				for (int i = 0; i < localFilePath.length; i++) {
 					inStream = new BufferedInputStream(new FileInputStream(localFilePath[i]));
 					logger.info("===================本地文件localFilePath==" + localFilePath[i]);
-					if(i == 0){
-						if (!"".equals(hyg.getUpload_remotePathps())) {
-							changeWorkingDirectory(hyg.getUpload_remotePathps());
-						}
-					}else if(i == 1){
-						if (!"".equals(hyg.getUpload_remotePathth())) {
-							changeWorkingDirectory(hyg.getUpload_remotePathth());
-						}
+					if (!"".equals(remoteFile)) {
+						changeWorkingDirectory(remoteFile);
 					}
 					success = ftpClient.storeFile(remoteFileName[i], inStream);
 					logger.info("====================【好易购】 反馈txt文件" + remoteFileName[i] + " 上传FTP完毕 返回" + success);

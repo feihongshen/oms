@@ -128,7 +128,7 @@ public class HyGService {
 				}
 				// 文件上传
 				HYGFTPUtils ftp = new HYGFTPUtils(hyg.getFtp_host(), hyg.getFtp_username(), hyg.getFtp_password(), hyg.getFtp_port(), hyg.getCharencode(), false);
-				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishps, hyg);
+				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishps, hyg,hyg.getUpload_remotePathps());
 			}else{
 				if(peisongflag!=0){
 					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
@@ -212,7 +212,7 @@ public class HyGService {
 				}
 				// 文件上传
 				HYGFTPUtils ftp = new HYGFTPUtils(hyg.getFtp_host(), hyg.getFtp_username(), hyg.getFtp_password(), hyg.getFtp_port(), hyg.getCharencode(), false);
-				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishth, hyg);
+				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishth, hyg,hyg.getUpload_remotePathth());
 			}else{
 				if(tuihuoflag!=0){
 					pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
