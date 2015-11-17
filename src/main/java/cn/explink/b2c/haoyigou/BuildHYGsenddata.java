@@ -109,7 +109,7 @@ public class BuildHYGsenddata {
 		String deliveryName = "";
 		String deliveryPhone = "";
 		
-		long deliveryid = deliveryState.getDeliveryid();
+		long deliveryid = deliveryState!=null?deliveryState.getDeliveryid():0;
 		if(deliveryid>0){
 			User deliveryUser = cacheBaseListener.getUser(cwbOrder.getDeliverid());
 			deliveryName = deliveryUser.getRealname();
