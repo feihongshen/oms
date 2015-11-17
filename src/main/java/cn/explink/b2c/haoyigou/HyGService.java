@@ -381,7 +381,7 @@ public class HyGService {
 	public static void main(String[] args) throws Exception {
 //		DongFangCJFTPUtils ftp = new DongFangCJFTPUtils("ftp.best1.com", "abc_input_qa","abc_input_qa@1", 21, "GBK", false);
 		HYGFTPUtils ftp = new HYGFTPUtils("ftp.best1.com", "abc_input_qa", "abc_input_qa@1",21, "GBK", false);
-		ftp.uploadFileToFTPByHYG("D:/ftp", "D:/ftpbak", "test"+","+"111", new HaoYiGou());
+		//ftp.uploadFileToFTPByHYG("D:/ftp", "D:/ftpbak", "test"+","+"111", new HaoYiGou());
 		
 		
 	}
