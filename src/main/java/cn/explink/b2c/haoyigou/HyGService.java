@@ -39,12 +39,24 @@ public class HyGService {
 
 		
 	public void feedback_status(){
+		HaoYiGou hyg=getHYGSettingMethod(B2cEnum.HaoYiGou.getKey());
+		
+		if (!this.b2ctools.isB2cOpen(B2cEnum.HaoYiGou.getKey())) {
+			this.logger.info("未开好易购的对接");
+			return ;
+		}
+		
 		//订单配送信息提交接口
-		SubmitDeliveryInfo(FlowOrderTypeEnum.RuKu.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.YiShenHe.getValue());
+		createHYGTxtFileAndUpload_peisong(FlowOrderTypeEnum.RuKu.getValue(),hyg);
+		createHYGTxtFileAndUpload_peisong(FlowOrderTypeEnum.ChuKuSaoMiao.getValue(),hyg);
+		createHYGTxtFileAndUpload_peisong(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(),hyg);
+		createHYGTxtFileAndUpload_peisong(FlowOrderTypeEnum.FenZhanLingHuo.getValue(),hyg);
+		createHYGTxtFileAndUpload_peisong(FlowOrderTypeEnum.YiShenHe.getValue(),hyg);
+		
+		createHYGTxtFileAndUpload_tuihuo(FlowOrderTypeEnum.YiShenHe.getValue(),hyg);
+		createHYGTxtFileAndUpload_tuihuo(FlowOrderTypeEnum.TuiHuoChuZhan.getValue(),hyg);
+		createHYGTxtFileAndUpload_tuihuo(FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue(),hyg);
+		createHYGTxtFileAndUpload_tuihuo(FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue(),hyg);
 	}
 	
 	//获取配置信息
@@ -62,29 +74,8 @@ public class HyGService {
 		}
 	
 	
-	/**
-	 * 订单配送流程反馈
-	 */
-	public long SubmitDeliveryInfo(long flowordertype){
-		
-		HaoYiGou hyg=getHYGSettingMethod(B2cEnum.HaoYiGou.getKey());
-		
-		if (!this.b2ctools.isB2cOpen(B2cEnum.HaoYiGou.getKey())) {
-			this.logger.info("未开好易购的对接");
-			return -1;
-		}
-		
-		long lines = createHYGTxtFileAndUpload(flowordertype,hyg);
-		
-		if(lines == 0){
-			this.logger.info("当前没有需要回传给【好易购】的信息!");
-		}
-		else{
-			this.logger.info("当前流程本次生成{}行txt文件记录~请查看！",lines);
-		}
-		return lines;
-	}
-	public long createHYGTxtFileAndUpload(long flowordertype,HaoYiGou hyg) {
+
+	public long createHYGTxtFileAndUpload_peisong(long flowordertype,HaoYiGou hyg) {
 		long lines = 0;
 	
 		String b2cids = "";
@@ -98,24 +89,17 @@ public class HyGService {
 			String partener = hyg.getPartener(); // 好易购标识
 			String filetime = DateTimeUtil.getNowTime("yyyyMMdd");
 			String filename_finishps = partener+"S"+"_"+ filetime + "_" + b2cdataid+ ".txt";//配送位置
-			String filename_finishth = partener+"R"+"_"+ filetime + "_" + (b2cdataid+"t")+ ".txt";//退货位置
 			String uploadPath = hyg.getUploadPath();
 
 			ifInExistsFileDirCreate(uploadPath); // 不存在则创建
 			File filePS = new File(uploadPath + filename_finishps); // 创建文件txt配送
-			File fileTH = new File(uploadPath + filename_finishth); // 创建文件txt退货
 			if (!filePS.exists()) {
 				filePS.createNewFile();
 			}
-			if (!fileTH.exists()) {
-				fileTH.createNewFile();
-			}
+			
 			OutputStreamWriter pwdcps = new OutputStreamWriter(new FileOutputStream(filePS), "UTF-8");
-			OutputStreamWriter pwdcth = new OutputStreamWriter(new FileOutputStream(fileTH), "UTF-8");
 			BufferedWriter pw_dcps = new BufferedWriter(pwdcps);
-			BufferedWriter pw_dcth = new BufferedWriter(pwdcth);
 			int peisongflag=0;
-			int tuihuoflag=0;
 			for (B2CData b2cData : datalist) {
 				PeisongAndTuihuoData psthdata = null; 
 				try{
@@ -131,6 +115,86 @@ public class HyGService {
 						pw_dcps.newLine();
 						peisongflag++;
 					}else{  //此时抓取退货单数据
+						continue;
+					}
+				}
+			}
+			
+			
+			if(lines>0){
+				if(peisongflag!=0){
+					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
+					pw_dcps.close();//========然后关闭流======
+				}
+				// 文件上传
+				HYGFTPUtils ftp = new HYGFTPUtils(hyg.getFtp_host(), hyg.getFtp_username(), hyg.getFtp_password(), hyg.getFtp_port(), hyg.getCharencode(), false);
+				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishps, hyg);
+			}else{
+				if(peisongflag!=0){
+					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
+					pw_dcps.close();//========然后关闭流======
+					if(filePS.exists()){
+						filePS.delete();
+					}
+				}
+			}
+			// 修改反馈结果为成功
+			if(b2cids.length()>0){
+				b2CDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cids.substring(0, b2cids.length() - 1));
+				return datalist.size();
+			}
+		}catch(Exception e){
+			this.logger.error("【好易购】处理异常:{}",e);
+			if(b2cids.length()>0){
+				b2CDataDAO.updateMultiB2cIdSQLResponseStatus_AllFailure(b2cids.substring(0, b2cids.length() - 1));
+			}
+		}
+		return lines;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public long createHYGTxtFileAndUpload_tuihuo(long flowordertype,HaoYiGou hyg) {
+		long lines = 0;
+	
+		String b2cids = "";
+		try{
+			List<B2CData> datalist = b2CDataDAO.getDataListByFlowStatus(flowordertype,hyg.getCustomerid(), hyg.getMaxcount());
+			if (datalist == null || datalist.size() == 0) {
+				logger.info("当前没有需要反馈给0好易购0的货态信息~");
+				return 0;
+			}
+			long b2cdataid = datalist.get(0).getB2cid();
+			String partener = hyg.getPartener(); // 好易购标识
+			String filetime = DateTimeUtil.getNowTime("yyyyMMdd");
+			String filename_finishth = partener+"R"+"_"+ filetime + "_" + (b2cdataid+"t")+ ".txt";//退货位置
+			String uploadPath = hyg.getUploadPath();
+
+			ifInExistsFileDirCreate(uploadPath); // 不存在则创建
+			File fileTH = new File(uploadPath + filename_finishth); // 创建文件txt退货
+		
+			if (!fileTH.exists()) {
+				fileTH.createNewFile();
+			}
+			OutputStreamWriter pwdcth = new OutputStreamWriter(new FileOutputStream(fileTH), "UTF-8");
+			BufferedWriter pw_dcth = new BufferedWriter(pwdcth);
+			int tuihuoflag=0;
+			for (B2CData b2cData : datalist) {
+				PeisongAndTuihuoData psthdata = null; 
+				try{
+					psthdata = getPSObjectsMethod(b2cData.getJsoncontent());
+				}catch(Exception e){
+					this.logger.error("【好易购】接口异常原因:{}",e);
+				}
+				if(psthdata != null){
+					if(psthdata.getWhichone()==1){//此时抓取的为配送单
+						continue;
+					}else{  //此时抓取退货单数据
 						pw_dcth.write(getTH_Strings(b2cData,hyg,psthdata).toString());
 						lines ++;
 						b2cids += b2cData.getB2cid() + ",";
@@ -140,37 +204,23 @@ public class HyGService {
 				}
 			}
 			
-			//如果文件生成是空的，则delete
-			isDelete(filePS, fileTH, pwdcps, pwdcth, pw_dcps, pw_dcth,peisongflag,tuihuoflag);
-			
 			
 			if(lines>0){
-				if(peisongflag!=0){
-					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
-					pw_dcps.close();//========然后关闭流======
-				}
 				if(tuihuoflag!=0){
 					pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
 					pw_dcth.close();//========然后关闭流======
 				}
-				
 				// 文件上传
 				HYGFTPUtils ftp = new HYGFTPUtils(hyg.getFtp_host(), hyg.getFtp_username(), hyg.getFtp_password(), hyg.getFtp_port(), hyg.getCharencode(), false);
-				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishps+","+filename_finishth, hyg);
-				/*this.b2CDataDAO.updateMultiB2cIdSQLResponseStatus_AllSuccess(b2cids.substring(0, b2cids.length() - 1));*/
-				//file.delete();//上传完成后删除所在服务器文件
+				ftp.uploadFileToFTPByHYG(uploadPath, hyg.getUploadPath_bak(), filename_finishth, hyg);
 			}else{
-				if(peisongflag!=0){
-					pw_dcps.flush();//将缓冲区存储的数据一次性发送出去（配送）
-					pw_dcps.close();//========然后关闭流======
-					filePS.delete();
-				}
 				if(tuihuoflag!=0){
 					pw_dcth.flush();//将缓冲区存储的数据一次性发送出去（退货）
 					pw_dcth.close();//========然后关闭流======
-					fileTH.delete();
+					if (fileTH.exists()) {
+						fileTH.delete();
+					}
 				}
-				
 			}
 			// 修改反馈结果为成功
 			if(b2cids.length()>0){

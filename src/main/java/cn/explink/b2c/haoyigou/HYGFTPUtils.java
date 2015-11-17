@@ -540,7 +540,7 @@ public class HYGFTPUtils {
 	 * @throws IOException
 	 */
 	public void uploadFileToFTPByHYG(String dirupload, String diruploadbak, String filename, HaoYiGou hyg) throws Exception {
-		String[] files = filename.split(",");
+		String[] files = {filename};
 		if (files != null && files.length > 0) {
 			for (int i = 0; i < files.length; i++) {
 				moveFile(dirupload + files[i], diruploadbak + files[i],hyg);

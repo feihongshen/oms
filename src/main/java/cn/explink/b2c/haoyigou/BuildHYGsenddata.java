@@ -56,8 +56,13 @@ public class BuildHYGsenddata {
 			//==========================存储需要反馈给【好易购】--配送单--的数据信息======================================
 			return this.setPesiongfeedback(orderFlow,cwbOrder,deliveryState,deliverystateStr,objectMapper,hyg);
 		}
-		else if((String.valueOf(CwbOrderTypeIdEnum.Shangmentui.getValue()).equals(cwbordertypeid))&&(flowOrdertype == FlowOrderTypeEnum.YiShenHe.getValue())){
-			if(delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue()){
+		else if((String.valueOf(CwbOrderTypeIdEnum.Shangmentui.getValue()).equals(cwbordertypeid))){
+			
+			if(delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue()&&flowOrdertype==FlowOrderTypeEnum.YiShenHe.getValue()
+				||flowOrdertype==FlowOrderTypeEnum.TuiHuoChuZhan.getValue()
+				||flowOrdertype==FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()
+				||flowOrdertype==FlowOrderTypeEnum.TuiGongYingShangChuKu.getValue()
+					){
 				deliverystateStr = FeedbackEnum.SMTsuccess.getValue();
 				//==========================存储需要反馈给【好易购】--退货单--的数据信息======================================
 				return this.setTuihuofeedback(orderFlow,cwbOrder,deliveryState,deliverystateStr,objectMapper,hyg);
@@ -138,12 +143,11 @@ public class BuildHYGsenddata {
 			String deliverystateStr, ObjectMapper objectMapper,HaoYiGou hyg) throws Exception{
 		PeisongAndTuihuoData pstd = new PeisongAndTuihuoData();
 		pstd.setDeliveryid("");
-		pstd.setShiporderno(cwbOrder.getCwb()+"2");//收货单号+序号（文档中描述为2）
+		pstd.setShiporderno(cwbOrder.getCwb());//excel中Q列，销退单号
 		pstd.setCompanyid(hyg.getCompanyid());//默认好易购，基础设置中配置
-		String edidate = cwbOrder.getRemark1();//excel导入时存入remark1字段
-		pstd.setEdidate(edidate);//产生日期，暂处理为 销退单建立的时间(存在remark1中)
+		pstd.setEdidate(DateTimeUtil.formatDate(orderFlow.getCredate(),"yyyy/MM/dd"));//产生日期，暂处理为 销退单建立的时间(存在remark1中)
 		pstd.setNumberofcartons(cwbOrder.getBackcarnum()==0?"1":(String.valueOf(cwbOrder.getBackcarnum())));//默认为发货件数
-		pstd.setStatusupdatedate(DateTimeUtil.formatDate(orderFlow.getCredate()));//收回日期
+		pstd.setStatusupdatedate(DateTimeUtil.formatDate(orderFlow.getCredate(),"yyyy/MM/dd"));//收回日期
 		pstd.setDeliverystatusdescription(b2cDataOrderFlowDetail.getDetail(orderFlow));
 		pstd.setClosuredate("");//默认空
 		pstd.setDeliverystatus(deliverystateStr);
