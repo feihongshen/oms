@@ -108,7 +108,7 @@ public class WeisudaService {
 		this.logger.info("唯速达_01进入唯速达对接cwb={}", orderFlow.getCwb());
 		DmpCwbOrder cwbOrder = cwbOrderWithDeliveryState.getCwbOrder();
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
-		if ((cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()) || (cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue())) {
+		if ((cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()) || (cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue())|| (cwbordertypeid == CwbOrderTypeIdEnum.OXO.getValue())) {
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
 			
 			Customer customer = this.cacheBaseListener.getCustomer(customerid);
