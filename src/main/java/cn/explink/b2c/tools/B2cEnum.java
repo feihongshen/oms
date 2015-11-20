@@ -67,7 +67,13 @@ public enum B2cEnum {
 			JiuYe1(20101, "九曵1", "jiuye_1"),JiuYe2(20102, "九曵2", "jiuye_2"),JiuYe3(20103, "九曵3", "jiuye_3"),JiuYe4(20104, "九曵4", "jiuye_4"),JiuYe5(20105, "九曵5", "jiuye_5"),
 			ZheMeng(20117, "哲盟-安达信", "zhemeng"),
 			HaoYiGou(20120,"好易购","haoyigou"),
-	GuangXinDianXin(20121,"广信电信","guangxindianxin")
+	GuangXinDianXin(20121,"广信电信","guangxindianxin"),
+	
+	VipShop_cangku4(20122, "唯品会_仓库4", "vipshop_cangku4"),
+	VipShop_cangku5(20123, "唯品会_仓库5", "vipshop_cangku5"),
+	VipShop_cangku6(20124, "唯品会_仓库6", "vipshop_cangku6"),
+	VipShop_cangku7(20125, "唯品会_仓库7", "vipshop_cangku7"),
+	VipShop_cangku8(20126, "唯品会_仓库8", "vipshop_cangku8"),
 			; // 唯品会OXO vipshop_oxo
 	private int key;
 	private String text;
