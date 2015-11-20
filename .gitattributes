@@ -123,6 +123,17 @@ src/main/java/cn/explink/b2c/gome/GomeService_CommitDeliverInfo.java -text
 src/main/java/cn/explink/b2c/gome/GomeTest.java -text
 src/main/java/cn/explink/b2c/gome/GuomeiService.java -text
 src/main/java/cn/explink/b2c/gome/SOAPHandle.java -text
+src/main/java/cn/explink/b2c/gxdx/BuildGxDxsenddata.java -text
+src/main/java/cn/explink/b2c/gxdx/GoodsState.java -text
+src/main/java/cn/explink/b2c/gxdx/GuangXinDidanXinService.java -text
+src/main/java/cn/explink/b2c/gxdx/GxDx.java -text
+src/main/java/cn/explink/b2c/gxdx/GxDxOrderTypeEnum.java -text
+src/main/java/cn/explink/b2c/gxdx/OrderState.java -text
+src/main/java/cn/explink/b2c/gxdx/OrderStatesList.java -text
+src/main/java/cn/explink/b2c/gxdx/OrderTypeEnum.java -text
+src/main/java/cn/explink/b2c/gxdx/xmldto/returnXml.java -text
+src/main/java/cn/explink/b2c/gxdx/xmldto/util/BeanToXml.java -text
+src/main/java/cn/explink/b2c/gxdx/xmldto/util/XmlToBean.java -text
 src/main/java/cn/explink/b2c/gzabc/BuildGuangZhouABCB2cData.java -text
 src/main/java/cn/explink/b2c/gzabc/GuangZhouABC.java -text
 src/main/java/cn/explink/b2c/gzabc/GuangZhouABCService.java -text

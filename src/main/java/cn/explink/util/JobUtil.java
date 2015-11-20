@@ -23,6 +23,7 @@ import cn.explink.b2c.explink.code_down.EpaiApiService;
 import cn.explink.b2c.explink.core.CoreService;
 import cn.explink.b2c.explink.core_up.EpaiCoreService_Receiver;
 import cn.explink.b2c.gome.GomeService_CommitDeliverInfo;
+import cn.explink.b2c.gxdx.GuangXinDidanXinService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.gztlfeedback.GztlServiceFeedback;
@@ -208,6 +209,8 @@ public class JobUtil {
 	WeisudaServiceDeliveryResult weisudaServiceDeliveryResult;
 	@Autowired
 	HyGService hygService;
+	@Autowired
+	GuangXinDidanXinService guangXinDidanXinService;
 
 	
 	public static Map<String, Integer> threadMap;
@@ -964,6 +967,17 @@ public class JobUtil {
 			this.logger.error("执行了好易购定时器异常!异常原因:{}",e);
 		}
 		this.logger.info("执行了【好易购】定时器任务!");
+	}
+	/**
+	 * 广信电信定时任务方法调用
+	 */
+	public void gxDxFTP(){
+		try{
+			this.guangXinDidanXinService.feedback_status();
+		}catch(Exception e){
+			this.logger.error("执行了广信电信定时器异常!异常原因:{}",e);
+		}
+		this.logger.info("执行了【广信电信】定时器任务!");
 	}
 }
 	

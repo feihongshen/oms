@@ -22,6 +22,7 @@ import cn.explink.b2c.dpfoss.DpfossService;
 import cn.explink.b2c.explink.code_down.EpaiApiService;
 import cn.explink.b2c.explink.core.CoreService;
 import cn.explink.b2c.explink.core.threadpool.CoreExcutorService;
+import cn.explink.b2c.gxdx.GuangXinDidanXinService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
 import cn.explink.b2c.haoxgou.HaoXiangGouService;
@@ -166,6 +167,8 @@ public class HandFeedBackController {
 	JobUtil jobUtil;
 	@Autowired
 	HyGService hygService;
+	@Autowired
+	GuangXinDidanXinService guangXinDidanXinService;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -494,5 +497,10 @@ public class HandFeedBackController {
 		return "手动执行【好易购】北京完成";
 	}
 	
+	@RequestMapping("/gxdx")
+	public @ResponseBody String requestGxDx(HttpServletRequest request){
+		this.guangXinDidanXinService.feedback_status();
+		return "手动执行【广信电信】北京完成";
+	}
 
 }

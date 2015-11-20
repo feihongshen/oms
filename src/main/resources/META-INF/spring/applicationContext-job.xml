@@ -73,6 +73,8 @@
 							 <ref bean="doTime_sysInit"/>
 							 <ref bean="doTime_zhemeng"/>
 							 <ref bean="doTime_haoyigou"/>
+							 <ref bean="doTime_gxdx"/>
+							 
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -934,6 +936,26 @@
 		</property>
 		<property name="targetMethod">
 			<value>hygtoFTP</value>
+		</property>
+	</bean>  
+	   
+	<bean id="doTime_gxdx" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="gxdx" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="gxdx" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>gxDxFTP</value>
 		</property>
 	</bean>     
 <!-- ===================================自动生成HTML定时器 结束========================================== -->

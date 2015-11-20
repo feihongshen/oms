@@ -9,6 +9,7 @@ import cn.explink.b2c.dangdang.BulidDangDangB2cData;
 import cn.explink.b2c.dongfangcj.BuildDongFangCJB2cData;
 import cn.explink.b2c.dpfoss.BuildDpfossB2cData;
 import cn.explink.b2c.gome.BulidGomeB2cData;
+import cn.explink.b2c.gxdx.BuildGxDxsenddata;
 import cn.explink.b2c.gzabc.BuildGuangZhouABCB2cData;
 import cn.explink.b2c.gztl.BuildGztlB2cData;
 import cn.explink.b2c.haoxgou.BuildHaoXiangGouB2cData;
@@ -123,7 +124,17 @@ public class BuildB2cDataMaster {
 	BuildJiuyeB2cData buildJiuyeB2cData;
 	@Autowired
 	BuildHYGsenddata buildHYGsenddata;
+	@Autowired
+	BuildGxDxsenddata buildGxDxsenddata;
 	
+	public BuildGxDxsenddata getBuildGxDxsenddata() {
+		return buildGxDxsenddata;
+	}
+
+	public void setBuildGxDxsenddata(BuildGxDxsenddata buildGxDxsenddata) {
+		this.buildGxDxsenddata = buildGxDxsenddata;
+	}
+
 	public BuildHYGsenddata getBuildHYGsenddata() {
 		return buildHYGsenddata;
 	}
