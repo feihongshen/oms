@@ -2705,7 +2705,7 @@
 		</profile>
 		
 		<profile>
-			<id>SXCL</id>
+			<id>XAPX</id>
 			<properties>
 				<tomcat.manager.url></tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
@@ -2714,9 +2714,9 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
-				<dmpUrl>http://localhost:8081/sxcl</dmpUrl>
-				<label>SXCL</label>
+				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
+				<dmpUrl>http://localhost:8081/xapx</dmpUrl>
+				<label>XAPX</label>
 			</properties>
 		</profile>
 		
