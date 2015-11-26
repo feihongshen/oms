@@ -922,4 +922,13 @@ public class B2CDataDAO {
 		}
 		return sql;
 	}
+
+	public void updataB2CrequestDataBYb2cids(String b2cids,long send_b2c_flag,String failedreason) {
+		String sql = " update express_send_b2c_data set send_b2c_flag="+send_b2c_flag+",remark="+failedreason+",select_b2c_flag=select_b2c_flag+1 where b2cid in("+b2cids+")";
+		try{
+			this.jdbcTemplate.update(sql);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

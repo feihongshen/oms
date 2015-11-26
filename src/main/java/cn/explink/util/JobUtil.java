@@ -53,6 +53,7 @@ import cn.explink.b2c.sfexpress.SfexpressService_sendOrder;
 import cn.explink.b2c.sfxhm.SfxhmService;
 import cn.explink.b2c.smile.SmileService;
 import cn.explink.b2c.smiled.SmiledService_SendBranch;
+import cn.explink.b2c.suning.SuNingService;
 import cn.explink.b2c.telecomsc.TelecomshopService;
 import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.B2CDataDAO;
@@ -211,6 +212,8 @@ public class JobUtil {
 	HyGService hygService;
 	@Autowired
 	GuangXinDidanXinService guangXinDidanXinService;
+	@Autowired
+	SuNingService suNingService; 
 
 	
 	public static Map<String, Integer> threadMap;
@@ -219,6 +222,7 @@ public class JobUtil {
 		JobUtil.threadMap = new HashMap<String, Integer>();
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
+		JobUtil.threadMap.put("suningCurrentinteger",0);
 	}
 
 	/**
@@ -979,6 +983,27 @@ public class JobUtil {
 		}
 		this.logger.info("执行了【广信电信】定时器任务!");
 	}
+	
+	/**
+	 * 【苏宁易购】数据回传
+	 */
+	
+	public void suNing_task(){
+		if(JobUtil.threadMap.get("suningCurrentinteger")==1){
+			return ;
+		}
+		JobUtil.threadMap.put("suningCurrentinteger",1);
+		try{
+			this.suNingService.feedback_status();
+			JobUtil.threadMap.put("suningCurrentinteger",0);
+		}catch(Exception e){
+			this.logger.error("执行了【苏宁易购】定时器异常!异常原因:{}",e);
+		}
+		this.logger.info("执行了【苏宁易购】定时器任务!");
+	}
+	
+	
+	
 }
 	
 

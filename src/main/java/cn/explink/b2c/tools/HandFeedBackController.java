@@ -494,7 +494,7 @@ public class HandFeedBackController {
 	@RequestMapping("/intoFTP")
 	public @ResponseBody String intoFTP_test(HttpServletRequest request){
 		this.hygService.feedback_status();
-		return "手动执行【好易购】北京完成";
+		return "手动执行【好易购】反馈完成";
 	}
 	
 	@RequestMapping("/gxdx")

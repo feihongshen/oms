@@ -31,6 +31,7 @@ import cn.explink.b2c.mmb.BuildmmbB2cData;
 import cn.explink.b2c.rufengda.BulidRufengdaB2cData;
 import cn.explink.b2c.sfxhm.BuildSfxhmB2cData;
 import cn.explink.b2c.smile.BulidSmileB2cData;
+import cn.explink.b2c.suning.BuildSuNingB2cData;
 import cn.explink.b2c.telecomsc.BuildTelecomshopB2cData;
 import cn.explink.b2c.tmall.BulidTmallB2cData;
 import cn.explink.b2c.vipshop.BulidVipShopB2cData;
@@ -126,7 +127,17 @@ public class BuildB2cDataMaster {
 	BuildHYGsenddata buildHYGsenddata;
 	@Autowired
 	BuildGxDxsenddata buildGxDxsenddata;
+	@Autowired
+	BuildSuNingB2cData buildSuNingB2cData;
 	
+	public BuildSuNingB2cData getBuildSuNingB2cData() {
+		return buildSuNingB2cData;
+	}
+
+	public void setBuildSuNingB2cData(BuildSuNingB2cData buildSuNingB2cData) {
+		this.buildSuNingB2cData = buildSuNingB2cData;
+	}
+
 	public BuildGxDxsenddata getBuildGxDxsenddata() {
 		return buildGxDxsenddata;
 	}

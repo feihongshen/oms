@@ -389,6 +389,17 @@ src/main/java/cn/explink/b2c/smiled/SmiledUnmarchal.java -text
 src/main/java/cn/explink/b2c/smiled/xmldto/SmiledOrder.java -text
 src/main/java/cn/explink/b2c/smiled/xmldto/SmiledOrderStatus.java -text
 src/main/java/cn/explink/b2c/smiled/xmldto/SmiledResponse.java -text
+src/main/java/cn/explink/b2c/suning/BuildSuNingB2cData.java -text
+src/main/java/cn/explink/b2c/suning/SuNing.java -text
+src/main/java/cn/explink/b2c/suning/SuNingFlowEnum.java -text
+src/main/java/cn/explink/b2c/suning/SuNingRunnableIml.java -text
+src/main/java/cn/explink/b2c/suning/SuNingService.java -text
+src/main/java/cn/explink/b2c/suning/requestdto/RequestBody.java -text
+src/main/java/cn/explink/b2c/suning/requestdto/RequestData.java -text
+src/main/java/cn/explink/b2c/suning/requestdto/WorkStatu.java -text
+src/main/java/cn/explink/b2c/suning/responsedto/ResponseBody.java -text
+src/main/java/cn/explink/b2c/suning/responsedto/ResponseData.java -text
+src/main/java/cn/explink/b2c/suning/responsedto/Result.java -text
 src/main/java/cn/explink/b2c/telecomsc/BuildTelecomshopB2cData.java -text
 src/main/java/cn/explink/b2c/telecomsc/TelecomFlowEnum.java -text
 src/main/java/cn/explink/b2c/telecomsc/TelecomJsonService.java -text
