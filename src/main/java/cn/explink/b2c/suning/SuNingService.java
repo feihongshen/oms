@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import cn.explink.b2c.suning.requestdto.WorkStatu;
 import cn.explink.b2c.suning.responsedto.ResponseData;
 import cn.explink.b2c.suning.responsedto.Result;
@@ -38,6 +39,34 @@ public class SuNingService {
 	private B2cTools b2ctools;
 	@Autowired
 	private B2CDataDAO b2CDataDAO;
+	
+	public B2cTools getB2ctools() {
+		return b2ctools;
+	}
+
+	public void setB2ctools(B2cTools b2ctools) {
+		this.b2ctools = b2ctools;
+	}
+
+	public B2CDataDAO getB2CDataDAO() {
+		return b2CDataDAO;
+	}
+
+	public void setB2CDataDAO(B2CDataDAO b2cDataDAO) {
+		b2CDataDAO = b2cDataDAO;
+	}
+	
+	private static SuNingService suNingService = null;
+	public SuNingService getSuNingService(){
+		//由于只注入一次
+		if(suNingService == null){
+			suNingService = new SuNingService();
+			suNingService.setB2ctools(b2ctools);
+			suNingService.setB2CDataDAO(b2CDataDAO);
+		}
+		return suNingService;
+	}
+	
 	private Logger logger =LoggerFactory.getLogger(this.getClass());
 	
 	public String filterJiuyeFlowEnum(long flowordertype,long deliverystate) {
@@ -59,8 +88,8 @@ public class SuNingService {
 		
 	}
 	
+	//订单配送信息提交接口
 	public void feedback_status(){
-		//订单配送信息提交接口
 		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.RuKu.getValue());
 		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
 		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
@@ -212,7 +241,7 @@ public class SuNingService {
 				for(int threadnum=0;threadnum<needthread;threadnum++){
 					//只需要一个线程处理
 					if(needthread==1){
-						executor.execute(new SuNingRunnableIml(suNingList,requestJsonBefore,middleJsoncontent,suning,barrier));
+						executor.execute(new SuNingRunnableIml(suNingList,requestJsonBefore,middleJsoncontent,suning,barrier,getSuNingService()));
 						/*impl.getLists(suNingList,requestJsonBefore,middleJsoncontent,suning);
 						Thread thread = new Thread(impl);
 						thread.start();*/
@@ -220,7 +249,7 @@ public class SuNingService {
 					}else{
 						//需要多个线程去处理
 						List<B2CData> bcList = getCurrentB2cdata(suNingList,fromindex,toindex);	
-						executor.execute(new SuNingRunnableIml(bcList,requestJsonBefore,middleJsoncontent,suning,barrier));
+						executor.execute(new SuNingRunnableIml(bcList,requestJsonBefore,middleJsoncontent,suning,barrier,getSuNingService()));
 						/*Thread thread = new Thread(impl);
 						thread.start();*/
 						//遍历循环拿到下一个线程需要处理的list索引位置
@@ -235,8 +264,8 @@ public class SuNingService {
 				try{
 					barrier.await();
 				}catch(Exception e){
-					this.logger.error("线程等待异常,reason:{}",e);
 					e.printStackTrace();
+					this.logger.error("线程等待异常,reason:{}",e);
 				}
 				executor.shutdown();
 				this.logger.info("====此次处理总共开辟了【"+needthread+"】个线程====");
@@ -250,8 +279,12 @@ public class SuNingService {
 		return totallist.subList(fromIndex, toIndex);
 	}
 	
+	
+	
 	//每个线程在此处处理
-	public void justdealwith(List<B2CData> suNingList,String requestJsonBefore,String middleJsoncontent,SuNing suning) throws Exception{
+	public void justdealwith(List<B2CData> suNingList,String requestJsonBefore,String middleJsoncontent,SuNing suning) throws Exception {
+		//单条线程处理开始
+		this.logger.info("每条线程调用处理===【苏宁易购】===货态反馈开始=======");
 		for(B2CData b2cdata:suNingList){
 			String jsoncontent = b2cdata.getJsoncontent();
 			String bodyStr = middleJsoncontent+jsoncontent+"]}";
@@ -263,29 +296,36 @@ public class SuNingService {
 			//字符串拼接成请求【苏宁易购】的数据
 			String requestdataStr = requestJsonBefore+bodyStr+requestJsonAfter;
 			logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
-			String responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
-			logger.info("【苏宁易购】返回的数据为:{}",responseJson);
-			ResponseData response=JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());	
-			//返回为空时，按全部失败处理
-			if(response.getBody() == null){
-				this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(),2,response.getFailedReason());
-			}else{
-				int send_b2c_flag = 1;
-				List<Result> results = response.getBody().getResults();
-				for(Result rs : results){
-					if(b2cdata.getCwb().equals(rs.getWork_id())){
-						if("E".equals((rs.getReturn_code()))){
-							send_b2c_flag = 2;
-							this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
-						}else{
-							this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
+			String responseJson = "";
+			ResponseData response = new ResponseData();
+			try{
+				responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
+				logger.info("【苏宁易购】返回的数据为:{}",responseJson);
+				response=JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());	
+				//返回为空时，按全部失败处理
+				if(response.getBody() == null){
+					this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(),2,response.getFailedReason());
+				}else{
+					int send_b2c_flag = 1;
+					List<Result> results = response.getBody().getResults();
+					for(Result rs : results){
+						if(b2cdata.getCwb().equals(rs.getWork_id())){
+							if("E".equals((rs.getReturn_code()))){
+								send_b2c_flag = 2;
+								this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
+							}else{
+								this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
+							}
 						}
 					}
 				}
+			}catch(Exception e){
+				this.logger.error("苏宁易购货态反馈处理异常,reason:{}",e);
+				this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(),2,"本地异常,reason:"+e.getMessage());
 			}
 		}
+		this.logger.info("每条线程调用处理===【苏宁易购】===货态反馈结束=======");
 	}
-	
 	
 	//获取配置信息
 	public SuNing getSuNingSettingMethod(int key) {

@@ -45,6 +45,7 @@ import cn.explink.b2c.mmb.MmbService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfxhm.SfxhmService;
 import cn.explink.b2c.smile.SmileService;
+import cn.explink.b2c.suning.SuNingService;
 import cn.explink.b2c.telecomsc.TelecomshopService;
 import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
@@ -169,6 +170,8 @@ public class HandFeedBackController {
 	HyGService hygService;
 	@Autowired
 	GuangXinDidanXinService guangXinDidanXinService;
+	@Autowired
+	SuNingService suNingService;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -488,7 +491,7 @@ public class HandFeedBackController {
 	@RequestMapping("/jiuye_test")
 	public @ResponseBody String jiuye_test(HttpServletRequest request){
 		jiuyeService.feedback_status();
-		return "手动执行反馈九曳北京完成";
+		return "手动执行反馈九曳货态反馈完成";
 	}
 	
 	@RequestMapping("/intoFTP")
@@ -503,4 +506,9 @@ public class HandFeedBackController {
 		return "手动执行【广信电信】北京完成";
 	}
 
+	@RequestMapping("/suning_test")
+	public @ResponseBody String suningfeedback(){
+		this.suNingService.feedback_status();
+		return "手动执行【苏宁易购】货态反馈完成";
+	}
 }

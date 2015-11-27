@@ -10,8 +10,7 @@ import cn.explink.domain.B2CData;
 
 
 public class SuNingRunnableIml implements Runnable{
-	@Autowired
-	SuNingService suNingService;
+	private SuNingService suNingService;
 	private List<B2CData> b2cdataList;
 	private String requestJsonBefore;
 	private String middleJsoncontent;
@@ -24,12 +23,13 @@ public class SuNingRunnableIml implements Runnable{
 		this.suning = suning;
 	}*/
 	
-	public SuNingRunnableIml(List<B2CData> b2cList,String requestJsonBefore,String middleJsoncontent,SuNing suning,CyclicBarrier barrier){
+	public SuNingRunnableIml(List<B2CData> b2cList,String requestJsonBefore,String middleJsoncontent,SuNing suning,CyclicBarrier barrier,SuNingService suNingService){
 		this.b2cdataList = b2cList;
 		this.requestJsonBefore = requestJsonBefore;
 		this.middleJsoncontent = middleJsoncontent;
 		this.suning = suning;
 		this.barrier = barrier;
+		this.suNingService = suNingService;
 	}
 	
 	@Override
