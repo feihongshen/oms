@@ -8,6 +8,7 @@ import cn.explink.b2c.chinamobile.BuildChinamobileB2cData;
 import cn.explink.b2c.dangdang.BulidDangDangB2cData;
 import cn.explink.b2c.dongfangcj.BuildDongFangCJB2cData;
 import cn.explink.b2c.dpfoss.BuildDpfossB2cData;
+import cn.explink.b2c.feiniuwang.BuildFeiNiuWangData;
 import cn.explink.b2c.gome.BulidGomeB2cData;
 import cn.explink.b2c.gxdx.BuildGxDxsenddata;
 import cn.explink.b2c.gzabc.BuildGuangZhouABCB2cData;
@@ -129,7 +130,13 @@ public class BuildB2cDataMaster {
 	BuildGxDxsenddata buildGxDxsenddata;
 	@Autowired
 	BuildSuNingB2cData buildSuNingB2cData;
+	@Autowired
+	BuildFeiNiuWangData buildFeiNiuWangData;
 	
+	public BuildFeiNiuWangData getBuildFeiNiuWangData() {
+		return buildFeiNiuWangData;
+	}
+
 	public BuildSuNingB2cData getBuildSuNingB2cData() {
 		return buildSuNingB2cData;
 	}

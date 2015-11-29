@@ -264,6 +264,12 @@ public class B2cJsonService {
 			return this.buildB2cDataMaster.getBuildLeChongB2cData().buildLeChongMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
+		
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Feiniuwang.getKey()))) {
+			return this.buildB2cDataMaster.getBuildFeiNiuWangData().buildFNWMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
+					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
+		}
+		
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Zhongliang.getKey()))) {
 			return this.buildB2cDataMaster.getBuildZhongliangB2cData().buildZhongliangMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);

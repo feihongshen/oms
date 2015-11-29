@@ -65,6 +65,7 @@ public enum B2cEnum {
 			"guangzhoutonglu"), GuangzhoutongluWaifadan(20096, "广州通路对接_外发单", "guangzhoutongluwaifadanduijie"),
 			VipShop_OXO(20090, "唯品会_oxo", "vipshop_OXO"),
 			JiuYe1(20101, "九曵1", "jiuye_1"),JiuYe2(20102, "九曵2", "jiuye_2"),JiuYe3(20103, "九曵3", "jiuye_3"),JiuYe4(20104, "九曵4", "jiuye_4"),JiuYe5(20105, "九曵5", "jiuye_5"),
+			Feiniuwang(20107, "飞牛网(http)", "feiniuwang"),
 			ZheMeng(20117, "哲盟-安达信", "zhemeng"),
 			HaoYiGou(20120,"好易购","haoyigou"),
 	GuangXinDianXin(20121,"广信电信","guangxindianxin"),

@@ -22,6 +22,7 @@ import cn.explink.b2c.dpfoss.DpfossService;
 import cn.explink.b2c.explink.code_down.EpaiApiService;
 import cn.explink.b2c.explink.core.CoreService;
 import cn.explink.b2c.explink.core.threadpool.CoreExcutorService;
+import cn.explink.b2c.feiniuwang.FNWService;
 import cn.explink.b2c.gxdx.GuangXinDidanXinService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
 import cn.explink.b2c.gztl.GztlService;
@@ -172,6 +173,8 @@ public class HandFeedBackController {
 	GuangXinDidanXinService guangXinDidanXinService;
 	@Autowired
 	SuNingService suNingService;
+	@Autowired
+	FNWService fnwService;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -506,6 +509,12 @@ public class HandFeedBackController {
 		return "手动执行【广信电信】北京完成";
 	}
 
+	@RequestMapping("/feiniuwang_test")
+	public @ResponseBody String feiniuwang_test(HttpServletRequest request){
+		this.fnwService.feedback_status();
+		return "手动推送飞牛网(http)成功";
+	}
+	
 	@RequestMapping("/suning_test")
 	public @ResponseBody String suningfeedback(){
 		this.suNingService.feedback_status();
