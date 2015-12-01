@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import cn.explink.b2c.suning.requestdto.WorkStatu;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
 import cn.explink.b2c.tools.B2cTools;
@@ -12,6 +13,7 @@ import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.UserDAO;
 import cn.explink.domain.User;
+import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
@@ -52,7 +54,13 @@ public class BuildSuNingB2cData {
 			}
 		}
 		WorkStatu workStatu = new WorkStatu();
-		workStatu.setWork_id(cwbOrder.getCwb());
+		String cwb = cwbOrder.getCwb();
+		if((Integer.valueOf(cwbOrder.getCwbordertypeid())==CwbOrderTypeIdEnum.Peisong.getValue())
+				&&(cwb.matches("[0-9]+"))){
+			//将数字补齐为20位纯数字
+			cwb = getNeedZeroStr(cwb,20);//补齐20位
+		}
+		workStatu.setWork_id(cwb);
 		workStatu.setWork_type(receivedStatus);
 		workStatu.setWork_status(work_status);
 		workStatu.setWork_site(this.cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchcode());//站点编码
@@ -69,5 +77,19 @@ public class BuildSuNingB2cData {
 		logger.info("订单号：{}封装成【苏宁易购】所需要的json----状态：{}",cwbOrder.getCwb(),flowOrdertype);
 		return objectMapper.writeValueAsString(workStatu);	
 	}	
+	
+	// 不足位数前面补0
+	private String getNeedZeroStr(String str, int lennum) {
+		String zerostr = "";
+		str = "0000000000" + str;
+		for(int i=0;i<100;i++){
+			str = "0000000000"+ str;
+			if(str.length()>lennum){
+				break;
+			}
+		}
+		zerostr = str.substring(str.length() - lennum, str.length());
+		return zerostr;
+	}
 	
 }
