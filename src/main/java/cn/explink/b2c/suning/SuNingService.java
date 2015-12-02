@@ -1,7 +1,6 @@
 package cn.explink.b2c.suning;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,10 +11,7 @@ import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import net.sf.json.JSONObject;
-
-import org.apache.cxf.wsdl.http.UrlEncoded;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import cn.explink.b2c.suning.requestdto.WorkStatu;
 import cn.explink.b2c.suning.responsedto.ResponseData;
 import cn.explink.b2c.suning.responsedto.Result;
@@ -95,11 +90,11 @@ public class SuNingService {
 	
 	//订单配送信息提交接口
 	public void feedback_status(){
-		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.RuKu.getValue());
-		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
-		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
-		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
-		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.YiShenHe.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.RuKu.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
+		SubmitDeliveryInfo(FlowOrderTypeEnum.YiShenHe.getValue());
 	}
 	
 	//获取需要反馈给【苏宁易购】的信息封装对象
@@ -169,10 +164,19 @@ public class SuNingService {
 				logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
 				Map<String, String> strMap = new HashMap<String, String>();
 				strMap.put("request", requestdataStr);
-				String responseJson = RestHttpServiceHanlder.sendHttptoServer(strMap, suning.getFeedbackUrl());
-				//String responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
-				logger.info("【苏宁易购】返回的数据为:{}",responseJson);
-				ResponseData response=JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());
+				String responseJson = "";
+				try{
+					responseJson = RestHttpServiceHanlder.sendHttptoServer(strMap, suning.getFeedbackUrl());
+					logger.info("【苏宁易购】返回的数据为:{}",responseJson);
+				}catch(Exception e){
+					this.logger.error("请求【苏宁易购】返回信息异常,原因:{}",e);
+				}
+				ResponseData response = new ResponseData();
+				try{
+					response = JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());
+				}catch(Exception e){
+					this.logger.error("解析返回信息错误,原因:{}",e);
+				}
 				//返回为空时，按全部失败处理
 				if(response.getBody() == null){
 					String b2cids = "";
@@ -197,7 +201,6 @@ public class SuNingService {
 									this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
 									this.logger.info("【苏宁易购】推送成功的订单号:{}",rs.getWork_id());
 								}
-								
 							}
 						}
 					}
