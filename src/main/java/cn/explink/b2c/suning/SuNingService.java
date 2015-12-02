@@ -165,8 +165,12 @@ public class SuNingService {
 				
 				//字符串拼接成请求【苏宁易购】的数据
 				String requestdataStr = requestJsonBefore+middleJsoncontent+requestJsonAfter;
+				requestdataStr = URLEncoder.encode(requestdataStr, "UTF-8");
 				logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
-				String responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
+				Map<String, String> strMap = new HashMap<String, String>();
+				strMap.put("request", requestdataStr);
+				String responseJson = RestHttpServiceHanlder.sendHttptoServer(strMap, suning.getFeedbackUrl());
+				//String responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
 				logger.info("【苏宁易购】返回的数据为:{}",responseJson);
 				ResponseData response=JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());
 				//返回为空时，按全部失败处理
@@ -188,8 +192,10 @@ public class SuNingService {
 								if("E".equals((rs.getReturn_code()))){
 									send_b2c_flag = 2;
 									this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
+									this.logger.info("【苏宁易购】推送失败订单号为:{}",rs.getWork_id());
 								}else{
 									this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
+									this.logger.info("【苏宁易购】推送成功的订单号:{}",rs.getWork_id());
 								}
 								
 							}
