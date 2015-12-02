@@ -1,6 +1,8 @@
 package cn.explink.b2c.suning;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import net.sf.json.JSONObject;
 
+import org.apache.cxf.wsdl.http.UrlEncoded;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -297,6 +300,8 @@ public class SuNingService {
 			String requestJsonAfter = ",\"spCode\":\""+suning.getSpCode()+"\",\"contentMesDigest\":\""+contentMesDigest+"\",\"time\":\""+time+"\"}";
 			//字符串拼接成请求【苏宁易购】的数据
 			String requestdataStr = requestJsonBefore+bodyStr+requestJsonAfter;
+			requestdataStr = URLEncoder.encode(requestdataStr, "UTF-8");
+			/*httpPost.setEntity(new UrlEncodedFormEntity(parameters,HTTP.UTF_8));*/
 			logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
 			String responseJson = "";
 			ResponseData response = new ResponseData();
