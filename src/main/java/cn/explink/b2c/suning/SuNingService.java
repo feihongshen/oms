@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -298,8 +300,11 @@ public class SuNingService {
 			logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
 			String responseJson = "";
 			ResponseData response = new ResponseData();
+			Map<String, String> strMap = new HashMap<String, String>();
+			strMap.put("request", requestdataStr);
 			try{
-				responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
+				responseJson = RestHttpServiceHanlder.sendHttptoServer(strMap, suning.getFeedbackUrl());
+				//responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
 				logger.info("【苏宁易购】返回的数据为:{}",responseJson);
 				response=JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());	
 				//返回为空时，按全部失败处理
