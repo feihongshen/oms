@@ -90,11 +90,11 @@ public class SuNingService {
 	
 	//订单配送信息提交接口
 	public void feedback_status(){
-		SubmitDeliveryInfo(FlowOrderTypeEnum.RuKu.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
-		SubmitDeliveryInfo(FlowOrderTypeEnum.YiShenHe.getValue());
+		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.RuKu.getValue());
+		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
+		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
+		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.FenZhanLingHuo.getValue());
+		SubmitDeliveryInfoSingle(FlowOrderTypeEnum.YiShenHe.getValue());
 	}
 	
 	//获取需要反馈给【苏宁易购】的信息封装对象
@@ -192,8 +192,8 @@ public class SuNingService {
 						int send_b2c_flag=1;
 						List<Result> results = response.getBody().getResults();
 						for(Result rs : results){
-							if(b2cdata.getCwb().equals(rs.getWork_id())){
-								if("E".equals((rs.getReturn_code()))){
+							if((rs.getWork_id()).contains(b2cdata.getCwb())){
+								if("E".equals(rs.getReturn_code())){
 									send_b2c_flag = 2;
 									this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
 									this.logger.info("【苏宁易购】推送失败订单号为:{}",rs.getWork_id());
@@ -328,13 +328,16 @@ public class SuNingService {
 					int send_b2c_flag = 1;
 					List<Result> results = response.getBody().getResults();
 					for(Result rs : results){
-						if(b2cdata.getCwb().equals(rs.getWork_id())){
+						if((rs.getWork_id()).contains(b2cdata.getCwb())){
 							if("E".equals((rs.getReturn_code()))){
 								send_b2c_flag = 2;
 								this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
 							}else{
 								this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, rs.getReturn_message());
 							}
+						}else{
+							this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), 2, "原单号不包含返回(截取)单号");
+							this.logger.info("原单号不包含返回(截取)单号,截取单号:{}",b2cdata.getCwb());
 						}
 					}
 				}
