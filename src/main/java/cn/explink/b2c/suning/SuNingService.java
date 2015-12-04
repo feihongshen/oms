@@ -309,9 +309,9 @@ public class SuNingService {
 			String requestJsonAfter = ",\"spCode\":\""+suning.getSpCode()+"\",\"contentMesDigest\":\""+contentMesDigest+"\",\"time\":\""+time+"\"}";
 			//字符串拼接成请求【苏宁易购】的数据
 			String requestdataStr = requestJsonBefore+bodyStr+requestJsonAfter;
+			this.logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
 			requestdataStr = URLEncoder.encode(requestdataStr, "UTF-8");
 			/*httpPost.setEntity(new UrlEncodedFormEntity(parameters,HTTP.UTF_8));*/
-			logger.info("请求【苏宁易购】参数为:{}",requestdataStr);
 			String responseJson = "";
 			ResponseData response = new ResponseData();
 			Map<String, String> strMap = new HashMap<String, String>();
@@ -319,7 +319,7 @@ public class SuNingService {
 			try{
 				responseJson = RestHttpServiceHanlder.sendHttptoServer(strMap, suning.getFeedbackUrl());
 				//responseJson=RestHttpServiceHanlder.sendHttptoServer(requestdataStr, suning.getFeedbackUrl());
-				logger.info("【苏宁易购】返回的数据为:{}",responseJson);
+				this.logger.info("【苏宁易购】返回的数据为:{}",responseJson);
 				response=JacksonMapper.getInstance().readValue(responseJson, new ResponseData().getClass());	
 				//返回为空时，按全部失败处理
 				if(response.getBody() == null){
