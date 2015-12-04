@@ -65,7 +65,12 @@ public class BuildSuNingB2cData {
 		workStatu.setWork_status(work_status);
 		workStatu.setWork_site(this.cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchcode());//站点编码
 		workStatu.setWork_name(this.cacheBaseListener.getBranch(orderFlow.getBranchid()).getBranchname());//站点名字
-		workStatu.setWork_user_id(deliveryman==null?null:(deliveryman.getRealname()));
+		//deliveryman==null?null:(deliveryman.getRealname())
+		String work_user_id = deliveryman==null?"":(deliveryman.getUsername());//登录名
+		if(!work_user_id.matches("[0-9]+")){//如果是纯数字则直接赋值，如果不是纯数字则获取手机号
+			work_user_id = deliveryman==null?"":(deliveryman.getUsermobile()==null?"":(deliveryman.getUsermobile()));
+		}
+		workStatu.setWork_user_id(work_user_id);
 		workStatu.setWork_mobilephone(deliveryman==null?null:(deliveryman.getUsermobile()));
 		workStatu.setWork_oper_id(user==null?null:(user.getRealname()));
 		workStatu.setWork_oper_time(orderFlow.getCredate().toString());
