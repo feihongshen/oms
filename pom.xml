@@ -38,6 +38,12 @@
 			<name>momoplan maven release</name>
 			<url>https://raw.github.com/momoplan/maven-repository/master/releases</url>
 		</repository>
+		<repository>
+			<id>explink-repostory</id>
+			<name>explink Repository</name>
+			<url>http://explink.wicp.net:21122/nexus/content/repositories/releases/</url>
+		</repository>
+		
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -391,6 +397,71 @@
 		</dependency>
 		
 		
+		<!-- 品骏达外单jar -->
+		
+		<dependency>
+		  <groupId>com.pjbest</groupId>
+	 	  <artifactId>pjdeliveryorder-service-api</artifactId>
+	  	  <version>1.13.0_07</version>
+	   </dependency>
+	   
+	   <dependency>
+		  <groupId>osp</groupId>
+		  <artifactId>osp-core</artifactId>
+		  <version>2.4.11</version>
+		</dependency>
+	  
+		<dependency>
+		  <groupId>osp</groupId>
+		  <artifactId>osp-basic</artifactId>
+		  <version>2.4.11</version>
+		</dependency>
+		
+		 <dependency>
+		  <groupId>com.codahale</groupId>
+		  <artifactId>metrics-core</artifactId>
+		  <version>3.1.0</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.vip.hermes</groupId>
+		  <artifactId>hermes-common</artifactId>
+		  <version>1.1.7</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>hermes</groupId>
+		  <artifactId>hermes-core</artifactId>
+		  <version>1.1.7</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-collections4</artifactId>
+		  <version>4.1</version>
+		</dependency>
+
+		<dependency>
+		     <groupId>org.apache</groupId> 
+			<artifactId>zookeeper</artifactId> 
+			<version>3.4.6</version> 
+		</dependency>
+	   <dependency>
+  			<groupId>org.apache.thrift</groupId>
+  			<artifactId>libthrift</artifactId>
+  			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty-all</artifactId>
+              <version>4.0.15.Final</version>
+		</dependency>
+		<dependency>
+              <groupId>io.netty</groupId>
+              <artifactId>netty</artifactId>
+              <version>3.7.0.Final</version>
+		</dependency>
+		
 		
 	</dependencies>
 	<build>
@@ -563,10 +634,10 @@
 				<expressurl.maxconn>20</expressurl.maxconn>
 				<expressurl.url>jdbc:mysql://127.0.0.1:3306/oms_42?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
 				<expressurl.user>root</expressurl.user>
-				<expressurl.password>root</expressurl.password>
+				<expressurl.password>wang</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://localhost:8082/dmp_pj</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8081/dmp</dmpUrl>
 				<label>local</label>
 			</properties>
 		</profile>
