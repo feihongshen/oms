@@ -69,7 +69,7 @@ public class SuNingService {
 	
 	private Logger logger =LoggerFactory.getLogger(this.getClass());
 	
-	public String filterJiuyeFlowEnum(long flowordertype,long deliverystate) {
+	public String filterSuningFlowEnum(long flowordertype,long deliverystate) {
 		if(flowordertype!=FlowOrderTypeEnum.YiShenHe.getValue()){
 			for(SuNingFlowEnum TEnum:SuNingFlowEnum.values()){
 				if(flowordertype==TEnum.getFlowordertype()){
@@ -77,13 +77,15 @@ public class SuNingService {
 				}
 			}
 		}
-		if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()&&
-		(deliverystate==DeliveryStateEnum.PeiSongChengGong.getValue()
-		||deliverystate==DeliveryStateEnum.ShangMenTuiChengGong.getValue()))
-		{
-			return SuNingFlowEnum.TMS_SIGN1.getWork_type();		
+		if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()){
+			if((deliverystate==DeliveryStateEnum.PeiSongChengGong.getValue())
+			||(deliverystate==DeliveryStateEnum.ShangMenTuiChengGong.getValue())
+			||(deliverystate==DeliveryStateEnum.QuanBuTuiHuo.getValue())
+					)
+			{
+				return SuNingFlowEnum.TMS_SIGN1.getWork_type();		
+			}
 		}
-		
 		return null;
 		
 	}

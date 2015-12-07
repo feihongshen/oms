@@ -38,7 +38,7 @@ public class BuildSuNingB2cData {
 	public String buildSuNingMethod(DmpOrderFlow orderFlow, long flowOrdertype,DmpCwbOrder cwbOrder,DmpDeliveryState deliveryState,
 			long delivery_state, ObjectMapper objectMapper) throws Exception{
 				
-		String receivedStatus=suNingService.filterJiuyeFlowEnum(flowOrdertype,delivery_state);
+		String receivedStatus=suNingService.filterSuningFlowEnum(flowOrdertype,delivery_state);
 			
 		if(receivedStatus==null){
 			logger.info("订单号：{} 不属于【苏宁易购】所需要存储的json数据,状态{},return",cwbOrder.getCwb(),flowOrdertype);
