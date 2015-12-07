@@ -498,12 +498,14 @@ src/main/java/cn/explink/b2c/wanxiang/bean/WxResponse.java -text
 src/main/java/cn/explink/b2c/wanxiang/bean/WxUnmarchal.java -text
 src/main/java/cn/explink/b2c/wanxiang/bean/Wxlog.java -text
 src/main/java/cn/explink/b2c/weisuda/HandleCodeEnum.java -text
+src/main/java/cn/explink/b2c/weisuda/WeiSuDaWaiDanService.java -text
 src/main/java/cn/explink/b2c/weisuda/Weisuda.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaController.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaCwb.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaService.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaServiceDeliveryResult.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudaServiceExtends.java -text
+src/main/java/cn/explink/b2c/weisuda/WeisudaTest.java -text
 src/main/java/cn/explink/b2c/weisuda/WeisudsInterfaceEnum.java -text
 src/main/java/cn/explink/b2c/weisuda/threadpool/SubExcuteWeisudaTask.java -text
 src/main/java/cn/explink/b2c/weisuda/threadpool/WeisudaExcutorService.java -text

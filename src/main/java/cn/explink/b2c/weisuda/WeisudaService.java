@@ -1,7 +1,7 @@
 package cn.explink.b2c.weisuda;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,13 +12,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tools.JointEntity;
 import cn.explink.b2c.weisuda.xml.GetUnVerifyOrders_back_Item;
 import cn.explink.b2c.weisuda.xml.Getback_Item;
 import cn.explink.b2c.weisuda.xml.Goods;
@@ -60,6 +60,8 @@ import cn.explink.util.DateTimeUtil;
 import cn.explink.util.JsonUtil;
 import cn.explink.util.RestHttpServiceHanlder;
 import cn.explink.util.MD5.MD5Util;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Service
 public class WeisudaService {
@@ -75,6 +77,10 @@ public class WeisudaService {
 	private BranchDAO branchDAO;
 	@Autowired
 	CacheBaseListener cacheBaseListener;
+	@Autowired
+	B2cTools b2cTools2;
+	@Autowired
+	WeiSuDaWaiDanService weiSuDaWaiDanService;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -104,7 +110,7 @@ public class WeisudaService {
 	 * @param cwbOrderWithDeliveryState
 	 * @param orderFlow
 	 */
-	public void insertWeisuda(CwbOrderWithDeliveryState cwbOrderWithDeliveryState, DmpOrderFlow orderFlow) {
+	public void insertWeisuda(CwbOrderWithDeliveryState cwbOrderWithDeliveryState, DmpOrderFlow orderFlow)  {
 		this.logger.info("唯速达_01进入唯速达对接cwb={}", orderFlow.getCwb());
 		DmpCwbOrder cwbOrder = cwbOrderWithDeliveryState.getCwbOrder();
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
@@ -116,7 +122,7 @@ public class WeisudaService {
 				this.logger.info("Customer对象在缓存中没有获取到，唯速达请求dmp..cwb={}", orderFlow.getCwb());
 				customer = this.getDmpDAO.getCustomer(customerid);
 			}
-			 
+			
 			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
 				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
 				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
@@ -131,12 +137,41 @@ public class WeisudaService {
 					this.weisudaDAO.insertWeisuda(weisudaCwb);
 					this.logger.info("唯速达_01获取唯速达数据插入成功cwb={}", weisudaCwb.getCwb());
 				}
-			} else {
-				this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
+				return;
+			} 
+				
+			//查询出唯速达所设置的客户
+			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+			if(weisuda.getIsSend() == 1){
+				
+				boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
+				
+				if(filterCustomerflag){
+					this.weiSuDaWaiDanService.sendCwb(cwbOrder,weisuda,customer);
+				} else {
+					this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
+				}
+			}else{
+				this.logger.info("唯速达_01未开启订单推送，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
 			}
 		} else {
 			this.logger.info("唯速达_01不是所需要的订单类型，cwb={}", orderFlow.getCwb());
 		}
+	}
+
+
+
+	private boolean filterWandanCustomerId(long customerid, Weisuda weisuda) {
+		String customerids = weisuda.getCustomers();
+		String[] ids = customerids.split(",|，");
+		boolean flag = false;
+		//查看当前订单的客户是不是唯速达的外单客户
+		for(int i=0; i<ids.length;i++){
+			if(customerid == Long.parseLong(ids[i])){
+				flag = true;
+			}
+		}
+		return flag;
 	}
 
 	/**
