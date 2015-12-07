@@ -1534,7 +1534,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://103.229.214.164/pxwl</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/pxwl</dmpUrl>
 				<label>PXWL</label>
 			</properties>
 		</profile>
@@ -1657,7 +1657,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://192.168.70.21/ahpx</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/ahpx</dmpUrl>
 				<label>AHPX</label>
 			</properties>
 		</profile>
@@ -1903,7 +1903,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://103.229.214.164/ynpx</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/ynpx</dmpUrl>
 				<label>YNPX</label>
 			</properties>
 		</profile>
@@ -1996,7 +1996,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://103.229.214.164/xjpx</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/xjpx</dmpUrl>
 				<label>XJPX</label>
 			</properties>
 		</profile>
@@ -2029,7 +2029,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://103.229.214.164/gxpx</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/gxpx</dmpUrl>
 				<label>GXPX</label>
 			</properties>
 		</profile>
@@ -2512,7 +2512,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://103.229.214.164/scpj</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/scpj</dmpUrl>
 				<label>SCPJ</label>
 			</properties>
 		</profile>
