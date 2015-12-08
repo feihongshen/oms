@@ -401,10 +401,10 @@
 		
 		<dependency>
 		  <groupId>com.pjbest</groupId>
-	 	  <artifactId>pjdeliveryorder-service-api</artifactId>
-	  	  <version>1.13.0_07</version>
-	   </dependency>
-	   
+		  <artifactId>pjdeliveryorder-service-api</artifactId>
+		  <version>1.13.1_01</version>
+		</dependency>
+			   
 	   <dependency>
 		  <groupId>osp</groupId>
 		  <artifactId>osp-core</artifactId>
