@@ -100,7 +100,6 @@ public class WeiSuDaWaiDanService {
             }
             value2.setPickerTime(StringUtil.nullConvertToEmptyString(cwbOrder.getEmaildate()));//揽件时间
             doReqs1.add(value2);
-            System.out.println(doReqs1.get(0).getWarehouse());
             List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = client.createDeliveryOrder(doReqs1);
             PjDeliveryOrder4DMPResponse pjDeliveryOrder = pjDeliveryOrderList.get(0);
             if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
