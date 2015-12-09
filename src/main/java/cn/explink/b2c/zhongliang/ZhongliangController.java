@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/zhongliang")
+
 public class ZhongliangController {
 	@Autowired
 	ZhongliangService zhongliangService;
-
 	@RequestMapping("/orderFlow")
 	public @ResponseBody String timmer() {
 		zhongliangService.feedback_status();

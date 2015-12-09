@@ -586,6 +586,12 @@ src/main/java/cn/explink/b2c/zhongliang/ZhongliangController.java -text
 src/main/java/cn/explink/b2c/zhongliang/ZhongliangLuYouEnum.java -text
 src/main/java/cn/explink/b2c/zhongliang/ZhongliangService.java -text
 src/main/java/cn/explink/b2c/zhongliang/ZhongliangTrackEnum.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Request_Body.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Request_UpdateStatus.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Request_orderStatus.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Response_Body.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Response_Order.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Response_orderStatus.java -text
 src/main/java/cn/explink/constant/Constants.java -text
 src/main/java/cn/explink/controller/AccountAreaController.java -text
 src/main/java/cn/explink/controller/AdvancedQueryController.java -text
