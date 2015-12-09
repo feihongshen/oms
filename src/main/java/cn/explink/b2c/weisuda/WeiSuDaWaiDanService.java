@@ -31,6 +31,7 @@ public class WeiSuDaWaiDanService {
 
 	public void sendCwb(DmpCwbOrder cwbOrder,Weisuda weisuda,Customer customer)  {
 		try {
+			String poString = this.getDmpDAO.getNowCustomerPos(customer.getCustomerid());
 			User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
 			int cwbOrderType = Integer.parseInt(cwbOrder.getCwbordertypeid());
 			int orderType = 0;
@@ -82,6 +83,8 @@ public class WeiSuDaWaiDanService {
             }else{
             	value2.setIsCod("0");
             }
+            value2.setIsCod("1");
+            value2.setCodAmount("300");
             value2.setCarriage(0);//运费合计
             value2.setTotalNum(String.valueOf(cwbOrder.getSendcarnum()));//商品数量
             value2.setTotalWeight(Double.parseDouble(cwbOrder.getCarrealweight().toString()));
@@ -91,13 +94,15 @@ public class WeiSuDaWaiDanService {
             value2.setTotalVolume(0);
             value2.setAssuranceFee(0);
             value2.setPayType("-1");//支付方式
-            if(cwbOrder.getPaywayid() == PaytypeEnum.Xianjin.getValue()){
+            value2.setAccountMark(poString);
+            /*if(cwbOrder.getPaywayid() == PaytypeEnum.Xianjin.getValue()){
             	value2.setPayment("0");//付款方式
             } else if(cwbOrder.getPaywayid() == PaytypeEnum.Pos.getValue()){
             	value2.setPayment("1");
             } else {
             	value2.setPayment("-1");
-            }
+            }*/
+            value2.setPayment("2");
             value2.setPickerTime(StringUtil.nullConvertToEmptyString(cwbOrder.getEmaildate()));//揽件时间
             doReqs1.add(value2);
             List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = client.createDeliveryOrder(doReqs1);

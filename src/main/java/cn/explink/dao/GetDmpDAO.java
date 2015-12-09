@@ -76,6 +76,22 @@ public class GetDmpDAO {
 		}
 		return branchid;
 	}
+	
+	/**
+	 * 获取通联pos分账标识
+	 *
+	 * @param 
+	 * @return
+	 */
+	public String getNowCustomerPos(long customerid) {
+		String posString = "";
+		try {
+			posString = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowCustomerPos;jsessionid=" + customerid, "");
+		} catch (Exception e) {
+			this.logger.error("获取通联pos分账标识异常", e);
+		}
+		return posString;
+	}
 
 	/**
 	 * 获取当前用户真实姓名
