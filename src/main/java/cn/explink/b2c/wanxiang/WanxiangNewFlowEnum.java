@@ -7,10 +7,8 @@ public enum WanxiangNewFlowEnum {
 	RuKu("45100", FlowOrderTypeEnum.RuKu.getValue(), "库房入库", 0), KuFangChuku("45990", FlowOrderTypeEnum.ChuKuSaoMiao.getValue(), "库房出库", 0), FenZhanDaoHuo("61000",
 			FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(), "分站到货", 0), ZhanDianChuku("62000", FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "站内派件", 0),
 	// DaoCuoHuo("60102",FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(),"出站转运(到错货)",0),
-	FenZhanZhiLiu("63010", FlowOrderTypeEnum.YiShenHe.getValue(), "站内延缓", 1),
-	// JuShou("63030",FlowOrderTypeEnum.YiFanKui.getValue(),"拒收-审核",1),
-	PeiSongChengGong("65000", FlowOrderTypeEnum.YiShenHe.getValue(), "配送成功", 1), ShangmenHuanChengGong("65010", FlowOrderTypeEnum.YiShenHe.getValue(), "换货成功", 1),
-	// BufenTuihuo("65030",FlowOrderTypeEnum.YiShenHe.getValue(),"部分退货",1),
+	FenZhanZhiLiu("63010", FlowOrderTypeEnum.YiShenHe.getValue(), "站内延缓", 1), JuShou("63030", FlowOrderTypeEnum.YiFanKui.getValue(), "拒收-审核", 1), PeiSongChengGong("65000", FlowOrderTypeEnum.YiShenHe
+			.getValue(), "配送成功", 1), ShangmenHuanChengGong("65010", FlowOrderTypeEnum.YiShenHe.getValue(), "换货成功", 1), BufenTuihuo("65030", FlowOrderTypeEnum.YiShenHe.getValue(), "部分退货", 1),
 
 	PeiSongChengGongConfrim("69990", FlowOrderTypeEnum.YiShenHe.getValue(), "配送成功-审核", 1),
 
@@ -34,7 +32,7 @@ public enum WanxiangNewFlowEnum {
 	}
 
 	public int getOnwer_code() {
-		return onwer_code;
+		return this.onwer_code;
 	}
 
 	public void setOnwer_code(int onwer_code) {
@@ -42,7 +40,7 @@ public enum WanxiangNewFlowEnum {
 	}
 
 	public String getDesribe() {
-		return desribe;
+		return this.desribe;
 	}
 
 	public void setDesribe(String desribe) {
@@ -50,11 +48,11 @@ public enum WanxiangNewFlowEnum {
 	}
 
 	public int getIsResultFlag() {
-		return isResultFlag;
+		return this.isResultFlag;
 	}
 
 	public String getWx_code() {
-		return wx_code;
+		return this.wx_code;
 	}
 
 	public void setIsResultFlag(int isResultFlag) {

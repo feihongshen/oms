@@ -14,9 +14,25 @@ public class Wanxiang {
 	private String user_name; // 用户名
 	private String pass_word; // 密码
 	private int version; // 版本
+	private int shangmentuiSupport;// 0 默认支持， 1不支持 
+	private int jushousendflag; //拒收是否推送， 0推送，  1不推送
+	
+	public int getJushousendflag() {
+		return jushousendflag;
+	}
+	public void setJushousendflag(int jushousendflag) {
+		this.jushousendflag = jushousendflag;
+	}
+	
+	public int getShangmentuiSupport() {
+		return shangmentuiSupport;
+	}
+	public void setShangmentuiSupport(int shangmentuiSupport) {
+		this.shangmentuiSupport = shangmentuiSupport;
+	}
 
 	public int getVersion() {
-		return version;
+		return this.version;
 	}
 
 	public void setVersion(int version) {
@@ -24,7 +40,7 @@ public class Wanxiang {
 	}
 
 	public String getUser_name() {
-		return user_name;
+		return this.user_name;
 	}
 
 	public void setUser_name(String user_name) {
@@ -32,7 +48,7 @@ public class Wanxiang {
 	}
 
 	public String getPass_word() {
-		return pass_word;
+		return this.pass_word;
 	}
 
 	public void setPass_word(String pass_word) {
@@ -40,7 +56,7 @@ public class Wanxiang {
 	}
 
 	public String getBranchname() {
-		return branchname;
+		return this.branchname;
 	}
 
 	public void setBranchname(String branchname) {
@@ -48,7 +64,7 @@ public class Wanxiang {
 	}
 
 	public int getMaxCount() {
-		return maxCount;
+		return this.maxCount;
 	}
 
 	public void setMaxCount(int maxCount) {
@@ -56,7 +72,7 @@ public class Wanxiang {
 	}
 
 	public String getPrivate_key() {
-		return private_key;
+		return this.private_key;
 	}
 
 	public void setPrivate_key(String private_key) {
@@ -64,7 +80,7 @@ public class Wanxiang {
 	}
 
 	public String getCustomerid() {
-		return customerid;
+		return this.customerid;
 	}
 
 	public void setCustomerid(String customerid) {
@@ -72,7 +88,7 @@ public class Wanxiang {
 	}
 
 	public String getUrl() {
-		return url;
+		return this.url;
 	}
 
 	public void setUrl(String url) {

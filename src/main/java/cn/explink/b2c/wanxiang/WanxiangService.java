@@ -1,6 +1,5 @@
 package cn.explink.b2c.wanxiang;
 
-import java.io.IOException;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -9,15 +8,12 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.explink.b2c.letv.LetvXMLNote;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
@@ -47,7 +43,7 @@ public class WanxiangService {
 	// 获取配置信息
 	public Wanxiang getWanxiang(int key) {
 		Wanxiang lt = null;
-		String objectMethod = b2ctools.getObjectMethod(key).getJoint_property();
+		String objectMethod = this.b2ctools.getObjectMethod(key).getJoint_property();
 		if (objectMethod != null) {
 			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
 			lt = (Wanxiang) JSONObject.toBean(jsonObj, Wanxiang.class);
@@ -63,8 +59,8 @@ public class WanxiangService {
 		PostMethod postMethod = new PostMethod(post_url);
 		postMethod.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
 
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(20000);
-		httpClient.getHttpConnectionManager().getParams().setSoTimeout(20000);
+		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(30000);
+		httpClient.getHttpConnectionManager().getParams().setSoTimeout(30000);
 		// 填入各个表单域的值
 		NameValuePair[] data = { new NameValuePair("JSONDATA", jsoncontent), };
 
@@ -111,18 +107,18 @@ public class WanxiangService {
 		}
 
 		// 审核
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue() && deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
+		if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) && (deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue())) {
 			return WanxiangFlowEnum.FenZhanZhiLiu.getWx_code();
 		}
 
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()
-				&& (deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue() || deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue() || deliverystate == DeliveryStateEnum.ShangMenHuanChengGong
-						.getValue())) {
+		if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue())
+				&& ((deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenHuanChengGong
+						.getValue()))) {
 			return WanxiangFlowEnum.PeiSongChengGong.getWx_code();
 		}
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()
-				&& (deliverystate == DeliveryStateEnum.BuFenTuiHuo.getValue() || deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue() || deliverystate == DeliveryStateEnum.ShangMenJuTui
-						.getValue())) {
+		if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue())
+				&& ((deliverystate == DeliveryStateEnum.BuFenTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenJuTui
+						.getValue()))) {
 			return WanxiangFlowEnum.JuShou.getWx_code();
 		}
 
@@ -130,7 +126,7 @@ public class WanxiangService {
 
 	}
 
-	public String getFlowEnumNew(long flowordertype, long deliverystate, String cwbordertypeid) {
+	public String getFlowEnumNew(long flowordertype, long deliverystate, String cwbordertypeid, int version) {
 
 		for (WanxiangNewFlowEnum em : WanxiangNewFlowEnum.values()) {
 			if (em.getIsResultFlag() == 0) {
@@ -141,29 +137,32 @@ public class WanxiangService {
 		}
 
 		// 审核
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue() && deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
+		if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) && (deliverystate == DeliveryStateEnum.FenZhanZhiLiu.getValue())) {
 			return WanxiangNewFlowEnum.FenZhanZhiLiu.getWx_code();
 		}
 		// 配送成功
-		if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue()
-				&& (deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue() || deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue())) {
+		if ((flowordertype == FlowOrderTypeEnum.YiFanKui.getValue())
+				&& ((deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue()))) {
 			return WanxiangNewFlowEnum.PeiSongChengGong.getWx_code();
 		}
 		// 配送成功 审核
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()
-				&& (deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue() || deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue())) {
+		if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue())
+				&& ((deliverystate == DeliveryStateEnum.PeiSongChengGong.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenTuiChengGong.getValue()))) {
 			return WanxiangNewFlowEnum.PeiSongChengGongConfrim.getWx_code();
 		}
 		// 上门换成功
-		if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue() && (deliverystate == DeliveryStateEnum.ShangMenHuanChengGong.getValue())) {
+		if ((flowordertype == FlowOrderTypeEnum.YiFanKui.getValue()) && (deliverystate == DeliveryStateEnum.ShangMenHuanChengGong.getValue())) {
 			return WanxiangNewFlowEnum.ShangmenHuanChengGong.getWx_code();
 		}
 
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue() && (deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue() || deliverystate == DeliveryStateEnum.ShangMenJuTui.getValue())) {
-			// return WanxiangNewFlowEnum.JuShou.getWx_code();
-		}
-		if (flowordertype == FlowOrderTypeEnum.YiShenHe.getValue() && deliverystate == DeliveryStateEnum.BuFenTuiHuo.getValue()) {
-			// return WanxiangNewFlowEnum.BufenTuihuo.getWx_code();
+		if (version != 0) {
+			if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue())
+					&& ((deliverystate == DeliveryStateEnum.QuanBuTuiHuo.getValue()) || (deliverystate == DeliveryStateEnum.ShangMenJuTui.getValue()))) {
+				return WanxiangNewFlowEnum.JuShou.getWx_code();
+			}
+			if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) && (deliverystate == DeliveryStateEnum.BuFenTuiHuo.getValue())) {
+				return WanxiangNewFlowEnum.BufenTuihuo.getWx_code();
+			}
 		}
 
 		return null;
@@ -175,12 +174,19 @@ public class WanxiangService {
 	 */
 	public void feedback_status() {
 
-		if (!b2ctools.isB2cOpen(B2cEnum.Wanxiang.getKey())) {
-			logger.info("未开0万象0的对接!");
+		if (!this.b2ctools.isB2cOpen(B2cEnum.Wanxiang.getKey())) {
+			this.logger.info("未开0万象0的对接!");
 			return;
 		}
-		Wanxiang wx = getWanxiang(B2cEnum.Wanxiang.getKey());
-		sendCwbStatus_To_wx(wx);
+		Wanxiang wx = this.getWanxiang(B2cEnum.Wanxiang.getKey());
+		this.sendCwbStatus_To_wx(wx);
+
+		this.feedbackFailedAgain(wx, FlowOrderTypeEnum.RuKu.getValue());
+		this.feedbackFailedAgain(wx, FlowOrderTypeEnum.ChuKuSaoMiao.getValue());
+		this.feedbackFailedAgain(wx, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue());
+		this.feedbackFailedAgain(wx, FlowOrderTypeEnum.FenZhanLingHuo.getValue());
+		this.feedbackFailedAgain(wx, FlowOrderTypeEnum.YiFanKui.getValue());
+		this.feedbackFailedAgain(wx, FlowOrderTypeEnum.YiShenHe.getValue());
 
 	}
 
@@ -195,23 +201,23 @@ public class WanxiangService {
 
 			int i = 0;
 			while (true) {
-				List<B2CData> datalist = b2cDataDAO.getDataListByFlowStatus(wx.getCustomerid(), wx.getMaxCount());
+				List<B2CData> datalist = this.b2cDataDAO.getDataListByFlowStatus(wx.getCustomerid(), wx.getMaxCount());
 				i++;
 				if (i > 100) {
-					logger.warn("查询0万象0状态反馈已经超过100次循环，可能存在程序未知异常,请及时查询并处理!");
+					this.logger.warn("查询0万象0状态反馈已经超过100次循环，可能存在程序未知异常,请及时查询并处理!");
 					return;
 				}
 
-				if (datalist == null || datalist.size() == 0) {
-					logger.info("当前没有要推送0万象0的数据");
+				if ((datalist == null) || (datalist.size() == 0)) {
+					this.logger.info("当前没有要推送0万象0的数据");
 					return;
 				}
-				DealWithBuildXMLAndSending(wx, datalist);
+				this.DealWithBuildXMLAndSending(wx, datalist);
 
 			}
 
 		} catch (Exception e) {
-			logger.error("发送0万象0状态反馈遇到不可预知的异常", e);
+			this.logger.error("发送0万象0状态反馈遇到不可预知的异常", e);
 		}
 
 	}
@@ -219,30 +225,67 @@ public class WanxiangService {
 	private void DealWithBuildXMLAndSending(Wanxiang wx, List<B2CData> datalist) throws Exception {
 
 		for (B2CData data : datalist) {
-			String jsoncontent = data.getJsoncontent();
-			jsoncontent = jsoncontent.substring(1, jsoncontent.length() - 1);
+			try {
+				String jsoncontent = data.getJsoncontent();
+				jsoncontent = jsoncontent.substring(1, jsoncontent.length() - 1);
 
-			logger.info("当前[推送]0万象0状态={},USER_NAME={},PASSWORD={},jsoncontent={}", new Object[] { data.getFlowordertype(), wx.getUser_name(), wx.getPass_word(), jsoncontent });
+				this.logger.info("当前[推送]0万象0状态={},USER_NAME={},PASSWORD={},jsoncontent={}", new Object[] { data.getFlowordertype(), wx.getUser_name(), wx.getPass_word(), jsoncontent });
 
-			String md5Data = MD5Util.md5(jsoncontent + wx.getPrivate_key());
-			String response = postHTTPJsonDataToWanXiang_new(wx.getUser_name(), wx.getPass_word(), jsoncontent, md5Data, wx.getUrl());
+				String md5Data = MD5Util.md5(jsoncontent + wx.getPrivate_key());
+				String response = this.postHTTPJsonDataToWanXiang_new(wx.getUser_name(), wx.getPass_word(), jsoncontent, md5Data, wx.getUrl());
 
-			logger.info("当前0万象0[返回]状态={},response={},cwb={}" + data.getCwb(), data.getFlowordertype(), response);
+				this.logger.info("当前0万象0[返回]状态={},response={},cwb={}" + data.getCwb(), data.getFlowordertype(), response);
 
-			WxResponse wxresp = WxUnmarchal.Unmarchal(response);
-			String state_total = wxresp.getState();
-			if (!"S0".equals(state_total)) {
-				logger.error("万象推送系统错误,return.response=" + response);
-				return;
+				WxResponse wxresp = WxUnmarchal.Unmarchal(response);
+				String state_total = wxresp.getState();
+				if (!"S0".equals(state_total)) {
+
+					this.logger.error("万象推送系统错误,return.response=" + response);
+					this.b2cDataDAO.updateB2cIdSQLResponseStatus(data.getB2cid(), 2, "万象返回失败");
+
+				}
+
+				int state = wxresp.getLog().getError_code().equalsIgnoreCase("B0") ? 1 : 2;
+				String remark = wxresp.getLog().getError_msg();
+				if ((remark != null) && remark.contains("重发")) {
+					state = 2;
+				}
+
+				this.b2cDataDAO.updateB2cIdSQLResponseStatus(data.getB2cid(), state, remark);
+			} catch (Exception e) {
+				int send_b2c_flag = 2;
+				if ((e.getMessage() != null) && e.getMessage().contains("Read") && e.getMessage().contains("out")) {
+					send_b2c_flag = 0;
+				}
+				if ((e.getMessage() != null) && e.getMessage().contains("重发")) {
+					send_b2c_flag = 2;
+				}
+
+				this.b2cDataDAO.updateB2cIdSQLResponseStatus(data.getB2cid(), send_b2c_flag, e.getMessage());
 			}
-
-			int state = wxresp.getLog().getError_code().equalsIgnoreCase("B0") ? 1 : 2;
-			String remark = wxresp.getLog().getError_msg();
-
-			b2cDataDAO.updateFlagAndRemarkByCwb(data.getB2cid(), state, remark);
 
 		}
 
+	}
+
+	/**
+	 * 补发推送失败的信息 只推送结果为 2 send_b2c_flag=2 每 1 个小时 推送一次 最多能推送 20次
+	 */
+	public void feedbackFailedAgain(Wanxiang wx, long flowordertype) {
+
+		try {
+
+			List<B2CData> datalist = this.b2cDataDAO.getDataListFailedByFlowStatus(flowordertype, wx.getCustomerid(), wx.getMaxCount(), 5, null);
+			if ((datalist == null) || (datalist.size() == 0)) {
+				this.logger.info("当前没有待重发的失败的数据wangxiang");
+				return;
+			}
+
+			this.DealWithBuildXMLAndSending(wx, datalist);
+
+		} catch (Exception e) {
+			this.logger.error("error info by request wangxiang interface Again!", e);
+		}
 	}
 
 }
