@@ -494,9 +494,6 @@ src/main/java/cn/explink/b2c/wanxiang/WanxiangFlowEnum.java -text
 src/main/java/cn/explink/b2c/wanxiang/WanxiangJson.java -text
 src/main/java/cn/explink/b2c/wanxiang/WanxiangNewFlowEnum.java -text
 src/main/java/cn/explink/b2c/wanxiang/WanxiangService.java -text
-src/main/java/cn/explink/b2c/wanxiang/bean/WxResponse.java -text
-src/main/java/cn/explink/b2c/wanxiang/bean/WxUnmarchal.java -text
-src/main/java/cn/explink/b2c/wanxiang/bean/Wxlog.java -text
 src/main/java/cn/explink/b2c/weisuda/HandleCodeEnum.java -text
 src/main/java/cn/explink/b2c/weisuda/WeiSuDaWaiDanService.java -text
 src/main/java/cn/explink/b2c/weisuda/Weisuda.java -text
