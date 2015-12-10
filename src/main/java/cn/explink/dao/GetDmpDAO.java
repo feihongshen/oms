@@ -86,7 +86,7 @@ public class GetDmpDAO {
 	public String getNowCustomerPos(long customerid) {
 		String posString = "";
 		try {
-			posString = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowCustomerPos;jsessionid=" + customerid, "");
+			posString = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowCustomerPos/" + customerid, "");
 		} catch (Exception e) {
 			this.logger.error("获取通联pos分账标识异常", e);
 		}
