@@ -744,7 +744,7 @@
                <ref bean="getweisuda" />
            </property>
              <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
+               <value>0 */5 * * * ?</value>
            </property>
       </bean>
      
@@ -765,7 +765,7 @@
                <ref bean="getweisudaDeliveryResult" />
            </property>
              <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
+               <value>0 */5 * * * ?</value>
            </property>
       </bean>
      
@@ -925,7 +925,7 @@
 			<ref bean="haoyigou" />
 		</property>
 		<property name="cronExpression">
-			<value>0 */15 * * * ?</value>
+			<value>0 */30 * * * ?</value>
 		</property>
 	</bean>
 
