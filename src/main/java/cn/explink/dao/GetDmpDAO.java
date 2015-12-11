@@ -1530,8 +1530,8 @@ public class GetDmpDAO {
 			return JSONReslutUtil.SendHttptoServer(cwbJson, GetDmpDAO.dmpUrl + "/OMSInterface/weisudaFeedback");
 		} catch (Exception e) {
 			this.logger.error("获取指定detail表异常", e);
+			return null;
 		}
-		return null;
 	}
 
 	public Stores getStoresById(long id) {
