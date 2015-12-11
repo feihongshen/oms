@@ -53,9 +53,6 @@ public class SubExcuteWeisudaTask implements Runnable{
 		this.barrier=barrier;
 	}
 	
-	
-
-
 	@Override
 	public void run() {
 		if(tasklist==null || tasklist.size() == 0){
@@ -63,22 +60,21 @@ public class SubExcuteWeisudaTask implements Runnable{
 		}
 		
 		for (GetUnVerifyOrders_back_Item item : tasklist) {
-			String cwb="";
+			String cwb=item.getOrder_id();
 			try {
-				WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
+				WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(cwb);
 				if (weisudaCwbs == null) {
+					String json = this.buliderJson(item, cwb);
+					String result = sendDmpFlow(json);
+					logger.info("品骏达外单推送dmp返回={},cwb={}",result,cwb);
 					this.updateUnVerifyOrders(item.getOrder_id(),weisuda);
 					continue;
 				}
-				cwb=weisudaCwbs.getCwb();
 				
-				String json = this.buliderJson(item, weisudaCwbs);
-
-				this.logger.info("唯速达_02请求dmp-json={}", json);
-
-				String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
-
+				String json = this.buliderJson(item, cwb);
+				String result = sendDmpFlow(json);
 				dealWithDmpFeedbackResult(item, result,weisuda);
+				
 				barrier.await();
 			} catch (Exception e) {
 				logger.error("唯速达签收结果处理单个数据异常"+cwb,e);
@@ -89,6 +85,15 @@ public class SubExcuteWeisudaTask implements Runnable{
 		
 		
 	}
+
+
+
+
+	private String sendDmpFlow(String json) {
+		String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
+		this.logger.info("唯速达_02请求dmp-json={}", json);
+		return result;
+	}
 	
 	private void updateUnVerifyOrders(String orderid,Weisuda weisuda) {
 		String send = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<root>" + "<item>" + "<order_id>" + orderid + "</order_id>" + "</item>" + "</root>";
@@ -97,13 +102,13 @@ public class SubExcuteWeisudaTask implements Runnable{
 		this.logger.info("唯速达_03APP包裹签收信息同步结果反馈接口返回报文,response={}", response);
 	}
 	
-	public String buliderJson(Item item, WeisudaCwb weisudaCwbs) throws Exception {
+	public String buliderJson(Item item, String cwb) throws Exception {
 		GetUnVerifyOrders_back_Item itemps = new GetUnVerifyOrders_back_Item();
 		Getback_Item itemsmt = new Getback_Item();
 		String json = "";
 		OrderFlowDto dto = new OrderFlowDto();
-		dto.setCustid(weisudaCwbs.getId());
-		dto.setCwb(weisudaCwbs.getCwb());
+		dto.setCustid("-1");
+		dto.setCwb(cwb);
 		dto.setStrandedrReason("");
 		long deliverystate = 0;
 		String status = item.getOrder_status();

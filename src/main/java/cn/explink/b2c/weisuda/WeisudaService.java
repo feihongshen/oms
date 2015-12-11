@@ -1,6 +1,5 @@
 package cn.explink.b2c.weisuda;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +15,6 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,6 @@ import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
-import cn.explink.b2c.tools.JointEntity;
 import cn.explink.b2c.weisuda.xml.GetUnVerifyOrders_back_Item;
 import cn.explink.b2c.weisuda.xml.Getback_Item;
 import cn.explink.b2c.weisuda.xml.Goods;
@@ -241,29 +237,21 @@ public class WeisudaService {
 				RootPS back_Root = (RootPS) ObjectUnMarchal.XmltoPOJO(response, new RootPS());
 
 				for (GetUnVerifyOrders_back_Item item : back_Root.getItem()) {
-					WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
+					String cwb=item.getOrder_id();
+					WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(cwb);
 					if (weisudaCwbs == null) {
+						String json = this.buliderJson(item, cwb);
+						this.logger.info("唯速达_02请求dmp-json={}", json);
+						String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
+						this.logger.info("品骏达外单签收结果={}", result);
 						this.updateUnVerifyOrders(item.getOrder_id());
 						continue;
 					}
-					String json = this.buliderJson(item, weisudaCwbs);
-
+					String json = this.buliderJson(item, cwb);
 					this.logger.info("唯速达_02请求dmp-json={}", json);
-
 					String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
 
-					if ("SUCCESS".equals(result)) {
-						this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息通过_手机_签收成功");
-						this.updateUnVerifyOrders(item.getOrder_id());
-					} else if (result.contains("处理唯速达反馈请求异") && result.contains("不允许进行反馈")) {
-						this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息已经通过_其它方式_签收成功");
-						this.updateUnVerifyOrders(item.getOrder_id());
-					}else {
-						this.logger.info("唯速达_02请求dmp唯速达信息异常{},cwb={}", result, item.getOrder_id());
-						this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "2", result);
-						this.updateUnVerifyOrders(item.getOrder_id());
-						continue;
-					}
+					updateWeisudaDeliveryState(item, result);
 				}
 			}
 
@@ -274,6 +262,23 @@ public class WeisudaService {
 
 		else {
 			this.logger.info("唯速达_02返回订单失败！{}", response);
+		}
+	}
+
+
+
+	private void updateWeisudaDeliveryState(GetUnVerifyOrders_back_Item item, String result) {
+		if ("SUCCESS".equals(result)) {
+			this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息通过_手机_签收成功");
+			this.updateUnVerifyOrders(item.getOrder_id());
+		} else if (result.contains("处理唯速达反馈请求异") && result.contains("不允许进行反馈")) {
+			this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "包裹信息已经通过_其它方式_签收成功");
+			this.updateUnVerifyOrders(item.getOrder_id());
+		}else {
+			this.logger.info("唯速达_02请求dmp唯速达信息异常{},cwb={}", result, item.getOrder_id());
+			this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "2", result);
+			this.updateUnVerifyOrders(item.getOrder_id());
+			return;
 		}
 	}
 
@@ -640,13 +645,14 @@ public class WeisudaService {
 					RootSMT back_Root = (RootSMT) ObjectUnMarchal.XmltoPOJO(response, new RootSMT());
 
 					for (Getback_Item item : back_Root.getItem()) {
-						WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(item.getOrder_id());
+						String cwb=item.getOrder_id();
+						WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(cwb);
 
 						if (weisudaCwbs == null) {
 							this.getback_confirmAppOrders(item.getOrder_id());
 							continue;
 						}
-						String json = this.buliderJson(item, weisudaCwbs);
+						String json = this.buliderJson(item, cwb);
 
 						this.logger.info("唯速达_11请求dmp-json={}", json);
 
@@ -990,13 +996,13 @@ public class WeisudaService {
 		return str;
 	}
 
-	public String buliderJson(Item item, WeisudaCwb weisudaCwbs) throws Exception {
+	public String buliderJson(Item item, String  cwb) throws Exception {
 		GetUnVerifyOrders_back_Item itemps = new GetUnVerifyOrders_back_Item();
 		Getback_Item itemsmt = new Getback_Item();
 		String json = "";
 		OrderFlowDto dto = new OrderFlowDto();
-		dto.setCustid(weisudaCwbs.getId());
-		dto.setCwb(weisudaCwbs.getCwb());
+		dto.setCustid("-1");
+		dto.setCwb(cwb);
 		dto.setStrandedrReason("");
 		long deliverystate = 0;
 		String status = item.getOrder_status();
