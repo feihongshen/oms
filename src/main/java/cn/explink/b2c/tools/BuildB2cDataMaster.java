@@ -28,6 +28,7 @@ import cn.explink.b2c.lechong.BuildLeChongB2cData;
 import cn.explink.b2c.lefeng.BuildLefengB2cData;
 import cn.explink.b2c.letv.BuildLetvB2cData;
 import cn.explink.b2c.liantong.BulidLiantongB2cData;
+import cn.explink.b2c.meilinkai.BuildMLKB2cData;
 import cn.explink.b2c.mmb.BuildmmbB2cData;
 import cn.explink.b2c.rufengda.BulidRufengdaB2cData;
 import cn.explink.b2c.sfxhm.BuildSfxhmB2cData;
@@ -132,7 +133,21 @@ public class BuildB2cDataMaster {
 	BuildSuNingB2cData buildSuNingB2cData;
 	@Autowired
 	BuildFeiNiuWangData buildFeiNiuWangData;
+	@Autowired
+	BuildMLKB2cData buildMLKB2cData;
 	
+	public BuildMLKB2cData getBuildMLKB2cData() {
+		return buildMLKB2cData;
+	}
+
+	public void setBuildMLKB2cData(BuildMLKB2cData buildMLKB2cData) {
+		this.buildMLKB2cData = buildMLKB2cData;
+	}
+
+	public void setBuildFeiNiuWangData(BuildFeiNiuWangData buildFeiNiuWangData) {
+		this.buildFeiNiuWangData = buildFeiNiuWangData;
+	}
+
 	public BuildFeiNiuWangData getBuildFeiNiuWangData() {
 		return buildFeiNiuWangData;
 	}

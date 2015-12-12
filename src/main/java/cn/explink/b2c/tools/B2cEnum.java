@@ -75,12 +75,14 @@ public enum B2cEnum {
 	VipShop_cangku6(20124, "唯品会_仓库6", "vipshop_cangku6"),
 	VipShop_cangku7(20125, "唯品会_仓库7", "vipshop_cangku7"),
 	VipShop_cangku8(20126, "唯品会_仓库8", "vipshop_cangku8"),
+	
 	SuNing(20127,"苏宁易购","suning"),
 	
 	Yihaodian_bakup1(20130, "一号店_备用1", "yihaodian_bakup1"), 
 	Yihaodian_bakup2(20131, "一号店_备用2", "yihaodian_bakup2"), 
 	Yihaodian_bakup3(20132, "一号店_备用3", "yihaodian_bakup3"), 
-	; // 唯品会OXO vipshop_oxo
+	meilinkai(20135,"玫琳凯","meilinkai")
+	; 
 	private int key;
 	private String text;
 	private String method;

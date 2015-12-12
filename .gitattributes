@@ -338,6 +338,12 @@ src/main/java/cn/explink/b2c/maisike/senddata_json/OrderPackage.java -text
 src/main/java/cn/explink/b2c/maisike/senddata_json/OrderShell.java -text
 src/main/java/cn/explink/b2c/maisike/senddata_json/OrderStatus.java -text
 src/main/java/cn/explink/b2c/maisike/senddata_json/RespOrder.java -text
+src/main/java/cn/explink/b2c/meilinkai/BuildMLKB2cData.java -text
+src/main/java/cn/explink/b2c/meilinkai/HDtoLipsEnum.java -text
+src/main/java/cn/explink/b2c/meilinkai/MLKService.java -text
+src/main/java/cn/explink/b2c/meilinkai/MeiLinKai.java -text
+src/main/java/cn/explink/b2c/meilinkai/TrackData.java -text
+src/main/java/cn/explink/b2c/meilinkai/TrackEnum.java -text
 src/main/java/cn/explink/b2c/mmb/BuildmmbB2cData.java -text
 src/main/java/cn/explink/b2c/mmb/Mmb.java -text
 src/main/java/cn/explink/b2c/mmb/MmbFlowEnum.java -text
@@ -968,6 +974,7 @@ src/main/java/cn/explink/service/validator/ReceivableFeeValidator.java -text
 src/main/java/cn/explink/service/validator/SendCargoNumShouldAboveZero.java -text
 src/main/java/cn/explink/service/validator/ShipCwbValidator.java -text
 src/main/java/cn/explink/service/validator/TransCwbValidator.java -text
+src/main/java/cn/explink/util/B2cUtil.java -text
 src/main/java/cn/explink/util/BeanInvokingJobDetailFactoryBean.java -text
 src/main/java/cn/explink/util/DatabaseInitCronTriggerBean.java -text
 src/main/java/cn/explink/util/DateDayUtil.java -text

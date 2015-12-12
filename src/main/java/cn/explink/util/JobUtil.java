@@ -46,6 +46,7 @@ import cn.explink.b2c.letv.LetvService;
 import cn.explink.b2c.liantong.LiantongService;
 import cn.explink.b2c.maikolin.MaikolinService;
 import cn.explink.b2c.maisike.MaisikeService_Send2LvBranch;
+import cn.explink.b2c.meilinkai.MLKService;
 import cn.explink.b2c.mmb.MmbService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfexpress.SfexpressService_searchOrderStatus;
@@ -214,6 +215,8 @@ public class JobUtil {
 	GuangXinDidanXinService guangXinDidanXinService;
 	@Autowired
 	SuNingService suNingService; 
+	@Autowired
+	MLKService mlkService;
 
 	
 	public static Map<String, Integer> threadMap;
@@ -1002,6 +1005,17 @@ public class JobUtil {
 		this.logger.info("执行了【苏宁易购】定时器任务!");
 	}
 	
+	/**
+	 * 【玫琳凯】数据回传
+	 */
+	
+	public void mlk_task(){
+		try{
+			this.mlkService.feedback_status();
+		}catch(Exception e){
+			this.logger.error("执行了【玫琳凯】状态回传定时器异常,原因:{}",e);
+		}
+	}
 	
 	
 }

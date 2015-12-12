@@ -42,6 +42,7 @@ import cn.explink.b2c.lefeng.LefengService;
 import cn.explink.b2c.letv.LetvService;
 import cn.explink.b2c.liantong.LiantongService;
 import cn.explink.b2c.maikolin.MaikolinService;
+import cn.explink.b2c.meilinkai.MLKService;
 import cn.explink.b2c.mmb.MmbService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfxhm.SfxhmService;
@@ -175,6 +176,8 @@ public class HandFeedBackController {
 	SuNingService suNingService;
 	@Autowired
 	FNWService fnwService;
+	@Autowired
+	MLKService mlkService;
 	
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -520,4 +523,16 @@ public class HandFeedBackController {
 		this.suNingService.feedback_status();
 		return "手动执行【苏宁易购】货态反馈完成";
 	}
+	
+	@RequestMapping("/marykay_test")
+	public @ResponseBody String marykayfeedback(){
+		try{
+			this.mlkService.feedback_status();
+		}catch(Exception e){
+			this.logger.error("【玫琳凯】数据对接反馈异常,原因:{}",e);
+			return "手动执行【玫琳凯】货态反馈异常,原因:"+e.getMessage();
+		}
+		return "手动执行【玫琳凯】货态反馈完成";
+	}
+	
 }

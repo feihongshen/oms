@@ -64,6 +64,9 @@ public class TelecomJsonService {
 					delivery_state, objectMapper);
 		}
 
+		if(customer.getB2cEnum().equals(String.valueOf(B2cEnum.meilinkai.getKey()))){
+			return this.buildB2cDataMaster.getBuildMLKB2cData().buildMLKMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, objectMapper);
+		}
 		return null;
 
 	}
