@@ -32,7 +32,7 @@ public class B2cUtil {
 	}
 	
 	//将json字符串反序列化为任一个对象 ====LX=====(首先定义好一个javabean) 
-	public <T> T getMLKdataMethod(String jsoncontent,Class<T> cla) throws JsonParseException, JsonMappingException, IOException {
+	public <T> T getDataMethod(String jsoncontent,Class<T> cla) throws JsonParseException, JsonMappingException, IOException {
 		return (T) new ObjectMapper().readValue(jsoncontent,cla);
 	}
 }

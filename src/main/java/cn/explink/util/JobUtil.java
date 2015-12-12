@@ -945,7 +945,6 @@ public class JobUtil {
 	 */
 	public void getJiuYe_Task() {
 		try {
-
 			this.jiuyeService.feedback_status();
 		} catch (Exception e) {
 			this.logger.error("执行了九曵定时器异常!", e);
