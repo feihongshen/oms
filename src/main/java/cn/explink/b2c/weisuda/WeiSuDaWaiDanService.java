@@ -31,7 +31,7 @@ public class WeiSuDaWaiDanService {
 
 	public void sendCwb(DmpCwbOrder cwbOrder,Weisuda weisuda,Customer customer)  {
 		try {
-			String poString = this.getDmpDAO.getNowCustomerPos(customer.getCustomerid());
+			String posString = this.getDmpDAO.getNowCustomerPos(customer.getCustomerid());
 			User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
 			int cwbOrderType = Integer.parseInt(cwbOrder.getCwbordertypeid());
 			int orderType = 0;
@@ -92,7 +92,7 @@ public class WeiSuDaWaiDanService {
             value2.setTotalVolume(0);
             value2.setAssuranceFee(0);
             value2.setPayType("-1");//支付方式
-            value2.setAccountMark(poString);
+            value2.setAccountMark(posString);
             if(cwbOrder.getPaywayid() == PaytypeEnum.Xianjin.getValue()){
             	value2.setPayment("0");//付款方式
             } else if(cwbOrder.getPaywayid() == PaytypeEnum.Pos.getValue()){
