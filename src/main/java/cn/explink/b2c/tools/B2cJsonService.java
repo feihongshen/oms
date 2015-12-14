@@ -289,7 +289,7 @@ public class B2cJsonService {
 					cwbOrderWothDeliverystate.getDeliveryState(), customer,this.objectMapper);
 		}
 		
-		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "jiuye_"))) {
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.JiuYe1.getKey()))) {
 			return this.buildB2cDataMaster.getBuildJiuyeB2cData().buildJiuYeMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
 					delivery_state, this.objectMapper);
 		}
