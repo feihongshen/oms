@@ -105,13 +105,12 @@ public class WeiSuDaWaiDanService {
             List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = client.createDeliveryOrder(doReqs1);
             PjDeliveryOrder4DMPResponse pjDeliveryOrder = pjDeliveryOrderList.get(0);
             if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
-            	this.logger.info("唯速达 外单信息发送成功！");
+            	this.logger.info("唯速达 外单信息发送成功！cwb={}",cwbOrder.getCwb());
             }else{
-            	this.logger.info("唯速达 外单信息发送失败！",pjDeliveryOrder.getResultMsg());
-            	System.out.println(pjDeliveryOrder.getResultMsg());
+            	this.logger.info("唯速达 外单信息发送失败！cwb={}",cwbOrder.getCwb()+pjDeliveryOrder.getResultMsg());
             }
         } catch(com.vip.osp.core.exception.OspException e){
-            this.logger.error("唯速达 外单信息发送失败！",e);
+            this.logger.error("唯速达 外单信息发送失败！cwb={}",cwbOrder.getCwb()+e);
             e.printStackTrace();
         }
 	}
