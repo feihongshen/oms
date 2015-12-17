@@ -74,6 +74,7 @@
 							 <ref bean="doTime_zhemeng"/>
 							 <ref bean="doTime_haoyigou"/>
 							 <ref bean="doTime_gxdx"/>
+							 <ref bean="doTime_suning"/>
 							 <ref bean="doTime_marykay"></ref>
 							 
 			           </list>            
@@ -957,6 +958,26 @@
 		</property>
 		<property name="targetMethod">
 			<value>gxDxFTP</value>
+		</property>
+	</bean>  
+	
+	<!-- 【苏宁】定时任务配置信息 --> 
+	<bean id="doTime_suning" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="suning" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="suning" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>suNing_task</value>
 		</property>
 	</bean>  
 	
