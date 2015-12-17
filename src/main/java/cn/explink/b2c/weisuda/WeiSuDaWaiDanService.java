@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +59,13 @@ public class WeiSuDaWaiDanService {
             value2.setCneeCity(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbcity()));
             value2.setCneeRegion(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbcounty()));
             value2.setCneeName(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneename()));
-            value2.setCneeMobile(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneemobile()));
-            value2.setCneeTel(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneephone()));
+            //如果收件人手机电话都为空，则传默认值
+            if(StringUtils.isBlank(cwbOrder.getConsigneemobile()) && StringUtils.isBlank(cwbOrder.getConsigneephone())){
+            	value2.setCneeMobile("******");
+            }else {
+            	value2.setCneeMobile(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneemobile()));
+            	value2.setCneeTel(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneephone()));
+            }
             value2.setZipCode(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneepostcode()));
             value2.setCneeAddr(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneeaddress()));
             value2.setCneeRemark(StringUtil.nullConvertToEmptyString(cwbOrder.getPodsignremark()));
@@ -107,10 +113,10 @@ public class WeiSuDaWaiDanService {
             if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
             	this.logger.info("唯速达 外单信息发送成功！cwb={}",cwbOrder.getCwb());
             }else{
-            	this.logger.info("唯速达 外单信息发送失败！cwb={}",cwbOrder.getCwb()+pjDeliveryOrder.getResultMsg());
+            	this.logger.info("唯速达 外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),pjDeliveryOrder.getResultMsg());
             }
         } catch(com.vip.osp.core.exception.OspException e){
-            this.logger.error("唯速达 外单信息发送失败！cwb={}",cwbOrder.getCwb()+e);
+            this.logger.error("唯速达 外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),e);
             e.printStackTrace();
         }
 	}
