@@ -76,6 +76,7 @@
 							 <ref bean="doTime_gxdx"/>
 							 <ref bean="doTime_suning"/>
 							 <ref bean="doTime_marykay"></ref>
+							 <ref bean="doTime_feiniuwang" />
 							 
 			           </list>            
 	               </property>       
@@ -1000,6 +1001,23 @@
 			<value>mlk_task</value>
 		</property>
 	</bean>  
+	<!-- 飞牛网（http） -->
+	 <bean id="doTime_feiniuwang" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+           <property name="jobDetail">
+               <ref bean="getfeiniuwang" />
+           </property>
+             <property name="cronExpression">
+               <value>0 */15 * * * ?</value>
+           </property>
+      </bean>
+     <bean id="getfeiniuwang" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+     	<property name="targetBean">
+             <value>updateEMS</value>
+         </property>
+         <property name="targetMethod">
+             <value>getFNW_Task</value>
+         </property>
+     </bean>
 	
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>
