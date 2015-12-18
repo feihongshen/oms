@@ -804,7 +804,7 @@ public class B2CDataDAO {
 	 * @param respMap
 	 */
 	public void updateKeyWordByVipShop(String customerids, String time, String keyword) throws Exception {
-		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<100  ";
+		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<300  ";
 		if ((keyword != null) && !keyword.isEmpty()) {
 			sql += " AND remark='" + keyword + "'";
 		}
