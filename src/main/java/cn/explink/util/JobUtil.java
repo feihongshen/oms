@@ -22,6 +22,7 @@ import cn.explink.b2c.dpfoss.DpfossService;
 import cn.explink.b2c.explink.code_down.EpaiApiService;
 import cn.explink.b2c.explink.core.CoreService;
 import cn.explink.b2c.explink.core_up.EpaiCoreService_Receiver;
+import cn.explink.b2c.feiniuwang.FNWService;
 import cn.explink.b2c.gome.GomeService_CommitDeliverInfo;
 import cn.explink.b2c.gxdx.GuangXinDidanXinService;
 import cn.explink.b2c.gzabc.GuangZhouABCService;
@@ -217,6 +218,8 @@ public class JobUtil {
 	SuNingService suNingService; 
 	@Autowired
 	MLKService mlkService;
+	@Autowired
+	FNWService fnwService;
 
 	
 	public static Map<String, Integer> threadMap;
@@ -1016,6 +1019,18 @@ public class JobUtil {
 		}
 	}
 	
+	/**
+	 * 飞牛网(http)
+	 */
+	public void getFNW_Task() {
+		try {
+
+			this.fnwService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了飞牛网(http)的定时器异常!", e);
+		}
+		this.logger.info("执行了推送飞牛网(http)定时器!");
+	}
 	
 }
 	
