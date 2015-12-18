@@ -3,9 +3,9 @@ package cn.explink.b2c.meilinkai;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
 import net.sf.json.JSONObject;
-
+import org.apache.commons.httpclient.Cookie;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,14 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.domain.B2CData;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
-import cn.explink.util.WebServiceHandler;
 
 @Service
 public class MLKService {
@@ -29,6 +27,8 @@ public class MLKService {
 	@Autowired
 	B2CDataDAO b2CDataDAO;
 	private Logger logger = LoggerFactory.getLogger(MLKService.class);
+	@Autowired
+	SOAPService soapService;
 	
 	/**
 	 * 【玫琳凯】反馈接口入口
@@ -49,6 +49,7 @@ public class MLKService {
 		String pwd = meilinkai.getPwd();
 		String methodCheck = meilinkai.getCheckUsermethod();
 		String methodHDToLIPSByWebService = meilinkai.getHdtolipsmethod();
+		
 		//isB2cOpen(key)对接设置的开关判断
 		if(!b2ctools.isB2cOpen(B2cEnum.meilinkai.getKey())) {
 			logger.info("未开启【玫琳凯】状态反馈接口");
@@ -71,40 +72,47 @@ public class MLKService {
 					this.logger.info("当前没有要推送【玫琳凯】的数据");
 					return ;
 				}
+				
+				//用户校验环节，校验一次，请求多次
+				Map<String, Cookie> cookieMap = this.soapService.checkUser(hdTOlipsUrl,username,pwd,methodCheck);
+				if(cookieMap == null){
+					return;
+				}
+				//用户校验时从【玫琳凯】返回的cookie对象
+				Cookie cookie = cookieMap.get("cookie");
 				//遍历每一条表单整体信息
 				for(B2CData b2cdata:mlklist){
 					String cwb = b2cdata.getCwb();
 					int send_b2c_flag = 1;
 					try{
-						//1.用户校验
+						/*//1.用户校验
 						Object[] obje = new Object[]{username,pwd};
 						this.logger.info("请求【玫琳凯】用户校验参数为:{},订单号:{}",Arrays.toString(obje),cwb);
 						Integer inte = (Integer)WebServiceHandler.invokeWs(hdTOlipsUrl, methodCheck, obje);
 						this.logger.info("【玫琳凯】返回的数据为:{},订单号:{}",inte,cwb);
-						
 						if(inte == HDtoLipsEnum.REASON_1.getResult()){
 							this.logger.info("【玫琳凯】用户校验失败,订单号:{}",cwb);
 							send_b2c_flag = 2;
 							this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag,HDtoLipsEnum.REASON_1.getCheckUsertext());
-							//continue;
+							continue;
 						}else if(inte == HDtoLipsEnum.REASON_2.getResult()){
 							this.logger.info("【玫琳凯】用户校验失败,订单号:{}",cwb);
 							send_b2c_flag = 2;
 							this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag,HDtoLipsEnum.REASON_2.getCheckUsertext());
-							//continue;
+							continue;
 						}else if(inte == HDtoLipsEnum.REASON_3.getResult()){
 							this.logger.info("【玫琳凯】用户校验失败,订单号:{}",cwb);
 							send_b2c_flag = 2;
 							this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag,HDtoLipsEnum.REASON_3.getCheckUsertext());
-							//continue;
-						}
-						//2.校验通过后开始执行第二步请求推送货态
+							continue;
+						}*/
+						
 						TrackData td = (TrackData)getMLKdataMethod(b2cdata.getJsoncontent(),TrackData.class);
 						Object[] objec = new Object[]{td.getDataID(),td.getReceiveDate(),td.getComment(),td.getTransactionType()};
 						this.logger.info("请求【玫琳凯】货态反馈请求参数为:{},订单号:{}",Arrays.toString(objec),cwb);
 						
 						String msg = "SUCCESS";
-						Integer integ = (Integer)WebServiceHandler.invokeWs(hdTOlipsUrl, methodHDToLIPSByWebService, objec);
+						Integer integ = this.soapService.hdTOlips(hdTOlipsUrl,methodHDToLIPSByWebService,objec,cookie);
 						if(integ == HDtoLipsEnum.REASON_1.getResult()){
 							send_b2c_flag = 2;
 							this.logger.info("【玫琳凯】返回-1,请求订单:{}",cwb);
@@ -117,6 +125,12 @@ public class MLKService {
 							send_b2c_flag = 2;
 							this.logger.info("【玫琳凯】返回-3,请求订单:{}",cwb);
 							msg = HDtoLipsEnum.REASON_3.getHdtolipsresult();
+						}else if(integ == -4){
+							send_b2c_flag = 2;
+							msg = "请求【玫琳凯】返回null或者空字符串";
+						}else if(integ == -5){
+							send_b2c_flag = 2;
+							msg = "系统异常";
 						}
 						this.b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag,msg);
 					}catch(Exception e){
@@ -131,6 +145,33 @@ public class MLKService {
 		}
 		
 	}
+	
+	
+	
+	
+/*	 public String onLogin(){
+         MessageContext mc = (MessageContext) this.webServiceContext.getMessageContext();
+         HttpSession session = ((javax.servlet.http.HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+         if (session == null) {
+        	 throw new WebServiceException("No session in WebServiceContext");
+         }
+         return session.getId().toString();
+	 }
+	
+	 public String sayHello(String sessionid) {
+         MessageContext mc = this.webServiceContext.getMessageContext();
+         HttpSession session = ((javax.servlet.http.HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+         if (session == null) {
+        	 throw new WebServiceException("No session in WebServiceContext");
+         }
+         if(sessionid.equals(session.getId().toString())) {
+                 return "EFFECTIVE";
+         } else {
+                 return "EXPIRED";
+         }
+	 }*/
+	
+	
 	
 	//获取配置信息==LX==
 	@SuppressWarnings("unchecked")

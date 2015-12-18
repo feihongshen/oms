@@ -342,6 +342,8 @@ src/main/java/cn/explink/b2c/meilinkai/BuildMLKB2cData.java -text
 src/main/java/cn/explink/b2c/meilinkai/HDtoLipsEnum.java -text
 src/main/java/cn/explink/b2c/meilinkai/MLKService.java -text
 src/main/java/cn/explink/b2c/meilinkai/MeiLinKai.java -text
+src/main/java/cn/explink/b2c/meilinkai/SOAPService.java -text
+src/main/java/cn/explink/b2c/meilinkai/TestFetchCookie.java -text
 src/main/java/cn/explink/b2c/meilinkai/TrackData.java -text
 src/main/java/cn/explink/b2c/meilinkai/TrackEnum.java -text
 src/main/java/cn/explink/b2c/mmb/BuildmmbB2cData.java -text
