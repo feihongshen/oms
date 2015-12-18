@@ -50,22 +50,27 @@ public class WeiSuDaWaiDanService {
             ArrayList<PjDeliverOrder4DMPRequest> doReqs1 = new ArrayList<PjDeliverOrder4DMPRequest>();
             PjDeliverOrder4DMPRequest value2 = new  PjDeliverOrder4DMPRequest();
             //我们系统中的运单号是对方的箱号，需要存储在custPackNo 中
-           // value2.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
-            value2.setTransportNo(StringUtil.nullConvertToEmptyString(cwbOrder.getTranscwb()));
+            value2.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
+            //value2.setTransportNo(StringUtil.nullConvertToEmptyString(cwbOrder.getTranscwb()));
             value2.setCustCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));// 发件客户编码
+            if(StringUtils.isNotBlank(cwbOrder.getConsigneename())){
+            	value2.setCneeName("******");
+            }else{
+            	value2.setCneeName(cwbOrder.getConsigneename());
+            }
             value2.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
             value2.setOrderType(orderType);//订单类型
             value2.setDistributer(StringUtil.nullConvertToEmptyString(deliverUser.getRealname()));//小件员
             value2.setCneeProv(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbprovince()));
             value2.setCneeCity(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbcity()));
             value2.setCneeRegion(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbcounty()));
-            value2.setCneeName(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneename()));
+            
             //如果收件人手机电话都为空，则传默认值
             if(StringUtils.isBlank(cwbOrder.getConsigneemobile()) && StringUtils.isBlank(cwbOrder.getConsigneephone())){
             	value2.setCneeMobile("******");
             }else {
-            	value2.setCneeMobile(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneemobile()));
-            	value2.setCneeTel(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneephone()));
+            	value2.setCneeMobile(cwbOrder.getConsigneemobile());
+            	value2.setCneeTel(cwbOrder.getConsigneephone());
             }
             value2.setZipCode(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneepostcode()));
             value2.setCneeAddr(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneeaddress()));
@@ -122,6 +127,10 @@ public class WeiSuDaWaiDanService {
             this.logger.error("品骏达外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),e);
             e.printStackTrace();
         }
+	}
+	//将外单信息存入表中
+	public void saveWeiSuDa(DmpCwbOrder cwbOrder, Weisuda weisuda, Customer customer) {
+		
 	}
 	
 }
