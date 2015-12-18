@@ -91,13 +91,13 @@ public class BuildFeiNiuWangData {
 				return FNWFlowEnum.SENT_SCAN.getSign();
 			}
 			if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()&&
-					(deliverystate==DeliveryStateEnum.QuanBuTuiHuo.getValue()||deliverystate==DeliveryStateEnum.BuFenTuiHuo.getValue())){
-				return FNWFlowEnum.PROBLEM.getSign();
-			}
-			if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()&&
 					deliverystate==DeliveryStateEnum.FenZhanZhiLiu.getValue()
 					){
-				return FNWFlowEnum.RETENTION.getSign();
+				return FNWFlowEnum.RETENTION.getSign();//留仓件
+			}
+			if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()&&
+					(deliverystate==DeliveryStateEnum.QuanBuTuiHuo.getValue()||deliverystate==DeliveryStateEnum.BuFenTuiHuo.getValue())){
+				return FNWFlowEnum.FAILED.getSign();//拒签（拒收）
 			}
 			if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()&&
 					deliverystate==DeliveryStateEnum.PeiSongChengGong.getValue()){
@@ -105,13 +105,19 @@ public class BuildFeiNiuWangData {
 			}
 		}
 		if(cwbordertypeid==CwbOrderTypeIdEnum.Shangmentui.getValue()){
-			if(flowordertype==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
-				return FNWFlowEnum.OTHER1.getSign();
-			}
 			if(flowordertype==FlowOrderTypeEnum.YiShenHe.getValue()){
-				if(deliverystate==DeliveryStateEnum.ShangMenHuanChengGong.getValue()){
-					return FNWFlowEnum.OTHER2.getSign();
+				if(deliverystate==DeliveryStateEnum.ShangMenTuiChengGong.getValue()){
+					return FNWFlowEnum.SIGNED.getSign();//上门退成功
 				}
+				if(deliverystate==DeliveryStateEnum.ShangMenJuTui.getValue()){
+					return FNWFlowEnum.FAILED.getSign();//上门拒退
+				}
+			}
+			if(flowordertype==FlowOrderTypeEnum.TuiHuoChuZhan.getValue()){
+				return FNWFlowEnum.OTHER2.getSign();//退货出站
+			}
+			if(flowordertype==FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()){
+				return FNWFlowEnum.OTHER1.getSign();//退货站入库
 			}
 		}
 		return null;

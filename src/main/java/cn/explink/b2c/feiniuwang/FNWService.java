@@ -128,7 +128,12 @@ public class FNWService {
 		params.put("logistics_interface", rd);
 		params.put("data_digest", data_digest);
 		params.put("msg_type", "TRACEPUSH");
-		params.put("logistic_provider_id", feiniuwang.getDmsCode());
+		List<Traceslist> traList = returnData.getTraceslist();
+		String logistic_provider_id = "";
+		for(Traceslist tra : traList){
+			logistic_provider_id = tra.getLogisticproviderid();
+		}
+		params.put("logistic_provider_id", logistic_provider_id);
 		
 		return params;
 	}
