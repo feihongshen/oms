@@ -60,7 +60,7 @@ public class WeiSuDaWaiDanService {
             }
             value2.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
             value2.setOrderType(orderType);//订单类型
-            value2.setDistributer(StringUtil.nullConvertToEmptyString(deliverUser.getRealname()));//小件员
+            value2.setDistributer(StringUtil.nullConvertToEmptyString(deliverUser.getUsername()));//小件员
             value2.setCneeProv(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbprovince()));
             value2.setCneeCity(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbcity()));
             value2.setCneeRegion(StringUtil.nullConvertToEmptyString(cwbOrder.getCwbcounty()));
