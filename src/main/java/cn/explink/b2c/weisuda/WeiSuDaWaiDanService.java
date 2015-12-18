@@ -53,7 +53,7 @@ public class WeiSuDaWaiDanService {
             value2.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
             //value2.setTransportNo(StringUtil.nullConvertToEmptyString(cwbOrder.getTranscwb()));
             value2.setCustCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));// 发件客户编码
-            if(StringUtils.isNotBlank(cwbOrder.getConsigneename())){
+            if(StringUtils.isBlank(cwbOrder.getConsigneename())){
             	value2.setCneeName("******");
             }else{
             	value2.setCneeName(cwbOrder.getConsigneename());
