@@ -49,7 +49,8 @@ public class WeiSuDaWaiDanService {
             PjDeliveryOrder4DMPServiceClient client=new PjDeliveryOrder4DMPServiceClient();
             ArrayList<PjDeliverOrder4DMPRequest> doReqs1 = new ArrayList<PjDeliverOrder4DMPRequest>();
             PjDeliverOrder4DMPRequest value2 = new  PjDeliverOrder4DMPRequest();
-            value2.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
+            //我们系统中的运单号是对方的箱号，需要存储在custPackNo 中
+           // value2.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
             value2.setTransportNo(StringUtil.nullConvertToEmptyString(cwbOrder.getTranscwb()));
             value2.setCustCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));// 发件客户编码
             value2.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
@@ -107,16 +108,18 @@ public class WeiSuDaWaiDanService {
             	value2.setPayment("-1");
             }
             value2.setPickerTime(StringUtil.nullConvertToEmptyString(cwbOrder.getEmaildate()));//揽件时间
+            
+            
             doReqs1.add(value2);
             List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = client.createDeliveryOrder(doReqs1);
             PjDeliveryOrder4DMPResponse pjDeliveryOrder = pjDeliveryOrderList.get(0);
             if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
-            	this.logger.info("唯速达 外单信息发送成功！cwb={}",cwbOrder.getCwb());
+            	this.logger.info("品骏达外单信息发送成功！cwb={}",cwbOrder.getCwb());
             }else{
-            	this.logger.info("唯速达 外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),pjDeliveryOrder.getResultMsg());
+            	this.logger.info("品骏达外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),pjDeliveryOrder.getResultMsg());
             }
         } catch(com.vip.osp.core.exception.OspException e){
-            this.logger.error("唯速达 外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),e);
+            this.logger.error("品骏达外单信息发送失败！cwb={},失败原因={}",cwbOrder.getCwb(),e);
             e.printStackTrace();
         }
 	}
