@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.httpclient.Cookie;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -13,12 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.domain.B2CData;
+import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
+import cn.explink.jms.dto.DmpCwbOrder;
 
 @Service
 public class MLKService {
@@ -197,12 +202,15 @@ public class MLKService {
 	 * @param delivery_state
 	 * @return
 	 */
-	public String filterMLKFlowEnum(long flowOrdertype, long delivery_state) {
-		if(flowOrdertype == FlowOrderTypeEnum.RuKu.getValue()){
-			return TrackEnum.Blank.getSign();
-		}else if((flowOrdertype == FlowOrderTypeEnum.YiFanKui.getValue())&&(delivery_state == DeliveryStateEnum.PeiSongChengGong.getValue())){
-			return TrackEnum.SHARRIVAL.getSign();
+	public String filterMLKFlowEnum(long flowOrdertype, long delivery_state,DmpCwbOrder cwbOrder) {
+		if(((cwbOrder.getCwbordertypeid()==null||"".equals(cwbOrder.getCwbordertypeid()))?1:(Integer.valueOf(cwbOrder.getCwbordertypeid())))==CwbOrderTypeIdEnum.Peisong.getValue()){
+			if(flowOrdertype == FlowOrderTypeEnum.RuKu.getValue()){
+				return TrackEnum.Blank.getSign();
+			}else if((flowOrdertype == FlowOrderTypeEnum.YiFanKui.getValue())&&(delivery_state == DeliveryStateEnum.PeiSongChengGong.getValue())){
+				return TrackEnum.SHARRIVAL.getSign();
+			}
 		}
+		
 		return null;
 	}
     

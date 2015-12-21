@@ -35,7 +35,7 @@ public class BuildMLKB2cData {
 			long delivery_state, ObjectMapper objectMapper)
 			throws IOException, JsonGenerationException, JsonMappingException
 	{
-		String receivedStatus = this.mlkService.filterMLKFlowEnum(flowOrdertype,delivery_state);
+		String receivedStatus = this.mlkService.filterMLKFlowEnum(flowOrdertype,delivery_state,cwbOrder);
 		
 		if(receivedStatus==null){
 			logger.info("订单号：{} 不属于【玫琳凯】所需要的json---,状态{}，return",cwbOrder.getCwb(),flowOrdertype);
