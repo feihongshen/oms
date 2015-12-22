@@ -2,8 +2,8 @@ package cn.explink.b2c.meilinkai;
 
 public enum TrackEnum {
 	Blank("","入库"),
-	SHARRIVAL("SHARRIVAL","妥投（此时为反馈状态，ps:飞远要求）"),
-	SHSHIP("SHSHIP","其他");
+	SHARRIVAL("SHARRIVAL","妥投"),
+	SHSHIP("SHSHIP","妥投(此时为反馈状态,针对快递配送成功)");
 	private String sign;
 	private String text;
 	public String getSign() {

@@ -43,7 +43,8 @@ public class BuildMLKB2cData {
 		}
 		TrackData trackData = new TrackData();
 		trackData.setDataID(cwbOrder.getCwb());//jde+seq
-		trackData.setReceiveDate(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()));
+		//new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())
+		trackData.setReceiveDate(orderFlow.getCredate()==null?(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())):(orderFlow.getCredate().toString()));
 		trackData.setComment(cwbOrder.getCwb());
 		trackData.setTransactionType(receivedStatus);
 		logger.info("订单号：{}封装成【玫琳凯】所需要的json----状态：{}",cwbOrder.getCwb(),flowOrdertype);

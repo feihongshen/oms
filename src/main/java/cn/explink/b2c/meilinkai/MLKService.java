@@ -207,7 +207,7 @@ public class MLKService {
 			if(flowOrdertype == FlowOrderTypeEnum.RuKu.getValue()){
 				return TrackEnum.Blank.getSign();
 			}else if((flowOrdertype == FlowOrderTypeEnum.YiFanKui.getValue())&&(delivery_state == DeliveryStateEnum.PeiSongChengGong.getValue())){
-				return TrackEnum.SHARRIVAL.getSign();
+				return TrackEnum.SHSHIP.getSign();
 			}
 		}
 		
