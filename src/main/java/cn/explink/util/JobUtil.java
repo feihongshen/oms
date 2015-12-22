@@ -64,6 +64,7 @@ import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
 import cn.explink.b2c.wanxiang.WanxiangService;
+import cn.explink.b2c.weisuda.WeiSuDaWaiDanService;
 import cn.explink.b2c.weisuda.WeisudaService;
 import cn.explink.b2c.weisuda.WeisudaServiceDeliveryResult;
 import cn.explink.b2c.weisuda.WeisudaServiceExtends;
@@ -219,8 +220,9 @@ public class JobUtil {
 	@Autowired
 	MLKService mlkService;
 	@Autowired
+	WeiSuDaWaiDanService weiSuDaWaiDanService;
+	@Autowired
 	FNWService fnwService;
-
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -988,6 +990,18 @@ public class JobUtil {
 		}
 		this.logger.info("执行了【广信电信】定时器任务!");
 	}
+
+	/**
+	 * 品骏达外单定时任务方法调用
+	 */
+	public void sendCwbToPJD(){
+		try{
+			this.weiSuDaWaiDanService.sendCwb();
+		}catch(Exception e){
+			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}",e);
+		}
+		this.logger.info("执行了【品骏达外单】定时器任务!");
+	}
 	
 	/**
 	 * 【苏宁易购】数据回传
@@ -1019,18 +1033,6 @@ public class JobUtil {
 		}
 	}
 	
-	/**
-	 * 飞牛网(http)
-	 */
-	public void getFNW_Task() {
-		try {
-
-			this.fnwService.feedback_status();
-		} catch (Exception e) {
-			this.logger.error("执行了飞牛网(http)的定时器异常!", e);
-		}
-		this.logger.info("执行了推送飞牛网(http)定时器!");
-	}
 	
 }
 	

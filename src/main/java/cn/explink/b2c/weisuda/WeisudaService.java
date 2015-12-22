@@ -130,7 +130,7 @@ public class WeisudaService {
 					weisudaCwb.setCwbordertypeid(cwbordertypeid);
 					weisudaCwb.setCourier_code(deliverUser.getUsername());
 					weisudaCwb.setOperationTime(orderTime);
-					this.weisudaDAO.insertWeisuda(weisudaCwb);
+					this.weisudaDAO.insertWeisuda(weisudaCwb,0);
 					this.logger.info("唯速达_01获取唯速达数据插入成功cwb={}", weisudaCwb.getCwb());
 				}
 				return;
@@ -143,7 +143,8 @@ public class WeisudaService {
 				boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
 				
 				if(filterCustomerflag){
-					this.weiSuDaWaiDanService.sendCwb(cwbOrder,weisuda,customer);
+					//this.weiSuDaWaiDanService.sendCwb(cwbOrder,weisuda,customer);
+					this.weiSuDaWaiDanService.saveWeiSuDa(cwbOrder,weisuda,customer);
 				} else {
 					this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
 				}
@@ -167,6 +168,7 @@ public class WeisudaService {
 				flag = true;
 			}
 		}
+		this.logger.info("唯速达_01不是所设置的外单客户，customerid={}",customerid);
 		return flag;
 	}
 
@@ -189,7 +191,7 @@ public class WeisudaService {
 			
 			int i = 0;
 			while (true) {
-				List<WeisudaCwb> weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0");
+				List<WeisudaCwb> weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0",0);
 				i++;
 				if (i > 100) {
 					String warning = "查询0唯速达0状态反馈已经超过100次循环，可能存在程序未知异常,请及时查询并处理!";

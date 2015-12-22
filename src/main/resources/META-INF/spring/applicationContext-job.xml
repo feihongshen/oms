@@ -74,6 +74,7 @@
 							 <ref bean="doTime_zhemeng"/>
 							 <ref bean="doTime_haoyigou"/>
 							 <ref bean="doTime_gxdx"/>
+							 <ref bean="doTime_PJD"/>
 							 <ref bean="doTime_suning"/>
 							 <ref bean="doTime_marykay"></ref>
 							 <ref bean="doTime_feiniuwang" />
@@ -959,6 +960,26 @@
 		</property>
 		<property name="targetMethod">
 			<value>gxDxFTP</value>
+		</property>
+	</bean>  
+	<!-- 品骏达外单定时任务 -->
+	<bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="pjd" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="pjd" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>sendCwbToPJD</value>
 		</property>
 	</bean>  
 	

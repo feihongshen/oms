@@ -30,19 +30,21 @@ public class WeisudaDAO {
 			weisudaCwb.setIsqianshou(StringUtil.nullConvertToEmptyString(rs.getString("isqianshou")));
 			weisudaCwb.setIstuisong(StringUtil.nullConvertToEmptyString(rs.getString("istuisong")));
 			weisudaCwb.setOperationTime(StringUtil.nullConvertToEmptyString(rs.getString("operationTime")));
+			weisudaCwb.setWaidanjson(StringUtil.nullConvertToEmptyString(rs.getString("waidanjson")));
+			weisudaCwb.setOrdertype(rs.getInt("ordertype"));
 			return weisudaCwb;
 		}
 
 	}
 
-	public void insertWeisuda(WeisudaCwb weisudaCwb) {
-		this.jdbcTemplate.update("INSERT INTO express_b2cdata_weisuda (cwb,cwbordertypeid,courier_code,operationTime)" + " VALUES(?,?,?,?)", weisudaCwb.getCwb(), weisudaCwb.getCwbordertypeid(),
-				weisudaCwb.getCourier_code(), weisudaCwb.getOperationTime());
+	public void insertWeisuda(WeisudaCwb weisudaCwb,int orderType ) {
+		this.jdbcTemplate.update("INSERT INTO express_b2cdata_weisuda (cwb,cwbordertypeid,courier_code,operationTime,waidanjson,ordertype)" + " VALUES(?,?,?,?,?,?)", weisudaCwb.getCwb(), weisudaCwb.getCwbordertypeid(),
+				weisudaCwb.getCourier_code(), weisudaCwb.getOperationTime(),weisudaCwb.getWaidanjson(),orderType);
 	}
 
-	public List<WeisudaCwb> getWeisudaCwb(String istuisong) {
+	public List<WeisudaCwb> getWeisudaCwb(String istuisong,int orderType) {
 		try {
-			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? limit 0,500", new WSMapper(), istuisong);
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and ordertype=? limit 0,500", new WSMapper(), istuisong,orderType);
 		} catch (Exception e) {
 			return null;
 		}
@@ -89,6 +91,10 @@ public class WeisudaDAO {
 	public void updateWeisuda(String cwb, String flag, String remark) {
 
 		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
+	}
+	public void updateWeisudawaidan(String cwb, String flag, String remark,int orderType) {
+		
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',ordertype = '"+orderType+"',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
 	}
 
 	public void updateBoundState(String cwbs, String flag,String remark) {

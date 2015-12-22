@@ -10,6 +10,26 @@ public class WeisudaCwb {
 	private String isqianshou;
 	private String remark;
 	private String operationTime;
+	private String waidanjson;
+	private int ordertype;//0代表是唯品会订单    1 ：  品骏达外单
+	
+	
+
+	public String getWaidanjson() {
+		return waidanjson;
+	}
+
+	public void setWaidanjson(String waidanjson) {
+		this.waidanjson = waidanjson;
+	}
+
+	public int getOrdertype() {
+		return ordertype;
+	}
+
+	public void setOrdertype(int ordertype) {
+		this.ordertype = ordertype;
+	}
 
 	public String getCwb() {
 		return this.cwb;

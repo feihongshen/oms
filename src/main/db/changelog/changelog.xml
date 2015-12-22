@@ -1073,6 +1073,13 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 			ALTER TABLE `express_b2cdata_weisuda` ADD INDEX `operatorTime_idx` (`operationTime`);
 		</sql>
 	</changeSet>
+	<changeSet id="wangqiang-2015-12-18-1"  author="wangqiang">
+		<sql>
+			ALTER TABLE `express_b2cdata_weisuda`   
+  			ADD COLUMN `waidanjson` TEXT NULL  COMMENT '外单json' AFTER `operationTime`,
+  			ADD COLUMN `ordertype` INT(4) NULL  COMMENT '是否是外单' AFTER `waidanjson`;
+		</sql>
+	</changeSet>
 	
 	
 	

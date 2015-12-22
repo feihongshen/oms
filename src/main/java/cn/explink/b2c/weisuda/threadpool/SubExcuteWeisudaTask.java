@@ -63,13 +63,17 @@ public class SubExcuteWeisudaTask implements Runnable{
 			String cwb=item.getOrder_id();
 			try {
 				WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(cwb);
-				if (weisudaCwbs == null) {
-					String json = this.buliderJson(item, cwb);
-					String result = sendDmpFlow(json);
-					logger.info("品骏达外单推送dmp返回={},cwb={}",result,cwb);
-					this.updateUnVerifyOrders(item.getOrder_id(),weisuda);
-					continue;
+				if(weisudaCwbs == null){
+					return;
 				}
+				
+//				if (weisudaCwbs.getOrdertype() == 1) {
+//					String json = this.buliderJson(item, cwb);
+//					String result = sendDmpFlow(json);
+//					logger.info("品骏达外单推送dmp返回={},cwb={}",result,cwb);
+//					this.updateUnVerifyOrders(item.getOrder_id(),weisuda);
+//					continue;
+//				}
 				
 				String json = this.buliderJson(item, cwb);
 				String result = sendDmpFlow(json);

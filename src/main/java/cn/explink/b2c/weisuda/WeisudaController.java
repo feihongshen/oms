@@ -30,7 +30,8 @@ public class WeisudaController {
 	WeisudaServiceExtends weisudaServiceExtends;
 	@Autowired
 	WeisudaServiceDeliveryResult weisudaServiceDeliveryResult;
-	
+	@Autowired
+	WeiSuDaWaiDanService  weiSuDaWaiDanService;
 	/**
 	 * 唯速达手动绑定
 	 */
@@ -67,6 +68,20 @@ public class WeisudaController {
 
 	}
 	
+	/**
+	 * 唯速达手动绑定 批量
+	 */
+	@RequestMapping("/bounds_waidan")
+	public @ResponseBody String bounds_waidan(HttpServletRequest request, HttpServletResponse response) {
+
+		response.setCharacterEncoding("UTF-8");
+
+		this.logger.info("进入唯速达_01数据对接Controller");
+		this.weiSuDaWaiDanService.sendCwb();
+
+		return "";
+
+	}
 	
 	@RequestMapping("/getDeliveryResult")
 	public @ResponseBody String getDeliveryResult(HttpServletRequest request, HttpServletResponse response) {
