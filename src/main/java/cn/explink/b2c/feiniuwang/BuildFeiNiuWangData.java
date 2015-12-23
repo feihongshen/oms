@@ -133,8 +133,9 @@ public class BuildFeiNiuWangData {
 		}
 		User user = getDmpdao.getUserById(userid);
 		Traces trace = new Traces();
-		String time = DateTimeUtil.getNowTime();//配送当前环节时间
-		trace.setTime(time);
+		//String time = DateTimeUtil.getNowTime();//配送当前环节时间
+		trace.setTime(orderFlow.getCredate()==null?(DateTimeUtil.getNowTime()):(orderFlow.getCredate().toString()));
+		//trace.setTime(time);
 		trace.setWeight(cwbOrder.getCarrealweight()==null?"":String.valueOf(cwbOrder.getCarrealweight()));//重量
 		trace.setDesc(orderFlowDetail.getDetail(orderFlow));//跟踪描述
 		trace.setCity(cwbOrder.getCwbcity()==null?"":cwbOrder.getCwbcity());
