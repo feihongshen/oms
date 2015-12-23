@@ -2839,6 +2839,36 @@
 				<label>SYPJ</label>
 			</properties>
 		</profile>
+		<profile>
+			<id>BJYFXK</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://localhost:3306/bjyfxk_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password></expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
+				<dmpUrl>http://221.123.178.101/bjyfxk</dmpUrl>
+				<label>BJYFXK</label>
+			</properties>
+		</profile>
+		<profile>
+			<id>WHZN</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://localhost:3306/whzn_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password></expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
+				<dmpUrl>http://221.123.178.101/whzn</dmpUrl>
+				<label>WHZN</label>
+			</properties>
+		</profile>
 
 	</profiles>
 </project>
