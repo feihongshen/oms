@@ -113,7 +113,7 @@ public class FlowFromJMSB2cService {
 				@Override
 				public void configure() throws Exception {
 
-					this.from("jms:queue:VirtualTopicConsumers.omsb2c.orderFlow?concurrentConsumers=5").to("bean:flowFromJMSB2cService?method=saveFlowB2cSend").routeId("omsb2c_");
+					this.from("jms:queue:VirtualTopicConsumers.omsb2c.orderFlow?concurrentConsumers=20").to("bean:flowFromJMSB2cService?method=saveFlowB2cSend").routeId("omsb2c_");
 				}
 			});
 
