@@ -599,6 +599,7 @@ src/main/java/cn/explink/b2c/zhongliang/xml/BB.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Request_Body.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Request_UpdateStatus.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Request_orderStatus.java -text
+src/main/java/cn/explink/b2c/zhongliang/xml/Response_Body.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Response_Order.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Response_orderStatus.java -text
 src/main/java/cn/explink/constant/Constants.java -text
