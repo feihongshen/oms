@@ -110,7 +110,7 @@ public class WeisudaServiceExtends {
 			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
 			int i = 0;
 			while (true) {
-				List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0",cwbordertypeid,maxBounds);
+				List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0",cwbordertypeid,maxBounds,0);
 				i++;
 				if (i > 100) {
 					String warning = "查询0唯速达0状态反馈已经超过100次循环，可能存在程序未知异常,请及时查询并处理!";

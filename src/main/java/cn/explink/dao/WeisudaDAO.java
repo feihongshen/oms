@@ -50,9 +50,9 @@ public class WeisudaDAO {
 		}
 	}
 	
-	public List<WeisudaCwb> getBoundWeisudaCwbs(String istuisong,long cwbordertypeid,int maxcount) {
+	public List<WeisudaCwb> getBoundWeisudaCwbs(String istuisong,long cwbordertypeid,int maxcount,int orderType) {
 		try {
-			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=?  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid);
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=?  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid,orderType);
 		} catch (Exception e) {
 			return null;
 		}
@@ -68,10 +68,10 @@ public class WeisudaDAO {
 		}
 	}
 
-	public WeisudaCwb getWeisudaCwb(String cwb, String orderTime) {
+	public WeisudaCwb getWeisudaCwb(String cwb, String orderTime,int orderType) {
 		try {
 
-			return this.jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=? and operationTime=? limit 1", new WSMapper(), cwb, orderTime);
+			return this.jdbcTemplate.queryForObject("select * from express_b2cdata_weisuda  where cwb=? and operationTime=? and ordertype=? limit 1", new WSMapper(), cwb, orderTime,orderType);
 
 		} catch (Exception e) {
 			return null;

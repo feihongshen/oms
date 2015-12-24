@@ -123,7 +123,7 @@ public class WeisudaService {
 				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
 				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
 				User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
-				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime);
+				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime,0);
 				if (weisudaCwbold == null) {
 					WeisudaCwb weisudaCwb = new WeisudaCwb();
 					weisudaCwb.setCwb(orderFlow.getCwb());

@@ -103,7 +103,7 @@ public class WeiSuDaWaiDanService {
 					
 				 } catch(com.vip.osp.core.exception.OspException e){
 				        this.logger.error("品骏达外单信息发送失败！cwb={},失败原因={}",e);
-				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",e.toString(),1);
+				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",e.getMessage(),1);
 				 }
 			}
 		
