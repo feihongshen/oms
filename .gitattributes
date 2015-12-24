@@ -587,7 +587,7 @@ src/main/java/cn/explink/b2c/zhemeng/Zhemeng.java -text
 src/main/java/cn/explink/b2c/zhemeng/ZhemengFlowEnum.java -text
 src/main/java/cn/explink/b2c/zhemeng/ZhemengService.java -text
 src/main/java/cn/explink/b2c/zhemeng/ZhemengXMLNote.java -text
-src/main/java/cn/explink/b2c/zhongliang/AAA.java -text
+src/main/java/cn/explink/b2c/zhongliang/AA.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/BB.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Request_Body.java -text
 src/main/java/cn/explink/b2c/zhongliang/xml/Request_UpdateStatus.java -text

@@ -1,5 +1,5 @@
 package cn.explink.b2c.zhongliang;
 
-public class AAA {
+public class AA {
 
 }
