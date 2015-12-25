@@ -2817,7 +2817,7 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
+				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
 				<dmpUrl>http://localhost:8080/hnadx</dmpUrl>
 				<label>HNADX</label>
 			</properties>
@@ -2834,7 +2834,7 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
+				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
 				<dmpUrl>http://localhost:8080/sypj</dmpUrl>
 				<label>SYPJ</label>
 			</properties>
@@ -2849,7 +2849,7 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password></expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
+				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
 				<dmpUrl>http://221.123.178.101/bjyfxk</dmpUrl>
 				<label>BJYFXK</label>
 			</properties>
@@ -2864,7 +2864,7 @@
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password></expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://locahost:61616</jms.brokerURL>
+				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
 				<dmpUrl>http://221.123.178.101/whzn</dmpUrl>
 				<label>WHZN</label>
 			</properties>
