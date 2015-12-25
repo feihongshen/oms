@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import cn.explink.b2c.vipshop.VipShop;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
 import cn.explink.domain.SystemInstall;
@@ -803,12 +804,12 @@ public class B2CDataDAO {
 	 * @param b2cids
 	 * @param respMap
 	 */
-	public void updateKeyWordByVipShop(String customerids, String time, String keyword) throws Exception {
-		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<300  ";
+	public void updateKeyWordByVipShop(String customerids, String time, String keyword,VipShop vipshop) throws Exception {
+		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<? ";
 		if ((keyword != null) && !keyword.isEmpty()) {
 			sql += " AND remark='" + keyword + "'";
 		}
-		this.jdbcTemplate.update(sql, customerids, time);
+		this.jdbcTemplate.update(sql, customerids, time, vipshop.getSelb2cnum());
 	}
 
 	/**

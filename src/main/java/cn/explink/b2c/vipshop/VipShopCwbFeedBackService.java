@@ -117,8 +117,8 @@ public class VipShopCwbFeedBackService {
 		String nowdateHours = DateTimeUtil.getNowTime("HH");
 		int hours = Integer.valueOf(nowdateHours);
 		if ((hours % 2) == 0) { // 每隔2的倍数来执行
-			this.updateVipShopByGanXianHuiDan(vipshop.getCustomerids()); // 定时执行干线回单的脚本 唯品
-			this.updateVipShopByGanXianHuiDan(vipshop.getLefengCustomerid()); // 定时执行干线回单的脚本 乐蜂
+			this.updateVipShopByGanXianHuiDan(vipshop,"vipshop"); // 定时执行干线回单的脚本 唯品
+			this.updateVipShopByGanXianHuiDan(vipshop,"lefeng"); // 定时执行干线回单的脚本 乐蜂
 		}
 
 		this.logger.info("=========VipShop状态反馈任务调度结束==========");
@@ -855,14 +855,18 @@ public class VipShopCwbFeedBackService {
 	/**
 	 * 定时重发
 	 */
-	private void updateVipShopByGanXianHuiDan(String customerids) {
+	private void updateVipShopByGanXianHuiDan(VipShop vipShop,String biaoshi) {
 		try {
-			String time = DateTimeUtil.getDateBefore(5);
+			String customeridStr = vipShop.getCustomerids();
+			if("lefeng".equals(biaoshi)){
+				customeridStr = vipShop.getLefengCustomerid();
+			}
+			String time = DateTimeUtil.getDateBefore(vipShop.getDaysno());
 			String keyword = "干线回单"; // 根据关键词删除
-			this.b2cDataDAO.updateKeyWordByVipShop(customerids, time, keyword);
+			this.b2cDataDAO.updateKeyWordByVipShop(customeridStr, time, keyword,vipShop);
 			String keyword2 = "状态发生时间";
 
-			this.b2cDataDAO.updateKeyWordByVipShop(customerids, time, keyword2);
+			this.b2cDataDAO.updateKeyWordByVipShop(customeridStr, time, keyword2,vipShop);
 
 		} catch (Exception e) {
 			this.logger.error("干线回单异常", e);
