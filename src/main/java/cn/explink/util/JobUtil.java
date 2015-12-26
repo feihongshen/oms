@@ -1033,6 +1033,18 @@ public class JobUtil {
 		}
 	}
 	
+	/**
+	 * 飞牛网(http)货态回传定时任务
+	 */
+	public void getFNW_Task() {
+		try {
+
+			this.fnwService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了飞牛网(http)的定时器异常!", e);
+		}
+		this.logger.info("执行了推送飞牛网(http)定时器!");
+	}
 	
 }
 	
