@@ -804,7 +804,7 @@ public class B2CDataDAO {
 	 * @param b2cids
 	 * @param respMap
 	 */
-	public void updateKeyWordByVipShop(String customerids, String time, String keyword,VipShop vipshop) throws Exception {
+	public void updateKeyWordByVipShop2(String customerids, String time, String keyword,VipShop vipshop) throws Exception {
 		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<? ";
 		if ((keyword != null) && !keyword.isEmpty()) {
 			sql += " AND remark='" + keyword + "'";
@@ -812,6 +812,20 @@ public class B2CDataDAO {
 		this.jdbcTemplate.update(sql, customerids, time, vipshop.getSelb2cnum());
 	}
 
+	/**
+	 * 修改 根据关键词 重置状态
+	 *
+	 * @param b2cids
+	 * @param respMap
+	 */
+	public void updateKeyWordByVipShop(String customerids, String time, String keyword) throws Exception {
+		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<300 ";
+		if ((keyword != null) && !keyword.isEmpty()) {
+			sql += " AND remark='" + keyword + "'";
+		}
+		this.jdbcTemplate.update(sql, customerids, time);
+	}
+	
 	/**
 	 * 按供货商修改失败的成为未推送状态
 	 *

@@ -130,8 +130,8 @@ public class TelecomshopService {
 	private void updateSendFaildInfo(String customerids) {
 		try {
 			String time = DateTimeUtil.getDateBefore(2);
-
-			b2cDataDAO.updateKeyWordByVipShop(customerids, time,"", null);
+			
+			b2cDataDAO.updateKeyWordByVipShop(customerids, time, null);
 
 		} catch (Exception e) {
 			logger.error("重发电信商城异常", e);

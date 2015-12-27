@@ -863,10 +863,10 @@ public class VipShopCwbFeedBackService {
 			}
 			String time = DateTimeUtil.getDateBefore(vipShop.getDaysno());
 			String keyword = "干线回单"; // 根据关键词删除
-			this.b2cDataDAO.updateKeyWordByVipShop(customeridStr, time, keyword,vipShop);
+			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword,vipShop);
 			String keyword2 = "状态发生时间";
 
-			this.b2cDataDAO.updateKeyWordByVipShop(customeridStr, time, keyword2,vipShop);
+			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword2,vipShop);
 
 		} catch (Exception e) {
 			this.logger.error("干线回单异常", e);
