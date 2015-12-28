@@ -100,6 +100,7 @@ public class WeisudaServiceExtends {
 		
 		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Peisong.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_01");
 		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Shangmentui.getValue(),WeisudsInterfaceEnum.getback_boundOrders.getValue(),"唯速达_10");
+		boundDeliveryAppMethod(CwbOrderTypeIdEnum.OXO.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_10");
 
 	}
 

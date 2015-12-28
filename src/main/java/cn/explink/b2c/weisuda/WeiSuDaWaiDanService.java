@@ -71,7 +71,7 @@ public class WeiSuDaWaiDanService {
 					}
 
 					if ((weisudaCwbs == null) || (weisudaCwbs.size() == 0)) {
-						this.logger.info("品骏达外单当前没有要推送0品骏达外单0的数据");
+						this.logger.info("品骏达外单当前没有要推送0品骏达0的数据");
 						return;
 					}
 
