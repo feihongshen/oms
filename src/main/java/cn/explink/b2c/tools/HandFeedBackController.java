@@ -31,6 +31,7 @@ import cn.explink.b2c.haoyigou.HyGService;
 import cn.explink.b2c.homegobj.HomegobjService;
 import cn.explink.b2c.homegou.HomegouService_Delivery;
 import cn.explink.b2c.homegou.HomegouService_Message;
+import cn.explink.b2c.huanqiugou.HuanqiugouService;
 import cn.explink.b2c.huitongtx.HuitongtxService;
 import cn.explink.b2c.hxgdms.HxgdmsService;
 import cn.explink.b2c.hzabc.HangZhouABCService;
@@ -178,7 +179,8 @@ public class HandFeedBackController {
 	FNWService fnwService;
 	@Autowired
 	MLKService mlkService;
-	
+	@Autowired
+	HuanqiugouService huanqiugouService;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -534,5 +536,12 @@ public class HandFeedBackController {
 		}
 		return "手动执行【玫琳凯】货态反馈完成";
 	}
+
+	@RequestMapping("/huanqiugou_test")
+	public @ResponseBody String huanqiugou_test(HttpServletRequest request){
+		huanqiugouService.feedback_status();
+		return "手动推送环球购物成功";
+	}
+	
 	
 }

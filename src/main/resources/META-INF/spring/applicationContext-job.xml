@@ -78,6 +78,7 @@
 							 <ref bean="doTime_suning"/>
 							 <ref bean="doTime_marykay"></ref>
 							 <ref bean="doTime_feiniuwang" />
+							 <ref bean="doTime_huanqiugouwu" />
 							 
 			           </list>            
 	               </property>       
@@ -1039,6 +1040,27 @@
              <value>getFNW_Task</value>
          </property>
      </bean>
+     
+     <!-- 环球购物 -->
+     <bean id="doTime_huanqiugouwu" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getHuanqiugouwu" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getHuanqiugouwu" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getHuanQiuGouWu_Task</value>
+		</property>
+	</bean>
 	
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>

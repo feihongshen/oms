@@ -231,6 +231,13 @@ src/main/java/cn/explink/b2c/homegou/HomegouXMLNote.java -text
 src/main/java/cn/explink/b2c/homegou/MOEnum.java -text
 src/main/java/cn/explink/b2c/homegou/MesageLineEnum.java -text
 src/main/java/cn/explink/b2c/homegou/REEnum.java -text
+src/main/java/cn/explink/b2c/huanqiugou/BulidHuanqiugouB2cData.java -text
+src/main/java/cn/explink/b2c/huanqiugou/Huanqiugou.java -text
+src/main/java/cn/explink/b2c/huanqiugou/HuanqiugouFlowEnum.java -text
+src/main/java/cn/explink/b2c/huanqiugou/HuanqiugouNote.java -text
+src/main/java/cn/explink/b2c/huanqiugou/HuanqiugouService.java -text
+src/main/java/cn/explink/b2c/huanqiugou/respDto/ResponseDto.java -text
+src/main/java/cn/explink/b2c/huanqiugou/respDto/ReturnDto.java -text
 src/main/java/cn/explink/b2c/huitongtx/BulidHuitongtxB2cData.java -text
 src/main/java/cn/explink/b2c/huitongtx/HuitongXMLNote.java -text
 src/main/java/cn/explink/b2c/huitongtx/Huitongtx.java -text
