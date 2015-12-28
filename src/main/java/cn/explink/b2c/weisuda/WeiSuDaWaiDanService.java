@@ -53,6 +53,10 @@ public class WeiSuDaWaiDanService {
 			}
 			
 			Weisuda weisuda = this.weisudaService.getWeisuda(PosEnum.Weisuda.getKey());
+			if(weisuda.getIsSend() == 0){
+				this.logger.info("未开启品骏达外单推送！");
+				return;
+			}
 			
 			try {
 				
