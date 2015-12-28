@@ -71,7 +71,7 @@ public class WeiSuDaWaiDanService {
 						return;
 					}
 
-					this.senCwbToWeiSuDa(weisudaCwbs, weisuda);
+					this.sendCwbToWeiSuDa(weisudaCwbs, weisuda);
 				}
 
 			} catch (Exception e) {
@@ -82,7 +82,7 @@ public class WeiSuDaWaiDanService {
 			
 		
 	}
-	private void senCwbToWeiSuDa(List<WeisudaCwb> weisudaCwbs, Weisuda weisuda) throws JsonParseException, JsonMappingException, IOException {
+	private void sendCwbToWeiSuDa(List<WeisudaCwb> weisudaCwbs, Weisuda weisuda) throws JsonParseException, JsonMappingException, IOException {
 		
 			for(WeisudaCwb weisudaCwb:weisudaCwbs){
 				try{
