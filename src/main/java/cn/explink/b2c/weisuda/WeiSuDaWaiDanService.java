@@ -105,9 +105,10 @@ public class WeiSuDaWaiDanService {
 							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",pjDeliveryOrder.getResultMsg(),1);
 						}
 					
-				 } catch(com.vip.osp.core.exception.OspException e){
+				 }catch(Exception e){
 				        this.logger.error("品骏达外单信息发送失败！cwb={},失败原因={}",e);
-				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",e.getMessage(),1);
+				        String message=e.getMessage().length()>500?e.getMessage().substring(0,450):e.getMessage();
+				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",message,1);
 				 }
 			}
 		

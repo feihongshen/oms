@@ -139,18 +139,18 @@ public class WeisudaService {
 			//查询出唯速达所设置的客户
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			if(weisuda.getIsSend() == 0){
-				
-				boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
-				
-				if(filterCustomerflag){
-					//this.weiSuDaWaiDanService.sendCwb(cwbOrder,weisuda,customer);
-					this.weiSuDaWaiDanService.saveWeiSuDa(cwbOrder,weisuda,customer);
-				} else {
-					this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
-				}
-			}else{
-				this.logger.info("唯速达_01未开启订单推送，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
+				return;
 			}
+			
+			boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
+			
+			if(filterCustomerflag){
+				//this.weiSuDaWaiDanService.sendCwb(cwbOrder,weisuda,customer);
+				this.weiSuDaWaiDanService.saveWeiSuDa(cwbOrder,weisuda,customer);
+			} else {
+				this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
+			}
+			
 		} else {
 			this.logger.info("唯速达_01不是所需要的订单类型，cwb={}", orderFlow.getCwb());
 		}
@@ -168,7 +168,7 @@ public class WeisudaService {
 				flag = true;
 			}
 		}
-		this.logger.info("唯速达_01不是所设置的外单客户，customerid={}",customerid);
+	
 		return flag;
 	}
 

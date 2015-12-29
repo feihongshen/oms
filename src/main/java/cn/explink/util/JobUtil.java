@@ -230,6 +230,7 @@ public class JobUtil {
 		JobUtil.threadMap = new HashMap<String, Integer>();
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
+		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("suningCurrentinteger",0);
 	}
 
@@ -239,6 +240,7 @@ public class JobUtil {
 	public void updateBatcnitialThreadMap() {
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
+		JobUtil.threadMap.put("pjdwaidan", 0);
 		
 		this.logger.info("系统自动初始化定时器完成");
 	}
@@ -995,10 +997,19 @@ public class JobUtil {
 	 * 品骏达外单定时任务方法调用
 	 */
 	public void sendCwbToPJD(){
+		
+		if (JobUtil.threadMap.get("pjdwaidan") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryResult");
+			return;
+		}
+		JobUtil.threadMap.put("pjdwaidan", 1);
+		
 		try{
 			this.weiSuDaWaiDanService.sendCwb();
 		}catch(Exception e){
 			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("pjdwaidan", 0);
 		}
 		this.logger.info("执行了【品骏达外单】定时器任务!");
 	}
