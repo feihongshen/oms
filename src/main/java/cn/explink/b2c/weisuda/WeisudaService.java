@@ -160,6 +160,9 @@ public class WeisudaService {
 
 	private boolean filterWandanCustomerId(long customerid, Weisuda weisuda) {
 		String customerids = weisuda.getCustomers();
+		if(customerids==null||customerids.isEmpty()){
+			return false;
+		}
 		String[] ids = customerids.split(",|，");
 		boolean flag = false;
 		//查看当前订单的客户是不是唯速达的外单客户
