@@ -92,9 +92,9 @@ public class WeisudaDAO {
 
 		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
 	}
-	public void updateWeisudawaidan(String cwb, String flag, String remark,int orderType) {
+	public void updateWeisudawaidan(String cwb, String flag, String remark) {
 		
-		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',ordertype = '"+orderType+"',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark=?,istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'",remark);
 	}
 
 	public void updateBoundState(String cwbs, String flag,String remark) {

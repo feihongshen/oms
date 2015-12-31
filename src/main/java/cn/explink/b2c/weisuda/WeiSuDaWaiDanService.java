@@ -98,17 +98,18 @@ public class WeiSuDaWaiDanService {
 					
 						PjDeliveryOrder4DMPResponse pjDeliveryOrder = pjDeliveryOrderList.get(0);
 						if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
-							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"1","品骏达外单推送成功",1);
+							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"1","品骏达外单推送成功");
 							this.logger.info("品骏达外单信息发送成功！cwb={}",weisudaCwb.getCwb());
 						}else{
 							this.logger.info("品骏达外单信息发送失败！cwb={},失败原因={}",weisudaCwb.getCwb(),pjDeliveryOrder.getResultMsg());
-							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",pjDeliveryOrder.getResultMsg(),1);
+							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",pjDeliveryOrder.getResultMsg());
 						}
 					
 				 }catch(Exception e){
-				        this.logger.error("品骏达外单信息发送失败！cwb={},失败原因={}",e);
+				        this.logger.error("品骏达外单信息发送失败！cwb="+weisudaCwb.getCwb(),e);
 				        String message=e.getMessage().length()>500?e.getMessage().substring(0,450):e.getMessage();
-				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",message,1);
+				        System.out.println("==========品骏达========="+message);
+				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",message);
 				 }
 			}
 		
