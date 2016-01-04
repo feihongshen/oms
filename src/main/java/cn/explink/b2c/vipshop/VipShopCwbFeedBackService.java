@@ -861,12 +861,13 @@ public class VipShopCwbFeedBackService {
 			if("lefeng".equals(biaoshi)){
 				customeridStr = vipShop.getLefengCustomerid();
 			}
-			String time = DateTimeUtil.getDateBefore(vipShop.getDaysno());
+			String time = DateTimeUtil.getDateBefore(vipShop.getDaysno()==0?5:vipShop.getDaysno());
+			long resendCount =vipShop.getSelb2cnum()==0?300:vipShop.getSelb2cnum();
 			String keyword = "干线回单"; // 根据关键词删除
-			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword,vipShop);
+			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword,resendCount);
 			String keyword2 = "状态发生时间";
 
-			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword2,vipShop);
+			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword2,resendCount);
 
 		} catch (Exception e) {
 			this.logger.error("干线回单异常", e);

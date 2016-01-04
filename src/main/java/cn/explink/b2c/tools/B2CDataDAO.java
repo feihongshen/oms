@@ -804,12 +804,12 @@ public class B2CDataDAO {
 	 * @param b2cids
 	 * @param respMap
 	 */
-	public void updateKeyWordByVipShop2(String customerids, String time, String keyword,VipShop vipshop) throws Exception {
+	public void updateKeyWordByVipShop2(String customerids, String time, String keyword,long  reSendCount) throws Exception {
 		String sql = " update express_send_b2c_data set  send_b2c_flag=0   WHERE  customerid=? AND posttime>? AND send_b2c_flag=2 AND select_b2c_flag<? ";
 		if ((keyword != null) && !keyword.isEmpty()) {
 			sql += " AND remark='" + keyword + "'";
 		}
-		this.jdbcTemplate.update(sql, customerids, time, vipshop.getSelb2cnum());
+		this.jdbcTemplate.update(sql, customerids, time, reSendCount);
 	}
 
 	/**
