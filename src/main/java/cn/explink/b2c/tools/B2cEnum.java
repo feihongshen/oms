@@ -83,6 +83,8 @@ public enum B2cEnum {
 	Yihaodian_bakup3(20132, "一号店_备用3", "yihaodian_bakup3"), 
 	meilinkai(20135,"玫琳凯","meilinkai"),
 	HuanQiuGou(20136, "环球购物", "huanqiugouwu"),
+	Zhongliang_bak1(21001, "中粮(我买网)_备用1", "zhongliang_bak1"),
+	Zhongliang_bak2(21002, "中粮(我买网)_备用2", "zhongliang_bak2"),
 	; 
 	private int key;
 	private String text;
