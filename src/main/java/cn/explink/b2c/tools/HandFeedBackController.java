@@ -59,6 +59,7 @@ import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
 import cn.explink.b2c.yixun.YiXunService;
+import cn.explink.b2c.yonghui.YongHuiServices;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.util.JobUtil;
@@ -181,6 +182,8 @@ public class HandFeedBackController {
 	MLKService mlkService;
 	@Autowired
 	HuanqiugouService huanqiugouService;
+	@Autowired
+	YongHuiServices YongHuiServices;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -543,5 +546,11 @@ public class HandFeedBackController {
 		return "手动推送环球购物成功";
 	}
 	
+	@RequestMapping("/orderflow")
+	public @ResponseBody
+	String timmer() {
+		this.YongHuiServices.feedback_status();
+		return "【永辉超市】手动状态回转";
+	}
 	
 }

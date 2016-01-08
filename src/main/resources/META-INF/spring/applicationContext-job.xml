@@ -79,6 +79,7 @@
 							 <ref bean="doTime_marykay"></ref>
 							 <ref bean="doTime_feiniuwang" />
 							 <ref bean="doTime_huanqiugouwu" />
+							 <ref bean="doTime_yonghuihh" />
 							 
 			           </list>            
 	               </property>       
@@ -1049,6 +1050,27 @@
 		</property>
 		<property name="cronExpression">
 			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<!-- 永辉超市LX -->
+	<bean id="doTime_yonghuihh" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="yonghuidingshi" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 12 * * ? </value>
+		</property>
+	</bean>
+
+	<bean id="yonghuidingshi" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getYongHuiCc_Task</value>
 		</property>
 	</bean>
 

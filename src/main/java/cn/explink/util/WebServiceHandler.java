@@ -1,9 +1,21 @@
 package cn.explink.util;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.commons.httpclient.Cookie;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.transport.http.CommonsHttpMessageSender;
 
@@ -23,13 +35,16 @@ public class WebServiceHandler {
 	 * @return 字符串
 	 * @throws Exception
 	 */
-	public static Object invokeWs(String wsdlUrl, String opName, Object... opArgs) throws Exception {
+	public static Object invokeWs(String wsdlUrl, String opName,
+			Object... opArgs) throws Exception {
 		Object[] results = null;
 		try {
 			Client client = new Client(new URL(wsdlUrl));
-			client.setProperty(CommonsHttpMessageSender.GZIP_RESPONSE_ENABLED, Boolean.TRUE);// 告诉对方支持返回GZIP内容
+			client.setProperty(CommonsHttpMessageSender.GZIP_RESPONSE_ENABLED,
+					Boolean.TRUE);// 告诉对方支持返回GZIP内容
 			client.setTimeout(30000); // 设置超时时间为30秒
 			results = client.invoke(opName, opArgs);
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new Exception("WebService服务链路异常:" + e.getMessage(), e);
@@ -38,7 +53,66 @@ public class WebServiceHandler {
 		return results[0];
 	}
 
-	public static Object invokeWsByNameAndPassWord(String url, String method, String pram, String userName, String passWord) throws Exception {
+	private static String doHttpRequest(boolean isGetRequest,
+			Map<String, String> params, String url) {
+		HttpClient client = new HttpClient();
+		HttpMethodBase method = null;
+		String responseBodyString = null;
+		if (isGetRequest) {
+			method = new GetMethod(url);
+		} else {
+			method = new PostMethod(url);
+			NameValuePair[] postParams = new NameValuePair[params.size()];
+			Set<String> keySet = params.keySet();
+			String[] keySetArray = keySet.toArray(new String[keySet.size()]);
+			for (int i = 0; i < keySetArray.length; i++) {
+				NameValuePair nameValuePair = new NameValuePair(keySetArray[i],
+						params.get(keySetArray[i]));
+				postParams[i] = nameValuePair;
+			}
+			// 将表单的值放入postMethod中
+
+			((PostMethod) method).addParameters(postParams);
+		}
+		try {
+			int statusCode = client.executeMethod(method);
+			if (statusCode == HttpStatus.SC_OK) {
+				responseBodyString = method.getResponseBodyAsString();
+				Cookie[] cookies = client.getState().getCookies();
+				for (int i = 0; i < cookies.length; i++) {
+					System.out.println("cookiename==" + cookies[i].getName());
+					System.out.println("cookieValue==" + cookies[i].getValue());
+					System.out.println("Domain==" + cookies[i].getDomain());
+					System.out.println("Path==" + cookies[i].getPath());
+					System.out.println("Version==" + cookies[i].getVersion());
+				}
+
+			} else {
+				System.err.println("Response Code: " + statusCode);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			method.releaseConnection();
+		}
+		return responseBodyString;
+	}
+
+	public static void main(String[] args) {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("strUserID", "HDZJS");
+		params.put("strPwd", "admin");
+		doHttpRequest(false, params, "http://www.mk-lips.com/HDToLIPS.asmx?op=CheckUser");
+		// try {
+		// invokeWs("http://www.mk-lips.com/HDToLIPS.asmx?wsdl", "CheckUser",
+		// "HDZJS","admin");
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+	}
+
+	public static Object invokeWsByNameAndPassWord(String url, String method,
+			String pram, String userName, String passWord) throws Exception {
 		Object[] params = new Object[] { pram };
 		Service service = new Service();
 		Call call = (Call) service.createCall();
@@ -49,7 +123,8 @@ public class WebServiceHandler {
 		return returnValue;
 	}
 
-	public static Object LandWsByNameAndPassWord(String url, String method, String pram) throws Exception {
+	public static Object LandWsByNameAndPassWord(String url, String method,
+			String pram) throws Exception {
 		Object[] params = new Object[] { pram };
 		Service service = new Service();
 		Call call = (Call) service.createCall();
@@ -59,7 +134,8 @@ public class WebServiceHandler {
 		return returnValue;
 	}
 
-	public static Object invokeWsByObjectParms(String url, String method, Object[] pram) throws Exception {
+	public static Object invokeWsByObjectParms(String url, String method,
+			Object[] pram) throws Exception {
 		Object[] params = new Object[] { pram };
 		Service service = new Service();
 		Call call = (Call) service.createCall();
@@ -69,19 +145,22 @@ public class WebServiceHandler {
 		return returnValue;
 	}
 
-	public static void main(String args[]) throws Exception {
-
-		// Object
-		// parms[]={rtn_id,ord_id,dlver_cd,payee,disburse_amt,disburse_date,hxg.getPassword()};
-
-		String ws_url = "http://bsp-test.sf-express.com:9090/bsp-ois/ws/expressService?wsdl";
-		String opName = "sfexpressService";
-		String xml = "<Request service='OrderService' lang='zh-CN'><Head>BJXXHKZX,682AtACqIz1dCzXS</Head><Body><Order><orderid>LBXTST00260050</orderid><express_type>1</express_type><j_province>北京</j_province><j_city>北京市</j_city><j_company>北京迅祥</j_company><j_contact>张三</j_contact><j_tel>010-54544</j_tel><j_address>北京市朝阳区建国路88号</j_address><d_province></d_province><d_city></d_city><d_company></d_company><d_contact>张三</d_contact><d_tel> 13426480484</d_tel><d_address>北京是朝阳区建国路111号</d_address><parcel_quantity>1</parcel_quantity><pay_method>1</pay_method><OrderOption><custid>1023125456</custid><cargo></cargo><cargo_count>1</cargo_count><cargo_unit/><cargo_weight>0.000</cargo_weight><cargo_amount>0.50</cargo_amount><cargo_amount>0.50</cargo_amount><cargo_total_weight>0.000</cargo_total_weight><sendstarttime>2014-05-05 20:22:02</sendstarttime></OrderOption><AddedService><name>COD</name><value>0.50</value><value1>1023125456</value1></AddedService></Order></Body>";
-		Object parm = new Object[] { xml };
-		Object wsresult = invokeWs(ws_url, opName, parm);
-		System.out.println(wsresult);
-
-	}
+	// public static void main(String args[]) throws Exception {
+	//
+	// // Object
+	// //
+	// parms[]={rtn_id,ord_id,dlver_cd,payee,disburse_amt,disburse_date,hxg.getPassword()};
+	//
+	// String ws_url =
+	// "http://bsp-test.sf-express.com:9090/bsp-ois/ws/expressService?wsdl";
+	// String opName = "sfexpressService";
+	// String xml =
+	// "<Request service='OrderService' lang='zh-CN'><Head>BJXXHKZX,682AtACqIz1dCzXS</Head><Body><Order><orderid>LBXTST00260050</orderid><express_type>1</express_type><j_province>北京</j_province><j_city>北京市</j_city><j_company>北京迅祥</j_company><j_contact>张三</j_contact><j_tel>010-54544</j_tel><j_address>北京市朝阳区建国路88号</j_address><d_province></d_province><d_city></d_city><d_company></d_company><d_contact>张三</d_contact><d_tel> 13426480484</d_tel><d_address>北京是朝阳区建国路111号</d_address><parcel_quantity>1</parcel_quantity><pay_method>1</pay_method><OrderOption><custid>1023125456</custid><cargo></cargo><cargo_count>1</cargo_count><cargo_unit/><cargo_weight>0.000</cargo_weight><cargo_amount>0.50</cargo_amount><cargo_amount>0.50</cargo_amount><cargo_total_weight>0.000</cargo_total_weight><sendstarttime>2014-05-05 20:22:02</sendstarttime></OrderOption><AddedService><name>COD</name><value>0.50</value><value1>1023125456</value1></AddedService></Order></Body>";
+	// Object parm = new Object[] { xml };
+	// Object wsresult = invokeWs(ws_url, opName, parm);
+	// System.out.println(wsresult);
+	//
+	// }
 
 	// public static String invokeService(){
 	// org.codehaus.xfire.service.Service serviceModel = new

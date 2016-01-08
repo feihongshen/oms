@@ -71,6 +71,7 @@ import cn.explink.b2c.weisuda.WeisudaServiceExtends;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
+import cn.explink.b2c.yonghui.YongHuiServices;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.b2c.zhemeng.ZhemengService;
 import cn.explink.b2c.zhongliang.ZhongliangService;
@@ -223,6 +224,8 @@ public class JobUtil {
 	WeiSuDaWaiDanService weiSuDaWaiDanService;
 	@Autowired
 	FNWService fnwService;
+	@Autowired
+	YongHuiServices yongHuiServices;
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -1055,6 +1058,18 @@ public class JobUtil {
 			this.logger.error("执行了飞牛网(http)的定时器异常!", e);
 		}
 		this.logger.info("执行了推送飞牛网(http)定时器!");
+	}
+	
+	/**
+	 * 永辉超市推送接口定时器
+	 */
+	public void getYongHuiCc_Task() {
+		try {
+			this.yongHuiServices.feedback_status();
+			this.logger.info("执行了永辉超市定时器!");
+		} catch (Exception e) {
+			this.logger.error("执行永辉超市的定时器异常!", e);
+		}
 	}
 	
 }

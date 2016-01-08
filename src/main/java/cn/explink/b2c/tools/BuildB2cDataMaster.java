@@ -43,6 +43,7 @@ import cn.explink.b2c.yangguang.BulidYangGuangB2cData;
 import cn.explink.b2c.yemaijiu.BuildYeMaiJiuB2cData;
 import cn.explink.b2c.yihaodian.BulidYihaodianB2cData;
 import cn.explink.b2c.yixun.BulidYiXunB2cData;
+import cn.explink.b2c.yonghui.BuildYongHuiB2cData;
 import cn.explink.b2c.yonghuics.BulidYonghuiB2cData;
 import cn.explink.b2c.zhongliang.BuildZhongliangB2cData;
 
@@ -135,7 +136,17 @@ public class BuildB2cDataMaster {
 	BuildFeiNiuWangData buildFeiNiuWangData;
 	@Autowired
 	BuildMLKB2cData buildMLKB2cData;
+	@Autowired
+	BuildYongHuiB2cData buildYongHuiB2cData;
 	
+	public BuildYongHuiB2cData getBuildYongHuiB2cData() {
+		return buildYongHuiB2cData;
+	}
+
+	public void setBuildYongHuiB2cData(BuildYongHuiB2cData buildYongHuiB2cData) {
+		this.buildYongHuiB2cData = buildYongHuiB2cData;
+	}
+
 	public BuildMLKB2cData getBuildMLKB2cData() {
 		return buildMLKB2cData;
 	}
