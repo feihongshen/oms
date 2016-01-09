@@ -586,7 +586,6 @@ src/main/java/cn/explink/b2c/yonghui/BuildYongHuiB2cData.java -text
 src/main/java/cn/explink/b2c/yonghui/YongHuiController.java -text
 src/main/java/cn/explink/b2c/yonghui/YongHuiExpEmum.java -text
 src/main/java/cn/explink/b2c/yonghui/YongHuiFlowEnum.java -text
-src/main/java/cn/explink/b2c/yonghui/YongHuiServices.java -text
 src/main/java/cn/explink/b2c/yonghui/domain/Content.java -text
 src/main/java/cn/explink/b2c/yonghui/domain/Order.java -text
 src/main/java/cn/explink/b2c/yonghui/domain/OrderBack.java -text
