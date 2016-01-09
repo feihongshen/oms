@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/yongHui")
 public class YongHuiController {
 	@Autowired
-	YongHuiServices YongHuiServices;
+	YHServices YongHuiServices;
 
 	@RequestMapping("/orderflow")
 	public @ResponseBody

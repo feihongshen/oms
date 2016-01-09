@@ -583,6 +583,7 @@ src/main/java/cn/explink/b2c/yixun/YiXunDTO.java -text
 src/main/java/cn/explink/b2c/yixun/YiXunFlowEnum.java -text
 src/main/java/cn/explink/b2c/yixun/YiXunService.java -text
 src/main/java/cn/explink/b2c/yonghui/BuildYongHuiB2cData.java -text
+src/main/java/cn/explink/b2c/yonghui/YHServices.java -text
 src/main/java/cn/explink/b2c/yonghui/YongHuiController.java -text
 src/main/java/cn/explink/b2c/yonghui/YongHuiExpEmum.java -text
 src/main/java/cn/explink/b2c/yonghui/YongHuiFlowEnum.java -text

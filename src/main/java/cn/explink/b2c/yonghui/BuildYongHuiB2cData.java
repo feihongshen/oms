@@ -37,7 +37,7 @@ public class BuildYongHuiB2cData {
 	@Autowired
 	GetDmpDAO getDmpdao;
 	@Autowired
-	YongHuiServices yonghuiServices;
+	YHServices yonghuiServices;
 	@Autowired
 	private B2cTools b2ctools;
 	@Autowired
