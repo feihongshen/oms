@@ -54,12 +54,11 @@ import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wanxiang.WanxiangService;
-import cn.explink.b2c.weisuda.WeisudaService;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
 import cn.explink.b2c.yixun.YiXunService;
-import cn.explink.b2c.yonghui.YongHuiServices;
+import cn.explink.b2c.yonghui.YHServices;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.util.JobUtil;
@@ -183,7 +182,7 @@ public class HandFeedBackController {
 	@Autowired
 	HuanqiugouService huanqiugouService;
 	@Autowired
-	YongHuiServices YongHuiServices;
+	YHServices YongHuiServices;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 

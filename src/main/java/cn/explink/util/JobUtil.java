@@ -71,7 +71,7 @@ import cn.explink.b2c.weisuda.WeisudaServiceExtends;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
-import cn.explink.b2c.yonghui.YongHuiServices;
+import cn.explink.b2c.yonghui.YHServices;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.b2c.zhemeng.ZhemengService;
 import cn.explink.b2c.zhongliang.ZhongliangService;
@@ -225,7 +225,7 @@ public class JobUtil {
 	@Autowired
 	FNWService fnwService;
 	@Autowired
-	YongHuiServices yongHuiServices;
+	YHServices yongHuiServices;
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
