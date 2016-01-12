@@ -36,8 +36,15 @@ public class WeiSuDaWaiDan {
 	private String pickerTime;
 	private String custPackNo;
 	private String codAmount;
+	private String sendCarrierCode;
 	
 	
+	public String getSendCarrierCode() {
+		return sendCarrierCode;
+	}
+	public void setSendCarrierCode(String sendCarrierCode) {
+		this.sendCarrierCode = sendCarrierCode;
+	}
 	public String getCodAmount() {
 		return codAmount;
 	}

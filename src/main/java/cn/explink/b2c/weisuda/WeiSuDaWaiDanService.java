@@ -88,44 +88,46 @@ public class WeiSuDaWaiDanService {
 	}
 	private void sendCwbToWeiSuDa(List<WeisudaCwb> weisudaCwbs, Weisuda weisuda) throws JsonParseException, JsonMappingException, IOException {
 		
-			for(WeisudaCwb weisudaCwb:weisudaCwbs){
-				try{
-					PjDeliveryOrder4DMPServiceClient client=new PjDeliveryOrder4DMPServiceClient();
-					
-					ArrayList<PjDeliverOrder4DMPRequest> doReqs1 = buildPjDeliverOrderRequest(weisuda, weisudaCwb);
-			        
-			        List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = client.createDeliveryOrder(doReqs1);
-					
-						PjDeliveryOrder4DMPResponse pjDeliveryOrder = pjDeliveryOrderList.get(0);
-						if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
-							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"1","品骏达外单推送成功");
-							this.logger.info("品骏达外单信息发送成功！cwb={}",weisudaCwb.getCwb());
-						}else{
-							this.logger.info("品骏达外单信息发送失败！cwb={},失败原因={}",weisudaCwb.getCwb(),pjDeliveryOrder.getResultMsg());
-							this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",pjDeliveryOrder.getResultMsg());
-						}
-					
-				 }catch(Exception e){
-				        this.logger.error("品骏达外单信息发送失败！cwb="+weisudaCwb.getCwb(),e);
-				        String message=e.getMessage().length()>500?e.getMessage().substring(0,450):e.getMessage();
-				        System.out.println("==========品骏达========="+message);
-				        this.weisudaDAO.updateWeisudawaidan(weisudaCwb.getCwb(),"2",message);
-				 }
-			}
-		
+		try{
+			PjDeliveryOrder4DMPServiceClient client=new PjDeliveryOrder4DMPServiceClient();
+			List<PjDeliverOrder4DMPRequest> doReqs =new  ArrayList<PjDeliverOrder4DMPRequest>();
 			
-	   
+			for(WeisudaCwb weisudaCwb:weisudaCwbs){
+				PjDeliverOrder4DMPRequest PjDeliverOrder = buildPjDeliverOrderRequest(weisuda, weisudaCwb);
+				doReqs.add(PjDeliverOrder);
+			}
+			
+			List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = client.createDeliveryOrder(doReqs);
+			
+			for(int i = 0;i < pjDeliveryOrderList.size();i++){
+				PjDeliveryOrder4DMPResponse pjDeliveryOrder = pjDeliveryOrderList.get(i);
+				if(Integer.parseInt(pjDeliveryOrder.getResultCode()) >0){
+					this.weisudaDAO.updateWeisudawaidan(pjDeliveryOrder.getCustOrderNo(),"1","品骏达外单推送成功");
+					this.logger.info("品骏达外单信息发送成功！cwb={}",pjDeliveryOrder.getCustOrderNo());
+				}else{
+					this.logger.info("品骏达外单信息发送失败！cwb={},失败原因={}",pjDeliveryOrder.getCustOrderNo(),pjDeliveryOrder.getResultMsg());
+					this.weisudaDAO.updateWeisudawaidan(pjDeliveryOrder.getCustOrderNo(),"2",pjDeliveryOrder.getResultMsg());
+				}
+				
+			}
+			
+			
+		 }catch(Exception e){
+		        this.logger.error("品骏达外单信息发送失败！出现未知异常。",e);
+		 }
 	}
 	
-	private ArrayList<PjDeliverOrder4DMPRequest> buildPjDeliverOrderRequest(Weisuda weisuda, WeisudaCwb weisudaCwb)
+			
+	   
+	
+	private PjDeliverOrder4DMPRequest buildPjDeliverOrderRequest(Weisuda weisuda, WeisudaCwb weisudaCwb)
 			throws JsonParseException, JsonMappingException, IOException {
-		ArrayList<PjDeliverOrder4DMPRequest> doReqs1 = new ArrayList<PjDeliverOrder4DMPRequest>();
 		PjDeliverOrder4DMPRequest value2 = new  PjDeliverOrder4DMPRequest();
 		WeiSuDaWaiDan weiSuDaWaiDan = new WeiSuDaWaiDan();
 		weiSuDaWaiDan = JsonUtil.readValue(weisudaCwb.getWaidanjson(),weiSuDaWaiDan.getClass());
 
 		value2.setCustOrderNo(weiSuDaWaiDan.getCustOrderNo());//客户订单号
-		value2.setCustCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));// 发件客户编码
+		value2.setCustCode(weiSuDaWaiDan.getCustCode());// 发件客户编码
 		if(StringUtils.isBlank(weiSuDaWaiDan.getCneeName())){
 			value2.setCneeName("******");
 		}else{
@@ -145,6 +147,7 @@ public class WeiSuDaWaiDanService {
 			value2.setCneeMobile(weiSuDaWaiDan.getCneeMobile());
 			value2.setCneeTel(weiSuDaWaiDan.getCneeTel());
 		}
+		value2.setSendCarrierCode(weiSuDaWaiDan.getSendCarrierCode());
 		value2.setZipCode(weiSuDaWaiDan.getZipCode());
 		value2.setCneeAddr(weiSuDaWaiDan.getCneeAddr());
 		value2.setCneeRemark(weiSuDaWaiDan.getCneeRemark());
@@ -165,8 +168,7 @@ public class WeiSuDaWaiDanService {
 		value2.setAccountMark(weiSuDaWaiDan.getAccountMark());
 		value2.setPayment(weiSuDaWaiDan.getPayment());//付款方式
 		value2.setPickerTime(weiSuDaWaiDan.getPickerTime());//揽件时间
-		doReqs1.add(value2);
-		return doReqs1;
+		return value2;
 	}
 	
 	
@@ -192,8 +194,9 @@ public class WeiSuDaWaiDanService {
 			
             //我们系统中的运单号是对方的箱号，需要存储在custPackNo 中
 			weiSuDaWaiDan.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
-            //value2.setTransportNo(StringUtil.nullConvertToEmptyString(cwbOrder.getTranscwb()));
-			weiSuDaWaiDan.setCustCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));// 发件客户编码
+			weiSuDaWaiDan.setCustCode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));// 发件客户编码
+			weiSuDaWaiDan.setSendCarrierCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));//承运商编码
+			weiSuDaWaiDan.setCustPackNo(StringUtil.nullConvertToEmptyString(cwbOrder.getTranscwb()));//运单号对应品骏达的箱号
             if(StringUtils.isBlank(cwbOrder.getConsigneename())){
             	weiSuDaWaiDan.setCneeName("******");
             }else{
