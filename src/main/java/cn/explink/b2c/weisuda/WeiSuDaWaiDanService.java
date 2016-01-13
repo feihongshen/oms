@@ -192,7 +192,7 @@ public class WeiSuDaWaiDanService {
 				orderType =3;
 			};
 			
-            //我们系统中的运单号是对方的箱号，需要存储在custPackNo 中
+            
 			weiSuDaWaiDan.setCustOrderNo(StringUtil.nullConvertToEmptyString(cwbOrder.getCwb()));//客户订单号
 			weiSuDaWaiDan.setCustCode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));// 发件客户编码
 			weiSuDaWaiDan.setSendCarrierCode(StringUtil.nullConvertToEmptyString(weisuda.getCode()));//承运商编码
