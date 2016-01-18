@@ -96,7 +96,7 @@ public class EpaiCoreService_Download {
 			if (responseJson == null||responseJson.isEmpty()) {
 				String cwbs="";
 				for(WarehouseToCommen co:datalist){
-					 cwbs+= co.getCwb()+",";
+					 cwbs+= "'"+co.getCwb()+"',";
 				}
 				if(cwbs.length()>0){
 					cwbs=cwbs.substring(0,cwbs.length()-1);
