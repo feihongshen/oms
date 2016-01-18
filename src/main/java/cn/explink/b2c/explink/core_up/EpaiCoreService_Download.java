@@ -94,15 +94,15 @@ public class EpaiCoreService_Download {
 			logger.info("返回-上游DMP返回OrderListDto={}", responseJson);
 
 			if (responseJson == null||responseJson.isEmpty()) {
-				String cwbs=null;
+				String cwbs="";
 				for(WarehouseToCommen co:datalist){
 					 cwbs+= co.getCwb()+",";
 				}
-				if(cwbs!=null){
+				if(cwbs.length()>0){
 					cwbs=cwbs.substring(0,cwbs.length()-1);
 				}
 				
-				warehouseCommenDAO.updateCommenCwbListBycwbs(cwbs==null?"-1":cwbs,"2");
+				warehouseCommenDAO.updateCommenCwbListBycwbs((cwbs.isEmpty()?"-1":cwbs),"2");
 				
 				orderExportResultDto.setErrCode(EpaiExpEmum.Success.getErrCode());
 				orderExportResultDto.setErrMsg(EpaiExpEmum.Success.getErrMsg());
