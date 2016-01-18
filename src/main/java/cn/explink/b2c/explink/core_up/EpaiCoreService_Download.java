@@ -26,6 +26,7 @@ import cn.explink.dao.WarehouseCommenDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.Common;
 import cn.explink.domain.WarehouseToCommen;
+import cn.explink.util.DateTimeUtil;
 import cn.explink.util.MD5.MD5Util;
 
 /**
@@ -41,7 +42,7 @@ public class EpaiCoreService_Download {
 	@Autowired
 	GetDmpDAO getDmpdao;
 	@Autowired
-	WarehouseCommenDAO WarehouseCommenDAO;
+	WarehouseCommenDAO warehouseCommenDAO;
 	@Autowired
 	GetDmpDAO getDmpDAO;
 
@@ -74,7 +75,7 @@ public class EpaiCoreService_Download {
 																			// 回传至下游订单详细信息
 			}
 
-			List<WarehouseToCommen> datalist = WarehouseCommenDAO.getCommenCwbListByCommonAndCount("'" + userCode + "'", pageSize);
+			List<WarehouseToCommen> datalist = warehouseCommenDAO.getCommenCwbListByCommonAndCount("'" + userCode + "'", pageSize);
 			if (datalist == null || datalist.size() == 0) { // 无数据List返回null
 															// 但是返回成功
 				orderExportResultDto.setErrCode(EpaiExpEmum.Success.getErrCode());
@@ -92,7 +93,17 @@ public class EpaiCoreService_Download {
 
 			logger.info("返回-上游DMP返回OrderListDto={}", responseJson);
 
-			if (responseJson == null) {
+			if (responseJson == null||responseJson.isEmpty()) {
+				String cwbs=null;
+				for(WarehouseToCommen co:datalist){
+					 cwbs+= co.getCwb()+",";
+				}
+				if(cwbs!=null){
+					cwbs=cwbs.substring(0,cwbs.length()-1);
+				}
+				
+				warehouseCommenDAO.updateCommenCwbListBycwbs(cwbs==null?"-1":cwbs,"2");
+				
 				orderExportResultDto.setErrCode(EpaiExpEmum.Success.getErrCode());
 				orderExportResultDto.setErrMsg(EpaiExpEmum.Success.getErrMsg());
 				logger.info("请求-上游OMS请求DMP发生未知异常，返回空,json={}", requestCwbs);
