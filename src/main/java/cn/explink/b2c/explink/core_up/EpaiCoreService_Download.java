@@ -1,5 +1,6 @@
 package cn.explink.b2c.explink.core_up;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +115,7 @@ public class EpaiCoreService_Download {
 			List<OrderDto> respOrders = JacksonMapper.getInstance().readValue(responseJson, new TypeReference<List<OrderDto>>() {
 			}); // json格式转化为泛型集合
 			addOtherParms(datalist, respOrders); // 追加其他参数
-			addOtherParms(datalist, respOrders);
+			
 
 			orderExportResultDto.setErrCode(EpaiExpEmum.Success.getErrCode());
 			orderExportResultDto.setErrMsg(EpaiExpEmum.Success.getErrMsg());
@@ -172,6 +173,10 @@ public class EpaiCoreService_Download {
 					if (orderDto.getCwb().equals(toCommon.getCwb())) {
 						orderDto.setSendtime(toCommon.getCredate()); // 发货时间
 						orderDto.setOuttobranch(getBranch(toCommon.getStartbranchid()).getBranchname()); // 出库承运商站点
+						if(orderDto.getShouldfare().doubleValue()>0&&orderDto.getReceivablefee().doubleValue()<=0){
+							orderDto.setReceivablefee(orderDto.getShouldfare());
+						}
+						
 					}
 				}
 			}
