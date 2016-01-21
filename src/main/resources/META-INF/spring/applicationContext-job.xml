@@ -25,7 +25,7 @@
 	 </bean>
 	 <bean lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	               <property name="triggers">        
-			           <list>                 
+			           <list>			                  
 			              	 <ref bean="doTime4"/>	
 			              	 <ref bean="doTime5"/>
 			              	 <ref bean="doTime6"/>
@@ -80,6 +80,7 @@
 							 <ref bean="doTime_feiniuwang" />
 							 <ref bean="doTime_huanqiugouwu" />
 							 <ref bean="doTime_yonghuihh" />
+							 <ref bean="doTime_sendThirdPartyOrderToDO" />
 							 
 			           </list>            
 	               </property>       
@@ -1084,5 +1085,26 @@
 		</property>
 	</bean>
 	
+	
+	<!--外单推送给DO服务定时任务开始--> 
+	<bean id="doTime_sendThirdPartyOrderToDO" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="thirdPartyOrderToDO"/>
+		</property>
+		<property name="cronExpression">
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="thirdPartyOrderToDO" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>sendThirdPartyOrder2DO_Task</value>
+		</property>
+	</bean>  
+	<!--外单推送给DO服务定时任务结束--> 
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>
