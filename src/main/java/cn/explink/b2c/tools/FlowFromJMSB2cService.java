@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 import cn.explink.b2c.amazon.BulidAmazonB2cData;
 import cn.explink.b2c.explink.code_down.EPaiInterfaceService;
 import cn.explink.b2c.telecomsc.TelecomJsonService;
+import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.dao.ExpressSysMonitorDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
@@ -68,7 +69,8 @@ public class FlowFromJMSB2cService {
 
 	@Autowired
 	ExpressSysMonitorDAO expressSysMonitorDAO;
-
+	@Autowired
+	TPOSendDoInfService tPOSendDoInfService;
 	@Autowired
 	TelecomJsonService telecomJsonService;
 	@Produce(uri = "jms:queue:sendBToCToDmp")
@@ -155,6 +157,8 @@ public class FlowFromJMSB2cService {
 					cwbOrderWithDeliveryState.getCwbOrder().setNewpaywayid("2");
 				}
 			}
+			//外单数据插入到外单推DO服务接口表
+			this.tPOSendDoInfService.insert2_TPO_SEND_DO_INF(cwbOrderWithDeliveryState, orderFlow);
 			// 手机终端 入口
 			this.mobileAppService.buildDeliveryingToMobileApps(cwbOrderWithDeliveryState, orderFlow);
 

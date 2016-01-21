@@ -61,6 +61,7 @@ import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
+import cn.explink.b2c.tpsdo.TPSDOService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
 import cn.explink.b2c.wanxiang.WanxiangService;
@@ -226,6 +227,8 @@ public class JobUtil {
 	FNWService fnwService;
 	@Autowired
 	YHServices yongHuiServices;
+	@Autowired
+	TPSDOService tPSDOService;
 	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -1070,6 +1073,12 @@ public class JobUtil {
 		} catch (Exception e) {
 			this.logger.error("执行永辉超市的定时器异常!", e);
 		}
+	}
+	
+	
+	public void sendThirdPartyOrder2DO_Task(){
+		this.logger.info("执行推送外单数据给DO服务定时器！");
+		tPSDOService.thirdPartyOrderSend2DO();
 	}
 	
 }
