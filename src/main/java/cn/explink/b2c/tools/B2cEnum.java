@@ -86,6 +86,7 @@ public enum B2cEnum {
 	HuanQiuGou(20136, "环球购物", "huanqiugouwu"),
 	Zhongliang_bak1(21001, "中粮(我买网)_备用1", "zhongliang_bak1"),
 	Zhongliang_bak2(21002, "中粮(我买网)_备用2", "zhongliang_bak2"),
+	ThirdPartyOrder_2_DO(20129, "外单推DO", "thirdPartyOrder2DO"),
 	; 
 	private int key;
 	private String text;

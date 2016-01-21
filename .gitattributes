@@ -477,6 +477,12 @@ src/main/java/cn/explink/b2c/tools/b2cmonitor/B2CMonitorData.java -text
 src/main/java/cn/explink/b2c/tools/b2cmonitor/B2cMonitorController.java -text
 src/main/java/cn/explink/b2c/tools/b2cmonitor/B2cMonitorService.java -text
 src/main/java/cn/explink/b2c/tools/b2cmonitor/B2cSendMointorService.java -text
+src/main/java/cn/explink/b2c/tpsdo/TPOSendDoInfDao.java -text
+src/main/java/cn/explink/b2c/tpsdo/TPOSendDoInfService.java -text
+src/main/java/cn/explink/b2c/tpsdo/TPSDOService.java -text
+src/main/java/cn/explink/b2c/tpsdo/bean/TPOSendDoInf.java -text
+src/main/java/cn/explink/b2c/tpsdo/bean/ThirdPartyOrder2DOCfg.java -text
+src/main/java/cn/explink/b2c/tpsdo/bean/ThirdPartyOrder2DORequestVo.java -text
 src/main/java/cn/explink/b2c/vipshop/BulidVipShopB2cData.java -text
 src/main/java/cn/explink/b2c/vipshop/OrderGoods.java -text
 src/main/java/cn/explink/b2c/vipshop/ReaderXMLHandler.java -text
