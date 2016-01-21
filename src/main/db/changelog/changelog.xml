@@ -1080,7 +1080,25 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
   			ADD COLUMN `ordertype` INT(4) NULL  COMMENT '是否是外单' AFTER `waidanjson`;
 		</sql>
 	</changeSet>
-	
+	<changeSet id="zhouguoting-2016-01-21-1" author="zhouguoting">
+		<sql>
+			CREATE TABLE `tpo_send_do_inf` (
+			  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+			  `cwb` varchar(100) NOT NULL DEFAULT '' COMMENT 'dmp订单号',
+			  `custcode` varchar(32) DEFAULT '' COMMENT '客户编码',
+			  `transportno` varchar(32) DEFAULT '' COMMENT 'TPS运单号',
+			  `req_obj_json` text COMMENT '请求参数JSON串',
+			  `remark` varchar(100) DEFAULT '' COMMENT '备注',
+			  `trytime` tinyint(4) NOT NULL DEFAULT '0' COMMENT '尝试次数',
+			  `is_sent` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已经发送成功。0.未发送/发送不成功，1.已发送成功',
+			  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+			  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+			  PRIMARY KEY (`id`),
+			  KEY `cwb_idx` (`cwb`),
+			  KEY `custcode_idx` (`custcode`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8
+		</sql>
+	</changeSet>
 	
 	
 </databaseChangeLog>
