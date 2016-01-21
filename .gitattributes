@@ -667,6 +667,7 @@ src/main/java/cn/explink/controller/MonitorHouseController.java -text
 src/main/java/cn/explink/controller/MonitorOrderDTO.java -text
 src/main/java/cn/explink/controller/MonitorSiteController.java -text
 src/main/java/cn/explink/controller/MonitorView.java -text
+src/main/java/cn/explink/controller/OmsJobController.java -text
 src/main/java/cn/explink/controller/OperationSelectController.java -text
 src/main/java/cn/explink/controller/OrderFlowController.java -text
 src/main/java/cn/explink/controller/OrderSelectController.java -text
