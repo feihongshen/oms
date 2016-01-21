@@ -1161,6 +1161,7 @@ src/main/webapp/WEB-INF/jsp/deliveryRate/mobileDeliveryRateSetup.jsp -text
 src/main/webapp/WEB-INF/jsp/deliveryRate/result.jsp -text
 src/main/webapp/WEB-INF/jsp/deliveryRate/saveMobileDeliveryRate.jsp -text
 src/main/webapp/WEB-INF/jsp/deliveryRate/search.jsp -text
+src/main/webapp/WEB-INF/jsp/dmpJobIndex.jsp -text
 src/main/webapp/WEB-INF/jsp/download/downloadlist.jsp -text
 src/main/webapp/WEB-INF/jsp/download/tuotoushow.jsp -text
 src/main/webapp/WEB-INF/jsp/download/zitiList.jsp -text
