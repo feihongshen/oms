@@ -13,7 +13,6 @@ import com.pjbest.deliveryorder.bizservice.PjDeliverOrder4DMPRequest;
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPResponse;
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPServiceHelper.PjDeliveryOrder4DMPServiceClient;
 
-import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
@@ -37,7 +36,7 @@ public class TPSDOService {
 	private B2cTools b2ctools;
 	
 	public void thirdPartyOrderSend2DO(){
-		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg(B2cEnum.ThirdPartyOrder_2_DO.getKey());
+		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
 		if(pushCfg == null){
 			logger.info("未配置外单推送DO服务配置信息!无法推送外单数据...");
 			return;

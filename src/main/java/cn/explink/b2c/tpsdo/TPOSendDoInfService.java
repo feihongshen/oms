@@ -58,26 +58,13 @@ public class TPOSendDoInfService {
 			}
 				
 			//查询出唯速达所设置的客户
-			ThirdPartyOrder2DOCfg pushCfg = this.getThirdPartyOrder2DOCfg(B2cEnum.ThirdPartyOrder_2_DO.getKey());
+			ThirdPartyOrder2DOCfg pushCfg = this.getThirdPartyOrder2DOCfg();
 			if(pushCfg == null){
 				this.logger.info("未获取到外单推送DO服务对接配置信息，外单cwb={}", orderFlow.getCwb());
 				return;
 			}
-			String customeridsCfg = pushCfg.getCustomerids();
-			String[] customerIdsCfgArray = customeridsCfg.split(",|，");
 			//是否是外单客户
-			boolean isTPCust  = false;
-			for(String customeridStr : customerIdsCfgArray){
-				try{
-					if( Long.valueOf(customeridStr).longValue() == customerid){
-						isTPCust = true;
-						break;
-					}
-				}catch(Exception e){
-					//do nothing
-				}
-			}
-			
+			boolean isTPCust  = this.isThirdPartyCustomer(customerid);
 			if(isTPCust){
 				this.logger.info("外单cwb={}加入外单推DO接口表（TPO_SEND_DO_INF）", orderFlow.getCwb());
 				ThirdPartyOrder2DORequestVo  thirdPartyOrder2DORequestVo = this.buildThirdPartyOrder2DORequestVo(cwbOrder, customer, pushCfg);
@@ -97,14 +84,42 @@ public class TPOSendDoInfService {
 	}
 
 	//获取配置信息
-	public ThirdPartyOrder2DOCfg getThirdPartyOrder2DOCfg(int key) {
+	public ThirdPartyOrder2DOCfg getThirdPartyOrder2DOCfg() {
 		ThirdPartyOrder2DOCfg cfg = null;
-		String objectMethod = this.b2ctools.getObjectMethod(key).getJoint_property();
+		String objectMethod = this.b2ctools.getObjectMethod(B2cEnum.ThirdPartyOrder_2_DO.getKey()).getJoint_property();
 		if (objectMethod != null) {
 			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
 			cfg = (ThirdPartyOrder2DOCfg) JSONObject.toBean(jsonObj, ThirdPartyOrder2DOCfg.class);
 		} 
 		return cfg;
+	}
+	
+	/**
+	 * 
+	 * @param customerid
+	 * @return
+	 */
+	public boolean isThirdPartyCustomer(long customerid){
+		//查询出唯速达所设置的客户
+		ThirdPartyOrder2DOCfg pushCfg = this.getThirdPartyOrder2DOCfg();
+		if(pushCfg == null){
+			return false;
+		}
+		String customeridsCfg = pushCfg.getCustomerids();
+		String[] customerIdsCfgArray = customeridsCfg.split(",|，");
+		//是否是外单客户
+		boolean isTPCust  = false;
+		for(String customeridStr : customerIdsCfgArray){
+			try{
+				if( Long.valueOf(customeridStr).longValue() == customerid){
+					isTPCust = true;
+					break;
+				}
+			}catch(Exception e){
+				//do nothing
+			}
+		}
+		return isTPCust;
 	}
 	
 	
