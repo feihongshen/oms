@@ -1,8 +1,11 @@
 package cn.explink.b2c.tpsdo;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -252,7 +255,18 @@ public class TPOSendDoInfService {
 		thirdPartyOrder2DORequestVo.setTransportNo("");
 		thirdPartyOrder2DORequestVo.setWarehouse(StringUtil.nullConvertToEmptyString(cwbOrder.getCarwarehouse()));
 		thirdPartyOrder2DORequestVo.setZipCode(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneepostcode()));
-		
+				
+		if(StringUtils.isNotBlank(cwbOrder.getTranscwb())){
+			List<ThirdPartyOrder2DORequestVo.Boxinfo> boxinfos = new ArrayList<ThirdPartyOrder2DORequestVo.Boxinfo>();
+			String[] boxNos = cwbOrder.getTranscwb().split(",|，");
+			thirdPartyOrder2DORequestVo.setTotalBox(boxNos.length);
+			for(String boxNo : boxNos){
+				ThirdPartyOrder2DORequestVo.Boxinfo boxInfo = new ThirdPartyOrder2DORequestVo.Boxinfo();
+				boxInfo.setBoxNo(boxNo);
+				boxinfos.add(boxInfo);
+			}
+			thirdPartyOrder2DORequestVo.setBoxinfos(boxinfos);
+		}	
 		return thirdPartyOrder2DORequestVo;
 	}
 	

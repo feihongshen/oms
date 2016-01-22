@@ -4,6 +4,7 @@ package cn.explink.b2c.tpsdo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +163,36 @@ public class TPSDOService {
 		request.setWarehouse(requestVo.getWarehouse());
 		request.setZipCode(requestVo.getZipCode());
 		
+		if(requestVo.getBoxinfos() != null){
+			List<com.pjbest.deliveryorder.order.service.BoxInfoRequest> boxInfoRqList = new ArrayList<com.pjbest.deliveryorder.order.service.BoxInfoRequest>();
+			for(ThirdPartyOrder2DORequestVo.Boxinfo boxinfo : requestVo.getBoxinfos()){
+				com.pjbest.deliveryorder.order.service.BoxInfoRequest boxInfoRq = new com.pjbest.deliveryorder.order.service.BoxInfoRequest();
+				boxInfoRq.setBoxNo(boxinfo.getBoxNo());
+				boxInfoRq.setVolume(boxinfo.getVolume().doubleValue());
+				boxInfoRq.setWeight(boxinfo.getWeight().doubleValue());
+				boxInfoRqList.add(boxInfoRq);
+			}
+			request.setBoxInfos(boxInfoRqList);
+		}
+		
+		if(requestVo.getDetails() != null){
+			List<com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPCargoInfo> OrderCargoInfoList = new ArrayList<com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPCargoInfo>();
+			for(ThirdPartyOrder2DORequestVo.OrderCargoInfo cargoInfo : requestVo.getDetails()){
+				com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPCargoInfo cargoInfoRq = new com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPCargoInfo();
+				cargoInfoRq.setCargoName(cargoInfo.getCargoName());
+				cargoInfoRq.setCount(cargoInfo.getCount() + "");
+				cargoInfoRq.setCargoLength(cargoInfo.getCargoLength().doubleValue());
+				cargoInfoRq.setCargoHeight(cargoInfo.getCargoHeight().doubleValue());
+				cargoInfoRq.setCargoWidth(cargoInfo.getCargoWidth().doubleValue());
+				cargoInfoRq.setWeight(cargoInfo.getWeight().doubleValue());
+				cargoInfoRq.setPrice(cargoInfo.getPrice().doubleValue());
+				cargoInfoRq.setUnit(cargoInfo.getUnit());
+				cargoInfoRq.setVolume(cargoInfo.getVolume().doubleValue());
+				cargoInfoRq.setSizeSn(cargoInfo.getSizeSn());
+				OrderCargoInfoList.add(cargoInfoRq);
+			}
+			request.setPjDeliveryOrderCargoInfos(OrderCargoInfoList);
+		}
 		return request;
 		
 	}

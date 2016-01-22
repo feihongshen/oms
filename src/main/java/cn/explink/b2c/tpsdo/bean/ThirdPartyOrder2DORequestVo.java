@@ -65,7 +65,7 @@ public class ThirdPartyOrder2DORequestVo {
 	private int actualPayType=-1; // 实际付款方式默认-1，0：现金1：pos 2：支付宝
 	
 	private List<OrderCargoInfo> details;
-	private List<boxinfo> boinfos;
+	private List<Boxinfo> boxinfos;
 	
 	public String getTransportNo() {
 		return transportNo;
@@ -392,113 +392,113 @@ public class ThirdPartyOrder2DORequestVo {
 	public void setDetails(List<OrderCargoInfo> details) {
 		this.details = details;
 	}
-	public List<boxinfo> getBoinfos() {
-		return boinfos;
+	
+	public List<Boxinfo> getBoxinfos() {
+		return boxinfos;
 	}
-	public void setBoinfos(List<boxinfo> boinfos) {
-		this.boinfos = boinfos;
+	public void setBoxinfos(List<Boxinfo> boxinfos) {
+		this.boxinfos = boxinfos;
 	}
-	
-	
-	
-	
-}
 
-class OrderCargoInfo{
-	private String cargoName;//货物名称
-	private int count;//件数
-	private BigDecimal cargoLength = BigDecimal.ZERO;	//长
-	private BigDecimal cargoWidth = BigDecimal.ZERO;//宽
-	private BigDecimal cargoHeight = BigDecimal.ZERO; //高
-	private BigDecimal weight = BigDecimal.ZERO;//重量	
-	private BigDecimal volume = BigDecimal.ZERO;//体积
-	private String sizeSn;//商品条码
-	private BigDecimal price = BigDecimal.ZERO;//商品价格
-	private String unit;//单位
-	public String getCargoName() {
-		return cargoName;
-	}
-	public void setCargoName(String cargoName) {
-		this.cargoName = cargoName;
-	}
-	public int getCount() {
-		return count;
-	}
-	public void setCount(int count) {
-		this.count = count;
-	}
-	public BigDecimal getCargoLength() {
-		return cargoLength;
-	}
-	public void setCargoLength(BigDecimal cargoLength) {
-		this.cargoLength = cargoLength;
-	}
-	public BigDecimal getCargoWidth() {
-		return cargoWidth;
-	}
-	public void setCargoWidth(BigDecimal cargoWidth) {
-		this.cargoWidth = cargoWidth;
-	}
-	public BigDecimal getCargoHeight() {
-		return cargoHeight;
-	}
-	public void setCargoHeight(BigDecimal cargoHeight) {
-		this.cargoHeight = cargoHeight;
-	}
-	public BigDecimal getWeight() {
-		return weight;
-	}
-	public void setWeight(BigDecimal weight) {
-		this.weight = weight;
-	}
-	public BigDecimal getVolume() {
-		return volume;
-	}
-	public void setVolume(BigDecimal volume) {
-		this.volume = volume;
-	}
-	public String getSizeSn() {
-		return sizeSn;
-	}
-	public void setSizeSn(String sizeSn) {
-		this.sizeSn = sizeSn;
-	}
-	public BigDecimal getPrice() {
-		return price;
-	}
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-	public String getUnit() {
-		return unit;
-	}
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}	
-	
-}
 
-class boxinfo{
-	private String boxNo;//箱号
-	private BigDecimal volume;//体积
-	private BigDecimal weight;//重量
-	public String getBoxNo() {
-		return boxNo;
+
+	public static class OrderCargoInfo{
+		private String cargoName;//货物名称
+		private int count;//件数
+		private BigDecimal cargoLength = BigDecimal.ZERO;	//长
+		private BigDecimal cargoWidth = BigDecimal.ZERO;//宽
+		private BigDecimal cargoHeight = BigDecimal.ZERO; //高
+		private BigDecimal weight = BigDecimal.ZERO;//重量	
+		private BigDecimal volume = BigDecimal.ZERO;//体积
+		private String sizeSn;//商品条码
+		private BigDecimal price = BigDecimal.ZERO;//商品价格
+		private String unit;//单位
+		public String getCargoName() {
+			return cargoName;
+		}
+		public void setCargoName(String cargoName) {
+			this.cargoName = cargoName;
+		}
+		public int getCount() {
+			return count;
+		}
+		public void setCount(int count) {
+			this.count = count;
+		}
+		public BigDecimal getCargoLength() {
+			return cargoLength;
+		}
+		public void setCargoLength(BigDecimal cargoLength) {
+			this.cargoLength = cargoLength;
+		}
+		public BigDecimal getCargoWidth() {
+			return cargoWidth;
+		}
+		public void setCargoWidth(BigDecimal cargoWidth) {
+			this.cargoWidth = cargoWidth;
+		}
+		public BigDecimal getCargoHeight() {
+			return cargoHeight;
+		}
+		public void setCargoHeight(BigDecimal cargoHeight) {
+			this.cargoHeight = cargoHeight;
+		}
+		public BigDecimal getWeight() {
+			return weight;
+		}
+		public void setWeight(BigDecimal weight) {
+			this.weight = weight;
+		}
+		public BigDecimal getVolume() {
+			return volume;
+		}
+		public void setVolume(BigDecimal volume) {
+			this.volume = volume;
+		}
+		public String getSizeSn() {
+			return sizeSn;
+		}
+		public void setSizeSn(String sizeSn) {
+			this.sizeSn = sizeSn;
+		}
+		public BigDecimal getPrice() {
+			return price;
+		}
+		public void setPrice(BigDecimal price) {
+			this.price = price;
+		}
+		public String getUnit() {
+			return unit;
+		}
+		public void setUnit(String unit) {
+			this.unit = unit;
+		}	
+		
 	}
-	public void setBoxNo(String boxNo) {
-		this.boxNo = boxNo;
-	}
-	public BigDecimal getVolume() {
-		return volume;
-	}
-	public void setVolume(BigDecimal volume) {
-		this.volume = volume;
-	}
-	public BigDecimal getWeight() {
-		return weight;
-	}
-	public void setWeight(BigDecimal weight) {
-		this.weight = weight;
+	
+	
+	public static class Boxinfo{
+		private String boxNo;//箱号
+		private BigDecimal volume = BigDecimal.ZERO;//体积
+		private BigDecimal weight = BigDecimal.ZERO;//重量
+		public String getBoxNo() {
+			return boxNo;
+		}
+		public void setBoxNo(String boxNo) {
+			this.boxNo = boxNo;
+		}
+		public BigDecimal getVolume() {
+			return volume;
+		}
+		public void setVolume(BigDecimal volume) {
+			this.volume = volume;
+		}
+		public BigDecimal getWeight() {
+			return weight;
+		}
+		public void setWeight(BigDecimal weight) {
+			this.weight = weight;
+		}
 	}
 	
 	
