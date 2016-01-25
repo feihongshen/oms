@@ -74,18 +74,9 @@ public class TPOSendDoInfDao {
 	 * @param custcode
 	 * @param isSent
 	 */
-	public void updateTPOSendDoInf(final String cwb, final String custcode,final String transportNo, final int isSent, final String remark){
-		String sql = "update tpo_send_do_inf set transportno=?,is_sent=?,trytime=trytime+1,remark=? where cwb=? and custcode=?";
-		this.jdbcTemplate.update(sql, new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setString(1, transportNo);
-				ps.setInt(2, isSent);
-				ps.setString(3, remark);
-				ps.setString(4, cwb);
-				ps.setString(5, custcode);
-			}
-		});
+	public void updateTPOSendDoInf(String cwb, String custcode,String transportNo, int isSent,int trytime, String remark){
+		String sql = "update tpo_send_do_inf set transportno=?,is_sent=?,trytime=?,remark=? where cwb=? and custcode=?";
+		this.jdbcTemplate.update(sql, transportNo,isSent,trytime,remark,cwb,custcode);
 	}
 	
 	

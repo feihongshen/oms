@@ -402,7 +402,8 @@
 		<dependency>
 		  <groupId>com.pjbest</groupId>
 		  <artifactId>pjdeliveryorder-service-api</artifactId>
-		  <version>1.14.0_26</version>
+		  <!-- <version>1.14.0_26</version> -->
+		  <version>1.15.0_09</version>
 		</dependency>
 			   
 	   <dependency>
@@ -634,10 +635,10 @@
 				<expressurl.maxconn>20</expressurl.maxconn>
 				<expressurl.url>jdbc:mysql://127.0.0.1:3306/oms_42?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
 				<expressurl.user>root</expressurl.user>
-				<expressurl.password>wang</expressurl.password>
+				<expressurl.password>root</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8081/dmp</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/dmp</dmpUrl>
 				<label>local</label>
 			</properties>
 		</profile>

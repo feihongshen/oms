@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -153,8 +154,7 @@ public class TPOSendDoInfService {
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
 		
 		String posString = this.getDmpDAO.getNowCustomerPos(customer.getCustomerid());
-
-		thirdPartyOrder2DORequestVo.setAcceptDept("");
+		thirdPartyOrder2DORequestVo.setAcceptDept(cwbOrder.getNextbranchid() + "");
 		thirdPartyOrder2DORequestVo.setAcceptOperator("");
 		thirdPartyOrder2DORequestVo.setAccountMark(posString);
 		thirdPartyOrder2DORequestVo.setActualFee(cwbOrder.getInfactfare());
@@ -224,7 +224,7 @@ public class TPOSendDoInfService {
 		thirdPartyOrder2DORequestVo.setCustCode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));
 		thirdPartyOrder2DORequestVo.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
 		thirdPartyOrder2DORequestVo.setCustOrderNo(cwbOrder.getCwb());
-		thirdPartyOrder2DORequestVo.setDestOrg(StringUtil.nullConvertToEmptyString(String.valueOf(cwbOrder.getDeliverybranchid())));
+		thirdPartyOrder2DORequestVo.setDestOrg(cwbOrder.getDeliverybranchid() == 0  ? null : cwbOrder.getDeliverybranchid() + "");
 		thirdPartyOrder2DORequestVo.setDistributer(cwbOrder.getDeliverid()+"");
 		//thirdPartyOrder2DORequestVo.setJoinTime(null);
 		if(cwbordertypeid == CwbOrderTypeIdEnum.Express.getValue()){
@@ -278,9 +278,9 @@ public class TPOSendDoInfService {
 	 * @param isSent
 	 * @param remark
 	 */
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void updateTPOSendDoInf(String cwb, String custcode, String transportNo,int isSent,String remark){
-		this.tPOSendDoInfDao.updateTPOSendDoInf(cwb, custcode, transportNo, isSent, remark);
+	@Transactional(propagation = Propagation.REQUIRES_NEW,isolation=Isolation.READ_COMMITTED)
+	public void updateTPOSendDoInf(String cwb, String custcode, String transportNo,int isSent,int trytime, String remark){
+		this.tPOSendDoInfDao.updateTPOSendDoInf(cwb, custcode, transportNo, isSent, trytime, remark);
 	}
 	
 }

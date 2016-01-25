@@ -1,15 +1,20 @@
 package cn.explink.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.SchedulerException;
@@ -24,10 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import cn.explink.core.common.model.json.DataGridReturn;
-import cn.explink.domain.AjaxJson;
-import cn.explink.util.Tools;
-
 
 @Controller
 @RequestMapping(value = "/omsJob")
@@ -37,17 +38,17 @@ public class OmsJobController{
 	@Resource(name="schedulerFactory")
 	private StdScheduler stdScheduler;
 	
-//	private SchedulerFactoryBean schedulerFactorywh;
 	
 	/**
 	 * 定时任务管理列表 页面跳转
 	 * 
 	 * @return
 	 */
-	@RequestMapping(params = "index")
+	@RequestMapping("/index")
 	public ModelAndView timeTask(HttpServletRequest request) {
 		return new ModelAndView("omsJobIndex");
 	}
+			
 
 	@RequestMapping(value = "/findJobList", method = RequestMethod.POST)
 	@ResponseBody
@@ -388,3 +389,132 @@ class CronTriggerVo{
 	
     
 }
+
+ class AjaxJson {
+	/**
+	 * 操作成功标识
+	 */
+	private boolean status = true;
+	/**
+	 * 提示信息
+	 */
+	private String msg = "";
+	/**
+	 * 动态对象
+	 */
+	private Object obj = null;
+	/**
+	 * 拓展属性
+	 */
+	private Map map = new HashMap();
+	
+	private List<Object> objList=new ArrayList<Object>();
+	
+	public List<Object> getObjList() {
+		return objList;
+	}
+	public void setObjList(List<Object> objList) {
+		this.objList = objList;
+	}
+	public boolean isStatus() {
+		return status;
+	}
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+	public String getMsg() {
+		return msg;
+	}
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	public Object getObj() {
+		return obj;
+	}
+	public void setObj(Object obj) {
+		this.obj = obj;
+	}
+	public Map getMap() {
+		return map;
+	}
+	public void setMap(Map map) {
+		this.map = map;
+	}
+	
+}
+ 
+ class DataGridReturn {
+
+		public DataGridReturn(Integer total, List rows) {
+			this.total = total;
+			this.rows = rows;
+		}
+
+		private Integer total;// 总记录数
+		private List rows;// 每行记录
+		private List footer;
+
+		public Integer getTotal() {
+			return total;
+		}
+
+		public void setTotal(Integer total) {
+			this.total = total;
+		}
+
+		public List getRows() {
+			return rows;
+		}
+
+		public void setRows(List rows) {
+			this.rows = rows;
+		}
+
+		public List getFooter() {
+			return footer;
+		}
+
+		public void setFooter(List footer) {
+			this.footer = footer;
+		}
+		public DataGridReturn() {
+			// TODO Auto-generated constructor stub
+		}
+	}
+ 
+  class Tools {
+	  static ObjectMapper mapper = new ObjectMapper();
+		public static String obj2json(Object obj) {
+			try {
+				if (obj == null) {
+					return "{}";
+				}
+				//mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+				mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
+
+				return mapper.writeValueAsString(obj);
+			} catch (Exception e) {
+				System.out.println("==>> Object to JSON occer error: " + e);
+			}
+			return "{}";
+		}
+	  
+	  
+	  public static void outData2Page(String s, HttpServletResponse response) throws IOException {
+			outData2Page(s, response, "text/html; charset=UTF-8");
+		}
+
+		public static void outData2Page(String s, HttpServletResponse response, String contentType)
+				throws IOException {
+			response.setContentType(contentType);
+			PrintWriter printwriter = response.getWriter();
+			printwriter.print(s);
+			printwriter.close();
+		}
+		
+		public static boolean isEmpty(String source) {
+			return (source == null || source.trim().equals(""));
+		} 
+ }
+ 
+ 
