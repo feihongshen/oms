@@ -63,7 +63,7 @@ public class TPOSendDoInfService {
 				
 			//查询出唯速达所设置的客户
 			ThirdPartyOrder2DOCfg pushCfg = this.getThirdPartyOrder2DOCfg();
-			if(pushCfg == null){
+			if(pushCfg == null || pushCfg.getOpenFlag() == 0){
 				this.logger.info("未获取到外单推送DO服务对接配置信息，外单cwb={}", orderFlow.getCwb());
 				return;
 			}
@@ -154,7 +154,7 @@ public class TPOSendDoInfService {
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
 		
 		String posString = this.getDmpDAO.getNowCustomerPos(customer.getCustomerid());
-		thirdPartyOrder2DORequestVo.setAcceptDept(cwbOrder.getNextbranchid() + "");
+		thirdPartyOrder2DORequestVo.setAcceptDept(cwbOrder.getNextbranchid() == 0 ? "" : cwbOrder.getNextbranchid() + "");
 		thirdPartyOrder2DORequestVo.setAcceptOperator("");
 		thirdPartyOrder2DORequestVo.setAccountMark(posString);
 		thirdPartyOrder2DORequestVo.setActualFee(cwbOrder.getInfactfare());
@@ -225,7 +225,7 @@ public class TPOSendDoInfService {
 		thirdPartyOrder2DORequestVo.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
 		thirdPartyOrder2DORequestVo.setCustOrderNo(cwbOrder.getCwb());
 		thirdPartyOrder2DORequestVo.setDestOrg(cwbOrder.getDeliverybranchid() == 0  ? null : cwbOrder.getDeliverybranchid() + "");
-		thirdPartyOrder2DORequestVo.setDistributer(cwbOrder.getDeliverid()+"");
+		thirdPartyOrder2DORequestVo.setDistributer(cwbOrder.getDeliverid() == 0 ? "" : cwbOrder.getDeliverid() + "");
 		//thirdPartyOrder2DORequestVo.setJoinTime(null);
 		if(cwbordertypeid == CwbOrderTypeIdEnum.Express.getValue()){
 			thirdPartyOrder2DORequestVo.setOrderType(1);

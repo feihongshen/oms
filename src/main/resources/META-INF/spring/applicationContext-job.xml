@@ -81,7 +81,7 @@
 							 <ref bean="doTime_huanqiugouwu" />
 							 <ref bean="doTime_yonghuihh" />	
 							 <ref bean="doTime_sendThirdPartyOrderToDO" />
-							 
+							 <ref bean="doTime_otherordertrack" />
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -1108,5 +1108,27 @@
 		<property name="concurrent" value="false" />
 	</bean>  
 	<!--外单推送给DO服务定时任务结束--> 
+	
+	<!-- 品骏达外单轨迹定时任务开始 -->
+	<bean id="doTime_otherordertrack" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="otherordertrack" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="otherordertrack" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>sendOtherOrderTrackToPJD</value>
+		</property>
+	</bean>  
+	<!-- 品骏达外单轨迹定时任务结束 --> 
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>

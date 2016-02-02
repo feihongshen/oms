@@ -1099,6 +1099,22 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8
 		</sql>
 	</changeSet>
-	
+	<changeSet id="gaojianrong-2016-01-26-1" author="gaojianrong">
+		<sql>		
+		CREATE TABLE `tpo_other_order_track`( 
+		   `cwb` varchar(100) NOT NULL COMMENT '订单号', 
+		   `floworderid` int(10) NOT NULL COMMENT '流程环节id',
+		   `flowmsg` text NULL COMMENT '轨迹报文', 
+		   `deliverymsg` text NULL COMMENT '配送状态报文', 
+		   `tracktime` timestamp NULL COMMENT '轨迹实际时间', 
+		   `createtime` timestamp NULL COMMENT '创建时间', 
+		   `status` int(2) COMMENT '状态：1未处理，2完成转业务，3错误，4忽略',
+		   `errinfo` varchar(500) DEFAULT '' NULL COMMENT '异常信息'
+		 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+		
+		ALTER TABLE `tpo_other_order_track` ADD INDEX `tpo_other_track_cwb_idx` (`cwb`); 
+		ALTER TABLE `tpo_other_order_track` ADD INDEX `tpo_other_track_time_idx` (`tracktime`); 
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

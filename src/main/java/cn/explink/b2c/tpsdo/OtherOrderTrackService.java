@@ -22,11 +22,11 @@ public class OtherOrderTrackService {
 	@Autowired
 	CustomerDAO customerDAO;
 	
-	private final static String OTHER_ORDER_TRACK_SAVE_SQL="insert into express_other_order_track (cwb,floworderid,flowmsg,deliverymsg,tracktime,createtime,status) values(?,?,?,?,?,CURRENT_TIMESTAMP,?)";
-	private final static String OTHER_ORDER_TRACK_QUERY_SQL="select g.transportno,t.* from express_other_order_track t inner join TPO_SEND_DO_INF g on t.cwb=g.cwb where t.status=1 and g.transportno is not null and g.transportno!='' order by t.tracktime limit 0,?";
-	private final static String OTHER_ORDER_TRACK_UPDATE_SQL="update express_other_order_track set status=?,errorinfo=? where cwb=? and floworderid=? and status=1";
+	private final static String OTHER_ORDER_TRACK_SAVE_SQL="insert into tpo_other_order_track (cwb,floworderid,flowmsg,deliverymsg,tracktime,createtime,status) values(?,?,?,?,?,CURRENT_TIMESTAMP,?)";
+	private final static String OTHER_ORDER_TRACK_QUERY_SQL="select g.transportno,t.* from tpo_other_order_track t inner join TPO_SEND_DO_INF g on t.cwb=g.cwb where t.status=1 and g.transportno is not null and g.transportno!='' order by t.tracktime limit 0,?";
+	private final static String OTHER_ORDER_TRACK_UPDATE_SQL="update tpo_other_order_track set status=?,errinfo=? where cwb=? and floworderid=? and status=1";
 
-	private final static String OTHER_CUSTOMER_QUERY_SQL="select count(1) from express_other_customer_list where customerid=?";
+	//private final static String OTHER_CUSTOMER_QUERY_SQL="select count(1) from express_other_customer_list where customerid=?";
 			
 	@Transactional
 	public void saveOtherOrderTrack(OtherOrderTrackVo vo){
@@ -63,7 +63,7 @@ public class OtherOrderTrackService {
 		
 	}
 	
-	@Transactional
+/*	@Transactional
 	public boolean isOtherCustomer(long customerid){
 		int cnt=jdbcTemplate.queryForInt(OTHER_CUSTOMER_QUERY_SQL,customerid);
 		boolean isOther=false;
@@ -92,5 +92,5 @@ public class OtherOrderTrackService {
 		}
 		
 	}
-	
+	*/
 }

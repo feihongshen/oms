@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 import cn.explink.b2c.amazon.BulidAmazonB2cData;
 import cn.explink.b2c.explink.code_down.EPaiInterfaceService;
 import cn.explink.b2c.telecomsc.TelecomJsonService;
+import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.dao.ExpressSysMonitorDAO;
 import cn.explink.dao.GetDmpDAO;
@@ -71,6 +72,8 @@ public class FlowFromJMSB2cService {
 	ExpressSysMonitorDAO expressSysMonitorDAO;
 	@Autowired
 	TPOSendDoInfService tPOSendDoInfService;
+	@Autowired
+	OtherOrderTrackSendService otherOrderTrackSendService;
 	@Autowired
 	TelecomJsonService telecomJsonService;
 	@Produce(uri = "jms:queue:sendBToCToDmp")
@@ -170,6 +173,10 @@ public class FlowFromJMSB2cService {
 
 			// 存入正常流程的状态信息
 			this.AddExcuteFlowStatusMethod(orderFlow);
+			
+			//外单轨迹数据保存到临时表
+			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState);
+			
 			try {
 				// TODO jms异常写入监控表
 				String optime = DateTimeUtil.getNowTime();

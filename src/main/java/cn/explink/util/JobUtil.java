@@ -61,6 +61,7 @@ import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
+import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPSDOService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
@@ -229,7 +230,8 @@ public class JobUtil {
 	YHServices yongHuiServices;
 	@Autowired
 	TPSDOService tPSDOService;
-	
+	@Autowired
+	OtherOrderTrackSendService otherOrderTrackSendService;
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
 
@@ -238,6 +240,8 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("suningCurrentinteger",0);
+		JobUtil.threadMap.put("otherordertrack", 0);
+		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
 	}
 
 	/**
@@ -247,7 +251,8 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
-		
+		JobUtil.threadMap.put("otherordertrack", 0);
+
 		this.logger.info("系统自动初始化定时器完成");
 	}
 
@@ -1075,10 +1080,45 @@ public class JobUtil {
 		}
 	}
 	
-	
+	/**
+	 * 推送外单数据给DO服务定时任务方法
+	 */
 	public void sendThirdPartyOrder2DO_Task(){
-		this.logger.info("执行推送外单数据给DO服务定时器！");
-		tPSDOService.thirdPartyOrderSend2DO();
+		if(JobUtil.threadMap.get("thirdPartyOrderSend2DO") == 1){
+			this.logger.warn("本地定时器没有执行完毕，跳出sendThirdPartyOrder2DO_Task");
+			return;
+		}
+		this.logger.info("执行推送外单数据给DO服务定时器...");
+		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 1);
+		try{
+			tPSDOService.thirdPartyOrderSend2DO();
+		}catch(Exception e){
+			this.logger.error("执行推送外单数据给DO服务定时器异常!异常原因:{}",e);
+		}finally{
+			JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
+			this.logger.info("执行推送外单数据给DO服务定时器完毕！");
+		}
+	}
+	
+	/**
+	 * 品骏达外单轨迹定时任务方法调用
+	 */
+	public void sendOtherOrderTrackToPJD(){
+		
+		if (JobUtil.threadMap.get("otherordertrack") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出sendOtherOrderTrackToPJD");
+			return;
+		}
+		JobUtil.threadMap.put("otherordertrack", 1);
+		
+		try{
+			this.otherOrderTrackSendService.process();
+		}catch(Exception e){
+			this.logger.error("执行了品骏达外单轨迹定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("otherordertrack", 0);
+		}
+		this.logger.info("执行了【品骏达外单轨迹】定时器任务!");
 	}
 	
 }

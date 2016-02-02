@@ -10,6 +10,7 @@ import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderService;
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderServiceHelper;
 import com.pjbest.deliveryorder.service.DeliveryTrack;
 import com.pjbest.deliveryorder.service.DoTrackFeedbackRequest;
+import com.pjbest.deliveryorder.service.ExceptionTrack;
 import com.pjbest.deliveryorder.service.SignTrack;
 import com.vip.osp.core.context.InvocationContext;
 import com.vip.osp.core.exception.OspException;
@@ -17,6 +18,7 @@ import com.vip.osp.core.exception.OspException;
 import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.User;
+import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpCwbOrder;
@@ -24,8 +26,7 @@ import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
-import net.sf.json.processors.JsDateJsonValueProcessor;
+import net.sf.json.util.JSONUtils;
 
 @Service
 public class OtherOrderTrackSendService {
@@ -39,7 +40,12 @@ public class OtherOrderTrackSendService {
 	
 	@Autowired
 	GetDmpDAO getDmpDAO;
+	
+	@Autowired
+	TPOSendDoInfService tPOSendDoInfService;
 
+	private static final String DATE_FORMAT="yyyy-MM-dd HH:mm:ss";
+	
 	public void process() {
 	       this.logger.info("other order track job process start...");
 	       try {
@@ -70,30 +76,40 @@ public class OtherOrderTrackSendService {
 				DmpOrderFlow orderFlow=parseOrderFlowObject(msgVo.getOrderFlowJson());
 				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
 				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
-				send(req);
+				if(req!=null){
+					send(req);
+					otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
+				}else{
+					otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
+				}
 				
-				otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
 			} catch (Exception e) {
 				logger.error("上传外单轨迹数据到TPS时出错.cwb="+msgVo.getCwb()+",floworderid="+msgVo.getFloworderid(),e);
 				
-				otherOrderTrackService.completedTrackMsg(3,e.getMessage(),msgVo.getCwb(),msgVo.getFloworderid());
+				otherOrderTrackService.completedTrackMsg(3,"上传外单轨迹数据到TPS时出错."+e.getMessage(),msgVo.getCwb(),msgVo.getFloworderid());
 			}
 		}
 	}
 	
 	private DoTrackFeedbackRequest prepareRequest(OtherOrderTrackVo msgVo,DmpOrderFlow orderFlow,CwbOrderWithDeliveryState orderWithState){
+		int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
+		
+		if(tpsOperateType<0){
+			return null;
+		}
+		
 		if(orderWithState==null){
-			throw new RuntimeException("CwbOrderWithDeliveryState is null.");
+			throw new RuntimeException("订单及归班报文数据为空.");
 		}
 		
 		DmpCwbOrder cwbOrder=orderWithState.getCwbOrder();
 		if(cwbOrder==null){
-			throw new RuntimeException("CwbOrderWithDeliveryState.getCwbOrder is null.");
+			throw new RuntimeException("订单报文数据为空.");
 		}
 		DmpDeliveryState ds=orderWithState.getDeliveryState();
 		
 		DoTrackFeedbackRequest req= new DoTrackFeedbackRequest();
-		int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
+		
 
 		if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
 			long deliveryid=0;
@@ -105,7 +121,7 @@ public class OtherOrderTrackSendService {
 			
 			User user=getDmpDAO.getUserById(deliveryid);//
 			DeliveryTrack deliveryTrack=new DeliveryTrack();
-			deliveryTrack.setCourier(user==null?null:user.getUsername());
+			deliveryTrack.setCourier(user==null?null:user.getRealname());
 			deliveryTrack.setCourierId(""+deliveryid);//id or deliverManCode ???
 			deliveryTrack.setCourierTel(user==null?null:user.getUsermobile());//or mobile??? format ?
 			//deliveryTrack.setDestinationOrg(""+cwbOrder.getDeliverybranchid());
@@ -113,27 +129,81 @@ public class OtherOrderTrackSendService {
 		}
 		
 		//需要审核or不用审核???
-		if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiFanKui.getValue()){
+		if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
 			
 			if(ds==null){
-				throw new RuntimeException("CwbOrderWithDeliveryState.getDeliveryState is null.");
+				throw new RuntimeException("归班反馈结果报文数据为空.");
 			}
 			
-			//以下需要检查配送成功与否???
-			//is it getReceivedfee???
-			req.setActualFee(ds.getReceivedfee()==null?null:ds.getReceivedfee().doubleValue());
-			req.setActualPayType(cwbOrder.getNewpaywayid());//cwbOrder.getPaywayid()???
-			//if(ds.getSign_typeid()==1){//已签收
-				SignTrack signTrack=new SignTrack();
-				signTrack.setSignMan(ds.getSign_man());
-				req.setSign(signTrack);
-			//}
-		} 
+			if(ds.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.PeiSongChengGong.getValue());
+				
+				//以下需要检查配送成功与否??? 
+				//is it getReceivedfee???
+				//if(ds.getSign_typeid()==1){//已签收
+					SignTrack signTrack=new SignTrack();
+					signTrack.setSignMan(ds.getSign_man());//本人或代签???????????
+					req.setSign(signTrack);
+				//}
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenTuiChengGong.getValue());
+
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenHuanChengGong.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenHuanChengGong.getValue());
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.QuanBuTuiHuo.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.JuShou.getValue());
+				ExceptionTrack et=new ExceptionTrack ();
+				//et.setExceptionType(""+DeliveryStateEnum.QuanBuTuiHuo.getValue());
+				et.setExceptionReason(DeliveryStateEnum.QuanBuTuiHuo.getText()+":"+ds.getBackreason());
+				req.setException(et);
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.BuFenTuiHuo.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.BuFenTuiHuo.getValue());
+				ExceptionTrack et=new ExceptionTrack ();
+				//et.setExceptionType(""+DeliveryStateEnum.BuFenTuiHuo.getValue());
+				et.setExceptionReason(DeliveryStateEnum.BuFenTuiHuo.getText()+":"+ds.getBackreason());
+				req.setException(et);
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenJuTui.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenJuTui.getValue());
+				ExceptionTrack et=new ExceptionTrack ();
+				//et.setExceptionType(""+DeliveryStateEnum.ShangMenJuTui.getValue());
+				et.setExceptionReason(""+DeliveryStateEnum.ShangMenJuTui.getText());//??????
+				req.setException(et);
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.HuoWuDiuShi.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.HuoWuDiuShi.getValue());
+				ExceptionTrack et=new ExceptionTrack ();
+				//et.setExceptionType(""+DeliveryStateEnum.HuoWuDiuShi.getValue());
+				et.setExceptionReason(""+DeliveryStateEnum.HuoWuDiuShi.getText());//??????
+				req.setException(et);
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.FenZhanZhiLiu.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.FenZhanZhiLiu.getValue());
+				ExceptionTrack et=new ExceptionTrack ();
+				//et.setExceptionType(""+DeliveryStateEnum.FenZhanZhiLiu.getValue());
+				et.setExceptionReason(DeliveryStateEnum.FenZhanZhiLiu.getText()+":"+ds.getLeavedreason());
+				req.setException(et);
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.ZhiLiuZiDongLingHuo.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.FenZhanZhiLiu.getValue());//???
+				ExceptionTrack et=new ExceptionTrack ();
+				//et.setExceptionType(""+DeliveryStateEnum.ZhiLiuZiDongLingHuo.getValue());
+				et.setExceptionReason(DeliveryStateEnum.ZhiLiuZiDongLingHuo.getText()+":"+ds.getLeavedreason());
+				req.setException(et);
+			}else if(ds.getDeliverystate()==DeliveryStateEnum.DaiZhongZhuan.getValue()){
+				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue());
+			}else{
+				return null;
+			}
+		}
 		
-		req.setException(null);//
-		req.setNextOrg(""+cwbOrder.getNextbranchid());//
-		req.setOperateOrg(""+orderFlow.getBranchid());//
-		req.setOperater(orderFlow.getUsername());//
+		User operateUser=getDmpDAO.getUserById(orderFlow.getUserid());//
+		
+		if(cwbOrder.getInfactfare()!=null&&cwbOrder.getInfactfare().doubleValue()>0){
+			req.setActualFee(cwbOrder.getInfactfare().doubleValue());
+			req.setActualPayType(cwbOrder.getNewpaywayid());//cwbOrder.getPaywayid()???
+		}
+		
+		//req.setException(null);//
+		req.setNextOrg(cwbOrder.getNextbranchid()==0?null:""+cwbOrder.getNextbranchid());//
+		req.setOperateOrg(orderFlow.getBranchid()==0?null:""+orderFlow.getBranchid());//
+		req.setOperater(operateUser==null?null:operateUser.getRealname());//???
 		req.setOperateTime(orderFlow.getCredate());
 		req.setOperateType(tpsOperateType);
 		req.setReason(null);//???
@@ -150,17 +220,67 @@ public class OtherOrderTrackSendService {
 	}
 	
 	private DmpOrderFlow parseOrderFlowObject(String json){
-		 JsonConfig jsconfig = new JsonConfig(); 
-		 jsconfig.registerJsonBeanProcessor(java.util.Date.class, new JsDateJsonBeanProcessor());
+		String[] formats={DATE_FORMAT};  
+		 JSONUtils.getMorpherRegistry().registerMorpher(new TimestampMorpher(formats));  
 		 
 		JSONObject jsonObj = JSONObject.fromObject(json);
 		DmpOrderFlow orderFlow=(DmpOrderFlow) JSONObject.toBean(jsonObj, DmpOrderFlow.class);
+		
 		return orderFlow;
 	}
 	
 	private CwbOrderWithDeliveryState parseDeliveryStateObject(String json){
+		String[] formats={DATE_FORMAT};  
+		 JSONUtils.getMorpherRegistry().registerMorpher(new TimestampMorpher(formats));  
+		 
 		JSONObject jsonObj = JSONObject.fromObject(json);
 		CwbOrderWithDeliveryState deliveryState=(CwbOrderWithDeliveryState) JSONObject.toBean(jsonObj, CwbOrderWithDeliveryState.class);
 		return deliveryState; 
+
+	}
+	
+	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState){
+		this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+		try {
+			boolean isOther=false;
+			DmpCwbOrder cwbOrder=deliveryState.getCwbOrder();
+			if(cwbOrder!=null){
+				//isOther=true; 
+				isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
+			}
+			if(!isOther){
+				this.logger.info("不是外单，轨迹数据不作处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				return;
+			}
+			
+			String orderFlowJson = bean2json(orderFlow);
+			String deliveryStateJson = bean2json(deliveryState);
+		
+			OtherOrderTrackVo vo=new OtherOrderTrackVo();
+			vo.setCwb(orderFlow.getCwb());
+			vo.setFloworderid(orderFlow.getFloworderid());
+			vo.setOrderFlowJson(orderFlowJson);
+			vo.setDeliveryStateJson(deliveryStateJson);
+			vo.setTracktime(orderFlow.getCredate());
+			vo.setStatus(1);//
+			
+			this.otherOrderTrackService.saveOtherOrderTrack(vo);
+		} catch (Exception e) {
+			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
+		}
+		
+	}
+	
+	private String bean2json(Object object){
+		if(object==null){
+			return null;
+		}
+		 JsonConfig jsconfig = new JsonConfig(); 
+		 jsconfig.registerJsonValueProcessor(java.sql.Timestamp.class, new cn.explink.b2c.tpsdo.TimestampJsonValueProcessor()); 
+		 
+		JSONObject jsonObj = JSONObject.fromObject(object,jsconfig);
+		String json=jsonObj.toString();
+		
+		return json;
 	}
 }
