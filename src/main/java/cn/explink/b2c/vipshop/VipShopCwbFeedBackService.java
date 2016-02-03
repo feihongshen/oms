@@ -169,7 +169,7 @@ public class VipShopCwbFeedBackService {
 					String Sign = VipShopMD5Util.MD5(MD5Str).toLowerCase();
 					String response_XML = null;
 					try {
-						response_XML = this.soapHandler.HTTPInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
+						response_XML = this.soapHandler.httpInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
 								VipShopConfig.PEISONG_TYPE);
 					} catch (Exception e) {
 						this.logger.error("推送vipshop状态-异常！推送XML信息：" + response_XML + ",异常原因：" + e, e);
@@ -244,7 +244,7 @@ public class VipShopCwbFeedBackService {
 				String response_XML = null;
 				try {
 					response_XML = this.soapHandler
-							.HTTPInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign, VipShopConfig.PEISONG_TYPE);
+							.httpInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign, VipShopConfig.PEISONG_TYPE);
 				} catch (Exception e) {
 					this.logger.error("推送vipshop状态-异常！推送XML信息：" + response_XML + ",异常原因：" + e, e);
 					e.printStackTrace();
@@ -910,7 +910,7 @@ public class VipShopCwbFeedBackService {
 					String Sign = VipShopMD5Util.MD5(MD5Str).toLowerCase();
 					String response_XML = null;
 					try {
-						response_XML = this.soapHandler.HTTPInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
+						response_XML = this.soapHandler.httpInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
 								VipShopConfig.TUIHUO_TYPE);
 					} catch (Exception e) {
 						this.logger.error("推送vipshop状态-异常！推送XML信息：" + response_XML + ",异常原因：" + e, e);
@@ -1010,7 +1010,7 @@ public class VipShopCwbFeedBackService {
 					String Sign = VipShopMD5Util.MD5(MD5Str).toLowerCase();
 					String response_XML = null;
 					try {
-						response_XML = this.soapHandler.HTTPInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
+						response_XML = this.soapHandler.httpInvokeWs(vipshop.getSendCwb_URL(), VipShopConfig.nameSpace, VipShopConfig.statusBackMethodNameNew, requestXML, Sign,
 								VipShopConfig.PEISONG_TYPE);
 					} catch (Exception e) {
 						this.logger.error("推送vipshop状态-异常！推送XML信息：" + response_XML + ",异常原因：" + e, e);

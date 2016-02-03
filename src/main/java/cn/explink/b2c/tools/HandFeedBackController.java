@@ -53,7 +53,9 @@ import cn.explink.b2c.telecomsc.TelecomshopService;
 import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
+import cn.explink.b2c.vipshop.mpspack.VipmpsFeedbackService;
 import cn.explink.b2c.wanxiang.WanxiangService;
+import cn.explink.b2c.weisuda.WeisudaService;
 import cn.explink.b2c.yangguang.YangGuangService_upload;
 import cn.explink.b2c.yemaijiu.YeMaiJiuService;
 import cn.explink.b2c.yihaodian.YihaodianService;
@@ -183,6 +185,8 @@ public class HandFeedBackController {
 	HuanqiugouService huanqiugouService;
 	@Autowired
 	YHServices YongHuiServices;
+	@Autowired
+	VipmpsFeedbackService vipmpsFeedbackService;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -550,6 +554,17 @@ public class HandFeedBackController {
 	String timmer() {
 		this.YongHuiServices.feedback_status();
 		return "【永辉超市】手动状态回转";
+	}
+	
+	@RequestMapping("/vipmps_test")
+	public @ResponseBody String vipmsp_test(HttpServletRequest request){
+		for (B2cEnum enums : B2cEnum.values()) {
+			if (enums.getMethod().contains("vipshop")) {
+				vipmpsFeedbackService.feedback_status(enums.getKey());
+			}
+		}
+		
+		return "手动推送唯品会集包状态完成";
 	}
 	
 }

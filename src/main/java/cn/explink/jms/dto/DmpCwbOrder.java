@@ -118,7 +118,47 @@ public class DmpCwbOrder {
 	
 	private BigDecimal shouldfare;
 	private BigDecimal infactfare;
+	private int mpsoptstate;// 一票多件操作状态（multiple package shipment,取值同订单操作状态）
+	private int mpsallarrivedflag;// 一票多件是否到齐（0：未到齐，1：到齐） MPSAllArrivedFlagEnum
+
+	private int ismpsflag; // 是否一票多件：0默认；1是一票多件   注意：这里只描述开启集单模式才起作用
 	
+
+	public int getMpsoptstate() {
+		return mpsoptstate;
+	}
+
+	public void setMpsoptstate(int mpsoptstate) {
+		this.mpsoptstate = mpsoptstate;
+	}
+
+	public int getMpsallarrivedflag() {
+		return mpsallarrivedflag;
+	}
+
+	public void setMpsallarrivedflag(int mpsallarrivedflag) {
+		this.mpsallarrivedflag = mpsallarrivedflag;
+	}
+
+	public int getIsmpsflag() {
+		return ismpsflag;
+	}
+
+	public void setIsmpsflag(int ismpsflag) {
+		this.ismpsflag = ismpsflag;
+	}
+
+	public void setPodfeetoheadtime(String podfeetoheadtime) {
+		this.podfeetoheadtime = podfeetoheadtime;
+	}
+
+	public void setPodfeetoheadchecktime(String podfeetoheadchecktime) {
+		this.podfeetoheadchecktime = podfeetoheadchecktime;
+	}
+
+	public void setDeliversubscribeday(String deliversubscribeday) {
+		this.deliversubscribeday = deliversubscribeday;
+	}
 
 	public String getConsigneenameOfkf() {
 		return consigneenameOfkf;

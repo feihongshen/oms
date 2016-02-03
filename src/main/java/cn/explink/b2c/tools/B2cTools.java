@@ -1,13 +1,19 @@
 package cn.explink.b2c.tools;
 
+import java.io.IOException;
+
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.explink.b2c.vipshop.VipShop;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.ReasonTypeEnum;
+import cn.explink.util.JsonUtil;
 
 @Component
 public class B2cTools {
@@ -26,6 +32,21 @@ public class B2cTools {
 			return getdmpDAO.getJointEntity(key);
 		} catch (Exception e) {
 			logger.warn("error while getting b2c entity with key {}, will defualt false", key);
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public <T> T getObject(int key,Class<T> obj) {
+		try {
+			String objectStr = this.getObjectMethod(key).getJoint_property();
+			if (objectStr == null) {
+				return null;
+			} 
+			
+			return JsonUtil.readValue(objectStr, obj);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

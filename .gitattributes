@@ -473,6 +473,8 @@ src/main/java/cn/explink/b2c/tools/JointEntity.java -text
 src/main/java/cn/explink/b2c/tools/Mail.java -text
 src/main/java/cn/explink/b2c/tools/MobileAppService.java -text
 src/main/java/cn/explink/b2c/tools/SaohuobangSign.java -text
+src/main/java/cn/explink/b2c/tools/TransFlowFromJMSService.java -text
+src/main/java/cn/explink/b2c/tools/TransflowdataDAO.java -text
 src/main/java/cn/explink/b2c/tools/b2cmonitor/B2CMonitorData.java -text
 src/main/java/cn/explink/b2c/tools/b2cmonitor/B2cMonitorController.java -text
 src/main/java/cn/explink/b2c/tools/b2cmonitor/B2cMonitorService.java -text
@@ -499,6 +501,9 @@ src/main/java/cn/explink/b2c/vipshop/VipShopExptCodeEnum.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopFlowEnum.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopMD5Util.java -text
 src/main/java/cn/explink/b2c/vipshop/VipShopXMLNote.java -text
+src/main/java/cn/explink/b2c/vipshop/mpspack/VipmpsFeedbackService.java -text
+src/main/java/cn/explink/b2c/vipshop/mpspack/VipmpsFlowEnum.java -text
+src/main/java/cn/explink/b2c/vipshop/mpspack/VipmpsNote.java -text
 src/main/java/cn/explink/b2c/wangjiu/BuildWangjiuB2cData.java -text
 src/main/java/cn/explink/b2c/wangjiu/Wangjiu.java -text
 src/main/java/cn/explink/b2c/wangjiu/WangjiuConfig.java -text
@@ -844,6 +849,7 @@ src/main/java/cn/explink/domain/StockDetail.java -text
 src/main/java/cn/explink/domain/StockResult.java -text
 src/main/java/cn/explink/domain/Switch.java -text
 src/main/java/cn/explink/domain/SystemInstall.java -text
+src/main/java/cn/explink/domain/Transflowdata.java -text
 src/main/java/cn/explink/domain/Truck.java -text
 src/main/java/cn/explink/domain/TuiHuoChuZhanOrder.java -text
 src/main/java/cn/explink/domain/TuiHuoZhanRuKuOrder.java -text
@@ -929,6 +935,8 @@ src/main/java/cn/explink/jms/dto/CwbOrderWithDeliveryState.java -text
 src/main/java/cn/explink/jms/dto/DmpCwbOrder.java -text
 src/main/java/cn/explink/jms/dto/DmpDeliveryState.java -text
 src/main/java/cn/explink/jms/dto/DmpOrderFlow.java -text
+src/main/java/cn/explink/jms/dto/DmpTranscwbOrderFlow.java -text
+src/main/java/cn/explink/jms/dto/TransCwbDetail.java -text
 src/main/java/cn/explink/pos/etong/Etong.java -text
 src/main/java/cn/explink/pos/etong/EtongFactory.java -text
 src/main/java/cn/explink/pos/etong/EtongService.java -text

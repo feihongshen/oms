@@ -20,7 +20,7 @@ public class DeliveryRateConditionWrapper {
 		try {
 			DeliveryRateRequest deliveryRateRequest = JsonUtil.readValue(deliveryRateCondition.getDeliveryRateRequest(), DeliveryRateRequest.class);
 			this.query = DeliveryRateDisplayUtil.buildQuery(deliveryRateRequest, branchList, customerList);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

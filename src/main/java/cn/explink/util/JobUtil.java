@@ -64,6 +64,7 @@ import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPSDOService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
+import cn.explink.b2c.vipshop.mpspack.VipmpsFeedbackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
 import cn.explink.b2c.wanxiang.WanxiangService;
 import cn.explink.b2c.weisuda.WeiSuDaWaiDanService;
@@ -232,6 +233,9 @@ public class JobUtil {
 	TPSDOService tPSDOService;
 	@Autowired
 	OtherOrderTrackSendService otherOrderTrackSendService;
+	@Autowired
+	VipmpsFeedbackService vipmpsFeedbackService;
+	
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
 
@@ -242,6 +246,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("suningCurrentinteger",0);
 		JobUtil.threadMap.put("otherordertrack", 0);
 		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
+		JobUtil.threadMap.put("vipmps",0);
 	}
 
 	/**
@@ -252,7 +257,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("otherordertrack", 0);
-
+		JobUtil.threadMap.put("vipmps",0);
 		this.logger.info("系统自动初始化定时器完成");
 	}
 
@@ -1121,6 +1126,30 @@ public class JobUtil {
 		this.logger.info("执行了【品骏达外单轨迹】定时器任务!");
 	}
 	
+	/**
+	 * 唯品会集包项目开发
+	 */
+	public void getVipmps_Task(){
+		
+		if (JobUtil.threadMap.get("vipmps") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出vipmps");
+			return;
+		}
+		JobUtil.threadMap.put("vipmps", 1);
+		
+		try{
+			for (B2cEnum enums : B2cEnum.values()) {
+				if (enums.getMethod().contains("vipshop")) {
+					this.vipmpsFeedbackService.feedback_status(enums.getKey());
+				}
+			}
+		}catch(Exception e){
+			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("vipmps", 0);
+		}
+		this.logger.info("执行了唯品会集包定时器任务!");
+	}
 }
 	
 

@@ -1099,6 +1099,33 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8
 		</sql>
 	</changeSet>
+	
+	<changeSet id="zhangpengkai-2016-01-29-1"  author="zhangpengkai">
+		<sql>
+			CREATE TABLE `express_send_transcwb_data` (
+			  `id` bigint(18) NOT NULL AUTO_INCREMENT,
+			  `transcwb` varchar(100) DEFAULT NULL COMMENT '运单号',
+			  `cwb` varchar(100) DEFAULT NULL COMMENT '订单号',
+			  `createtime` varchar(50) DEFAULT NULL COMMENT '创建时间',
+			  `flowtime` varchar(50) DEFAULT NULL COMMENT '状态发生时间',
+			  `sendtime` varchar(50) DEFAULT NULL COMMENT '推送时间',
+			  `flowordertype` int(11) DEFAULT NULL COMMENT '状态',
+			  `jsoncontent` text COMMENT 'json字符串',
+			  `send_b2c_flag` int(4) DEFAULT '0' COMMENT '推送状态:0未推送，1.推送成功，2推送失败 ,3(垃圾数据标识) 系统自动屏蔽',
+			  `customerid` int(11) DEFAULT NULL COMMENT '供货商id',
+			  `select_b2c_flag` int(11) DEFAULT '0' COMMENT '查询次数',
+			  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+			  PRIMARY KEY (`id`),
+			  KEY `transcwb_index` (`transcwb`),
+			  KEY `customerid_idx` (`customerid`),
+			  KEY `flowordertype_idx` (`flowordertype`),
+			  KEY `send_b2c_flag_idx` (`send_b2c_flag`),
+			  KEY `createtime_idx` (`createtime`),
+			  KEY `flowtime_idx` (`flowtime`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</sql>
+	</changeSet>
+	
 	<changeSet id="gaojianrong-2016-01-26-1" author="gaojianrong">
 		<sql>		
 		CREATE TABLE `tpo_other_order_track`( 

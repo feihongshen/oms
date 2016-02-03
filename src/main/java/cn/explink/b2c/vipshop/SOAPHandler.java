@@ -20,7 +20,7 @@ public class SOAPHandler {
 	ReaderXMLHandler readXML;
 	private Logger logger = LoggerFactory.getLogger(SOAPHandler.class);
 
-	public String HTTPInvokeWs(String endpointUrl, String nameSpace, String methodName, String requestXML, String sign, String serviceCode) throws Exception {
+	public String httpInvokeWs(String endpointUrl, String nameSpace, String methodName, String requestXML, String sign, String serviceCode) throws Exception {
 		StringBuffer result = null;
 		OutputStream out = null;
 		BufferedReader in = null;

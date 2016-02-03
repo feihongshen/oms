@@ -635,6 +635,42 @@
 	</build>
 	<profiles>
 		<profile>
+			<id>package_test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.0.217:3306/fjfy_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>eap</expressurl.user>
+				<expressurl.password>explink</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:8085/package</dmpUrl>
+				<label>local</label>
+			</properties>
+		</profile>
+		<profile>
+			<id>tjpj_update</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://192.168.0.217:3306/oms_tjpj_update?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>eap</expressurl.user>
+				<expressurl.password>explink</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<dmpUrl>http://127.0.0.1:10128/dmp_pj</dmpUrl>
+				<label>tjpj_update</label>
+			</properties>
+		</profile>
+		<profile>
 			<id>local</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -643,12 +679,12 @@
 				<tomcat.manager.url></tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
 				<expressurl.maxconn>20</expressurl.maxconn>
-				<expressurl.url>jdbc:mysql://127.0.0.1:3306/oms_42?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
-				<expressurl.user>root</expressurl.user>
-				<expressurl.password>root</expressurl.password>
+				<expressurl.url>jdbc:mysql://192.168.0.217:3306/fjfy_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>eap</expressurl.user>
+				<expressurl.password>explink</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8080/dmp</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/dmp_pj</dmpUrl>
 				<label>local</label>
 			</properties>
 		</profile>
@@ -2878,6 +2914,21 @@
 				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
 				<dmpUrl>http://221.123.178.101/whzn</dmpUrl>
 				<label>WHZN</label>
+			</properties>
+		</profile>
+		<profile>
+			<id>BJRB</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://130.1.0.176:3306/bjrb_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>apps</expressurl.user>
+				<expressurl.password>explinkvipshop</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
+				<dmpUrl>http://218.249.193.154/bjrb_dmp</dmpUrl>
+				<label>BJRB</label>
 			</properties>
 		</profile>
 		<profile>

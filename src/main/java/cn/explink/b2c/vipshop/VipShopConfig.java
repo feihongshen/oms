@@ -16,6 +16,7 @@ public class VipShopConfig {
 	public static String sign_type = "MD5";
 	// 版本号
 	public static String version = "1.0";
+	public static String versionNew = "1.2";
 
 	public static String nameSpace = "http://common.tmsinterface.tms.com";
 	public static String statusBackMethodName = "sendTrackInfo";
@@ -24,5 +25,7 @@ public class VipShopConfig {
 
 	public static String PEISONG_TYPE = "S103"; // 配送
 	public static String TUIHUO_TYPE = "S113"; // 揽退
+	public static String JIBAO_TYPE = "S143"; // 集包
+	
 
 }

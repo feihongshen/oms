@@ -82,6 +82,7 @@
 							 <ref bean="doTime_yonghuihh" />	
 							 <ref bean="doTime_sendThirdPartyOrderToDO" />
 							 <ref bean="doTime_otherordertrack" />
+							 <ref bean="doTime_vipmps" />
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -1130,5 +1131,26 @@
 		</property>
 	</bean>  
 	<!-- 品骏达外单轨迹定时任务结束 --> 
+	
+	<!-- 唯品会集包项目 -->
+    <bean id="doTime_vipmps" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getVipmps" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getVipmps" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getVipmps_Task</value>
+		</property>
+	</bean>
 <!-- ===================================自动生成HTML定时器 结束========================================== -->
 </beans>

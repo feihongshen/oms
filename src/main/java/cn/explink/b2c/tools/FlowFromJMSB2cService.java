@@ -38,6 +38,7 @@ import cn.explink.domain.ExpressSysMonitor;
 import cn.explink.domain.SystemInstall;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
+import cn.explink.enumutil.IsmpsflagEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
@@ -142,6 +143,16 @@ public class FlowFromJMSB2cService {
 				this.logger.warn("RE:cwb=" + orderFlow.getCwb() + ",flowordertype=" + orderFlow.getFlowordertype() + "排除封装-return");
 				return;
 			}
+			
+			
+			CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail(), CwbOrderWithDeliveryState.class);
+			
+			/**
+			 * 如果是一票多件的订单，那么将慢的flowordertype(mpsoptstate)赋值给flowordertype
+			 */
+			translateMpsoptstate(orderFlow, cwbOrderWithDeliveryState);
+			
+			
 			if (this.b2CDataDAO.checkIsRepeatDataFlag(orderFlow.getCwb(), orderFlow.getFlowordertype(), DateTimeUtil.formatDate(orderFlow.getCredate())) > 0) {
 				this.logger.info("RE: orderFlow send b2c 环节信息重复,已过滤,{}", parm);
 				// buidCod(orderFlow);//存cod表
@@ -150,7 +161,6 @@ public class FlowFromJMSB2cService {
 
 			this.logger.info("send b2c:cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 
-			CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail(), CwbOrderWithDeliveryState.class);
 			if (cwbOrderWithDeliveryState != null) {
 				if ((cwbOrderWithDeliveryState.getDeliveryState() != null) && (cwbOrderWithDeliveryState.getDeliveryState().getCodpos().compareTo(BigDecimal.ZERO) > 0)) {
 					cwbOrderWithDeliveryState.getDeliveryState().setPos(cwbOrderWithDeliveryState.getDeliveryState().getCodpos());
@@ -204,6 +214,23 @@ public class FlowFromJMSB2cService {
 			this.logger.error("error while handle orderflow", e1);
 		}
 		this.logger.info("进入b2c消息，结束：" + System.currentTimeMillis());
+	}
+
+	
+	private void translateMpsoptstate(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState cwbOrderWithDeliveryState) {
+		
+		DmpCwbOrder cwbOrder =cwbOrderWithDeliveryState.getCwbOrder();
+		DmpDeliveryState deliveryState = cwbOrderWithDeliveryState.getDeliveryState();
+		if (cwbOrder.getIsmpsflag() == IsmpsflagEnum.yes.getValue()) {
+			
+			orderFlow.setFlowordertype(cwbOrder.getMpsoptstate());
+			cwbOrder.setFlowordertype(cwbOrder.getMpsoptstate());
+			cwbOrderWithDeliveryState.setCwbOrder(cwbOrder);
+			if(deliveryState!=null){
+				deliveryState.setFlowordertype(cwbOrder.getMpsoptstate());
+				cwbOrderWithDeliveryState.setDeliveryState(deliveryState);
+			}
+		}
 	}
 
 	/**

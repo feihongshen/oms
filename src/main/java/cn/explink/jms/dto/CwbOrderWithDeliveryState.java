@@ -6,6 +6,15 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class CwbOrderWithDeliveryState {
 	private DmpCwbOrder cwbOrder;
 	private DmpDeliveryState deliveryState;
+	private TransCwbDetail transCwbDetail;
+
+	public TransCwbDetail getTransCwbDetail() {
+		return transCwbDetail;
+	}
+
+	public void setTransCwbDetail(TransCwbDetail transCwbDetail) {
+		this.transCwbDetail = transCwbDetail;
+	}
 
 	public DmpCwbOrder getCwbOrder() {
 		return cwbOrder;
