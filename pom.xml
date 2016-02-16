@@ -2682,6 +2682,22 @@
 		</profile>
 		
 		<profile>
+			<id>PJ_MERGE_TEST</id>
+			<properties>
+				<tomcat.manager.url></tomcat.manager.url>
+				<drivers>com.mysql.jdbc.Driver</drivers>
+				<expressurl.maxconn>20</expressurl.maxconn>
+				<expressurl.url>jdbc:mysql://10.199.247.161:3306/merge_dmp_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.user>root</expressurl.user>
+				<expressurl.password>dmpdmp1555</expressurl.password>
+				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
+				<jms.brokerURL>tcp://10.199.244.183:61616</jms.brokerURL>
+				<dmpUrl>http://10.199.244.181:8080/dmp</dmpUrl>
+				<label>PJ_MERGE_TEST_SERVER</label>
+			</properties>
+		</profile>
+		
+		<profile>
 			<id>HNPJ</id>
 			<properties>
 				<tomcat.manager.url></tomcat.manager.url>
