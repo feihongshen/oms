@@ -246,6 +246,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("suningCurrentinteger",0);
 		JobUtil.threadMap.put("otherordertrack", 0);
 		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
+		JobUtil.threadMap.put("otherorderhousekeep", 0);
 		JobUtil.threadMap.put("vipmps",0);
 	}
 
@@ -257,6 +258,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("otherordertrack", 0);
+		JobUtil.threadMap.put("otherorderhousekeep", 0);
 		JobUtil.threadMap.put("vipmps",0);
 		this.logger.info("系统自动初始化定时器完成");
 	}
@@ -1126,6 +1128,26 @@ public class JobUtil {
 		this.logger.info("执行了【品骏达外单轨迹】定时器任务!");
 	}
 	
+	/**
+	 * 品骏达外单临时表数据清理定时任务方法调用
+	 */
+	public void housekeepOtherOrderAndTrack(){
+		
+		if (JobUtil.threadMap.get("otherorderhousekeep") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出housekeepOtherOrderAndTrack");
+			return;
+		}
+		JobUtil.threadMap.put("otherorderhousekeep", 1);
+		
+		try{
+			this.otherOrderTrackSendService.housekeepOtherOrder();
+		}catch(Exception e){
+			this.logger.error("执行了品骏达外单临时表数据清理定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("otherorderhousekeep", 0);
+		}
+		this.logger.info("执行了【品骏达外单临时表数据清理】定时器任务!");
+	}
 	/**
 	 * 唯品会集包项目开发
 	 */

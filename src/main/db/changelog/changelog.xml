@@ -1143,5 +1143,12 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 		ALTER TABLE `tpo_other_order_track` ADD INDEX `tpo_other_track_time_idx` (`tracktime`); 
 		</sql>
 	</changeSet>
-	
+	<changeSet id="gaojianrong-2016-02-15-1" author="gaojianrong">
+		<sql>		
+		ALTER TABLE `tpo_other_order_track` ADD COLUMN `trytime` int(4) DEFAULT '0' NULL COMMENT '尝试次数' after `errinfo`;
+		ALTER TABLE `tpo_other_order_track` ADD INDEX `tpo_other_track_status_idx` (`status`);
+		ALTER TABLE `tpo_send_do_inf` ADD INDEX `tpo_send_do_inf_status_idx` (`is_sent`);
+		ALTER TABLE `tpo_send_do_inf` ADD INDEX `tpo_send_do_inf_time_idx` (`create_time`);
+		</sql>
+	</changeSet>
 </databaseChangeLog>

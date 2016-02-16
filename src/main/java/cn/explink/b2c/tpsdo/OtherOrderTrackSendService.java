@@ -16,6 +16,7 @@ import com.vip.osp.core.context.InvocationContext;
 import com.vip.osp.core.exception.OspException;
 
 import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
+import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.User;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -48,9 +49,21 @@ public class OtherOrderTrackSendService {
 	
 	public void process() {
 	       this.logger.info("other order track job process start...");
-	       try {
+	      
+	       
+	       try { 
+		   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
+				if(pushCfg == null){
+					logger.info("未配置外单轨迹推送DO服务配置信息!无法推送外单轨迹数据...");
+					return;
+				}
+				if(pushCfg.getTrackOpenFlag() != 1){
+					logger.info("未开启外单轨迹推送接口.");
+					return;
+				}
 		        //加载临时表数据
-		        List<OtherOrderTrackVo> rowList= otherOrderTrackService.retrieveOtherOrderTrack(3000);
+	    	    int maxRetry=pushCfg.getTrackMaxTryTime();
+		        List<OtherOrderTrackVo> rowList= otherOrderTrackService.retrieveOtherOrderTrack(maxRetry,3000);
 		        //处理数据
 		        handleData(rowList);
 	      } catch (Throwable ex) {
@@ -96,6 +109,10 @@ public class OtherOrderTrackSendService {
 		
 		if(tpsOperateType<0){
 			return null;
+		}
+		
+		if(msgVo.getTpsno()==null){
+			throw new RuntimeException("TPS运单号为空.");
 		}
 		
 		if(orderWithState==null){
@@ -240,8 +257,18 @@ public class OtherOrderTrackSendService {
 	}
 	
 	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState){
-		this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 		try {
+	   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
+			if(pushCfg == null){
+				logger.info("未配置外单轨迹推送DO服务配置信息!无法保存外单轨迹数据到临时表...");
+				return;
+			}
+			if(pushCfg.getTrackOpenFlag() != 1){
+				logger.info("未开启外单轨迹推送接口.");
+				return;
+			}
+			this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+
 			boolean isOther=false;
 			DmpCwbOrder cwbOrder=deliveryState.getCwbOrder();
 			if(cwbOrder!=null){
@@ -282,5 +309,33 @@ public class OtherOrderTrackSendService {
 		String json=jsonObj.toString();
 		
 		return json;
+	}
+	
+	public void housekeepOtherOrder(){
+   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
+		if(pushCfg == null){
+			logger.info("未配置外单临时表清理配置信息!不进行外单临时表清理...");
+			return;
+		}
+		int trackday=pushCfg.getTrackHousekeepDay();
+		int orderday=pushCfg.getHousekeepDay();
+		
+		if(pushCfg.getTrackOpenFlag()==1){
+			if(trackday<7){
+				trackday=7;
+				logger.info("外单轨迹临时表数据保留天数至少为7.");
+			}
+			int tnum=otherOrderTrackService.housekeepOtherOrderTrack(trackday);
+			logger.info("外单轨迹临时表数据清理了{}条.",tnum);
+		}
+		
+		if(pushCfg.getOpenFlag()==1){
+			if(orderday<15){
+				orderday=15;
+				logger.info("外单订单临时表数据保留天数至少为15.");
+			}
+			int onum=otherOrderTrackService.housekeepOtherOrder(orderday);
+			logger.info("外单订单临时表数据清理了{}条.",onum);
+		}
 	}
 }

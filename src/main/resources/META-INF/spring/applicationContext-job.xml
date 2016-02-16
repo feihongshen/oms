@@ -82,6 +82,7 @@
 							 <ref bean="doTime_yonghuihh" />	
 							 <ref bean="doTime_sendThirdPartyOrderToDO" />
 							 <ref bean="doTime_otherordertrack" />
+							 <ref bean="doTime_otherorderhousekeep" />
 							 <ref bean="doTime_vipmps" />
 			           </list>            
 	               </property>       
@@ -1131,6 +1132,28 @@
 		</property>
 	</bean>  
 	<!-- 品骏达外单轨迹定时任务结束 --> 
+	
+	<!-- 品骏达外单及轨迹临时表清理定时任务开始 -->
+	<bean id="doTime_otherorderhousekeep" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="otherorderhousekeep" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 3 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="otherorderhousekeep" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>housekeepOtherOrderAndTrack</value>
+		</property>
+	</bean>  
+	<!-- 品骏达外单及轨迹临时表清理定时任务结束 -->
 	
 	<!-- 唯品会集包项目 -->
     <bean id="doTime_vipmps" class="cn.explink.util.DatabaseInitCronTriggerBean"
