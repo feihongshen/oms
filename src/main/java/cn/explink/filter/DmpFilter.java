@@ -14,10 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 import cn.explink.util.JSONReslutUtil;
+import cn.explink.util.ResourceBundleUtil;
 
 public class DmpFilter implements Filter {
-	private static ResourceBundle oms = ResourceBundle.getBundle("oms");
-	private static String dmpUrl = oms.getString("dmpUrl");
 
 	public void destroy() {
 
@@ -33,20 +32,20 @@ public class DmpFilter implements Filter {
 		String dmpid = request.getParameter("dmpid") == null ? "" : (String) request.getParameter("dmpid");
 		if (!"".equals(dmpid)) {
 			/** 如果线上不行，就删除掉或者注释此段 ↓↓↓↓↓↓↓↓↓↓↓↓↓------------开始 */
-			// String branchStr = JSONReslutUtil.getResultMessage( dmpUrl
-			// +"/OMSInterface/getNowUserId;jsessionid="+dmpid,"UTF-8","POST").toString();
-			// if(branchStr == null || branchStr.equals("")){
-			// response.sendRedirect("/dmp/login");
-			// return;
-			// }
-			// JSONObject jsonValue = JSONObject.fromObject(branchStr);
-			// if(jsonValue == null || jsonValue.isEmpty()){
-			// response.sendRedirect("/dmp/login");
-			// return;
-			// }else if(jsonValue.get("nowUserId").toString().equals("")){
-			// response.sendRedirect("/dmp/login");
-			// return;
-			// }
+//			 String branchStr = JSONReslutUtil.getResultMessage( ResourceBundleUtil.dmpUrl
+//			 +"/OMSInterface/getNowUserId;jsessionid="+dmpid,"UTF-8","POST").toString();
+//			 if(branchStr == null || branchStr.equals("")){
+//			 response.sendRedirect("/dmp/login");
+//			 return;
+//			 }
+//			 JSONObject jsonValue = JSONObject.fromObject(branchStr);
+//			 if(jsonValue == null || jsonValue.isEmpty()){
+//			 response.sendRedirect("/dmp/login");
+//			 return;
+//			 }else if(jsonValue.get("nowUserId").toString().equals("")){
+//			 response.sendRedirect("/dmp/login");
+//			 return;
+//			 }
 			/** 如果线上不行，就删除掉或者注释此段↑↑↑↑↑↑↑↑↑↑↑↑↑------------结束 */
 			request.getSession().setAttribute("dmpid", dmpid);
 			// System.out.println("请求oms传递dmpid:"+dmpid);

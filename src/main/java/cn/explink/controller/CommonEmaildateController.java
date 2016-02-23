@@ -43,7 +43,6 @@ import cn.explink.domain.CustomWareHouse;
 import cn.explink.domain.Customer;
 import cn.explink.domain.CwbOrder;
 import cn.explink.domain.CwbOrderAll;
-
 import cn.explink.domain.Reason;
 import cn.explink.domain.Remark;
 import cn.explink.domain.SetExportField;
@@ -53,6 +52,7 @@ import cn.explink.service.CommenService;
 import cn.explink.service.ExportExcelService;
 import cn.explink.util.ExcelUtils;
 import cn.explink.util.Page;
+import cn.explink.util.ResourceBundleUtil;
 import cn.explink.util.StreamingStatementCreator;
 
 @RequestMapping("/commonemail")
@@ -99,7 +99,7 @@ public class CommonEmaildateController {
 				comMap.put(common.getCommonnumber(), common.getCommonname());
 			}
 		}
-		String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+		String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 		model.addAttribute("dmpUrl", dmpURl);
 		model.addAttribute("comMap", comMap);
 		model.addAttribute("commList", commonList);
@@ -144,7 +144,7 @@ public class CommonEmaildateController {
 		model.addAttribute("page_obj", new Page(count, page, Page.ONE_PAGE_NUMBER));
 		model.addAttribute("page", page);
 		model.addAttribute("cwborderList", cwbOrderView);
-		String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+		String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 		model.addAttribute("dmpUrl", dmpURl);
 		return "/common/showDetail";
 	}
@@ -199,7 +199,7 @@ public class CommonEmaildateController {
 			model.addAttribute("cwborderList", cwbOrderView);
 
 		}
-		String dmpURl = getDmpDAO.getDmpurl().substring(getDmpDAO.getDmpurl().lastIndexOf("/"), getDmpDAO.getDmpurl().length());
+		String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 		model.addAttribute("dmpUrl", dmpURl);
 		model.addAttribute("page_obj", new Page(count, page, Page.ONE_PAGE_NUMBER));
 		model.addAttribute("page", page);

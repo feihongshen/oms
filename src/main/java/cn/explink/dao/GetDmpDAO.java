@@ -41,23 +41,17 @@ import cn.explink.domain.User;
 import cn.explink.service.ProxyService;
 import cn.explink.util.Http;
 import cn.explink.util.JSONReslutUtil;
+import cn.explink.util.ResourceBundleUtil;
 
 @Component
 public class GetDmpDAO {
-	/*
-	 * @Value("${godmp.dmpUrl}") String dmpUrl;
-	 */
+
 	@Autowired
 	ProxyService proxyService;
 	@Autowired
 	ProxyConfDAO proxyConfDAO;
-	private static ResourceBundle oms = ResourceBundle.getBundle("oms");
-	private static String dmpUrl = GetDmpDAO.oms.getString("dmpUrl");
-	private Logger logger = LoggerFactory.getLogger(GetDmpDAO.class);
 
-	public String getDmpurl() {
-		return GetDmpDAO.dmpUrl;
-	}
+	private Logger logger = LoggerFactory.getLogger(GetDmpDAO.class);
 
 	/**
 	 * 获取当前站点id
@@ -68,7 +62,7 @@ public class GetDmpDAO {
 	public long getNowBrancheId(String dmpid) {
 		long branchid = 0;
 		try {
-			String branchStr = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowBrancheId;jsessionid=" + dmpid, "");
+			String branchStr = Http.post(ResourceBundleUtil.dmpUrl + "/OMSInterface/getNowBrancheId;jsessionid=" + dmpid, "");
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			branchid = jsonValue.getLong("nowbranchid");
 		} catch (Exception e) {
@@ -86,7 +80,7 @@ public class GetDmpDAO {
 	public String getNowCustomerPos(long customerid) {
 		String posString = "";
 		try {
-			posString = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowCustomerPos/" + customerid, "");
+			posString = Http.post(ResourceBundleUtil.dmpUrl + "/OMSInterface/getNowCustomerPos/" + customerid, "");
 		} catch (Exception e) {
 			this.logger.error("获取通联pos分账标识异常", e);
 		}
@@ -102,7 +96,7 @@ public class GetDmpDAO {
 	public String getNowRealname(String dmpid) {
 		String realName = "";
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getNowRealname;jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getNowRealname;jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			this.logger.debug("now branchRealname");
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			realName = jsonValue.get("nowRealname").toString();
@@ -121,7 +115,7 @@ public class GetDmpDAO {
 	public int getNowUserId(String dmpid) {
 		int nowUserId = 0;
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getNowUserId;jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getNowUserId;jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			nowUserId = Integer.parseInt(jsonValue.get("nowUserId").toString());
 		} catch (Exception e) {
@@ -139,7 +133,7 @@ public class GetDmpDAO {
 	public int getNowUserShowPhoneFlag(String dmpid) {
 		int nowShowPhoneFlag = 0;
 		try {
-			String branchStr = Http.post(GetDmpDAO.dmpUrl + "/OMSInterface/getNowUserShowPhoneFlag;jsessionid=" + dmpid, "");
+			String branchStr = Http.post(ResourceBundleUtil.dmpUrl + "/OMSInterface/getNowUserShowPhoneFlag;jsessionid=" + dmpid, "");
 			JSONObject jsonValue = JSONObject.fromObject(branchStr);
 			nowShowPhoneFlag = Integer.parseInt(jsonValue.get("nowShowPhoneFlag").toString());
 		} catch (Exception e) {
@@ -158,7 +152,7 @@ public class GetDmpDAO {
 		User user = new User();
 		JSONArray jSONArray = new JSONArray();
 		try {
-			String userStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getUserByid/" + id, "UTF-8", "POST").toString();
+			String userStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getUserByid/" + id, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(userStr);
 			String delivermancode = jSONArray.getJSONObject(0).get("deliverManCode") == null ? "" : jSONArray.getJSONObject(0).getString("deliverManCode");
 			user.setBranchid(jSONArray.getJSONObject(0).getLong("branchid"));
@@ -199,7 +193,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByZhanDian", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByZhanDian", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -229,7 +223,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByAllZhanDian", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByAllZhanDian", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -259,7 +253,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByAllEffectZhanDian", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByAllEffectZhanDian", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
 			for (int i = 0; i < jSONArray.size(); i++) {
@@ -288,7 +282,7 @@ public class GetDmpDAO {
 	public List<Branch> getAccessableBranch(long userId) {
 		List<Branch> list = new ArrayList<Branch>();
 		try {
-			String branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAccessableBranch/" + userId, "UTF-8", "POST").toString();
+			String branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAccessableBranch/" + userId, "UTF-8", "POST").toString();
 			JSONArray jSONArray = JSONArray.fromObject(branchByZhanDian);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Branch branch = new Branch();
@@ -317,7 +311,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByKufang", "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByKufang", "UTF-8", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
@@ -348,7 +342,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchList = "";
 		try {
-			branchList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllBranch", "UTF-8", "POST").toString();
+			branchList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAllBranch", "UTF-8", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchList);
 			list = new ArrayList<Branch>();
@@ -375,7 +369,7 @@ public class GetDmpDAO {
 	public Branch getBranchByBranchName(String branchname) {
 		Branch branch = new Branch();
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByBranchName", "branchname=" + branchname, "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByBranchName", "branchname=" + branchname, "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(branchStr);
 			branch.setBranchid(jsonObject.getLong("branchid"));
 			branch.setBranchname(jsonObject.getString("branchname"));
@@ -394,7 +388,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchList = "";
 		try {
-			branchList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByBranchids/" + branchids, "UTF-8", "POST").toString();
+			branchList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByBranchids/" + branchids, "UTF-8", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchList);
 			list = new ArrayList<Branch>();
@@ -419,7 +413,7 @@ public class GetDmpDAO {
 
 		String branchbyidTojson = "";
 		try {
-			branchbyidTojson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
+			branchbyidTojson = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
 		} catch (IOException e) {
 			this.logger.error("获取所有指点站点异常", e);
 		}
@@ -436,7 +430,7 @@ public class GetDmpDAO {
 	public Branch getNowBranch(long id) {
 		Branch branch = new Branch();
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchById/" + id, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(branchStr);
 			branch.setBranchid(jsonObject.getLong("branchid"));
 			branch.setBranchname(jsonObject.getString("branchname"));
@@ -467,7 +461,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchByName", "name=" + name + "", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchByName", "name=" + name + "", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
@@ -497,7 +491,7 @@ public class GetDmpDAO {
 		List<Customer> list = new ArrayList<Customer>();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(customerAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Customer customer = new Customer();
@@ -524,7 +518,7 @@ public class GetDmpDAO {
 		List<Customer> list = new ArrayList<Customer>();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomer", "UTF-8", "POST").toString();
 
 			jSONArray = JSONArray.fromObject(customerAll);
 
@@ -552,7 +546,7 @@ public class GetDmpDAO {
 		List<CustomWareHouse> list = new ArrayList();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouse", "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomWareHouse", "UTF-8", "POST").toString();
 			this.logger.debug("get CustomWareHouse");
 			jSONArray = JSONArray.fromObject(customerAll);
 
@@ -579,7 +573,7 @@ public class GetDmpDAO {
 		List<CustomWareHouse> list = new ArrayList();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouseByCustomid/" + customid, "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomWareHouseByCustomid/" + customid, "UTF-8", "POST").toString();
 			this.logger.debug("get CustomWareHouse");
 			jSONArray = JSONArray.fromObject(customerAll);
 
@@ -599,7 +593,7 @@ public class GetDmpDAO {
 	public CustomWareHouse getCustomWareHouseByid(String customid) {
 		CustomWareHouse customerH = new CustomWareHouse();
 		try {
-			String customerStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouseByid/" + customid, "UTF-8", "POST").toString();
+			String customerStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomWareHouseByid/" + customid, "UTF-8", "POST").toString();
 			this.logger.debug(" get CustomWareHouse");
 			if (!JSONObject.fromObject(customerStr).isEmpty()) {
 				customerH.setWarehouseid(JSONObject.fromObject(customerStr).getLong("warehouseid"));
@@ -619,7 +613,7 @@ public class GetDmpDAO {
 		List<Customer> list = new ArrayList<Customer>();
 		String customerAll = "";
 		try {
-			customerAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomerByIds/" + ids, "UTF-8", "POST").toString();
+			customerAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomerByIds/" + ids, "UTF-8", "POST").toString();
 			this.logger.debug(" get customerAll");
 			jSONArray = JSONArray.fromObject(customerAll);
 
@@ -645,7 +639,7 @@ public class GetDmpDAO {
 	public Customer getCustomer(long id) {
 		Customer customer = new Customer();
 		try {
-			String customerStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomerById/" + id, "UTF-8", "POST").toString();
+			String customerStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomerById/" + id, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(customerStr);
 
 			customer.setCustomerid(jsonObject.getLong("customerid"));
@@ -667,7 +661,7 @@ public class GetDmpDAO {
 		String reJson = "";
 		try {
 			this.logger.debug("get getCwbDetailsByCwb");
-			reJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
+			reJson = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(JSONObject.fromObject(reJson).get("cwb"));
 			cwborder = (CwbOrderCopyForDmp) JSONObject.toBean(json, CwbOrderCopyForDmp.class);
 
@@ -688,7 +682,7 @@ public class GetDmpDAO {
 		DeliveryStateForDmp delivery = new DeliveryStateForDmp();
 		String reJson = "";
 		try {
-			reJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
+			reJson = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCwbDetailsByCwb/" + cwb, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(JSONObject.fromObject(reJson).get("deliveryState"));
 			json.remove("mobilepodtime");
 			delivery = (DeliveryStateForDmp) JSONObject.toBean(json, DeliveryStateForDmp.class);
@@ -702,7 +696,7 @@ public class GetDmpDAO {
 
 		String deliverByIdToJson = "";
 		try {
-			deliverByIdToJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getDeliverById/" + id, "UTF-8", "POST").toString();
+			deliverByIdToJson = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getDeliverById/" + id, "UTF-8", "POST").toString();
 		} catch (Exception e) {
 			this.logger.error("获取deliverByIdToJson异常");
 		}
@@ -713,7 +707,7 @@ public class GetDmpDAO {
 
 		String password = "";
 		try {
-			String deliverByIdToJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getUserByUserName/" + userName, "UTF-8", "POST").toString();
+			String deliverByIdToJson = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getUserByUserName/" + userName, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(deliverByIdToJson);
 			password = json.getString("password");
 		} catch (Exception e) {
@@ -727,7 +721,7 @@ public class GetDmpDAO {
 		List<Common> list = new ArrayList();
 		String commonAll = "";
 		try {
-			commonAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
+			commonAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(commonAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Common common = new Common();
@@ -755,7 +749,7 @@ public class GetDmpDAO {
 		List<Common> list = new ArrayList();
 		String commonAll = "";
 		try {
-			commonAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
+			commonAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCommon", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(commonAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Common common = new Common();
@@ -778,7 +772,7 @@ public class GetDmpDAO {
 		User u = new User();
 		String user = "";
 		try {
-			user = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getLogUser;jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			user = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getLogUser;jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			if ("[]".equals(user)) {
 				this.logger.error("获取[]登录用户失败,登录失效了");
 				return u;
@@ -837,7 +831,7 @@ public class GetDmpDAO {
 
 		String commonByIdToJson = "";
 		try {
-			commonByIdToJson = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommonById/" + id, "UTF-8", "POST").toString();
+			commonByIdToJson = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCommonById/" + id, "UTF-8", "POST").toString();
 		} catch (IOException e) {
 			this.logger.error("获取指定承运商异常");
 		}
@@ -848,7 +842,7 @@ public class GetDmpDAO {
 
 		JointEntity jointEntity = new JointEntity();
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointEntity/" + jointnum, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getJointEntity/" + jointnum, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(jointEntityStr);
 			if ((jsonObject == null) || jsonObject.isEmpty()) {
 				return new JointEntity();
@@ -865,7 +859,7 @@ public class GetDmpDAO {
 	public List<JointEntity> getJointEntityList() {
 		List<JointEntity> jointlist = new ArrayList<JointEntity>();
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointEntityList/", "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getJointEntityList/", "UTF-8", "POST").toString();
 			JSONArray jSONArray = JSONArray.fromObject(jointEntityStr);
 			if ((jSONArray != null) && (jSONArray.size() > 0)) {
 				for (int i = 0; i < jSONArray.size(); i++) {
@@ -892,7 +886,7 @@ public class GetDmpDAO {
 
 		JointEntity jointEntity = null;
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointEntityByCompany/" + companyname, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getJointEntityByCompany/" + companyname, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(jointEntityStr);
 			jointEntity = new JointEntity();
 			jointEntity.setJoint_num(jsonObject.getInt("joint_num"));
@@ -909,7 +903,7 @@ public class GetDmpDAO {
 
 		JointEntity jointEntity = null;
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getJointDaoByClientID/" + ClientID, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getJointDaoByClientID/" + ClientID, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(jointEntityStr);
 			jointEntity = new JointEntity();
 			jointEntity.setJoint_num(jsonObject.getInt("joint_num"));
@@ -926,7 +920,7 @@ public class GetDmpDAO {
 		List<Exportmould> list = new ArrayList<Exportmould>();
 		String exportmouldAll = "";
 		try {
-			exportmouldAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getExportMoulds/" + user.getRoleid() + ";jsessionid=" + dmpid, "UTF-8", "POST").toString();
+			exportmouldAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getExportMoulds/" + user.getRoleid() + ";jsessionid=" + dmpid, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(exportmouldAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Exportmould exportmould = new Exportmould();
@@ -956,7 +950,7 @@ public class GetDmpDAO {
 		List<SetExportField> list = new ArrayList<SetExportField>();
 		String exportmouldAll = "";
 		try {
-			exportmouldAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getSetExportFieldByStrs/" + strs, "UTF-8", "POST").toString();
+			exportmouldAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getSetExportFieldByStrs/" + strs, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(exportmouldAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				SetExportField setExportField = new SetExportField();
@@ -978,7 +972,7 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllUsers", "UTF-8", "POST").toString();
+			userList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAllUsers", "UTF-8", "POST").toString();
 			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
@@ -1010,7 +1004,7 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getDeliverListByBranch/" + branchid, "UTF-8", "POST").toString();
+			userList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getDeliverListByBranch/" + branchid, "UTF-8", "POST").toString();
 			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
@@ -1034,7 +1028,7 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllUserByBranchIds/" + branchids, "UTF-8", "POST").toString();
+			userList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAllUserByBranchIds/" + branchids, "UTF-8", "POST").toString();
 			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
@@ -1057,7 +1051,7 @@ public class GetDmpDAO {
 
 		SystemInstall systemIn = null;
 		try {
-			String switchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getSystemInstallByName/" + name, "UTF-8", "POST").toString();
+			String switchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getSystemInstallByName/" + name, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(switchStr);
 			systemIn = new SystemInstall();
 			systemIn.setName(jsonObject.getString("name"));
@@ -1073,7 +1067,7 @@ public class GetDmpDAO {
 
 		Switch swith = new Switch();
 		try {
-			String switchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getSwitchBySwitchname/" + switchname, "UTF-8", "POST").toString();
+			String switchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getSwitchBySwitchname/" + switchname, "UTF-8", "POST").toString();
 			JSONObject jsonObject = JSONObject.fromObject(switchStr);
 			swith.setId(jsonObject.getLong("id"));
 			swith.setSwitchname(jsonObject.getString("switchname"));
@@ -1089,7 +1083,7 @@ public class GetDmpDAO {
 		List<User> userlist = new ArrayList<User>();
 		JSONArray jSONArray = new JSONArray();
 		try {
-			String userStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getDeliverListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
+			String userStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getDeliverListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
 			this.logger.debug("get userlist by cwiwu!");
 			jSONArray = JSONArray.fromObject(userStr);
 			if ((jSONArray != null) && (jSONArray.size() > 0)) {
@@ -1114,7 +1108,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchListByCaiwu/" + caiwubranchid, "UTF-8", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
@@ -1136,7 +1130,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByCaiwuAndUser/" + caiwubranchid + "?userid=" + userid, "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchListByCaiwuAndUser/" + caiwubranchid + "?userid=" + userid, "UTF-8", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
@@ -1159,7 +1153,7 @@ public class GetDmpDAO {
 		List<Branch> list = null;
 		String branchByZhanDian = "";
 		try {
-			branchByZhanDian = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByTypeAndUser/" + type + "?userid=" + userid, "UTF-8", "POST").toString();
+			branchByZhanDian = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchListByTypeAndUser/" + type + "?userid=" + userid, "UTF-8", "POST").toString();
 			this.logger.debug("branchAll");
 			jSONArray = JSONArray.fromObject(branchByZhanDian);
 			list = new ArrayList<Branch>();
@@ -1180,7 +1174,7 @@ public class GetDmpDAO {
 	public String getReason(long id) {
 		String reason = "";
 		try {
-			String reasonStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReason/" + id, "UTF-8", "POST").toString();
+			String reasonStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getReason/" + id, "UTF-8", "POST").toString();
 			JSONObject json = JSONObject.fromObject(reasonStr);
 			if ((json != null) && !json.isEmpty()) {
 				reason = json.getString("reasoncontent");
@@ -1196,7 +1190,7 @@ public class GetDmpDAO {
 		List<Role> list = null;
 		String roleList = "";
 		try {
-			roleList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getRoles", "UTF-8", "POST").toString();
+			roleList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getRoles", "UTF-8", "POST").toString();
 			this.logger.debug("rolelist :");
 			jSONArray = JSONArray.fromObject(roleList);
 			list = new ArrayList<Role>();
@@ -1219,7 +1213,7 @@ public class GetDmpDAO {
 
 		Role r = new Role();
 		try {
-			String roleStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getRoleByRoleid/" + id, "UTF-8", "POST").toString();
+			String roleStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getRoleByRoleid/" + id, "UTF-8", "POST").toString();
 			this.logger.debug("role");
 			r = (Role) JSONObject.toBean(JSONObject.fromObject(roleStr), Role.class);
 		} catch (Exception e) {
@@ -1240,7 +1234,7 @@ public class GetDmpDAO {
 		ExptReason exptReason = new ExptReason();
 
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid, "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid, "UTF-8", "POST").toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 			if (jparm.isEmpty()) {
 				exptReason.setExpt_code("");
@@ -1267,7 +1261,7 @@ public class GetDmpDAO {
 		ExptReason exptReason = new ExptReason();
 
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid, "UTF-8", "POST")
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid, "UTF-8", "POST")
 					.toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 
@@ -1279,7 +1273,7 @@ public class GetDmpDAO {
 			this.logger.error("获取指定getExptCodeJointByB2c异常");
 		}
 		this.logger.debug("OMS请求接口:reasonid：" + reasonid + ";expt_type:" + expt_type + ";support_key:" + customerid);
-		this.logger.debug("OMS对接请求接口路径:" + GetDmpDAO.dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid);
+		this.logger.debug("OMS对接请求接口路径:" + ResourceBundleUtil.dmpUrl + "/OMSInterface/getExptCodeJointByB2c/" + reasonid + "/" + expt_type + "/" + customerid);
 		return exptReason == null ? new ExptReason() : exptReason;
 	}
 
@@ -1295,7 +1289,7 @@ public class GetDmpDAO {
 		ExptReason exptReason = new ExptReason();
 
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + Long.valueOf(customerid), "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + Long.valueOf(customerid), "UTF-8", "POST").toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 
 			exptReason.setExpt_code((jparm.get("reasonid") != null) && !"".equals(jparm.getString("reasonid")) ? jparm.getString("reasonid") : "");
@@ -1305,7 +1299,7 @@ public class GetDmpDAO {
 			this.logger.error("获取指定getExptCodeJointByB2c异常");
 		}
 		this.logger.debug("OMS请求接口:reasonid：" + code + ";expt_type:" + customerid);
-		this.logger.debug("OMS对接请求接口路径:" + GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid + "/" + customerid);
+		this.logger.debug("OMS对接请求接口路径:" + ResourceBundleUtil.dmpUrl + "/OMSInterface/getReasonidJointByB2c/" + code + "/" + customerid + "/" + customerid);
 		return exptReason == null ? new ExptReason() : exptReason;
 	}
 
@@ -1315,7 +1309,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getQueryBranchByBranchsiteAndUserid/" + userid + "/" + sitetype + "", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getQueryBranchByBranchsiteAndUserid/" + userid + "/" + sitetype + "", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((Branch) JSONObject.toBean(jSONArray.getJSONObject(i), Branch.class));
@@ -1333,7 +1327,7 @@ public class GetDmpDAO {
 		List<Branch> list = new ArrayList<Branch>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getBranchListByUser/" + userid, "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getBranchListByUser/" + userid, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((Branch) JSONObject.toBean(jSONArray.getJSONObject(i), Branch.class));
@@ -1350,7 +1344,7 @@ public class GetDmpDAO {
 		List<CustomWareHouse> list = new ArrayList<CustomWareHouse>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCustomWareHouseByCustomerid/" + customerid + "", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCustomWareHouseByCustomerid/" + customerid + "", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((CustomWareHouse) JSONObject.toBean(jSONArray.getJSONObject(i), CustomWareHouse.class));
@@ -1368,7 +1362,7 @@ public class GetDmpDAO {
 		List<Reason> list = new ArrayList<Reason>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllReason", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAllReason", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((Reason) JSONObject.toBean(jSONArray.getJSONObject(i), Reason.class));
@@ -1384,7 +1378,7 @@ public class GetDmpDAO {
 		JSONArray jSONArray = new JSONArray();
 		List<User> list = new ArrayList<User>();
 		try {
-			String userStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllUserbybranchid/" + branchid, "UTF-8", "POST").toString();
+			String userStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAllUserbybranchid/" + branchid, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(userStr);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((User) JSONObject.toBean(jSONArray.getJSONObject(i), User.class));
@@ -1409,7 +1403,7 @@ public class GetDmpDAO {
 		List<Remark> list = new ArrayList<Remark>();
 		String remarkAll = "";
 		try {
-			remarkAll = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getAllRemark", "UTF-8", "POST").toString();
+			remarkAll = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getAllRemark", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(remarkAll);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				Remark remark = new Remark();
@@ -1429,7 +1423,7 @@ public class GetDmpDAO {
 
 	public String getFileUrl() {
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getFileUrl", "UTF-8", "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getFileUrl", "UTF-8", "POST").toString();
 			JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 			return jparm.getString("fileUrl");
 		} catch (IOException e) {
@@ -1450,7 +1444,7 @@ public class GetDmpDAO {
 		List<EpaiApi> list = new ArrayList<EpaiApi>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getEpaiAPI", "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getEpaiAPI", "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((EpaiApi) JSONObject.toBean(jSONArray.getJSONObject(i), EpaiApi.class));
@@ -1474,7 +1468,7 @@ public class GetDmpDAO {
 		List<ExptReason> list = new ArrayList<ExptReason>();
 		String resultList = "";
 		try {
-			resultList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getExptB2cSetUp/" + customerid + "/" + type, "UTF-8", "POST").toString();
+			resultList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getExptB2cSetUp/" + customerid + "/" + type, "UTF-8", "POST").toString();
 			jSONArray = JSONArray.fromObject(resultList);
 			for (int i = 0; i < jSONArray.size(); i++) {
 				list.add((ExptReason) JSONObject.toBean(jSONArray.getJSONObject(i), ExptReason.class));
@@ -1496,7 +1490,7 @@ public class GetDmpDAO {
 
 		try {
 
-			return JSONReslutUtil.SendHttptoServer(content, GetDmpDAO.dmpUrl + "/OMSInterface/getOrdersByJsonCwbArr");
+			return JSONReslutUtil.SendHttptoServer(content, ResourceBundleUtil.dmpUrl + "/OMSInterface/getOrdersByJsonCwbArr");
 
 		} catch (Exception e) {
 			this.logger.error("获取指定dmp上游信息异常", e);
@@ -1515,7 +1509,7 @@ public class GetDmpDAO {
 		try {
 			// return JSONReslutUtil.getResultMessage( dmpUrl
 			// +"/OMSInterface/requestDMPorderService_feedback",cwbJson,"POST").toString();
-			return JSONReslutUtil.SendHttptoServer(cwbJson, GetDmpDAO.dmpUrl + "/OMSInterface/requestDMPorderService_feedback");
+			return JSONReslutUtil.SendHttptoServer(cwbJson, ResourceBundleUtil.dmpUrl + "/OMSInterface/requestDMPorderService_feedback");
 		} catch (Exception e) {
 			this.logger.error("获取指定detail表异常", e);
 		}
@@ -1527,7 +1521,7 @@ public class GetDmpDAO {
 		try {
 			// return JSONReslutUtil.getResultMessage( dmpUrl
 			// +"/OMSInterface/requestDMPorderService_feedback",cwbJson,"POST").toString();
-			return JSONReslutUtil.SendHttptoServer(cwbJson, GetDmpDAO.dmpUrl + "/OMSInterface/weisudaFeedback");
+			return JSONReslutUtil.SendHttptoServer(cwbJson, ResourceBundleUtil.dmpUrl + "/OMSInterface/weisudaFeedback");
 		} catch (Exception e) {
 			this.logger.error("获取指定detail表异常", e);
 			return null;
@@ -1538,7 +1532,7 @@ public class GetDmpDAO {
 
 		Stores stores = new Stores();
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getStoresById/" + id, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getStoresById/" + id, "UTF-8", "POST").toString();
 			stores = (Stores) JSONObject.toBean(JSONObject.fromObject(branchStr), Stores.class);
 		} catch (IOException e) {
 			this.logger.error("获取迈思可站点信息表的详细信息异常", e);
@@ -1548,7 +1542,7 @@ public class GetDmpDAO {
 
 	public Common getCommonByCommonnumber(String Commonnumber) {
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getCommonByCommonnumber/" + Commonnumber, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getCommonByCommonnumber/" + Commonnumber, "UTF-8", "POST").toString();
 			Common common = (Common) JSONObject.toBean(JSONObject.fromObject(branchStr), Common.class);
 			return common;
 		} catch (IOException e) {
@@ -1562,7 +1556,7 @@ public class GetDmpDAO {
 		List<User> list = null;
 		String userList = "";
 		try {
-			userList = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getUserForALL", "UTF-8", "POST").toString();
+			userList = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getUserForALL", "UTF-8", "POST").toString();
 			this.logger.debug("userList :");
 			jSONArray = JSONArray.fromObject(userList);
 			list = new ArrayList<User>();
@@ -1586,7 +1580,7 @@ public class GetDmpDAO {
 
 	public String getOrderGoods(String cwb) {
 		try {
-			String branchStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getOrderGoods/" + cwb, "UTF-8", "POST").toString();
+			String branchStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getOrderGoods/" + cwb, "UTF-8", "POST").toString();
 			return branchStr;
 		} catch (Exception e) {
 			this.logger.error("获取唯品会商品列表异常" + cwb, e);
@@ -1599,7 +1593,7 @@ public class GetDmpDAO {
 	public ExptReason getExptCodeJointByB2cGztl(long customerid,String expect_code){
 		ExptReason exptReason = new ExptReason();
 		try {
-			String jointEntityStr = JSONReslutUtil.getResultMessage(GetDmpDAO.dmpUrl + "/OMSInterface/getReasonidJointByB2cGztl/"+ customerid , "code=" + expect_code, "POST").toString();
+			String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getReasonidJointByB2cGztl/"+ customerid , "code=" + expect_code, "POST").toString();
 			if(jointEntityStr != null ){
 				JSONObject jparm = JSONObject.fromObject(jointEntityStr);
 				exptReason.setExpt_code((jparm.get("expt_code") != null) && !"".equals(jparm.getString("expt_code")) ? jparm.getString("expt_code") : "");//广州通路对应我们系统中的原因

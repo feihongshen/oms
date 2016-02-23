@@ -86,6 +86,7 @@ import cn.explink.util.DateDayUtil;
 import cn.explink.util.DateTimeUtil;
 import cn.explink.util.JsonUtil;
 import cn.explink.util.Page;
+import cn.explink.util.ResourceBundleUtil;
 import cn.explink.vo.delivery.CustomizedDeliveryDateType;
 import cn.explink.vo.delivery.DeliveryRateAggregation;
 import cn.explink.vo.delivery.DeliveryRateBranchOrCustomerAggregation;
@@ -283,7 +284,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("妥投订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 
@@ -440,7 +441,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getChukuCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("库房出库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -567,7 +568,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getKDKChukuCwbOrderViewCount10(orderlist, delList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("库对库出库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -665,7 +666,7 @@ public class DataStatisticController {
 					}
 				}
 				this.logger.info("退货出站统计(云)，当前操作人{},条数{}", user.getRealname(), count);
-				String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+				String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 				model.addAttribute("dmpUrl", dmpURl);
 			}
 
@@ -760,7 +761,7 @@ public class DataStatisticController {
 			model.addAttribute("orderlist", orderlist);
 			model.addAttribute("page_obj", pageparm);
 			model.addAttribute("page", page);
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.TuiHuoZhanRuKuTongJi.getValue()).getLastupdatetime());
 			this.logger.info("退货站入库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
@@ -842,7 +843,7 @@ public class DataStatisticController {
 			model.addAttribute("orderlist", orderlist);
 			model.addAttribute("page_obj", pageparm);
 			model.addAttribute("page", page);
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangZaiTuTongJi.getValue()).getLastupdatetime());
 			this.logger.info("库房在途订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
@@ -957,7 +958,7 @@ public class DataStatisticController {
 			model.addAttribute("orderlist", orderlist);
 			model.addAttribute("page_obj", pageparm);
 			model.addAttribute("page", page);
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			model.addAttribute("lastupdatetime", this.updateMessageDAO.getUpdateMessageByMenunvalue(UpdateMessageMenuNameEnum.KuFangRuKuTongJi.getValue()).getLastupdatetime());
 			this.logger.info("库房入库统计(云)，当前操作人{},条数{}", user.getRealname(), count);
@@ -1098,7 +1099,7 @@ public class DataStatisticController {
 				orderlist = this.cwbDAO.getCwbOrderByCwbs(cwbs);
 				orderlist = this.dataStatisticService.getChukuCollectDataCwbOrderViewCount10(orderlist, delList, customerList, branchList, customerWareHouseList);
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 		}
 
@@ -1202,7 +1203,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getZhiLiuCwbOrderViewCount10(orderlist, dzlList, customerlist, branchList, reasonList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("滞留订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -1328,7 +1329,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getJuShouCwbOrderViewCount10(orderlist, djList, customerlist, branchList, reasonList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("拒收订单汇总(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -1458,7 +1459,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getDaohuoCwbOrderViewCount10(orderlist, delList, customerlist, branchAllList, userList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("分站到货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -1553,7 +1554,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getZhongzhuanCwbOrderViewCount10(orderlist, zhongzhuanList, customerlist, branchList, userList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("中转订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -1664,7 +1665,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getDaohuoCwbOrderViewCount10(orderlist, delList, customerlist, branchAllList, userList);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 		}
 		model.addAttribute("orderlist", orderlist);
@@ -1726,7 +1727,7 @@ public class DataStatisticController {
 					orderlist = this.dataStatisticService.getTiHuoCwbOrderViewCount10(orderlist, tihuoList, customerlist);
 				}
 			}
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("提货订单统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -1831,7 +1832,7 @@ public class DataStatisticController {
 			// 赋值显示对象
 			List<Branch> branchs = this.getDmpDAO.getAllBranchs();
 			cwbOrderView = this.dataStatisticService.getKeHuFaHuoTongJiCwbOrderView(clist, customerList, branchs);
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("客户发货统计(云)，当前操作人{},条数{}", user.getRealname(), count);
 		}
@@ -1980,7 +1981,7 @@ public class DataStatisticController {
 			count = sum.getId();
 			pageparm = new Page(count, page, Page.ONE_PAGE_NUMBER);
 
-			String dmpURl = this.getDmpDAO.getDmpurl().substring(this.getDmpDAO.getDmpurl().lastIndexOf("/"), this.getDmpDAO.getDmpurl().length());
+			String dmpURl = ResourceBundleUtil.dmpUrl.substring(ResourceBundleUtil.dmpUrl.lastIndexOf("/"), ResourceBundleUtil.dmpUrl.length());
 			model.addAttribute("dmpUrl", dmpURl);
 			this.logger.info("综合查询，当前操作人{},条数{}", user.getRealname(), count);
 
@@ -2428,7 +2429,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2476,7 +2477,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2577,7 +2578,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2634,7 +2635,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2742,7 +2743,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2756,7 +2757,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2786,7 +2787,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
@@ -2833,7 +2834,7 @@ public class DataStatisticController {
 		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
 		User user = this.getDmpDAO.getLogUser(dmpid);
 		if ((user == null) || (user.getUserid() == 0)) {
-			String dmpUrl = this.getDmpDAO.getDmpurl();
+			String dmpUrl = ResourceBundleUtil.dmpUrl;
 			model.addAttribute("dmpUrl", dmpUrl.substring(dmpUrl.lastIndexOf("/"), dmpUrl.length()));
 			return "/common/login";
 		}
