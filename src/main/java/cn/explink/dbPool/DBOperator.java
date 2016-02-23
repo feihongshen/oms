@@ -713,7 +713,7 @@ public class DBOperator {
 					}
 				}
 				prep.addBatch();
-				this.batchnum = Integer.parseInt(ResourceBundleUtil.sqlServerExpressurlBATCHNUM);
+				this.batchnum = Integer.parseInt(ResourceBundleUtil.sqlServerExpressurlBatchNum);
 				if (batchnum > 0) { // pst+batch
 					if (p % batchnum == 0) { // 可以设置不同的大小；如50，100，500，1000等等
 						long startTime = System.currentTimeMillis();

@@ -53,6 +53,6 @@ public class ResourceBundleUtil {
 	public static final String sqlServerExpressurlUrl = ResourceBundleUtil.rbint.getString("sqlserver_expressurl.url");
 	public static final String sqlServerExpressurlUser = ResourceBundleUtil.rbint.getString("sqlserver_expressurl.user");
 	public static final String sqlServerExpressurlPassword = ResourceBundleUtil.rbint.getString("sqlserver_expressurl.password");
-	public static final String sqlServerExpressurlBATCHNUM = ResourceBundleUtil.rbint.getString("sqlserver_expressurl.BATCHNUM");
+	public static final String sqlServerExpressurlBatchNum = ResourceBundleUtil.rbint.getString("sqlserver_expressurl.batchNum");
 	
 }
