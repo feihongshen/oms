@@ -470,6 +470,9 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<excludes>
+					<exclude>${excludeJobFile}</exclude>					
+				</excludes>
 			</resource>
 			<resource>
 				<directory>src/main/db</directory>
@@ -2468,13 +2471,14 @@
 				<tomcat.manager.url></tomcat.manager.url>
 				<drivers>com.mysql.jdbc.Driver</drivers>
 				<expressurl.maxconn>20</expressurl.maxconn>
-				<expressurl.url>jdbc:mysql://192.168.70.48:3306/gztl_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
+				<expressurl.url>jdbc:mysql://172.20.200.36:3306/gztl_oms?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false&amp;amp;useCursorFetch=true&amp;amp;defaultFetchSize=1000</expressurl.url>
 				<expressurl.user>root</expressurl.user>
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
-				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
+				<jms.brokerURL>tcp://172.20.200.83:61616</jms.brokerURL>
 				<dmpUrl>http://127.0.0.1:8080/gztl</dmpUrl>
 				<label>GZTL</label>
+				<excludeJobFile>**/applicationContext-job.xml</excludeJobFile>
 			</properties>
 		</profile>
 		
@@ -2557,6 +2561,7 @@
 				<jms.brokerURL>tcp://172.20.200.83:61616</jms.brokerURL>
 				<dmpUrl>http://127.0.0.1:8080/gztlfbzx</dmpUrl>
 				<label>GZTLFBZX</label>
+				<excludeJobFile>**/applicationContext-job.xml</excludeJobFile>
 			</properties>
 		</profile>
 		
