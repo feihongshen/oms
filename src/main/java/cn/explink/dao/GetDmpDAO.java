@@ -362,6 +362,7 @@ public class GetDmpDAO {
 				branch.setBranchprovince(jSONArray.getJSONObject(i).getString("branchprovince"));
 				branch.setBranchcity(jSONArray.getJSONObject(i).getString("branchcity"));
 				branch.setBrancharea(jSONArray.getJSONObject(i).getString("brancharea"));
+				branch.setTpsbranchcode(jSONArray.getJSONObject(i).getString("tpsbranchcode"));
 				list.add(branch);
 			}
 
@@ -382,6 +383,7 @@ public class GetDmpDAO {
 			branch.setBranchaddress(jsonObject.getString("branchaddress"));
 			branch.setSitetype(jsonObject.getInt("sitetype"));
 			branch.setBindmsksid(jsonObject.getInt("bindmsksid"));
+			branch.setTpsbranchcode(jsonObject.getString("tpsbranchcode"));
 		} catch (IOException e) {
 			branch = null;
 			this.logger.error("获取当前站点的详细信息异常", e);
@@ -405,6 +407,7 @@ public class GetDmpDAO {
 				branch.setBranchaddress(jSONArray.getJSONObject(i).getString("branchaddress"));
 				branch.setSitetype(jSONArray.getJSONObject(i).getInt("sitetype"));
 				branch.setBindmsksid(jSONArray.getJSONObject(i).getInt("bindmsksid"));
+				branch.setTpsbranchcode(jSONArray.getJSONObject(i).getString("tpsbranchcode"));
 				list.add(branch);
 			}
 
@@ -449,6 +452,7 @@ public class GetDmpDAO {
 			branch.setBranchcity(jsonObject.getString("branchcity"));
 			branch.setBrancharea(jsonObject.getString("brancharea"));
 			branch.setBranchcode(jsonObject.getString("branchcode"));
+			branch.setTpsbranchcode(jsonObject.getString("tpsbranchcode"));
 		} catch (IOException e) {
 			branch = null;
 			this.logger.error("获取当前站点的详细信息异常", e);
@@ -478,6 +482,7 @@ public class GetDmpDAO {
 				branch.setBranchaddress(jSONArray.getJSONObject(i).getString("branchaddress"));
 				branch.setSitetype(jSONArray.getJSONObject(i).getInt("sitetype"));
 				branch.setBindmsksid(jSONArray.getJSONObject(i).getInt("bindmsksid"));
+				branch.setTpsbranchcode(jSONArray.getJSONObject(i).getString("tpsbranchcode"));
 				list.add(branch);
 			}
 		} catch (Exception e) {

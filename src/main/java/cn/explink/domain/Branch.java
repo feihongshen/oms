@@ -47,6 +47,8 @@ public class Branch {
 	private int bindmsksid; // 绑定迈思可站点id
 
 	private String brancharea; // 区县
+	private String tpsbranchcode;//上传tps时所用的机构编码
+
 
 	public String getBrancharea() {
 		return brancharea;
@@ -393,5 +395,15 @@ public class Branch {
 		}
 		return "";
 	}
+
+	public String getTpsbranchcode() {
+		return tpsbranchcode;
+	}
+
+	public void setTpsbranchcode(String tpsbranchcode) {
+		this.tpsbranchcode = tpsbranchcode;
+	}
+	
+	
 
 }
