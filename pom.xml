@@ -51,6 +51,12 @@
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
 			<version>5.5.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
@@ -59,19 +65,34 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
+			<artifactId>camel-jms</artifactId>
 			<version>2.10.2</version>
 			<exclusions>
+				<exclusion>
+					<artifactId>spring-jms</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
 				<exclusion>
 					<artifactId>spring-tx</artifactId>
 					<groupId>org.springframework</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>spring-beans</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-aop</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jms</artifactId>
-			<version>2.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xbean</groupId>
@@ -265,6 +286,11 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
+			<artifactId>spring-jms</artifactId>
+			<groupId>org.springframework</groupId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>${aspectj.version}</version>
@@ -332,12 +358,32 @@
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-api</artifactId>
 			<version>2.2.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-beans</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<version>2.2.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -393,6 +439,12 @@
 		  <artifactId>pjdeliveryorder-service-api</artifactId>
 		  <!-- <version>1.14.0_26</version> -->
 		  <version>1.15.0_09</version>
+		  <exclusions>
+		  	<exclusion>
+		  		<artifactId>spring-context-support</artifactId>
+		  		<groupId>org.springframework</groupId>
+		  	</exclusion>
+		  </exclusions>
 		</dependency>
 			   
 	    <dependency>
