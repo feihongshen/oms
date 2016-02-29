@@ -2911,7 +2911,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
-				<dmpUrl>http://localhost:8081/xapx</dmpUrl>
+				<dmpUrl>http://localhost:8080/xapx</dmpUrl>
 				<label>XAPX</label>
 			</properties>
 		</profile>
