@@ -453,11 +453,11 @@ public class WeisudaService {
 			String province=bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
 			String city=bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
 			String zone=bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
-			
+			String oldCode=weisuda.getChangeBranchcode()==1?(""+bch.getBranchid()):"";
 			String data = "<root>" 
 							+ "<item>" 
-								+ "<code>" + bch.getBranchid() + "</code>" 
-								+ "<old_code></old_code>" 
+								+ "<code>" + bch.getTpsbranchcode()+ "</code>" 
+								+ "<old_code>"+oldCode+"</old_code>" 
 								+ "<name>" + bch.getBranchname() + "</name>" 
 								+ "<province>"+ province + "</province>" 
 								+ "<city>" + city + "</city>" 
@@ -484,10 +484,12 @@ public class WeisudaService {
 			return;
 		}
 		try {
+			long bid=Long.parseLong(branchid);
+			Branch branch = this.getDmpDAO.getNowBranch(bid);
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			String data = "<root>" 
 							+ "<item>" 
-								+ "<del_code>" + branchid + "</del_code>" 
+								+ "<del_code>" + branch.getTpsbranchcode() + "</del_code>" 
 								+ "<rec_code></rec_code>" 
 							+ "</item>"
 						+ "</root>";
@@ -533,13 +535,14 @@ public class WeisudaService {
 			 * + user.getBranchid() + " 快递员手机号码:" + user.getUsermobile() +
 			 * " 快递员登陆密码:" + user.getPassword();
 			 */
+			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			String data = "<root>" 
 							+ "<item>" 
 								+ "<code>" + user.getUsername().toUpperCase() + "</code>" 
 								+ "<old_code>" + oldusername.toUpperCase() + "</old_code>" 
 								+ "<name>" + user.getRealname()+ "</name>" 
-								+ "<site_code>" + user.getBranchid() + "</site_code>" 
+								+ "<site_code>" + branch.getTpsbranchcode() + "</site_code>" 
 								+ "<mobile>" + user.getUsermobile() + "</mobile>"
 								+ "<password>" + user.getPassword() + "</password>"
 							+ "</item>"
@@ -1153,15 +1156,17 @@ public class WeisudaService {
 
 	public String updataAllBranch() {
 		List<Branch> branchs = this.getDmpDAO.getAllBranchs();
+		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		String data = "<root>";
 		for (Branch bch : branchs) {
 			if (bch.getSitetype() == BranchEnum.ZhanDian.getValue()) {
 				String branchProvince = bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
 				String branchCity = bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
 				String branchArea = bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
+				String oldCode=weisuda.getChangeBranchcode()==1?(""+bch.getBranchid()):"";
 				data += "<item>" 
-							+ "<code>" + bch.getBranchid() + "</code>" 
-							+ "<old_code></old_code>" 
+							+ "<code>" + bch.getTpsbranchcode() + "</code>" 
+							+ "<old_code>"+oldCode+"</old_code>" 
 							+ "<name>" + bch.getBranchname() + "</name>" 
 							+ "<province>"+ (branchProvince) + "</province>" 
 							+ "<city>" + (branchCity) + "</city>"
@@ -1173,7 +1178,7 @@ public class WeisudaService {
 		}
 		data += "</root>";
 		this.logger.info("唯速达_同步所有站点发送报文,data={}", data);
-		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+		
 		String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteUpdate.getValue());
 
 		return response;
@@ -1214,7 +1219,7 @@ public class WeisudaService {
 							 + "<code>" + user.getUsername().toUpperCase() + "</code>" 
 							 + "<old_code></old_code>" 
 							 + "<name>" + user.getRealname() + "</name>" 
-							 + "<site_code>"+ branch.getBranchid() + "</site_code>" 
+							 + "<site_code>"+ branch.getTpsbranchcode() + "</site_code>" 
 							 + "<mobile>" + user.getUsermobile() + "</mobile>" 
 							 + "<password>" + (user.getPassword() == null ? "" : user.getPassword())+ "</password>" 
 						 + "</item>";
