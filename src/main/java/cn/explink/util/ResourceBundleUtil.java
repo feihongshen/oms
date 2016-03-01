@@ -24,7 +24,7 @@ public class ResourceBundleUtil {
 	private static ResourceBundle rbint = null;
 	//初始化
 	 static {   
-        String proFilePath = "/home/apps/javaconf/"+ System.getProperty("company") + "/oms-webapp.properties";
+        String proFilePath = "/apps/conf/javaconf/"+ System.getProperty("company") + "/oms-webapp.properties";
 	    //开发使用
         String development = System.getProperty("development");
 	    if(null != development && development.length() > 0){
