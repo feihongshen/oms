@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +21,8 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,7 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class OmsJobController{
 
 	private Logger logger = LoggerFactory.getLogger(OmsJobController.class);
-	@Resource(name="schedulerFactory")
+	@Autowired(required=false)
+	@Qualifier("schedulerFactory") 
 	private StdScheduler stdScheduler;
 	
 	
