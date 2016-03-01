@@ -15,9 +15,11 @@ import com.pjbest.deliveryorder.service.SignTrack;
 import com.vip.osp.core.context.InvocationContext;
 import com.vip.osp.core.exception.OspException;
 
+import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.domain.Branch;
 import cn.explink.domain.User;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
@@ -44,6 +46,9 @@ public class OtherOrderTrackSendService {
 	
 	@Autowired
 	TPOSendDoInfService tPOSendDoInfService;
+	
+	@Autowired
+	private CacheBaseListener cacheBaseListener;
 
 	private static final String DATE_FORMAT="yyyy-MM-dd HH:mm:ss";
 	
@@ -217,9 +222,26 @@ public class OtherOrderTrackSendService {
 			req.setActualPayType(cwbOrder.getNewpaywayid());//cwbOrder.getPaywayid()???
 		}
 		
+		String nextOrg=null;
+		String operateOrg=null;
+		
+		if(cwbOrder.getNextbranchid()>0){
+			nextOrg=getTpsBranchCodeById(cwbOrder.getNextbranchid());
+			if(nextOrg==null){
+				throw new RuntimeException("没找到此下一站机构，branchid="+cwbOrder.getNextbranchid());
+			}
+		}
+		
+		if(orderFlow.getBranchid()>0){
+			operateOrg=getTpsBranchCodeById(orderFlow.getBranchid());
+			if(operateOrg==null){
+				throw new RuntimeException("没找到此操作机构，branchid="+orderFlow.getBranchid());
+			}
+		}
+		
 		//req.setException(null);//
-		req.setNextOrg(cwbOrder.getNextbranchid()==0?null:""+cwbOrder.getNextbranchid());//
-		req.setOperateOrg(orderFlow.getBranchid()==0?null:""+orderFlow.getBranchid());//
+		req.setNextOrg(nextOrg);//tps机构编码
+		req.setOperateOrg(operateOrg);//tps机构编码
 		req.setOperater(operateUser==null?null:operateUser.getRealname());//???
 		req.setOperateTime(orderFlow.getCredate());
 		req.setOperateType(tpsOperateType);
@@ -227,6 +249,20 @@ public class OtherOrderTrackSendService {
 		req.setTransportNo(msgVo.getTpsno());
 		
 		return req;
+	}
+	
+	//get tpsbranchcode
+	private String getTpsBranchCodeById(long branchid){
+		String tpsBranchCode=null;	
+		Branch branch = this.cacheBaseListener.getBranch(branchid);
+		if (branch == null) {
+			branch = this.getDmpDAO.getNowBranch(branchid);
+		}
+		if (branch != null) {
+			tpsBranchCode=branch.getTpsbranchcode();
+		}
+		
+		return tpsBranchCode;
 	}
 	
 	private void send(DoTrackFeedbackRequest request) throws OspException{

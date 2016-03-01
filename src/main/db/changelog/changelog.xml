@@ -2,6 +2,11 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<!-- 新建存储过程，用于检查column, index是否存在，不存在则创建 -->
+	<changeSet id="wangwei-2016-02-18-merge-001" author="wangwei">
+		<sqlFile endDelimiter="//" path="proc_create_index_if_not_exists.sql" encoding="UTF-8" relativeToChangelogFile="true" />
+  	    <sqlFile endDelimiter="//" path="proc_add_column_if_not_exists.sql" encoding="UTF-8" relativeToChangelogFile="true" />
+	</changeSet>
 	<changeSet id="zhangxiaofeng-001" author="zhangxiaofeng">
 		<sqlFile path="oms_init.sql" encoding="UTF-8"
 			relativeToChangelogFile="true" />
@@ -1150,5 +1155,9 @@ ADD INDEX `isqianshou_idx` (`isqianshou`) ;
 		ALTER TABLE `tpo_send_do_inf` ADD INDEX `tpo_send_do_inf_status_idx` (`is_sent`);
 		ALTER TABLE `tpo_send_do_inf` ADD INDEX `tpo_send_do_inf_time_idx` (`create_time`);
 		</sql>
+	</changeSet>
+	<!-- 最后执行，同步所有数据库的结构 -->
+	<changeSet id="wangwei-2016-02-18-merge-002" author="wangwei">
+		<sqlFile path="merge_all_db_at_last.sql" encoding="UTF-8" relativeToChangelogFile="true" />
 	</changeSet>
 </databaseChangeLog>

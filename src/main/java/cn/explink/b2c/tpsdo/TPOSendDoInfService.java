@@ -22,6 +22,7 @@ import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DORequestVo;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.domain.Branch;
 import cn.explink.domain.Customer;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
@@ -154,7 +155,26 @@ public class TPOSendDoInfService {
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
 		
 		String posString = this.getDmpDAO.getNowCustomerPos(customer.getCustomerid());
-		thirdPartyOrder2DORequestVo.setAcceptDept(cwbOrder.getNextbranchid() == 0 ? "" : cwbOrder.getNextbranchid() + "");
+		String nextBranceTpsbranchcode = null; //下一站
+		if(cwbOrder.getNextbranchid() > 0){
+			Branch branch = this.cacheBaseListener.getBranch(cwbOrder.getNextbranchid());
+			if (branch == null) {
+				this.logger.info("Branch对象在缓存中没有获取到，OMS外单业务请求dmp..cwb={},nextBranchid={}", cwbOrder.getCwb(),cwbOrder.getNextbranchid());
+				branch = this.getDmpDAO.getNowBranch(cwbOrder.getNextbranchid());
+			}
+			nextBranceTpsbranchcode = branch.getTpsbranchcode();
+		}
+		String destOrg = null; //目的机构（派送站点）
+		if(cwbOrder.getDeliverybranchid() > 0){
+			Branch branch = this.cacheBaseListener.getBranch(cwbOrder.getDeliverybranchid());
+			if (branch == null) {
+				this.logger.info("Branch对象在缓存中没有获取到，OMS外单业务请求dmp..cwb={},deliverybranchid={}", cwbOrder.getCwb(),cwbOrder.getDeliverybranchid());
+				branch = this.getDmpDAO.getNowBranch(cwbOrder.getDeliverybranchid());
+			}
+			destOrg = branch.getTpsbranchcode();
+		}
+		thirdPartyOrder2DORequestVo.setAcceptDept(nextBranceTpsbranchcode == null ? "" : nextBranceTpsbranchcode);//由原来的id改为编码 。zhouguoting 2016/02/25
+		//thirdPartyOrder2DORequestVo.setAcceptDept(cwbOrder.getNextbranchid() == 0 ? "" : cwbOrder.getNextbranchid() + "");
 		thirdPartyOrder2DORequestVo.setAcceptOperator("");
 		thirdPartyOrder2DORequestVo.setAccountMark(posString);
 		thirdPartyOrder2DORequestVo.setActualFee(cwbOrder.getInfactfare());
@@ -224,7 +244,8 @@ public class TPOSendDoInfService {
 		thirdPartyOrder2DORequestVo.setCustCode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));
 		thirdPartyOrder2DORequestVo.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
 		thirdPartyOrder2DORequestVo.setCustOrderNo(cwbOrder.getCwb());
-		thirdPartyOrder2DORequestVo.setDestOrg(cwbOrder.getDeliverybranchid() == 0  ? null : cwbOrder.getDeliverybranchid() + "");
+		//thirdPartyOrder2DORequestVo.setDestOrg(cwbOrder.getDeliverybranchid() == 0  ? null : cwbOrder.getDeliverybranchid() + "");
+		thirdPartyOrder2DORequestVo.setDestOrg(destOrg);//由原来的传机构id改为传编码 。zhouguoting 2016/02/25
 		thirdPartyOrder2DORequestVo.setDistributer(cwbOrder.getDeliverid() == 0 ? "" : cwbOrder.getDeliverid() + "");
 		//thirdPartyOrder2DORequestVo.setJoinTime(null);
 		if(cwbordertypeid == CwbOrderTypeIdEnum.Express.getValue()){
