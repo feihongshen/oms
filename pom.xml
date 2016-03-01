@@ -2927,7 +2927,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://localhost:61616</jms.brokerURL>
-				<dmpUrl>http://localhost:8080/hnadx</dmpUrl>
+				<dmpUrl>http://localhost:8081/hnadx</dmpUrl>
 				<label>HNADX</label>
 			</properties>
 		</profile>
