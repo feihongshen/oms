@@ -11,7 +11,7 @@
             http://www.springframework.org/schema/aop/spring-aop-2.5.xsd  
             http://www.springframework.org/schema/tx  
             http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-    <!-- 
+    
 	<bean id="scheduledTaskService" class="cn.explink.service.ScheduledTaskService">
 		<property name="cachedWorkers">
 			<map>
@@ -19,7 +19,7 @@
 			</map>
 		</property>
 	</bean>
-	 -->
+	
 	<!-- ===================================自动生成HTML定时器 开始========================================== -->
 	 <bean id="updateEMS" class="cn.explink.util.JobUtil">
 	 </bean>
