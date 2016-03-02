@@ -433,7 +433,7 @@ public class FlowFromJMSService {
 		cwborder.setShipcwb(order.getShipcwb());
 		cwborder.setConsigneeno(order.getConsigneeno());
 		cwborder.setConsigneepostcode(order.getConsigneepostcode());
-		cwborder.setCwbremark(order.getCwbremark().substring(0, 999)); //防超长，上游入口众多，直接在这里改比较稳妥
+		cwborder.setCwbremark(order.getCwbremark()==null?null:order.getCwbremark().substring(0, order.getCwbremark().length())); //防超长，上游入口众多，直接在这里改比较稳妥
 		cwborder.setTransway(order.getTransway());
 		cwborder.setCwbprovince(order.getCwbprovince());
 		cwborder.setCwbcity(order.getCwbcity());
