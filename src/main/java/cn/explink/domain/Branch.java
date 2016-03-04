@@ -1,10 +1,15 @@
 package cn.explink.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import cn.explink.enumutil.BranchEnum;
 
-public class Branch {
+public class Branch implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long branchid;
 	private String branchname;
 	private String branchprovince;

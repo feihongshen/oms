@@ -14,6 +14,7 @@ import cn.explink.dao.ScheduledTaskDAO;
 import cn.explink.domain.ScheduledTask;
 import cn.explink.schedule.Constants;
 import cn.explink.schedule.ExecutorManager;
+import cn.explink.schedule.ScheduledTaskEnv;
 import cn.explink.schedule.Task;
 import cn.explink.schedule.Worker;
 
@@ -69,6 +70,12 @@ public class ScheduledTaskService {
 	 * @param taskId
 	 */
 	public void scheduleTask(String taskType, Long taskId) {
+		ScheduledTaskEnv env = ScheduledTaskEnv.getInstance();
+		if (env.hasTask(taskId)) {
+			return;
+		}
+		env.addTask(taskId);
+		
 		Task task = new Task();
 		task.setTaskId(taskId);
 		task.setWorker(cachedWorkers.get(taskType));

@@ -13,11 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tools.RedisMap;
+import cn.explink.b2c.tools.RedisMapCommonImpl;
 import cn.explink.dao.CommonSendDataDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WarehouseCommenDAO;
 import cn.explink.domain.CommenSendData;
 import cn.explink.domain.Common;
+import cn.explink.domain.Customer;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.util.DateTimeUtil;
 import cn.explink.util.JSONReslutUtil;
@@ -38,23 +41,27 @@ public class CoreService {
 	GetDmpDAO getDmpDAO;
 	@Autowired
 	CommonSendDataDAO commonSendDataDAO;
+	
+	private static final String DMP_LIST_CACHE = "dmpListCache";
+	private static final String COMMON_LIST = "commonList";
+	private static final RedisMap<String, List<?>> dmpListCache = new RedisMapCommonImpl<String, List<?>>(DMP_LIST_CACHE);
 
 	public static List<Common> commonList;
 
-	public static Map<Long, Long> chackMap = new HashMap<Long, Long>();
-
 	public void initCommonList() {
-		commonList = getDmpDAO.getAllCommons();
+		List<Common> commonList = getDmpDAO.getAllCommons();
+		dmpListCache.put(COMMON_LIST, commonList);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Common> getCommonList() {
-		if (chackMap.get(1l) == null) {
-			chackMap.put(1l, 1l);
+		List<Common> commonList = (List<Common>) dmpListCache.get(COMMON_LIST);
+		if (commonList == null || commonList.size() == 0) {
 			commonList = getDmpDAO.getAllCommons();
-			return commonList;
-		} else {
-			return commonList;
+			dmpListCache.put(COMMON_LIST, commonList);
 		}
+
+		return commonList;
 	}
 
 	/**

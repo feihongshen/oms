@@ -60,6 +60,8 @@ import cn.explink.b2c.telecomsc.TelecomshopService;
 import cn.explink.b2c.tmall.TmallService;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
+import cn.explink.b2c.tools.RedisMap;
+import cn.explink.b2c.tools.RedisMapThreadImpl;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPSDOService;
@@ -236,10 +238,10 @@ public class JobUtil {
 	@Autowired
 	VipmpsFeedbackService vipmpsFeedbackService;
 	
-	public static Map<String, Integer> threadMap;
+	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
 
-		JobUtil.threadMap = new HashMap<String, Integer>();
+		JobUtil.threadMap = new RedisMapThreadImpl<String, Integer>("JobUtil");
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);

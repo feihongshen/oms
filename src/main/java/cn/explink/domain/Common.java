@@ -1,7 +1,12 @@
 package cn.explink.domain;
 
-public class Common {
+import java.io.Serializable;
 
+public class Common implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long id;
 	private String commonname;
 	private String commonnumber; // 设置分配下游唯一编码

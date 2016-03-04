@@ -9,6 +9,10 @@ import cn.explink.enumutil.UserEmployeestatusEnum;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	long userid;
 	String oldusername;
 	String username;

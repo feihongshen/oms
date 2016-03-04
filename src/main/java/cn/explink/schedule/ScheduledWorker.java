@@ -29,10 +29,12 @@ public abstract class ScheduledWorker implements Worker {
 			logger.info("lock task success. task id = {} ", scheduledTask.getId());
 			if (Constants.TASK_STATUS_COMPLETED == scheduledTask.getStatus()) {
 				logger.info("task is already completed. id = {}, referenceId = {}", new Object[] { scheduledTask.getId(), scheduledTask.getReferenceId() });
+				removeTask(task);
 				return;
 			}
 			if (DateTimeUtil.isBefore(new Date(), scheduledTask.getFireTime())) {
 				logger.info("task is not readdy to run. id = {}, fireTime = {}", new Object[] { scheduledTask.getId(), scheduledTask.getFireTime() });
+				removeTask(task);
 				return;
 			}
 		} catch (Exception e) {
@@ -53,7 +55,14 @@ public abstract class ScheduledWorker implements Worker {
 			}
 		} catch (Exception e) {
 			logger.error("task exception. taskId = {}", task.getTaskId(), e);
+		} finally {
+			removeTask(task);
 		}
+	}
+	
+	protected void removeTask(Task task) {
+		ScheduledTaskEnv env = ScheduledTaskEnv.getInstance();
+		env.removeTask(task.getTaskId());
 	}
 
 	/**

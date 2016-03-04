@@ -1,6 +1,12 @@
 package cn.explink.domain;
 
-public class Customer {
+import java.io.Serializable;
+
+public class Customer implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long customerid;
 	private String customername;
 	private String customeraddress;

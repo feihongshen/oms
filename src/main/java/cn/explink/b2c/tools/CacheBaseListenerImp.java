@@ -1,12 +1,12 @@
 package cn.explink.b2c.tools;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
@@ -30,42 +30,59 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	@Autowired
 	GetDmpDAO getDmpdao;
 
-	private static List<Customer> customerlist = new ArrayList<Customer>();
-	private static List<Branch> branchlist = new ArrayList<Branch>();
-	private static List<User> userlist = new ArrayList<User>();
-
-	public void initCustomerList() {
-		customerlist = getDmpdao.getAllCustomers();
+	private static final String CUSTOMER_CACHE_NAME = "customerCache";
+	private static final String BRANCH_CACHE_NAME = "branchCache";
+	private static final String USER_CACHE_NAME = "userCache";
+	
+	private static final RedisMap<Long, Customer> customerCache = new RedisMapCommonImpl<Long, Customer>(CUSTOMER_CACHE_NAME);
+	private static final RedisMap<Long, Branch> branchCache = new RedisMapCommonImpl<Long, Branch>(BRANCH_CACHE_NAME);
+	private static final RedisMap<Long, User> userCache = new RedisMapCommonImpl<Long, User>(USER_CACHE_NAME);
+	
+	private void initCustomerList() {
+		List<Customer> customerlist = getDmpdao.getAllCustomers();
+		if(customerlist != null){
+			for(Customer customer : customerlist){
+				customerCache.put(customer.getCustomerid(), customer);
+			}
+		}
 		logger.info("初始化customer成功");
 	}
 
-	public void initBranchList() {
-		branchlist = getDmpdao.getAllBranchs();
+	private void initBranchList() {
+		List<Branch> branchlist = getDmpdao.getAllBranchs();
+		if(branchlist != null){
+			for(Branch branch : branchlist){
+				branchCache.put(branch.getBranchid(), branch);
+			}
+		}
 		logger.info("初始化branch成功");
 	}
 
-	public void initUserList() {
-		userlist = getDmpdao.getAllUsers();
+	private void initUserList() {
+		List<User> userlist = getDmpdao.getAllUsers();
+		if(userlist != null){
+			for(User user : userlist){
+				userCache.put(user.getUserid(), user);
+			}
+		}
 		logger.info("初始化user成功");
 	}
 
 	@Override
 	public void initAll() {
-		customerlist = getDmpdao.getAllCustomers();
-		branchlist = getDmpdao.getAllBranchs();
-		userlist = getDmpdao.getAllUsers();
+		this.initCustomerList();
+		this.initBranchList();
+		this.initUserList();
 		logger.info("初始化oms基础数据成功");
 	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		// /this.initAll();
+//		this.initAll();
 	}
 
 	@Override
 	public void onChange(Map<String, String> parameters) {
-		
-		
 		if (parameters == null) {
 			this.initAll();
 		}
@@ -82,37 +99,18 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 		}
 	}
 
-	private List<Customer> getCustomerList() {
-		if (customerlist.size() == 0) {
-			this.initCustomerList();
-		}
-		return customerlist;
-	}
-
-	private List<Branch> getBranchList() {
-		if (branchlist.size() == 0) {
-			this.initBranchList();
-		}
-		return branchlist;
-	}
-
-	private List<User> getUserList() {
-		if (userlist.size() == 0) {
-			this.initUserList();
-		}
-		return userlist;
-	}
-
 	@Override
 	public Customer getCustomer(long customerid) {
 		try {
-
-			for (Customer cust : getCustomerList()) {
-				if (cust.getCustomerid() == customerid) {
-					return cust;
+			Customer customer = customerCache.get(customerid);
+			if(customer == null){
+				customer = getDmpdao.getCustomer(customerid);
+				if(customer != null) {
+					customerCache.put(customer.getCustomerid(), customer);
 				}
 			}
-
+			return customer;
+			
 		} catch (Exception e) {
 			logger.error("获取供货商异常", e);
 		}
@@ -122,12 +120,14 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	@Override
 	public Branch getBranch(long branchid) {
 		try {
-
-			for (Branch branch : this.getBranchList()) {
-				if (branch.getBranchid() == branchid) {
-					return branch;
+			Branch branch = branchCache.get(branchid);
+			if(branch == null){
+				branch = getDmpdao.getNowBranch(branchid);
+				if(branch != null) {
+					branchCache.put(branch.getBranchid(), branch);					
 				}
 			}
+			return branch;
 
 		} catch (Exception e) {
 			logger.error("获取站点信息异常", e);
@@ -138,12 +138,14 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	@Override
 	public User getUser(long userid) {
 		try {
-
-			for (User user : this.getUserList()) {
-				if (user.getUserid() == userid) {
-					return user;
+			User user = userCache.get(userid);
+			if(user == null){
+				user = getDmpdao.getUserById(userid);
+				if(user != null) {
+					userCache.put(user.getUserid(), user);
 				}
 			}
+			return user;
 
 		} catch (Exception e) {
 			logger.error("获取员工信息异常", e);
