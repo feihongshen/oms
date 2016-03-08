@@ -57,9 +57,13 @@ public class SubExcuteWeisudaTask implements Runnable{
 	@Override
 	public void run() {
 		if(tasklist==null || tasklist.size() == 0){
+			try {
+				barrier.await();
+			} catch (InterruptedException e) {  
+			} catch (BrokenBarrierException e) { 
+			}
 			return ;
 		}
-		boolean awaited = false;
 		for (GetUnVerifyOrders_back_Item item : tasklist) {
 			String cwb=item.getOrder_id();
 			try {
@@ -74,22 +78,16 @@ public class SubExcuteWeisudaTask implements Runnable{
 				String result = sendDmpFlow(json);
 				dealWithDmpFeedbackResult(item, result,weisuda);
 				
-				if(!awaited){ //解决线程泄露问题
-					barrier.await();
-					awaited = true;
-				}
 			} catch (Exception e) {
 				logger.error("唯速达签收结果处理单个数据异常"+cwb,e);
 			}
 			
 			
-		}
-		if(!awaited){ //保证至少一次await()
-			try {
-				barrier.await();
-			} catch (InterruptedException e) {  
-			} catch (BrokenBarrierException e) { 
-			}
+		} 
+		try {
+			barrier.await();
+		} catch (InterruptedException e) {  
+		} catch (BrokenBarrierException e) { 
 		}
 		
 	}
