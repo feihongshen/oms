@@ -131,4 +131,23 @@ public class WeisudaDAO {
 			return 0;
 		}
 	}
+	
+	/**
+	 * 获取指定数量的发给唯速达的订单
+	 * @author leo01.liao 2016-03-08
+	 * @param istuisong
+	 * @param orderType
+	 * @param maxcount
+	 * @return
+	 */
+	public List<WeisudaCwb> getWeisudaCwb(String istuisong,int orderType, int maxcount) {
+		try {
+			if(maxcount <= 0){
+				maxcount = 500;
+			}
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and ordertype=? limit 0," + maxcount, new WSMapper(), istuisong,orderType);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

@@ -11,6 +11,9 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Header;
@@ -56,8 +59,6 @@ import cn.explink.util.DateTimeUtil;
 import cn.explink.util.JsonUtil;
 import cn.explink.util.RestHttpServiceHanlder;
 import cn.explink.util.MD5.MD5Util;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 @Service
 public class WeisudaService {
@@ -191,7 +192,38 @@ public class WeisudaService {
 		}
 		
 		try {
+			//Added by leoliao at 2016-03-08 改为一次获取需要发送的订单，然后分批发送。
+			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
+			int cntLoop   = 10;
 			
+			List<WeisudaCwb> weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0", 0, (cntLoop * maxBounds));
+			if ((weisudaCwbs == null) || (weisudaCwbs.size() == 0)) {
+				this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
+				return;
+			}
+			
+			int total = weisudaCwbs.size();
+			int k     = 1;
+			int batch = maxBounds; //每次发送数量
+			while(true){
+				int fromIdx = (k - 1) * batch;
+				if (fromIdx >= total) {
+					break;
+				}
+				
+				int toIdx = k * batch;
+				if (toIdx > total) {
+					toIdx = total;
+				}
+				
+				List<WeisudaCwb> subList = weisudaCwbs.subList(fromIdx, toIdx);
+				this.DealWithBuildXMLAndSending(subList, weisuda);
+				
+				k++;
+			}
+			//Added end
+			
+			/**Commented by leoliao at 2016-03-08
 			int i = 0;
 			while (true) {
 				List<WeisudaCwb> weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0",0);
@@ -210,7 +242,7 @@ public class WeisudaService {
 				this.DealWithBuildXMLAndSending(weisudaCwbs, weisuda);
 
 			}
-
+			*/
 		} catch (Exception e) {
 			String errorinfo = "唯速达_01发送0唯速达0状态反馈遇到不可预知的异常";
 			this.logger.error(errorinfo, e);
