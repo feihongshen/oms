@@ -102,11 +102,14 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	@Override
 	public Customer getCustomer(long customerid) {
 		try {
+			logger.info("查找customer，id=" + String.valueOf(customerid));
 			Customer customer = customerCache.get(customerid);
 			if(customer == null){
+				logger.info("没有找到对应的customer缓存，id=" + String.valueOf(customerid));
 				customer = getDmpdao.getCustomer(customerid);
 				if(customer != null) {
 					customerCache.put(customer.getCustomerid(), customer);
+					logger.info("重新读取customer并加入缓存，id=" + String.valueOf(customerid));
 				}
 			}
 			return customer;
@@ -120,11 +123,14 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	@Override
 	public Branch getBranch(long branchid) {
 		try {
+			logger.info("查找branch，id=" + String.valueOf(branchid));
 			Branch branch = branchCache.get(branchid);
 			if(branch == null){
+				logger.info("没有找到对应的branch缓存，id=" + String.valueOf(branchid));
 				branch = getDmpdao.getNowBranch(branchid);
 				if(branch != null) {
-					branchCache.put(branch.getBranchid(), branch);					
+					branchCache.put(branch.getBranchid(), branch);
+					logger.info("重新读取branch并加入缓存，id=" + String.valueOf(branchid));
 				}
 			}
 			return branch;
@@ -138,11 +144,14 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	@Override
 	public User getUser(long userid) {
 		try {
+			logger.info("查找user，id=" + String.valueOf(userid));
 			User user = userCache.get(userid);
 			if(user == null){
+				logger.info("没有找到对应的user缓存，id=" + String.valueOf(userid));
 				user = getDmpdao.getUserById(userid);
 				if(user != null) {
 					userCache.put(user.getUserid(), user);
+					logger.info("重新读取user并加入缓存，id=" + String.valueOf(userid));
 				}
 			}
 			return user;

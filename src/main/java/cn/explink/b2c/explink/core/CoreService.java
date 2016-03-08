@@ -20,7 +20,6 @@ import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WarehouseCommenDAO;
 import cn.explink.domain.CommenSendData;
 import cn.explink.domain.Common;
-import cn.explink.domain.Customer;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.util.DateTimeUtil;
 import cn.explink.util.JSONReslutUtil;
@@ -51,14 +50,18 @@ public class CoreService {
 	public void initCommonList() {
 		List<Common> commonList = getDmpDAO.getAllCommons();
 		dmpListCache.put(COMMON_LIST, commonList);
+		logger.info("初始化commonList并加入缓存，id=" + COMMON_LIST);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Common> getCommonList() {
+		logger.info("查找commonList，id=" + COMMON_LIST);
 		List<Common> commonList = (List<Common>) dmpListCache.get(COMMON_LIST);
 		if (commonList == null || commonList.size() == 0) {
+			logger.info("没有找到对应的commonList缓存，id=" + COMMON_LIST);
 			commonList = getDmpDAO.getAllCommons();
 			dmpListCache.put(COMMON_LIST, commonList);
+			logger.info("重新读取commonList并加入缓存，id=" + COMMON_LIST);
 		}
 
 		return commonList;
