@@ -97,4 +97,6 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
             </bean>  
         </property>  
      </bean>
+     
+     <bean id="healthCheck" class="cn.explink.util.impl.HealthCheckImpl" />
 </beans>
