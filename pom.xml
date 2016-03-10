@@ -2253,7 +2253,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8083/fjfy</dmpUrl>
+				<dmpUrl>http://127.0.0.1:8080/fjfy</dmpUrl>
 				<label>FJFY</label>
 			</properties>
 		</profile>
