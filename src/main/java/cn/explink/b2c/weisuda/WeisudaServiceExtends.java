@@ -1,63 +1,32 @@
 package cn.explink.b2c.weisuda;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Header;
-import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.explink.b2c.explink.xmldto.OrderFlowDto;
-import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
-import cn.explink.b2c.tools.JacksonMapper;
-import cn.explink.b2c.weisuda.xml.GetUnVerifyOrders_back_Item;
-import cn.explink.b2c.weisuda.xml.Getback_Item;
-import cn.explink.b2c.weisuda.xml.Goods;
-import cn.explink.b2c.weisuda.xml.Item;
 import cn.explink.b2c.weisuda.xml.ObjectUnMarchal;
-import cn.explink.b2c.weisuda.xml.Order;
-import cn.explink.b2c.weisuda.xml.OrderGoods;
-import cn.explink.b2c.weisuda.xml.RootOrder;
-import cn.explink.b2c.weisuda.xml.RootPS;
-import cn.explink.b2c.weisuda.xml.RootSMT;
 import cn.explink.b2c.weisuda.xml.bound.RespRootOrder;
 import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WeisudaDAO;
-import cn.explink.domain.Branch;
-import cn.explink.domain.Customer;
 import cn.explink.domain.SystemInstall;
-import cn.explink.domain.User;
-import cn.explink.enumutil.BranchEnum;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
-import cn.explink.enumutil.DeliveryStateEnum;
-import cn.explink.enumutil.FlowOrderTypeEnum;
-import cn.explink.enumutil.PaytypeEnum;
 import cn.explink.enumutil.pos.PosEnum;
-import cn.explink.jms.dto.CwbOrderWithDeliveryState;
-import cn.explink.jms.dto.DmpCwbOrder;
-import cn.explink.jms.dto.DmpDeliveryState;
-import cn.explink.jms.dto.DmpOrderFlow;
 import cn.explink.util.DateTimeUtil;
-import cn.explink.util.JsonUtil;
 import cn.explink.util.RestHttpServiceHanlder;
 import cn.explink.util.MD5.MD5Util;
 
@@ -109,6 +78,37 @@ public class WeisudaServiceExtends {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 
 			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
+			
+			//Added by leoliao at 2016-03-08 改为一次获取需要发送的订单，然后分批发送。
+			int cntLoop = 10;
+			List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
+			if ((boundList == null) || (boundList.size() == 0)) {
+				this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
+				return;
+			}
+			
+			int total = boundList.size();
+			int k     = 1;
+			int batch = maxBounds; //每次发送数量
+			while(true){
+				int fromIdx = (k - 1) * batch;
+				if (fromIdx >= total) {
+					break;
+				}
+				
+				int toIdx = k * batch;
+				if (toIdx > total) {
+					toIdx = total;
+				}
+				
+				List<WeisudaCwb> subList = boundList.subList(fromIdx, toIdx);				
+				this.DealWithBuildXMLAndSending(subList, weisuda, urlFlag, upflagString);
+				
+				k++;
+			}
+			//Added end
+			
+			/**Commented by leoliao at 2016-03-08
 			int i = 0;
 			while (true) {
 				List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0",cwbordertypeid,maxBounds,0);
@@ -127,6 +127,7 @@ public class WeisudaServiceExtends {
 				this.DealWithBuildXMLAndSending(boundList, weisuda,urlFlag,upflagString);
 
 			}
+			*/
 
 		} catch (Exception e) {
 			String errorinfo = "唯速达_01发送0唯速达0状态反馈遇到不可预知的异常";

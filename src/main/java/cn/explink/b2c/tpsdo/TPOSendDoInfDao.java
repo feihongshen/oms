@@ -79,6 +79,19 @@ public class TPOSendDoInfDao {
 		this.jdbcTemplate.update(sql, transportNo,isSent,trytime,remark,cwb,custcode);
 	}
 	
+	/**
+	 * 
+	 * @param cwb
+	 * @return
+	 */
+	public TPOSendDoInf getTPOSendDoInfByCwb(String cwb){
+		String sql = "select * from tpo_send_do_inf where cwb=? limit 0,1";
+		try{
+			return this.jdbcTemplate.queryForObject(sql, new TPOSendDoInfMapper(),cwb);
+		}catch(Exception e){
+			return null;
+		}
+	}
 	
 
 }

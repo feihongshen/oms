@@ -70,7 +70,7 @@
 							 <ref bean="doTime_gztlOutbranch"/>
 							 <ref bean="doTime_gztl"/>
 							 <ref bean="doTime_weisudaDeliveryResult"/>
-							 <ref bean="doTime_sysInit"/>
+							 <!-- <ref bean="doTime_sysInit"/>-->
 							 <ref bean="doTime_zhemeng"/>
 							 <ref bean="doTime_haoyigou"/>
 							 <ref bean="doTime_gxdx"/>
@@ -932,7 +932,7 @@
 		<property name="concurrent" value="false" />
 	</bean> 
 	
-	
+<!-- wangwei 2016-03-10 暂停手动初始化任务，避免订单重复	
 	  <bean id="doTime_sysInit" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
                <ref bean="getSystemInitTask" />
@@ -951,6 +951,7 @@
          </property>
          <property name="concurrent" value="false" />
      </bean>
+-->
      
      	<bean id="doTime_zhemeng" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
