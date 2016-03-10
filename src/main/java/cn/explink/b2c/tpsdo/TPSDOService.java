@@ -1,6 +1,7 @@
 package cn.explink.b2c.tpsdo;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -120,12 +121,12 @@ public class TPSDOService {
 		request.setAcceptDept(requestVo.getAcceptDept());
 		request.setAcceptOperator(requestVo.getAcceptOperator());
 		request.setAccountMark(requestVo.getAccountMark());
-		request.setActualFee(requestVo.getActualFee().doubleValue());
+		request.setActualFee(requestVo.getActualFee()==null?BigDecimal.ZERO.doubleValue():requestVo.getActualFee().doubleValue());
 		request.setActualPayType(requestVo.getActualPayType());
-		request.setAssuranceFee(requestVo.getAssuranceFee().doubleValue());
-		request.setAssuranceValue(requestVo.getAssuranceValue().doubleValue());
-		request.setCalculateWeight(requestVo.getCalculateWeight().doubleValue());
-		request.setCarriage(requestVo.getCarriage().doubleValue());
+		request.setAssuranceFee(requestVo.getAssuranceFee()==null?BigDecimal.ZERO.doubleValue():requestVo.getAssuranceFee().doubleValue());
+		request.setAssuranceValue(requestVo.getAssuranceValue()==null?BigDecimal.ZERO.doubleValue():requestVo.getAssuranceValue().doubleValue());
+		request.setCalculateWeight(requestVo.getCalculateWeight()==null?BigDecimal.ZERO.doubleValue():requestVo.getCalculateWeight().doubleValue());
+		request.setCarriage(requestVo.getCarriage()==null?BigDecimal.ZERO.doubleValue():requestVo.getCarriage().doubleValue());
 		request.setCneeAddr(requestVo.getCneeAddr());
 		request.setCneeCertificate(requestVo.getCneeCertificate());
 		request.setCneeCity(requestVo.getCneeCity());
@@ -148,7 +149,7 @@ public class TPSDOService {
 		request.setCnorRemark(requestVo.getCnorRemark());
 		request.setCnorTel(requestVo.getCnorTel());
 		request.setCnorTown(requestVo.getCnorTown());
-		request.setCodAmount(requestVo.getCodAmount().doubleValue() + "");
+		request.setCodAmount(requestVo.getCodAmount()==null?BigDecimal.ZERO.doubleValue()+"":requestVo.getCodAmount().doubleValue() + "");
 		request.setCustCode(requestVo.getCustCode());
 		request.setCustName(requestVo.getCustName());
 		request.setCustOrderNo(requestVo.getCustOrderNo());
@@ -164,8 +165,8 @@ public class TPSDOService {
 		request.setSendCarrierCode(requestVo.getSendCarrierCode());
 		request.setTotalBox(requestVo.getTotalBox() + "");
 		request.setTotalNum(requestVo.getTotalNum() + "");
-		request.setTotalVolume(requestVo.getTotalVolume().doubleValue());
-		request.setTotalWeight(requestVo.getTotalWeight().doubleValue());
+		request.setTotalVolume(requestVo.getTotalVolume()==null?BigDecimal.ZERO.doubleValue():requestVo.getTotalVolume().doubleValue());
+		request.setTotalWeight(requestVo.getTotalWeight()==null?BigDecimal.ZERO.doubleValue():requestVo.getTotalWeight().doubleValue());
 		request.setTransportNo(requestVo.getTransportNo());
 		request.setWarehouse(requestVo.getWarehouse());
 		request.setZipCode(requestVo.getZipCode());
@@ -175,8 +176,8 @@ public class TPSDOService {
 			for(ThirdPartyOrder2DORequestVo.Boxinfo boxinfo : requestVo.getBoxinfos()){
 				com.pjbest.deliveryorder.order.service.BoxInfoRequest boxInfoRq = new com.pjbest.deliveryorder.order.service.BoxInfoRequest();
 				boxInfoRq.setBoxNo(boxinfo.getBoxNo());
-				boxInfoRq.setVolume(boxinfo.getVolume().doubleValue());
-				boxInfoRq.setWeight(boxinfo.getWeight().doubleValue());
+				boxInfoRq.setVolume(boxinfo.getVolume()==null?BigDecimal.ZERO.doubleValue():boxinfo.getVolume().doubleValue());
+				boxInfoRq.setWeight(boxinfo.getWeight()==null?BigDecimal.ZERO.doubleValue():boxinfo.getWeight().doubleValue());
 				boxInfoRqList.add(boxInfoRq);
 			}
 			request.setBoxInfos(boxInfoRqList);
@@ -188,13 +189,13 @@ public class TPSDOService {
 				com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPCargoInfo cargoInfoRq = new com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPCargoInfo();
 				cargoInfoRq.setCargoName(cargoInfo.getCargoName());
 				cargoInfoRq.setCount(cargoInfo.getCount() + "");
-				cargoInfoRq.setCargoLength(cargoInfo.getCargoLength().doubleValue());
-				cargoInfoRq.setCargoHeight(cargoInfo.getCargoHeight().doubleValue());
-				cargoInfoRq.setCargoWidth(cargoInfo.getCargoWidth().doubleValue());
-				cargoInfoRq.setWeight(cargoInfo.getWeight().doubleValue());
-				cargoInfoRq.setPrice(cargoInfo.getPrice().doubleValue());
+				cargoInfoRq.setCargoLength(cargoInfo.getCargoLength()==null?BigDecimal.ZERO.doubleValue():cargoInfo.getCargoLength().doubleValue());
+				cargoInfoRq.setCargoHeight(cargoInfo.getCargoHeight()==null?BigDecimal.ZERO.doubleValue():cargoInfo.getCargoHeight().doubleValue());
+				cargoInfoRq.setCargoWidth(cargoInfo.getCargoWidth()==null?BigDecimal.ZERO.doubleValue():cargoInfo.getCargoWidth().doubleValue());
+				cargoInfoRq.setWeight(cargoInfo.getWeight()==null?BigDecimal.ZERO.doubleValue():cargoInfo.getWeight().doubleValue());
+				cargoInfoRq.setPrice(cargoInfo.getPrice()==null?BigDecimal.ZERO.doubleValue():cargoInfo.getPrice().doubleValue());
 				cargoInfoRq.setUnit(cargoInfo.getUnit());
-				cargoInfoRq.setVolume(cargoInfo.getVolume().doubleValue());
+				cargoInfoRq.setVolume(cargoInfo.getVolume()==null?BigDecimal.ZERO.doubleValue():cargoInfo.getVolume().doubleValue());
 				cargoInfoRq.setSizeSn(cargoInfo.getSizeSn());
 				OrderCargoInfoList.add(cargoInfoRq);
 			}
