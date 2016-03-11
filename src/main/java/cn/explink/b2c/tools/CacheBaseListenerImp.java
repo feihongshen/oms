@@ -41,6 +41,7 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	private void initCustomerList() {
 		List<Customer> customerlist = getDmpdao.getAllCustomers();
 		if(customerlist != null){
+			customerCache.clear();
 			for(Customer customer : customerlist){
 				customerCache.put(customer.getCustomerid(), customer);
 			}
@@ -51,6 +52,7 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	private void initBranchList() {
 		List<Branch> branchlist = getDmpdao.getAllBranchs();
 		if(branchlist != null){
+			branchCache.clear();
 			for(Branch branch : branchlist){
 				branchCache.put(branch.getBranchid(), branch);
 			}
@@ -61,6 +63,7 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 	private void initUserList() {
 		List<User> userlist = getDmpdao.getAllUsers();
 		if(userlist != null){
+			userCache.clear();
 			for(User user : userlist){
 				userCache.put(user.getUserid(), user);
 			}
@@ -107,7 +110,7 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 			if(customer == null){
 				logger.info("没有找到对应的customer缓存，id=" + String.valueOf(customerid));
 				customer = getDmpdao.getCustomer(customerid);
-				if(customer != null) {
+				if(customer != null && customer.getCustomerid() != 0) {
 					customerCache.put(customer.getCustomerid(), customer);
 					logger.info("重新读取customer并加入缓存，id=" + String.valueOf(customerid));
 				}
@@ -128,7 +131,7 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 			if(branch == null){
 				logger.info("没有找到对应的branch缓存，id=" + String.valueOf(branchid));
 				branch = getDmpdao.getNowBranch(branchid);
-				if(branch != null) {
+				if(branch != null && branch.getBranchid() != 0) {
 					branchCache.put(branch.getBranchid(), branch);
 					logger.info("重新读取branch并加入缓存，id=" + String.valueOf(branchid));
 				}
@@ -149,7 +152,7 @@ public class CacheBaseListenerImp implements CacheBaseListener, ApplicationListe
 			if(user == null){
 				logger.info("没有找到对应的user缓存，id=" + String.valueOf(userid));
 				user = getDmpdao.getUserById(userid);
-				if(user != null) {
+				if(user != null && user.getUserid() != 0) {
 					userCache.put(user.getUserid(), user);
 					logger.info("重新读取user并加入缓存，id=" + String.valueOf(userid));
 				}
