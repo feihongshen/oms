@@ -177,7 +177,7 @@ public class TPOSendDoInfService {
 		if(cwbOrder.getDeliverid() > 0){
 			deliveryUser=getDmpDAO.getUserById(cwbOrder.getDeliverid());
 			if(deliveryUser!=null&&deliveryUser.getUsername()!=null){
-				deliveryUsername=deliveryUser.getUsername();
+				deliveryUsername=deliveryUser.getUsername().toUpperCase();
 			}
 		}
 
@@ -457,7 +457,7 @@ public class TPOSendDoInfService {
 		if(cwbOrder.getDeliverid() > 0){
 			deliveryUser=getDmpDAO.getUserById(cwbOrder.getDeliverid());
 			if(deliveryUser!=null&&deliveryUser.getUsername()!=null){
-				deliveryUsername=deliveryUser.getUsername();
+				deliveryUsername=deliveryUser.getUsername().toUpperCase();
 			}
 		}
 		
