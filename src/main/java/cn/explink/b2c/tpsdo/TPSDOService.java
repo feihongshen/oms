@@ -56,50 +56,60 @@ public class TPSDOService {
 			List<PjDeliverOrder4DMPRequest> doReqs =new  ArrayList<PjDeliverOrder4DMPRequest>();
 
 			for(TPOSendDoInf tPOSendDoInf : list){
-				PjDeliverOrder4DMPRequest PjDeliverOrder = buildPjDeliverOrderRequest(tPOSendDoInf);
-				if(PjDeliverOrder != null){
-					doReqs.clear();
-					doReqs.add(PjDeliverOrder);
-					int trytime = tPOSendDoInf.getTrytime();
-					List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = null;
+					PjDeliverOrder4DMPRequest PjDeliverOrder = null;
 					try{
-						this.logger.info("开始推送"+doReqs.size() + "条外单数据给DO服务...");
-						long beginTime = new Date().getTime();
-						pjDeliveryOrderList = client.createDeliveryOrder(doReqs);
-						this.logger.info("获得外单推DO响应数据" + (pjDeliveryOrderList == null ? 0 : pjDeliveryOrderList.size()) + "条，耗时" + (new Date().getTime() - beginTime) + "ms");
-						
+						PjDeliverOrder = buildPjDeliverOrderRequest(tPOSendDoInf);
 					}catch(Exception e){
-					    this.logger.error("推送外单数据给DO服务失败！出现未知异常。",e);
-					}
-					
-					if(pjDeliveryOrderList == null || pjDeliveryOrderList.isEmpty()){
+						logger.error("buildPjDeliverOrderRequest failed. cwb={}",tPOSendDoInf.getCwb(), e);
+						try{
+							this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getCwb(), tPOSendDoInf.getCustcode(), null, 0, tPOSendDoInf.getTrytime() + 1, "build request fail:"+e.getMessage());
+						}catch(Exception ex){
+							logger.error("buildPjDeliverOrderRequest db failed. cwb={}",tPOSendDoInf.getCwb(), ex);
+						}
 						continue;
 					}
 					
-					for(PjDeliveryOrder4DMPResponse response : pjDeliveryOrderList ){
-						int resultCode = 0;
+					if(PjDeliverOrder != null){
+						doReqs.clear();
+						doReqs.add(PjDeliverOrder);
+						int trytime = tPOSendDoInf.getTrytime();
+						List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = null;
 						try{
-							resultCode = Integer.parseInt(response.getResultCode());
-						}catch(Exception e){	
-							logger.error("外单数据发送失败！cwb=" + (response == null ? "" :  response.getCustOrderNo()), e);
-						}
-						try{
-							if(resultCode == 1){
-								this.logger.info("推送外单数据给DO成功！cwb={}",response.getCustOrderNo());
-								this.tPOSendDoInfService.updateTPOSendDoInf(response.getCustOrderNo(), response.getCustCode(), response.getTransportNo(), 1, trytime + 1, "");
-							}else{
-								this.logger.info("推送外单数据给DO失败！cwb={},失败原因={}",response.getCustOrderNo(),response.getResultMsg());
-								this.tPOSendDoInfService.updateTPOSendDoInf(response.getCustOrderNo(), response.getCustCode(), response.getTransportNo(), 0, trytime + 1, response.getResultMsg());
-							}
+							this.logger.info("开始推送"+doReqs.size() + "条外单数据给DO服务...");
+							long beginTime = new Date().getTime();
+							pjDeliveryOrderList = client.createDeliveryOrder(doReqs);
+							this.logger.info("获得外单推DO响应数据" + (pjDeliveryOrderList == null ? 0 : pjDeliveryOrderList.size()) + "条，耗时" + (new Date().getTime() - beginTime) + "ms");
+							
 						}catch(Exception e){
-							logger.error("更新外单接口表数据推送账单失败 cwb=" +(response == null ? "" :  response.getCustOrderNo()), e);
+						    this.logger.error("推送外单数据给DO服务失败！出现未知异常。",e);
+						}
+						
+						if(pjDeliveryOrderList == null || pjDeliveryOrderList.isEmpty()){
+							continue;
+						}
+						
+						for(PjDeliveryOrder4DMPResponse response : pjDeliveryOrderList ){
+							int resultCode = 0;
+							try{
+								resultCode = Integer.parseInt(response.getResultCode());
+							}catch(Exception e){	
+								logger.error("外单数据发送失败！cwb=" + (response == null ? "" :  response.getCustOrderNo()), e);
+							}
+							try{
+								if(resultCode == 1){
+									this.logger.info("推送外单数据给DO成功！cwb={}",response.getCustOrderNo());
+									this.tPOSendDoInfService.updateTPOSendDoInf(response.getCustOrderNo(), response.getCustCode(), response.getTransportNo(), 1, trytime + 1, "");
+								}else{
+									this.logger.info("推送外单数据给DO失败！cwb={},失败原因={}",response.getCustOrderNo(),response.getResultMsg());
+									this.tPOSendDoInfService.updateTPOSendDoInf(response.getCustOrderNo(), response.getCustCode(), response.getTransportNo(), 0, trytime + 1, response.getResultMsg());
+								}
+							}catch(Exception e){
+								logger.error("更新外单接口表数据推送账单失败 cwb=" +(response == null ? "" :  response.getCustOrderNo()), e);
+							}
 						}
 					}
-				}
+				
 			}
-			
-			
-			
 		}
 	}
 	
@@ -115,7 +125,8 @@ public class TPSDOService {
 			requestVo = JsonUtil.readValue(tPOSendDoInf.getReqObjJson(),ThirdPartyOrder2DORequestVo.class);
 		} catch (Exception e) {
 			this.logger.error("外单推送DO请求参数json串转对象失败，cwb="+tPOSendDoInf.getCwb(), e);
-			return null;
+			//return null;
+			throw new RuntimeException("json串转对象失败:"+e.getMessage());
 		}
 		PjDeliverOrder4DMPRequest request = new  PjDeliverOrder4DMPRequest();
 		request.setAcceptDept(requestVo.getAcceptDept());
