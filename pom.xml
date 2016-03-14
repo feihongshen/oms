@@ -2191,7 +2191,7 @@
 				<expressurl.password>explinkvipshop</expressurl.password>
 				<expressurl.promptOnNonLocalDatabase></expressurl.promptOnNonLocalDatabase>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<dmpUrl>http://127.0.0.1:8080/gxpx</dmpUrl>
+				<dmpUrl>http://103.229.214.164/gxpx</dmpUrl>
 				<label>GXPX</label>
 			</properties>
 		</profile>
