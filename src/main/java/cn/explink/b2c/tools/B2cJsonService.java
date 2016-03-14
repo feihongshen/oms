@@ -103,7 +103,11 @@ public class B2cJsonService {
 					cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
 
 		}
-		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian.getKey())) || customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian_beijing.getKey()))) {
+		/*if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian.getKey())) || customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian_beijing.getKey()))) {
+			return this.buildB2cDataMaster.getBulidYihaodianB2cData().BuildYihaodianMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate, delivery_state, customer.getB2cEnum(),
+					this.objectMapper);
+		}*/
+		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "yihaodian"))) {
 			return this.buildB2cDataMaster.getBulidYihaodianB2cData().BuildYihaodianMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate, delivery_state, customer.getB2cEnum(),
 					this.objectMapper);
 		}
