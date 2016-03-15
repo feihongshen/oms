@@ -42,6 +42,7 @@ import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WeisudaDAO;
 import cn.explink.domain.Branch;
+import cn.explink.domain.BranchWithOld;
 import cn.explink.domain.Customer;
 import cn.explink.domain.SystemInstall;
 import cn.explink.domain.User;
@@ -480,15 +481,23 @@ public class WeisudaService {
 		try {
 			
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			Branch bch = JsonUtil.readValue(branch, Branch.class);
+			BranchWithOld bch = JsonUtil.readValue(branch, BranchWithOld.class);
 			
 			String province=bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
 			String city=bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
 			String zone=bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
-			String oldCode=weisuda.getChangeBranchcode()==1?(""+bch.getBranchid()):"";
+			String newCode=bch.getTpsbranchcode()==null?"":bch.getTpsbranchcode();
+			String oldCode="";
+			if(weisuda.getChangeBranchcode()==1){
+				oldCode=""+bch.getBranchid();
+			}else{
+				oldCode=bch.getOldtpsbranchcode()==null?"":bch.getOldtpsbranchcode();
+				oldCode=oldCode.equals(newCode)?"":oldCode;//???
+			}
+			
 			String data = "<root>" 
 							+ "<item>" 
-								+ "<code>" + bch.getTpsbranchcode()+ "</code>" 
+								+ "<code>" + newCode+ "</code>" 
 								+ "<old_code>"+oldCode+"</old_code>" 
 								+ "<name>" + bch.getBranchname() + "</name>" 
 								+ "<province>"+ province + "</province>" 
