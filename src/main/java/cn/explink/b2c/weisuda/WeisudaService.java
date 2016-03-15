@@ -28,6 +28,8 @@ import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tpsdo.TPOSendDoInfService;
+import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.weisuda.xml.GetUnVerifyOrders_back_Item;
 import cn.explink.b2c.weisuda.xml.Getback_Item;
 import cn.explink.b2c.weisuda.xml.Goods;
@@ -79,6 +81,8 @@ public class WeisudaService {
 	B2cTools b2cTools2;
 	@Autowired
 	WeiSuDaWaiDanService weiSuDaWaiDanService;
+	@Autowired
+	TPOSendDoInfService tPOSendDoInfService;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -138,8 +142,11 @@ public class WeisudaService {
 				return;
 			} 
 				
+			/**
+			 * 旧外单接口逻辑已废弃 deleted by zhouguoting 2016/03/15
+			 */
 			//查询出唯速达所设置的客户
-			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+			/*Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			if(weisuda.getIsSend() == 0){
 				return;
 			}
@@ -151,6 +158,33 @@ public class WeisudaService {
 				this.weiSuDaWaiDanService.saveWeiSuDa(cwbOrder,weisuda,customer);
 			} else {
 				this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
+			}*/
+			
+			/**
+			 * 修复外单无法同步品骏达签收信息给DMP问题
+			 */
+			ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
+			if(pushCfg == null || pushCfg.getOpenFlag() != 1){
+				logger.info("未配置外单推送DO服务配置信息!无法保存外单数据到express_b2cdata_weisuda表");
+				return;
+			}
+			boolean filterCustomerflag = tPOSendDoInfService.isThirdPartyCustomer(customerid);
+			if(filterCustomerflag){
+				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
+				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
+				User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
+				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime, 1);
+				if (weisudaCwbold == null) {
+					WeisudaCwb weisudaCwb = new WeisudaCwb();
+					weisudaCwb.setCwb(orderFlow.getCwb());
+					weisudaCwb.setCwbordertypeid(cwbordertypeid);
+					weisudaCwb.setCourier_code(deliverUser.getUsername());
+					weisudaCwb.setOperationTime(orderTime);
+					this.weisudaDAO.insertWeisuda(weisudaCwb,1);
+					this.logger.info("唯速达_01获取唯速达数据插入成功cwb={}", weisudaCwb.getCwb());
+				}
+			} else {
+				this.logger.info("外单客户未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
 			}
 			
 		} else {
