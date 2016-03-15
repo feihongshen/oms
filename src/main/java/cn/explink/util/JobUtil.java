@@ -1013,7 +1013,9 @@ public class JobUtil {
 
 	/**
 	 * 品骏达外单定时任务方法调用
+	 * 该方法已废弃 modified by zhouguoting 2015/3/15
 	 */
+	@Deprecated
 	public void sendCwbToPJD(){
 		
 		if (JobUtil.threadMap.get("pjdwaidan") == 1) {
