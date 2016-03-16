@@ -74,7 +74,7 @@
 							 <ref bean="doTime_zhemeng"/>
 							 <ref bean="doTime_haoyigou"/>
 							 <ref bean="doTime_gxdx"/>
-							 <ref bean="doTime_PJD"/>
+							<!--  <ref bean="doTime_PJD"/> -->
 							 <ref bean="doTime_suning"/>
 							 <ref bean="doTime_marykay"></ref>
 							 <ref bean="doTime_feiniuwang" />
@@ -1016,7 +1016,7 @@
 		<property name="concurrent" value="false" />
 	</bean>  
 	<!-- 品骏达外单定时任务 -->
-	<bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean"
+	<!-- <bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="pjd" />
@@ -1035,7 +1035,7 @@
 			<value>sendCwbToPJD</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
+	</bean>   -->
 	
 	<!-- 【苏宁】定时任务配置信息 --> 
 	<bean id="doTime_suning" class="cn.explink.util.DatabaseInitCronTriggerBean"
