@@ -1,8 +1,8 @@
 package cn.explink.util;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,7 +239,7 @@ public class JobUtil {
 	public static Map<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
 
-		JobUtil.threadMap = new HashMap<String, Integer>();
+		JobUtil.threadMap = new ConcurrentHashMap<String, Integer>();
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
