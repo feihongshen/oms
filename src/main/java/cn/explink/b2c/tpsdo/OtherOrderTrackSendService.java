@@ -95,7 +95,7 @@ public class OtherOrderTrackSendService {
 				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
 				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
 				if(req!=null){
-					send(req);
+					send(req,60000);
 					otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
 				}else{
 					otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
@@ -265,8 +265,8 @@ public class OtherOrderTrackSendService {
 		return tpsBranchCode;
 	}
 	
-	private void send(DoTrackFeedbackRequest request) throws OspException{
-		InvocationContext.Factory.getInstance().setTimeout(10000);
+	private void send(DoTrackFeedbackRequest request,long timeout) throws OspException{
+		InvocationContext.Factory.getInstance().setTimeout(timeout);
 		PjDeliveryOrderService pjDeliveryOrderService = new PjDeliveryOrderServiceHelper.PjDeliveryOrderServiceClient();
 			
 		pjDeliveryOrderService.feedbackDoTrack(request);//
@@ -316,6 +316,12 @@ public class OtherOrderTrackSendService {
 				return;
 			}
 			
+			int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
+			if(tpsOperateType<0){
+				this.logger.info("此轨迹不处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				return ;
+			}
+			
 			String orderFlowJson = bean2json(orderFlow);
 			String deliveryStateJson = bean2json(deliveryState);
 		
@@ -326,12 +332,50 @@ public class OtherOrderTrackSendService {
 			vo.setDeliveryStateJson(deliveryStateJson);
 			vo.setTracktime(orderFlow.getCredate());
 			vo.setStatus(1);//
+			vo.setTrytime(0);
+			vo.setErrinfo("");
+
+			//为了性能，分站领货环节优先发送
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
+				String sendTpsResult=sendFlowToTps(orderFlow, deliveryState);
+				if(sendTpsResult==null){
+					vo.setStatus(2);
+					vo.setTrytime(1);
+				}else{
+					vo.setStatus(3);
+					vo.setTrytime(1);
+					vo.setErrinfo(sendTpsResult);
+				}
+			}
 			
 			this.otherOrderTrackService.saveOtherOrderTrack(vo);
+			
 		} catch (Exception e) {
 			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
 		}
 		
+	}
+	
+	private String sendFlowToTps(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState){
+		String result=null;
+		try {
+				String tpsno=otherOrderTrackService.getTpsTransportno(orderFlow.getCwb());
+				
+				OtherOrderTrackVo msgVo=new OtherOrderTrackVo();
+				msgVo.setTpsno(tpsno);
+				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,deliveryState);
+				if(req!=null){
+					send(req,3000);
+					this.logger.info("发送领货成功,cwb="+orderFlow.getCwb());
+				}else{
+					result="此外单轨迹环节忽略不处理";
+				}
+		} catch (Exception e) {
+			result="发送外单领货轨迹到TPS时出错.原因:"+e.getMessage();
+			this.logger.error("发送外单领货轨迹到TPS时出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
+		}
+		
+		return result;
 	}
 	
 	private String bean2json(Object object){

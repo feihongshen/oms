@@ -9,6 +9,8 @@ public class OtherOrderTrackVo {
 	private String deliveryStateJson;
 	private Timestamp tracktime;
 	private int status;
+	private String errinfo;
+	private int trytime;
 	
 	private String tpsno;//tps运单号
 	
@@ -54,6 +56,18 @@ public class OtherOrderTrackVo {
 	}
 	public void setTpsno(String tpsno) {
 		this.tpsno = tpsno;
+	}
+	public String getErrinfo() {
+		return errinfo;
+	}
+	public void setErrinfo(String errinfo) {
+		this.errinfo = errinfo;
+	}
+	public int getTrytime() {
+		return trytime;
+	}
+	public void setTrytime(int trytime) {
+		this.trytime = trytime;
 	}
 	
 	
