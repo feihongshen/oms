@@ -198,7 +198,7 @@
                <ref bean="getRufengdaTask" />
            </property>
              <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
+               <value>0 */5 * * * ?</value>
            </property>
       </bean>
      
