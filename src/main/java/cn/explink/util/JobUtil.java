@@ -868,7 +868,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryResult", 1);
 		try {
-			this.weisudaService.getUnVerifyOrdersOfCount();
+			//Commented by leoliao at 2016-04-01 全部统一使用批量同步方式
+			//this.weisudaService.getUnVerifyOrdersOfCount();
 			this.weisudaService.getback_getAppOrdersCounts();
 			
 			this.weisudaServiceDeliveryResult.getDeliveryResult();

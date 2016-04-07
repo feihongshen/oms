@@ -55,9 +55,10 @@ public class WeisudaServiceDeliveryResult {
 		}
 		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 		
+		/**Commented by leoliao at 2016-04-01 全部统一使用批量同步方式
 		if(weisuda.getOpenbatchflag()==0){ //关闭批量之后退出
 			return;
-		}
+		}*/
 		
 		int count = weisuda.getCount().length() > 0 ? Integer.parseInt(weisuda.getCount()) : 1;
 		for (int i = 0; i < count; i++) {
