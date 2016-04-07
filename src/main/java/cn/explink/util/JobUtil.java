@@ -241,6 +241,7 @@ public class JobUtil {
 
 		JobUtil.threadMap = new ConcurrentHashMap<String, Integer>();
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
+		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("suningCurrentinteger",0);
@@ -255,6 +256,7 @@ public class JobUtil {
 	 */
 	public void updateBatcnitialThreadMap() {
 		JobUtil.threadMap.put("weisudaDeliveryBound", 0);
+		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("otherordertrack", 0);
@@ -838,7 +840,31 @@ public class JobUtil {
 		this.logger.info("执行了推送家有购物北京定时器!");
 	}
 
-	public  void getWeisuda_Task() {
+	
+	/**
+	 * 推送订单绑定小件员失败重推
+	 */
+    public void getWeisuda_TaskResend() {
+		
+		if (JobUtil.threadMap.get("weisudaDeliveryBoundRepeat") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryBoundRepeat");
+			return;
+		}
+		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 1);
+		try {
+			this.weisudaService.boundDeliveryToApp(true); //重推单票
+			this.weisudaServiceExtends.boundsDeliveryToApp(true);//重推批量
+
+		} catch (Exception e) {
+			this.logger.error("执行了唯速达重推订单绑定小件员定时器异常!", e);
+		}finally{
+			JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 0);
+		}
+		this.logger.info("执行了推送唯速达快递单绑定小件员失败重推定时器!");
+	}
+	
+    
+    public  void getWeisuda_Task() {
 		
 		if (JobUtil.threadMap.get("weisudaDeliveryBound") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryBound");
@@ -846,8 +872,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
 		try {
-			this.weisudaService.boundDeliveryToApp(); //单票
-			this.weisudaServiceExtends.boundsDeliveryToApp();//批量
+			this.weisudaService.boundDeliveryToApp(false); //首次单票
+			this.weisudaServiceExtends.boundsDeliveryToApp(false);//首次批量
 
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达定时器异常!", e);
