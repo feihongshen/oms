@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -762,6 +763,9 @@ public class WeisudaService {
 				try {
 					RootSMT back_Root = (RootSMT) ObjectUnMarchal.XmltoPOJO(response, new RootSMT());
 
+					//Modified by leoliao at 2016-04-01 改为批量反馈给品骏达方式
+					Map<String, String> mapResult = new HashMap<String, String>();
+					
 					for (Getback_Item item : back_Root.getItem()) {
 						String cwb=item.getOrder_id();
 						WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(cwb);
@@ -775,7 +779,9 @@ public class WeisudaService {
 						this.logger.info("唯速达_11请求dmp-json={}", json);
 
 						String result = this.getDmpDAO.requestDMPOrderService_Weisuda(json);
-
+						mapResult.put(cwb, result);
+						
+						/**Commented by leoliao at 2016-04-01
 						if ("SUCCESS".equals(result)) {
 							this.weisudaDAO.updataWeisudaCwbIsqianshou(item.getOrder_id(), "1", "上门退订单信息通过_手机_签收成功");
 							this.getback_confirmAppOrders(item.getOrder_id());
@@ -789,13 +795,45 @@ public class WeisudaService {
 							this.getback_confirmAppOrders(item.getOrder_id());
 							continue;
 						}
+						*/
+					}
+					
+					try{
+						//批量反馈签收处理结果给品骏达						
+						logger.info("唯速达_11使用批量方式把上门退签收信息同步结果反馈给品骏达,mapResult={}", mapResult);
+						
+						if(!mapResult.isEmpty()){
+							//DMP签收成功或已经签收的订单号
+							List<String> listOrderIdSuccess = new ArrayList<String>();
+							
+							Iterator<String> keys = mapResult.keySet().iterator();
+							while(keys.hasNext()){
+								String orderId = keys.next();
+								String result  = mapResult.get(orderId);
+								
+								if ("SUCCESS".equals(result)) {
+									this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "1", "上门退订单信息通过_手机_签收成功");
+									listOrderIdSuccess.add(orderId);
+								} else if (result.contains("处理唯速达反馈请求异") && result.contains("已审核的订单不允许进行反馈")) {
+									this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "1", "上门退订单信息已经通过_其它方式_签收成功");
+									listOrderIdSuccess.add(orderId);
+								}else {
+									this.logger.info("唯速达_11请求dmp唯速达信息异常{},cwb={}", result, orderId);
+									String remark = (result!=null&&result.length()>80)?result.substring(0, 80):result;
+									this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "2", remark);
+								}
+							}
+							
+							//DMP签收成功或已经签收的需要反馈给品骏达
+							this.getback_confirmAppOrders(listOrderIdSuccess, weisuda);
+						}
+					}catch(Exception ex){
+						logger.error("唯速达_11使用批量方式把上门退签收信息同步结果反馈给品骏达异常", ex);
 					}
 				}catch (Exception e) {
 					this.logger.error("唯速达_11请求dmp唯速达信息异常" + response, e);
 				}
-			}
-
-			else {
+			} else {
 				this.logger.info("唯速达_11返回订单失败！{}", response);
 			}
 		}
@@ -1156,6 +1194,13 @@ public class WeisudaService {
 		dto.setDeliveryname(item.getCourier_code());
 		String payremark = "_";
 		int paytype = 0;
+		
+		/**Added by leoliao at 2016-04-01  添加新的支付方式
+		 * 品骏达现有支付方式：1-线上已支付，2-现金，3-POS支付，11-微信扫码，12-支付宝扫码，13-工行MPOS,14-快刷,
+		                      15-pos快刷支付,16-通联支付，17-唯宝支付，18-支付宝主动扫码
+                     后期计划添加支付方式： 20-微信主动扫码,19-银商支付
+           DMP支付方式：Xianjin(1, "现金"), Pos(2, "POS刷卡"), Zhipiao(3, "支票"), Qita(4, "其他"), CodPos(5, "COD扫码支付");
+		 */
 		if ("1".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.Xianjin.getValue();
 			// paytype = PaytypeEnum.Qita.getValue();
@@ -1193,6 +1238,15 @@ public class WeisudaService {
 			paytype = PaytypeEnum.Pos.getValue();
 		} else if ("17".equals(item.getPaymethod())) {
 			payremark = "唯宝支付";
+			paytype = PaytypeEnum.CodPos.getValue();
+		} else if ("18".equals(item.getPaymethod())) {
+			payremark = "支付宝主动扫码";
+			paytype = PaytypeEnum.CodPos.getValue();
+		} else if ("19".equals(item.getPaymethod())) {
+			payremark = "银商支付";
+			paytype = PaytypeEnum.Pos.getValue();
+		} else if ("20".equals(item.getPaymethod())) {
+			payremark = "微信主动扫码";
 			paytype = PaytypeEnum.CodPos.getValue();
 		}
 		dto.setCwbremark(item.getMemo());
@@ -1342,4 +1396,30 @@ public class WeisudaService {
 		return version;
 	}
 	
+	/**
+	 * APP包裹签收信息同步结果反馈接口[批量反馈给APP]
+	 * @author leo01.liao
+	 * @param 订单号码
+	 */
+	private void getback_confirmAppOrders(List<String> listOrderId, Weisuda weisuda) {
+		if(listOrderId == null || listOrderId.isEmpty()){
+			return;
+		}
+		
+		StringBuffer sbSend = new StringBuffer();
+		sbSend.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+		sbSend.append("<root>");
+		for(String orderId : listOrderId){
+			sbSend.append("<item>");
+			sbSend.append("<order_id>");
+			sbSend.append(orderId);
+			sbSend.append("</order_id>");
+			sbSend.append("</item>");
+		}
+		sbSend.append("</root>");
+		
+		this.logger.info("[批量发送]唯速达_12APP上门退签收信息同步结果反馈接口 发送报文,userMessage={}", sbSend);
+		String response = this.check(weisuda, "data", sbSend.toString(), WeisudsInterfaceEnum.getback_confirmAppOrders.getValue());
+		this.logger.info("[批量发送]唯速达_12APP上门退签收信息同步结果反馈接口 返回response={}", response);
+	}
 }
