@@ -1,10 +1,8 @@
-package cn.explink.dao;
+package cn.explink.domain;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import cn.explink.domain.MqException;
 
 import com.alibaba.fastjson.JSON;
 
