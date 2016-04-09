@@ -8,8 +8,6 @@ import java.util.Map;
 
 import net.sf.json.JSONObject;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 

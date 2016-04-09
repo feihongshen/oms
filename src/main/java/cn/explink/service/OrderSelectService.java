@@ -1,7 +1,5 @@
 package cn.explink.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,10 +9,6 @@ import net.sf.json.JSONObject;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +19,12 @@ import cn.explink.controller.CwbOrderImportDTO;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.ExportmouldDAO;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.dao.MqExceptionDAO;
 import cn.explink.dao.OperatelogDAO;
 import cn.explink.dao.SetExportFieldDAO;
-import cn.explink.domain.CwbOrder;
-import cn.explink.domain.SetExportField;
+import cn.explink.domain.MqExceptionBuilder;
 import cn.explink.domain.User;
-import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
-import cn.explink.enumutil.FlowOrderTypeEnum;
-import cn.explink.util.ExcelUtils;
 
 @Service
 public class OrderSelectService {
@@ -62,6 +53,9 @@ public class OrderSelectService {
 	ProducerTemplate auditBackGoodsRemark;
 	@Autowired
 	ExportService exportService;
+	
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
 
 	private Logger logger = LoggerFactory.getLogger(OrderSelectService.class);
 
@@ -75,6 +69,11 @@ public class OrderSelectService {
 			return 1;
 		} catch (Exception e) {
 			logger.error("JMS : Send : jms:topic:updateOrderMoney : cwb : " + cwb);
+			//写MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("updateOrderMoneySendJms")
+					.buildExceptionInfo(e.getMessage()).buildTopic(this.sendUpdateOrderMoney.getDefaultEndpoint().getEndpointUri())
+					.buildMessageHeader("cwbAndMoney", sendObject.toString()).getMqException());
+		
 			return 0;
 		}
 	}
@@ -90,6 +89,10 @@ public class OrderSelectService {
 			return 1;
 		} catch (Exception e) {
 			logger.error("JMS : Send error: jms:topic:auditBackGoods : cwb : " + cwb + " auditstate:" + state);
+			//写MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsJms")
+					.buildExceptionInfo(e.getMessage()).buildTopic(this.auditBackGoods.getDefaultEndpoint().getEndpointUri())
+					.buildMessageHeader( "cwbAndAuditstate", sendObject.toString()).getMqException());
 			return 0;
 		}
 	}
@@ -105,6 +108,10 @@ public class OrderSelectService {
 			return 1;
 		} catch (Exception e) {
 			logger.error("JMS : Send error: jms:topic:auditBackGoodsEgan : cwb : " + cwb + " auditEganstate:" + state);
+			//写MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsEganJms")
+					.buildExceptionInfo(e.getMessage()).buildTopic(this.auditBackGoodsEgan.getDefaultEndpoint().getEndpointUri())
+					.buildMessageHeader( "cwbAndAuditEganstate", sendObject.toString()).getMqException());
 			return 0;
 		}
 	}
@@ -120,6 +127,11 @@ public class OrderSelectService {
 			return 1;
 		} catch (Exception e) {
 			logger.error("JMS : Send error: jms:topic:auditBackGoodsRemark : cwb : " + cwb + " remark:" + remark);
+			//写MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsRemarkJms")
+					.buildExceptionInfo(e.getMessage()).buildTopic(this.auditBackGoodsRemark.getDefaultEndpoint().getEndpointUri())
+					.buildMessageHeader( "cwbAndBackremark", sendObject.toString()).getMqException());
+		
 			return 0;
 		}
 	}

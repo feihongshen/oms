@@ -2,7 +2,6 @@ package cn.explink.service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,8 +10,6 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -48,8 +45,6 @@ public class BranchPayamountService {
 	DeliveryStateDAO deliverStateDAO;
 	@Autowired
 	GotoClassDAO gotoClassDAO;
-	@Produce(uri = "jms:queue:sendPayUpBack")
-	ProducerTemplate sendPayUpBackMsg;
 
 	private Logger logger = LoggerFactory.getLogger(BranchPayamountService.class);
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -83,8 +78,6 @@ public class BranchPayamountService {
 							}
 							branchPayamountDao.save(b);
 							logger.info("发送反馈消息给站点---payUpBack");
-							// sendPayUpBackMsg.sendBodyAndHeader(null,
-							// "payUpBack", b.getObjctToJSON().toString());
 
 						} else {
 							BranchPayamount b = list.get(i);
@@ -105,9 +98,6 @@ public class BranchPayamountService {
 							}
 							branchPayamountDao.save(b);
 							logger.info("发送反馈消息给站点---payUpBack");
-							// sendPayUpBackMsg.sendBodyAndHeader(null,
-							// "payUpBack", b.getObjctToJSON().toString());
-
 						}
 					}
 				}

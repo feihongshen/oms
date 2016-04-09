@@ -32,9 +32,11 @@ import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.dao.ExpressSysMonitorDAO;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.dao.MqExceptionDAO;
 import cn.explink.domain.B2CData;
 import cn.explink.domain.Customer;
 import cn.explink.domain.ExpressSysMonitor;
+import cn.explink.domain.MqExceptionBuilder;
 import cn.explink.domain.SystemInstall;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
@@ -80,10 +82,12 @@ public class FlowFromJMSB2cService {
 	@Produce(uri = "jms:queue:sendBToCToDmp")
 	ProducerTemplate sendBToCToDmpProducer;
 
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private ObjectReader dmpOrderFlowMapper = this.objectMapper.reader(DmpOrderFlow.class);
 	private ObjectReader cwbOrderWithDeliveryStateReader = this.objectMapper.reader(CwbOrderWithDeliveryState.class);
-	private ObjectReader dmpOrderReader = this.objectMapper.reader(DmpCwbOrder.class);
 
 	private Logger logger = LoggerFactory.getLogger(FlowFromJMSB2cService.class);
 	private List<String> flowList = new ArrayList<String>(); // 存储 对接所用的环节
@@ -500,6 +504,7 @@ public class FlowFromJMSB2cService {
 	}
 
 	public void sendTodmp(String b2cids) {
+		JSONObject json = new JSONObject();
 		try {
 			List<B2CData> list = this.b2CDataDAO.getB2CDataListByIds(b2cids);
 			if ((list != null) && (list.size() > 0)) {
@@ -508,14 +513,18 @@ public class FlowFromJMSB2cService {
 					delIds += b2cData.getDelId() + ",";
 				}
 				delIds = delIds.length() > 0 ? delIds.substring(0, delIds.length() - 1) : "";
-				JSONObject json = new JSONObject();
+				
 				json.put("ids", delIds);
 				json.put("pushtime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 				this.sendBToCToDmpProducer.sendBodyAndHeader(null, "delIds", json.toString());
 			}
 		} catch (CamelExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("", e);
+			//写MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("sendTodmp")
+					.buildExceptionInfo(e.getMessage()).buildTopic(this.sendBToCToDmpProducer.getDefaultEndpoint().getEndpointUri())
+					.buildMessageHeader("delIds", json.toString()).getMqException());
+		
 		}
 
 	}

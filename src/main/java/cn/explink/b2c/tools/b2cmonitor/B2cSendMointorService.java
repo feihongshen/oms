@@ -3,8 +3,6 @@ package cn.explink.b2c.tools.b2cmonitor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +21,7 @@ import cn.explink.domain.B2CData;
 @Service
 public class B2cSendMointorService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	// @Produce(uri="jms:topic:b2cDataSendResultMonitor")
-	// ProducerTemplate b2cDataResultSend;
+	
 	@Autowired
 	B2CDataDAO b2cDataDAO;
 
