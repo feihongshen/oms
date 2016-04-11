@@ -308,7 +308,7 @@ public class FlowFromJMSService {
 	 * 
 	 * @param parm
 	 */
-	public void doSaveFlow(String parm) {
+	public void doSaveFlow(String parm) throws Exception{
 		long start = System.currentTimeMillis();
 		logger.info("进入flow消息，开始：" + start);
 		saveAll(parm, 1);
