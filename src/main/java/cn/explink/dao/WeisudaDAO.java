@@ -57,6 +57,14 @@ public class WeisudaDAO {
 			return null;
 		}
 	}
+	
+	public List<WeisudaCwb> getBoundWeisudaCwbsRepeat(String istuisong,long cwbordertypeid,int maxcount,int orderType) {
+		try {
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=? and sendedcount >= 1 and sendedcount <= 50  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid,orderType);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 	public WeisudaCwb getWeisudaCwbIstuisong(String cwb) {
 		try {
@@ -90,7 +98,12 @@ public class WeisudaDAO {
 
 	public void updateWeisuda(String cwb, String flag, String remark) {
 
-		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW() where cwb='" + cwb + "'");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW(),sendedcount = 1 where cwb='" + cwb + "'");
+	}
+	
+	public void updateWeisudaRepeat(String cwb, String flag, String remark) {
+
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='" + remark + "',istuisong='" + flag + "',bound_time=NOW(),sendedcount = sendedcount+1 where cwb='" + cwb + "'");
 	}
 	public void updateWeisudawaidan(String cwb, String flag, String remark) {
 		
@@ -99,9 +112,12 @@ public class WeisudaDAO {
 
 	public void updateBoundState(String cwbs, String flag,String remark) {
 
-		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW() where cwb in ("+cwbs+") ");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW(),sendedcount = 1 where cwb in ("+cwbs+") ");
 	}
-	
+	public void updateBoundStateRepeat(String cwbs, String flag,String remark) {
+
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW(),sendedcount = sendedcount + 1 where cwb in ("+cwbs+") ");
+	}
 	
 	public void updataWeisudaCwbIsqianshou(String cwb, String flag, String remark) {
 		this.jdbcTemplate.update("update express_b2cdata_weisuda set isqianshou='" + flag + "' ,remark='" + remark + "' where  cwb='" + cwb + "'");
@@ -146,6 +162,24 @@ public class WeisudaDAO {
 				maxcount = 500;
 			}
 			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and ordertype=? limit 0," + maxcount, new WSMapper(), istuisong,orderType);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * 获取指定数量的重发给唯速达的订单
+	 */
+	public List<WeisudaCwb> getWeisudaCwbRepeat(String istuisong,int orderType, int maxcount) {
+		try {
+			if(maxcount <= 0){
+				maxcount = 500;
+			}
+			return this.jdbcTemplate
+					.query("select * from express_b2cdata_weisuda  where istuisong=? and ordertype=? "
+							+ " and sendedcount >= 1 and sendedcount <= 50 limit 0,"
+							+ maxcount, new WSMapper(), istuisong, orderType);
 		} catch (Exception e) {
 			return null;
 		}

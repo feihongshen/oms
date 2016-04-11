@@ -56,7 +56,7 @@ public class WeisudaServiceExtends {
 	 * 批量推送
 	 */
 
-	public void boundsDeliveryToApp() {
+	public void boundsDeliveryToApp(boolean isRepeat) {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_01未开启[唯速达]接口");
 			return;
@@ -67,13 +67,13 @@ public class WeisudaServiceExtends {
 			return;
 		}
 		
-		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Peisong.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_01");
-		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Shangmentui.getValue(),WeisudsInterfaceEnum.getback_boundOrders.getValue(),"唯速达_10");
-		boundDeliveryAppMethod(CwbOrderTypeIdEnum.OXO.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_10");
+		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Peisong.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_01",isRepeat);
+		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Shangmentui.getValue(),WeisudsInterfaceEnum.getback_boundOrders.getValue(),"唯速达_10",isRepeat);
+		boundDeliveryAppMethod(CwbOrderTypeIdEnum.OXO.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_10",isRepeat);
 
 	}
 
-	private void boundDeliveryAppMethod(long cwbordertypeid,int urlFlag,String upflagString ) {
+	private void boundDeliveryAppMethod(long cwbordertypeid,int urlFlag,String upflagString, boolean isRepeat ) {
 		try {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 
@@ -81,12 +81,22 @@ public class WeisudaServiceExtends {
 			
 			//Added by leoliao at 2016-03-08 改为一次获取需要发送的订单，然后分批发送。
 			int cntLoop = 10;
-			List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
-			if ((boundList == null) || (boundList.size() == 0)) {
-				this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
-				return;
-			}
 			
+			List<WeisudaCwb> boundList = null;
+			if (!isRepeat) {
+				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
+				if ((boundList == null) || (boundList.size() == 0)) {
+					this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
+					return;
+				}
+			} else {
+				boundList = this.weisudaDAO.getBoundWeisudaCwbsRepeat("2", cwbordertypeid, (cntLoop * maxBounds), 0);
+				if ((boundList == null) || (boundList.size() == 0)) {
+					this.logger.info("重推唯速达_01当前没有要推送0唯速达0的数据");
+					return;
+				}
+			}
+
 			int total = boundList.size();
 			int k     = 1;
 			int batch = maxBounds; //每次发送数量
@@ -102,7 +112,7 @@ public class WeisudaServiceExtends {
 				}
 				
 				List<WeisudaCwb> subList = boundList.subList(fromIdx, toIdx);				
-				this.DealWithBuildXMLAndSending(subList, weisuda, urlFlag, upflagString);
+				this.DealWithBuildXMLAndSending(subList, weisuda, urlFlag, upflagString, isRepeat);
 				
 				k++;
 			}
@@ -135,7 +145,7 @@ public class WeisudaServiceExtends {
 		}
 	}
 	
-	private void DealWithBuildXMLAndSending(List<WeisudaCwb> boundList, Weisuda weisuda,int urlFlag,String upflagString) {
+	private void DealWithBuildXMLAndSending(List<WeisudaCwb> boundList, Weisuda weisuda,int urlFlag,String upflagString, boolean isRepeat) {
 		try {
 		
 			String response = "";
@@ -151,7 +161,7 @@ public class WeisudaServiceExtends {
 			this.logger.info(upflagString + "快递员批量绑定接口接口发送报文,userMessage={}", sub.toString());
 			response = this.check(weisuda, "data", sub.toString(), urlFlag);
 			this.logger.info(upflagString + "快递员批量绑定接口返回：{}", response);
-			updateDeliveryUserBound(response, upflagString, version,boundList);
+			updateDeliveryUserBound(response, upflagString, version,boundList, isRepeat );
 		} catch (Exception e) {
 			logger.error("唯速达批量绑定接口发生异常",e);
 		} 
@@ -184,7 +194,7 @@ public class WeisudaServiceExtends {
 	}
 	
 	private void updateDeliveryUserBound(String response,
-			String upflagString, int version,List<WeisudaCwb> boundList) throws JAXBException,
+			String upflagString, int version,List<WeisudaCwb> boundList, boolean isRepeat ) throws JAXBException,
 			UnsupportedEncodingException {
 		
 		RespRootOrder respOrders=(RespRootOrder) ObjectUnMarchal.XmltoPOJO(response, new RespRootOrder());
@@ -207,7 +217,12 @@ public class WeisudaServiceExtends {
 				this.weisudaDAO.updateBoundState(cwbs, "1","成功");
 			}
 			if(failCwbs!=null&&!failCwbs.isEmpty()){
-				this.weisudaDAO.updateBoundState(failCwbs, "2","失败");
+				if (!isRepeat) {
+					this.weisudaDAO.updateBoundState(failCwbs, "2","失败");
+				} else {
+					this.weisudaDAO.updateBoundStateRepeat(failCwbs, "2","失败");
+				}
+				
 			}
 			
 		} 
