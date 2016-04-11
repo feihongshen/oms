@@ -109,29 +109,33 @@ public class JiuyeService {
 				}
 				//遍历每一条表单整体信息
 				for(B2CData b2cdata:jiuyelist){
-					JiuyeXMLNote note = this.b2cUtil.getDataMethod(b2cdata.getJsoncontent(),JiuyeXMLNote.class);
-					JiuYe_request jiuyereq=new JiuYe_request();
-					jiuyereq.setRequestName("RequestOrderStateToDMS");
-					jiuyereq.setDelveryCode(jiuye.getDmsCode());
-					String timeStamp=DateTimeUtil.getNowTime();
-					jiuyereq.setSign(MD5Util.md5(timeStamp+jiuye.getPrivate_key()));
-					jiuyereq.setTimeStamp(timeStamp);
-					jiuyereq.setContent(note);
-					
-					String requestJson=JacksonMapper.getInstance().writeValueAsString(jiuyereq);
-					logger.info("请求九曵参数为:{}",requestJson);
-					String responseJson=RestHttpServiceHanlder.sendHttptoServer(requestJson, jiuye.getFeedbackUrl());
-					logger.info("九曵返回的数据为:{}",responseJson);
-					JiuYe_response response=JacksonMapper.getInstance().readValue(responseJson, JiuYe_response.class);
-					
-					int send_b2c_flag=1;
-					if(response.getSuccess().equals("true")){
-						send_b2c_flag=1;
-					}else{
-						send_b2c_flag=2;
+					try{
+						JiuyeXMLNote note = this.b2cUtil.getDataMethod(b2cdata.getJsoncontent(),JiuyeXMLNote.class);
+						JiuYe_request jiuyereq=new JiuYe_request();
+						jiuyereq.setRequestName("RequestOrderStateToDMS");
+						jiuyereq.setDelveryCode(jiuye.getDmsCode());
+						String timeStamp=DateTimeUtil.getNowTime();
+						jiuyereq.setSign(MD5Util.md5(timeStamp+jiuye.getPrivate_key()));
+						jiuyereq.setTimeStamp(timeStamp);
+						jiuyereq.setContent(note);
+						
+						String requestJson=JacksonMapper.getInstance().writeValueAsString(jiuyereq);
+						logger.info("请求九曵参数为:{}",requestJson);
+						String responseJson=RestHttpServiceHanlder.sendHttptoServer(requestJson, jiuye.getFeedbackUrl());
+						logger.info("九曵返回的数据为:{}",responseJson);
+						JiuYe_response response=JacksonMapper.getInstance().readValue(responseJson, JiuYe_response.class);
+						
+						int send_b2c_flag=1;
+						if(response.getSuccess().equals("true")){
+							send_b2c_flag=1;
+						}else{
+							send_b2c_flag=2;
+						}
+						b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, response.getMsg());
+					}catch (Exception e) {
+						logger.error("0九曳0状态反馈异常,b2cid="+b2cdata.getB2cid()+",单号="+b2cdata.getCwb()+",异常信息:"+e.getMessage(),e);
 					}
-					b2CDataDAO.updateB2cIdSQLResponseStatus(b2cdata.getB2cid(), send_b2c_flag, response.getMsg());
-				}
+					}
 			}
 		} catch (Exception e) {
 			logger.error("调用0九曳0webservice服务器异常"+e.getMessage(),e);
