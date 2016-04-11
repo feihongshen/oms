@@ -1,7 +1,9 @@
 package cn.explink.b2c.weisuda.threadpool;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BrokenBarrierException;
@@ -64,26 +66,38 @@ public class SubExcuteWeisudaTask implements Runnable{
 			}
 			return ;
 		}
+		
+		//Modified by leoliao at 2016-04-01 改为批量反馈给品骏达方式
+		Map<String, String> mapResult = new HashMap<String, String>();
+		
 		for (GetUnVerifyOrders_back_Item item : tasklist) {
 			String cwb=item.getOrder_id();
 			try {
 				WeisudaCwb weisudaCwbs = this.weisudaDAO.getWeisudaCwbIstuisong(cwb);
 				if(weisudaCwbs == null){
+					logger.info("唯速达_03APP包裹签收信息同步：接口表express_b2cdata_weisuda没有订单号为{}的订单", cwb);
+					
 					this.updateUnVerifyOrders(item.getOrder_id(),weisuda);
 					continue;
 				}
 				
-				
 				String json = this.buliderJson(item, cwb);
 				String result = sendDmpFlow(json);
-				dealWithDmpFeedbackResult(item, result,weisuda);
 				
+				mapResult.put(cwb, result);
+				//dealWithDmpFeedbackResult(item, result,weisuda);
 			} catch (Exception e) {
 				logger.error("唯速达签收结果处理单个数据异常"+cwb,e);
 			}
-			
-			
-		} 
+		}
+		
+		try{
+			//批量反馈签收处理结果给品骏达
+			this.dealWithDmpFeedbackResult(mapResult, weisuda);			
+		}catch(Exception ex){
+			logger.error("批量反馈唯速达签收结果给品骏达异常", ex);
+		}
+		
 		try {
 			barrier.await();
 		} catch (InterruptedException e) {  
@@ -150,6 +164,13 @@ public class SubExcuteWeisudaTask implements Runnable{
 		dto.setDeliveryname(item.getCourier_code());
 		String payremark = "_";
 		int paytype = 0;
+		
+		/**Added by leoliao at 2016-04-01  添加新的支付方式
+		 * 品骏达现有支付方式：1-线上已支付，2-现金，3-POS支付，11-微信扫码，12-支付宝扫码，13-工行MPOS,14-快刷,
+		                      15-pos快刷支付,16-通联支付，17-唯宝支付，18-支付宝主动扫码
+                     后期计划添加支付方式： 20-微信主动扫码,19-银商支付
+           DMP支付方式：Xianjin(1, "现金"), Pos(2, "POS刷卡"), Zhipiao(3, "支票"), Qita(4, "其他"), CodPos(5, "COD扫码支付");
+		 */
 		if ("1".equals(item.getPaymethod())) {
 			paytype = PaytypeEnum.Xianjin.getValue();
 			// paytype = PaytypeEnum.Qita.getValue();
@@ -188,7 +209,17 @@ public class SubExcuteWeisudaTask implements Runnable{
 		} else if ("17".equals(item.getPaymethod())) {
 			payremark = "唯宝支付";
 			paytype = PaytypeEnum.CodPos.getValue();
+		} else if ("18".equals(item.getPaymethod())) {
+			payremark = "支付宝主动扫码";
+			paytype = PaytypeEnum.CodPos.getValue();
+		} else if ("19".equals(item.getPaymethod())) {
+			payremark = "银商支付";
+			paytype = PaytypeEnum.Pos.getValue();
+		} else if ("20".equals(item.getPaymethod())) {
+			payremark = "微信主动扫码";
+			paytype = PaytypeEnum.CodPos.getValue();
 		}
+		
 		dto.setCwbremark(item.getMemo());
 		dto.setPayremark(payremark);
 		dto.setPaytype(paytype);
@@ -294,4 +325,71 @@ public class SubExcuteWeisudaTask implements Runnable{
 		}
 	}
 	
+	
+	/**
+	 * 使用批量方式把签收信息同步结果反馈给品骏达
+	 * @author leo01.liao
+	 * @param mapResult key-订单号 value-DMP处理签收结果
+	 * @param weisuda
+	 */
+	private void dealWithDmpFeedbackResult(Map<String, String> mapResult, Weisuda weisuda) {
+		logger.info("使用批量方式把签收信息同步结果反馈给品骏达,mapResult={}", mapResult);
+		
+		if(mapResult == null || mapResult.isEmpty()){
+			return;
+		}
+		
+		//DMP签收成功或已经签收的订单号
+		List<String> listOrderIdSuccess = new ArrayList<String>();
+		
+		Iterator<String> keys = mapResult.keySet().iterator();
+		while(keys.hasNext()){
+			String orderId = keys.next();
+			String result  = mapResult.get(orderId);
+			
+			if ("SUCCESS".equals(result)) {
+				this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "1", "包裹信息通过_手机_签收成功");
+				listOrderIdSuccess.add(orderId);
+			} else if (result.contains("处理唯速达反馈请求异") && result.contains("不允许进行反馈")) {
+				this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "1", "包裹信息已经通过_其它方式_签收成功");
+				listOrderIdSuccess.add(orderId);
+			}else {
+				this.logger.info("唯速达_02请求dmp唯速达信息异常{},cwb={}", result, orderId);
+				this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "2", result);
+			}
+		}
+		
+		//DMP签收成功或已经签收的需要反馈给品骏达
+		if(listOrderIdSuccess.size() > 0){
+			this.updateUnVerifyOrders(listOrderIdSuccess, weisuda);
+		}
+	}
+	
+	/**
+	 * 使用批量方式把签收信息同步结果反馈给品骏达
+	 * @author leo01.liao
+	 * @param listOrderId 订单号列表
+	 * @param weisuda
+	 */
+	private void updateUnVerifyOrders(List<String> listOrderId, Weisuda weisuda) {
+		if(listOrderId == null || listOrderId.isEmpty()){
+			return;
+		}
+		
+		StringBuffer sbSend = new StringBuffer();
+		sbSend.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+		sbSend.append("<root>");
+		for(String orderId : listOrderId){
+			sbSend.append("<item>");
+			sbSend.append("<order_id>");
+			sbSend.append(orderId);
+			sbSend.append("</order_id>");			
+			sbSend.append("</item>");
+		}		
+		sbSend.append("</root>");
+		
+		this.logger.info("[批量发送]唯速达_03APP包裹签收信息同步结果 发送报文,userMessage={}", sbSend);
+		String response = this.check(weisuda, "data", sbSend.toString(), WeisudsInterfaceEnum.updateUnVerifyOrders.getValue());
+		this.logger.info("[批量发送]唯速达_03APP包裹签收信息同步结果反馈接口返回报文,response={}", response);
+	}
 }
