@@ -65,6 +65,7 @@
 							 <ref bean="doTime_jiuye"/>
 							 <ref bean="doTime_sfxhm"/>
 							 <ref bean="doTime_weisuda"/>
+							 <ref bean="doTime_weisuda_resend" />
 							 <ref bean="doTime_weisudadelete"/>
 							 <ref bean="doTime_zhongliang"/>
 							 <ref bean="doTime_gztlOutbranch"/>
@@ -84,6 +85,7 @@
 							 <ref bean="doTime_otherordertrack" />
 							 <ref bean="doTime_otherorderhousekeep" />
 							 <ref bean="doTime_vipmps" />
+							 
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -784,6 +786,7 @@
          </property>
          <property name="concurrent" value="false" />
      </bean>
+    
      <bean id="doTime_weisuda" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
                <ref bean="getweisuda" />
@@ -803,9 +806,25 @@
          <property name="concurrent" value="false" />
      </bean>
      
+     <bean id="doTime_weisuda_resend" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+           <property name="jobDetail">
+               <ref bean="getweisudaresend" />
+           </property>
+             <property name="cronExpression">
+               <value>0 */5 * * * ?</value>
+           </property>
+      </bean>
      
-     
-     
+     <bean id="getweisudaresend" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+      <property name="targetBean">
+             <value>updateEMS</value>
+         </property>
+         <property name="targetMethod">
+             <value>getWeisuda_TaskResend</value>
+         </property>
+         <property name="concurrent" value="false" />
+     </bean>
+    
       <bean id="doTime_weisudaDeliveryResult" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
                <ref bean="getweisudaDeliveryResult" />
@@ -868,9 +887,6 @@
          </property>
          <property name="concurrent" value="false" />
      </bean>
-     
-     
-     
      
      <bean id="doTime_smiled" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
