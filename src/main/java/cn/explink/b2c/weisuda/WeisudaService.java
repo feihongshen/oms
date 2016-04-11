@@ -216,7 +216,7 @@ public class WeisudaService {
 	 * 订单与快递员绑定关系同步接口
 	 */
 
-	public void boundDeliveryToApp() {
+	public void boundDeliveryToApp(boolean isRepeat) {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_01未开启[唯速达]接口");
 			return;
@@ -232,10 +232,20 @@ public class WeisudaService {
 			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
 			int cntLoop   = 10;
 			
-			List<WeisudaCwb> weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0", 0, (cntLoop * maxBounds));
-			if ((weisudaCwbs == null) || (weisudaCwbs.size() == 0)) {
-				this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
-				return;
+			List<WeisudaCwb> weisudaCwbs = null;
+			
+			if (!isRepeat) {
+				weisudaCwbs = this.weisudaDAO.getWeisudaCwb("0", 0, (cntLoop * maxBounds));
+				if ((weisudaCwbs == null) || (weisudaCwbs.size() == 0)) {
+					this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
+					return;
+				}
+			} else {
+				weisudaCwbs = this.weisudaDAO.getWeisudaCwbRepeat("0", 0, (cntLoop * maxBounds));
+				if ((weisudaCwbs == null) || (weisudaCwbs.size() == 0)) {
+					this.logger.info("重推唯速达_01当前没有要推送0唯速达0的数据");
+					return;
+				}
 			}
 			
 			int total = weisudaCwbs.size();
@@ -253,7 +263,7 @@ public class WeisudaService {
 				}
 				
 				List<WeisudaCwb> subList = weisudaCwbs.subList(fromIdx, toIdx);
-				this.DealWithBuildXMLAndSending(subList, weisuda);
+				this.DealWithBuildXMLAndSending(subList, weisuda, isRepeat);
 				
 				k++;
 			}
@@ -985,7 +995,7 @@ public class WeisudaService {
 		return null;
 	}
 
-	private void DealWithBuildXMLAndSending(List<WeisudaCwb> weisudaCwbs, Weisuda weisuda) {
+	private void DealWithBuildXMLAndSending(List<WeisudaCwb> weisudaCwbs, Weisuda weisuda, boolean isRepeat) {
 		String cwb = "";
 		String response = "";
 		int version = this.GetWeisuda_Version();
@@ -1015,7 +1025,7 @@ public class WeisudaService {
 				response = this.check(weisuda, "data", xml, url);
 				this.logger.info(upflagString + "快递员绑定接口返回：{},cwb={}", response, cwb);
 				
-				updateDeliveryUserBound(cwb, response, upflagString, version);
+				updateDeliveryUserBound(cwb, response, upflagString, version, isRepeat);
 
 			} catch (Exception e) {
 				this.logger.error(upflagString + "异常：" + e.getMessage() + "cwb=" + cwb + "返回：" + response, e);
@@ -1025,14 +1035,19 @@ public class WeisudaService {
 	}
 
 	private void updateDeliveryUserBound(String cwb, String response,
-			String upflagString, int version) throws JAXBException,
+			String upflagString, int version, boolean isRepeat) throws JAXBException,
 			UnsupportedEncodingException {
 		if (version == 1) {
 			if (response.contains(cwb)) {
 				this.weisudaDAO.updateWeisuda(cwb, "1", "快递员绑定成功!");
 				this.logger.info(upflagString + "快递员绑定接口成功!response={},cwb={}", response, cwb);
 			} else {
-				this.weisudaDAO.updateWeisuda(cwb, "2", response);
+				if (!isRepeat) {
+					this.weisudaDAO.updateWeisuda(cwb, "2", response);
+				} else {
+					this.weisudaDAO.updateWeisudaRepeat(cwb, "2", response); //重推
+				}
+				
 				this.logger.info(upflagString + "快递员绑定失败! response={},cwb={}", response, cwb);
 			}
 		} else if (version == 2) {
@@ -1044,7 +1059,11 @@ public class WeisudaService {
 							this.weisudaDAO.updateWeisuda(cwb, "1", "快递员绑定成功!");
 							this.logger.info(upflagString + "快递员绑定接口成功!response={},cwb={}", response, cwb);
 						} else {
-							this.weisudaDAO.updateWeisuda(cwb, "2", order.getMsg());
+							if (!isRepeat) {
+								this.weisudaDAO.updateWeisuda(cwb, "2", order.getMsg());
+							} else {
+								this.weisudaDAO.updateWeisudaRepeat(cwb, "2", order.getMsg());
+							}
 							this.logger.info(upflagString + "快递员绑定失败! response={},cwb={}", response, cwb);
 						}
 					}
