@@ -43,10 +43,13 @@ import cn.explink.b2c.weisuda.xml.RootPS;
 import cn.explink.b2c.weisuda.xml.RootSMT;
 import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.dao.MqExceptionDAO;
 import cn.explink.dao.WeisudaDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.BranchWithOld;
 import cn.explink.domain.Customer;
+import cn.explink.domain.MqExceptionBuilder;
+import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
 import cn.explink.domain.SystemInstall;
 import cn.explink.domain.User;
 import cn.explink.enumutil.BranchEnum;
@@ -86,6 +89,21 @@ public class WeisudaService {
 	TPOSendDoInfService tPOSendDoInfService;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
+	private static final String MQ_FROM_URI_SAVE_ZHANDIAN = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.savezhandian";
+	private static final String MQ_HEADER_NAME_SAVE_ZHANDIAN = "branch";
+	
+	private static final String MQ_FROM_URI_DEL_ZHANDIAN = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.delzhandian";
+	private static final String MQ_HEADER_NAME_DEL_ZHANDIAN = "branchid";
+	
+	private static final String MQ_FROM_URI_COURIER_UPDATE = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.courierUpdate";
+	private static final String MQ_HEADER_NAME_COURIER_UPDATE = "user";
+	
+	private static final String MQ_FROM_URI_COURIER_DEL = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.carrierDel";
+	private static final String MQ_HEADER_NAME_COURIER_DEL = "";
 
 	@PostConstruct
 	public void init() {
@@ -526,7 +544,7 @@ public class WeisudaService {
 	/**
 	 * 站点更新接口
 	 */
-	public void siteUpdate(@Header("branch") String branch) {
+	public void siteUpdate(@Header("branch") String branch, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_05未开启[唯速达]接口");
 			return;
@@ -565,6 +583,20 @@ public class WeisudaService {
 			
 		} catch (Exception e) {
 			this.logger.error("唯速达_05更新站点信息出错" + branch, e);
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "siteUpdate";
+			String fromUri = MQ_FROM_URI_SAVE_ZHANDIAN;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_SAVE_ZHANDIAN;
+			String headerValue = branch;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
@@ -572,7 +604,7 @@ public class WeisudaService {
 	 * 站点撤销接口
 	 */
 
-	public void siteDel(@Header("branchid") String branchid) {
+	public void siteDel(@Header("branchid") String branchid, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("未开启[唯速达]接口");
 			return;
@@ -593,31 +625,45 @@ public class WeisudaService {
 			
 		} catch (Exception e) {
 			this.logger.error("站点撤销信息出错" + branchid, e);
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "siteDel";
+			String fromUri = MQ_FROM_URI_DEL_ZHANDIAN;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_DEL_ZHANDIAN;
+			String headerValue = branchid;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
 	/**
 	 * 快递员信息更新接口
 	 */
-	public void courierUpdate(@Header("user") String userFlag, @Body() String jsonUser) {
-
-		if (userFlag == null) {
-			return;
-		}
-
-		if (userFlag.contains("del")) {
-			this.carrierDel(jsonUser);
-			return;
-		}
-		if (!userFlag.contains("update")) {
-			return;
-		}
-
-		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-			this.logger.info("唯速达_07未开启[唯速达]接口");
-			return;
-		}
+	public void courierUpdate(@Header("user") String userFlag, @Body() String jsonUser, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		try {
+			if (userFlag == null) {
+				return;
+			}
+	
+			if (userFlag.contains("del")) {
+				this.doCarrierDel(jsonUser);
+				return;
+			}
+			if (!userFlag.contains("update")) {
+				return;
+			}
+	
+			if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+				this.logger.info("唯速达_07未开启[唯速达]接口");
+				return;
+			}
+		
 			User user = JsonUtil.readValue(jsonUser, User.class);
 			String oldusername = user.getOldusername() == null ? "" : user.getOldusername();
 			if (user.getUsername().equals(oldusername)) {
@@ -648,13 +694,52 @@ public class WeisudaService {
 			
 		} catch (Exception e) {
 			this.logger.error("唯速达_07快递员更新信息出错 ！jsonUser=" + jsonUser, e);
+			
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "courierUpdate";
+			String fromUri = MQ_FROM_URI_COURIER_UPDATE;
+			String body = jsonUser;
+			String headerName = MQ_HEADER_NAME_COURIER_UPDATE;
+			String headerValue = userFlag;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
 	/**
 	 * 快递员删除接口
 	 */
-	public void carrierDel(String jsonUser) {
+	public void carrierDel(@Body() String jsonUser, @Header("MessageHeaderUUID") String messageHeaderUUID) {
+		try {
+			doCarrierDel(jsonUser);
+			
+		} catch (Exception e) {
+			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
+			
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "carrierDel";
+			String fromUri = MQ_FROM_URI_COURIER_DEL;
+			String body = jsonUser;
+			String headerName = MQ_HEADER_NAME_COURIER_DEL;
+			String headerValue = "";
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
+		}
+	}
+	
+	public void doCarrierDel(String jsonUser) throws Exception {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_08未开启[唯速达]接口");
 			return;
@@ -680,6 +765,7 @@ public class WeisudaService {
 			
 		} catch (Exception e) {
 			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
+			throw e;
 		}
 	}
 

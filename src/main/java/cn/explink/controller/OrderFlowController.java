@@ -676,7 +676,7 @@ public class OrderFlowController {
 	public String saveFlowB2cSend(Model model, @RequestParam(value = "orderFlow", required = true) String orderFlow) {
 		logger.info("in saveFlowB2cSend. orderFlow = " + orderFlow);
 		try {
-			flowFromJMSB2cService.saveFlowB2cSend(orderFlow);
+			flowFromJMSB2cService.doSaveFlowB2cSend(orderFlow);
 			model.addAttribute("result", "success");
 		} catch (Exception e) {
 			model.addAttribute("result", "failure");
@@ -689,7 +689,7 @@ public class OrderFlowController {
 	public String saveFlow(Model model, @RequestParam(value = "orderFlow", required = true) String orderFlow) {
 		logger.info("in saveFlow. orderFlow = " + orderFlow);
 		try {
-			flowFromJMSService.saveFlow(orderFlow);
+			flowFromJMSService.doSaveFlow(orderFlow);
 			model.addAttribute("result", "success");
 		} catch (Exception e) {
 			model.addAttribute("result", "failure");

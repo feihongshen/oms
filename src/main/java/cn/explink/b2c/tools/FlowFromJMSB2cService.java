@@ -37,6 +37,7 @@ import cn.explink.domain.B2CData;
 import cn.explink.domain.Customer;
 import cn.explink.domain.ExpressSysMonitor;
 import cn.explink.domain.MqExceptionBuilder;
+import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
 import cn.explink.domain.SystemInstall;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
@@ -82,15 +83,19 @@ public class FlowFromJMSB2cService {
 	@Produce(uri = "jms:queue:sendBToCToDmp")
 	ProducerTemplate sendBToCToDmpProducer;
 
-	@Autowired
-	private MqExceptionDAO mqExceptionDAO;
-	
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private ObjectReader dmpOrderFlowMapper = this.objectMapper.reader(DmpOrderFlow.class);
 	private ObjectReader cwbOrderWithDeliveryStateReader = this.objectMapper.reader(CwbOrderWithDeliveryState.class);
+	private ObjectReader dmpOrderReader = this.objectMapper.reader(DmpCwbOrder.class);
 
 	private Logger logger = LoggerFactory.getLogger(FlowFromJMSB2cService.class);
 	private List<String> flowList = new ArrayList<String>(); // 存储 对接所用的环节
+	
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
+	private static final String MQ_FROM_URI = "jms:queue:VirtualTopicConsumers.omsb2c.orderFlow";
+	private static final String MQ_HEADER_NAME = "orderFlow";
 
 	@PostConstruct
 	public void init() {
@@ -132,12 +137,34 @@ public class FlowFromJMSB2cService {
 		}
 	}
 
+	public void saveFlowB2cSend(@Header("orderFlow") String parm, @Header("MessageHeaderUUID") String messageHeaderUUID) {
+		try {
+			doSaveFlowB2cSend(parm);
+		} catch (Exception e1) {
+			this.logger.error("error while handle orderflow", e1);
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "saveFlowB2cSend";
+			String fromUri = MQ_FROM_URI;
+			String body = null;
+			String headerName = MQ_HEADER_NAME;
+			String headerValue = parm;
+			String exceptionMessage = e1.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
+		}
+	}
 	/**
 	 * 接收环节消息，用于B2C对接，存储B2C_Send 表
 	 *
 	 * @param parm
+	 * @throws Exception 
 	 */
-	public void saveFlowB2cSend(@Header("orderFlow") String parm) {
+	public void doSaveFlowB2cSend(String parm) throws Exception {
 		this.logger.info("进入b2c消息，开始：" + System.currentTimeMillis());
 		this.logger.debug("orderFlow send b2c 环节信息处理,{}", parm);
 		try {
@@ -216,6 +243,7 @@ public class FlowFromJMSB2cService {
 			}
 		} catch (Exception e1) {
 			this.logger.error("error while handle orderflow", e1);
+			throw e1;
 		}
 		this.logger.info("进入b2c消息，结束：" + System.currentTimeMillis());
 	}

@@ -25,8 +25,11 @@ import cn.explink.dao.CwbOrderTailDao;
 import cn.explink.dao.DeliveryStateDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.GotoClassDAO;
+import cn.explink.dao.MqExceptionDAO;
 import cn.explink.dao.OrderFlowDAO;
 import cn.explink.dao.PosPayDAO;
+import cn.explink.domain.MqExceptionBuilder;
+import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.ReasonTypeEnum;
 
@@ -62,6 +65,21 @@ public class UpdateOrderFromJMSService {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
+	private static final String MQ_FROM_URI_GOTO_CLASS = "jms:queue:VirtualTopicConsumers.oms1.gotoClass";
+	private static final String MQ_HEADER_NAME_GOTO_CLASS = "GotoClassAuditing";
+	
+	private static final String MQ_FROM_URI_PAY_UP = "jms:queue:VirtualTopicConsumers.oms1.PayUp";
+	private static final String MQ_HEADER_NAME_PAY_UP = "PayUp";
+	
+	private static final String MQ_FROM_URI_LOSE_CWB = "jms:queue:VirtualTopicConsumers.oms1.loseCwb";
+	private static final String MQ_HEADER_NAME_LOSE_CWB = "loseCwbByEmaildateid";
+	
+	private static final String MQ_FROM_URI_BATCHEDIT = "jms:queue:VirtualTopicConsumers.oms1.batchedit";
+	private static final String MQ_HEADER_NAME_BATCHEDIT = "emaildate";
 
 	@PostConstruct
 	public void init() {
@@ -119,7 +137,7 @@ public class UpdateOrderFromJMSService {
 	 * @param parm
 	 *            "{\"emaildateid\":1,\"editemaildate\":\"2012-09-02 15:00:00\",\"warehouseid\":1,\"areaid\":2}"
 	 */
-	public void updatebatchedit(@Header("emaildate") String parm) {
+	public void updatebatchedit(@Header("emaildate") String parm, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		logger.info("RE:jms:queue:VirtualTopicConsumers.oms1.batchedit ");
 		try {
 			JSONObject jsonValue = JSONObject.fromObject(parm);
@@ -135,6 +153,21 @@ public class UpdateOrderFromJMSService {
 		} catch (Exception e) {
 			logger.error("接收了批量更新的通知处理异常");
 			e.printStackTrace();
+			
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "updatebatchedit";
+			String fromUri = MQ_FROM_URI_BATCHEDIT;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_BATCHEDIT;
+			String headerValue = parm;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
@@ -203,7 +236,7 @@ public class UpdateOrderFromJMSService {
 	 * @param parm
 	 *            "{\"emaildateid\":10}"
 	 */
-	public void updateLoseOrder(@Header("loseCwbByEmaildateid") String parm) {
+	public void updateLoseOrder(@Header("loseCwbByEmaildateid") String parm, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		logger.info("RE:jms:queue:VirtualTopicConsumers.oms1.loseCwb ");
 		JSONObject emaildateidJSON = JSONObject.fromObject(parm);
 		int emaildateid = emaildateidJSON.getInt("emaildateid");
@@ -221,6 +254,20 @@ public class UpdateOrderFromJMSService {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "updateLoseOrder";
+			String fromUri = MQ_FROM_URI_LOSE_CWB;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_LOSE_CWB;
+			String headerValue = parm;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 
 	}

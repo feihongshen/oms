@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
@@ -21,14 +20,15 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.vipshop.VipShop;
 import cn.explink.b2c.vipshop.VipShopConfig;
-import cn.explink.b2c.vipshop.VipShopExptCodeEnum;
 import cn.explink.b2c.vipshop.mpspack.VipmpsFlowEnum;
 import cn.explink.b2c.vipshop.mpspack.VipmpsNote;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.dao.MqExceptionDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.Customer;
+import cn.explink.domain.MqExceptionBuilder;
+import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
 import cn.explink.domain.Transflowdata;
-import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
@@ -70,6 +70,12 @@ public class TransFlowFromJMSService {
 
 	private Logger logger = LoggerFactory.getLogger(TransFlowFromJMSService.class);
 	private List<String> flowList = new ArrayList<String>(); // 存储 对接所用的环节
+	
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
+	private static final String MQ_FROM_URI = "jms:queue:VirtualTopicConsumers.omsb2c.transCwbOrderFlow";
+	private static final String MQ_HEADER_NAME = "transCwbOrderFlow";
 
 	@PostConstruct
 	public void init() {
@@ -111,7 +117,7 @@ public class TransFlowFromJMSService {
 	 *
 	 * @param Object 
 	 */
-	public void saveTransCwbFlow(@Header("transCwbOrderFlow") String parm) {
+	public void saveTransCwbFlow(@Header("transCwbOrderFlow") String parm, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 	
 	
 		this.logger.info("transCwbOrderFlow send b2c 环节信息处理,{}", parm);
@@ -146,6 +152,21 @@ public class TransFlowFromJMSService {
 			
 		} catch (Exception e1) {
 			this.logger.error("error while handle transorderflow", e1);
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "saveTransCwbFlow";
+			String fromUri = MQ_FROM_URI;
+			String body = null;
+			String headerName = MQ_HEADER_NAME;
+			String headerValue = parm;
+			String exceptionMessage = e1.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
+			
 		}
 	}
 

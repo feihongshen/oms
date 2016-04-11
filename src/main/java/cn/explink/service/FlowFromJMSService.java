@@ -38,6 +38,7 @@ import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.KDKDeliveryChukuDAO;
 import cn.explink.dao.KuFangRuKuDao;
 import cn.explink.dao.KuFangZaiTuDao;
+import cn.explink.dao.MqExceptionDAO;
 import cn.explink.dao.OrderFlowDAO;
 import cn.explink.dao.TuiHuoChuZhanDao;
 import cn.explink.dao.TuiHuoZhanRuKuDao;
@@ -55,6 +56,8 @@ import cn.explink.domain.ExpressSysMonitor;
 import cn.explink.domain.KDKDeliveryChuku;
 import cn.explink.domain.KuFangRuKuOrder;
 import cn.explink.domain.KuFangZaiTuOrder;
+import cn.explink.domain.MqExceptionBuilder;
+import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
 import cn.explink.domain.TuiHuoChuZhanOrder;
 import cn.explink.domain.TuiHuoZhanRuKuOrder;
 import cn.explink.domain.UpdateMessage;
@@ -130,6 +133,18 @@ public class FlowFromJMSService {
 
 	private Logger logger = LoggerFactory.getLogger(FlowFromJMSService.class);
 
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
+	private static final String MQ_FROM_URI_ORDER_FLOW = "jms:queue:VirtualTopicConsumers.oms1.orderFlow";
+	private static final String MQ_HEADER_NAME_ORDER_FLOW = "orderFlow";
+	
+	private static final String MQ_FROM_URI_LOSECWB = "jms:queue:VirtualTopicConsumers.oms1.losecwb";
+	private static final String MQ_HEADER_NAME_LOSECWB = "cwbAndUserid";
+	
+	private static final String MQ_FROM_URI_LOSECWBBATCH = "jms:queue:VirtualTopicConsumers.oms1.losecwbbatch";
+	private static final String MQ_HEADER_NAME_LOSECWBBATCH = "cwbbatchDelete";
+	
 	@PostConstruct
 	public void init() throws Exception {
 		camelContext.addRoutes(new RouteBuilder() {
@@ -142,7 +157,7 @@ public class FlowFromJMSService {
 		});
 	}
 
-	public void deletecwb(@Header("cwbAndUserid") String cwbAndUserid) {
+	public void deletecwb(@Header("cwbAndUserid") String cwbAndUserid, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		String cwb = cwbAndUserid.split(",")[0];
 		logger.info("数据删除功能：操作人：{}，订单号：{}", cwbAndUserid.split(",")[1], cwb);
 		try {
@@ -171,10 +186,25 @@ public class FlowFromJMSService {
 			}
 		} catch (Exception e) {
 			logger.info("数据删除功能：操作人：{}，订单号：{}", cwbAndUserid.split(",")[1], cwb);
+			
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "deletecwb";
+			String fromUri = MQ_FROM_URI_LOSECWB;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_LOSECWB;
+			String headerValue = cwbAndUserid;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
-	public void deletecwbBatch(@Header("cwbbatchDelete") String cwb) {
+	public void deletecwbBatch(@Header("cwbbatchDelete") String cwb, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		logger.info("--订单失效功能，订单号：{}", cwb);
 		try {
 			if (cwb.trim().length() > 0) {
@@ -202,6 +232,21 @@ public class FlowFromJMSService {
 			}
 		} catch (Exception e) {
 			logger.info("--订单失效功能：，订单号：{}", cwb);
+			
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "deletecwbBatch";
+			String fromUri = MQ_FROM_URI_LOSECWBBATCH;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_LOSECWBBATCH;
+			String headerValue = cwb;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
@@ -233,6 +278,27 @@ public class FlowFromJMSService {
 		}
 
 	}
+	
+	public void saveFlow(@Header("orderFlow") String parm, @Header("MessageHeaderUUID") String messageHeaderUUID) { // 处理jms数据
+		try {
+			doSaveFlow(parm);
+		} catch(Exception e) {
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "saveFlow";
+			String fromUri = MQ_FROM_URI_ORDER_FLOW;
+			String body = null;
+			String headerName = MQ_HEADER_NAME_ORDER_FLOW;
+			String headerValue = parm;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headerName, headerValue)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
+		}
+	}
 
 	/**
 	 * {"floworderid":5367,"cwb":"25","branchid":186,"credate":
@@ -242,7 +308,7 @@ public class FlowFromJMSService {
 	 * 
 	 * @param parm
 	 */
-	public void saveFlow(@Header("orderFlow") String parm) { // 处理jms数据
+	public void doSaveFlow(String parm) {
 		long start = System.currentTimeMillis();
 		logger.info("进入flow消息，开始：" + start);
 		saveAll(parm, 1);
@@ -269,6 +335,7 @@ public class FlowFromJMSService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 
 		logger.info("进入flow消息，结束：" + end + ",时差：" + (end - start));

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
@@ -12,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+
+import cn.explink.dao.MqExceptionDAO;
+import cn.explink.domain.MqExceptionBuilder;
+import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
 
 @Component
 public class FromBaseService implements ApplicationListener<ContextRefreshedEvent> {
@@ -23,6 +28,15 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 
 	@Autowired
 	private CamelContext camelContext;
+	
+	@Autowired
+	private MqExceptionDAO mqExceptionDAO;
+	
+	private static final String MQ_FROM_URI_USER = "jms:queue:VirtualTopicConsumers.cachebase_user.courierUpdate";
+	
+	private static final String MQ_FROM_URI_BRANCH = "jms:queue:VirtualTopicConsumers.cachebase_branch.savezhandian";
+	
+	private static final String MQ_FROM_URI_CUSTOMER = "jms:queue:VirtualTopicConsumers.cachebase_customer.courierUpdate";
 
 	public void init() {
 		logger.info("init base info camel routes");
@@ -42,9 +56,25 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 
 	}
 
-	public void notifyChange(@Headers() Map<String, String> parameters) {
-		for (CacheBaseListener cacheBaseListener : cacheBaseListeners) {
-			cacheBaseListener.onChange(parameters);
+	public void notifyChange(@Headers() Map<String, String> parameters, @Header("MessageHeaderUUID") String messageHeaderUUID) {
+		try{
+			for (CacheBaseListener cacheBaseListener : cacheBaseListeners) {
+				cacheBaseListener.onChange(parameters);
+			}
+		}catch(Exception e){
+			// 把未完成MQ插入到数据库中, start
+			String functionName = "notifyChange";
+			String fromUri = MQ_FROM_URI_USER;
+			String body = null;
+			Map<String, String> headers = parameters;
+			String exceptionMessage = e.getMessage();
+			
+			//消费MQ异常表
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
+					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildMessageHeader(headers)
+					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+			// 把未完成MQ插入到数据库中, end
 		}
 	}
 
