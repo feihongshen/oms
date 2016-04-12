@@ -71,7 +71,7 @@ public class OrderSelectService {
 			logger.error("JMS : Send : jms:topic:updateOrderMoney : cwb : " + cwb);
 			//写MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("updateOrderMoneySendJms")
-					.buildExceptionInfo(e.getMessage()).buildTopic(this.sendUpdateOrderMoney.getDefaultEndpoint().getEndpointUri())
+					.buildExceptionInfo(e.toString()).buildTopic(this.sendUpdateOrderMoney.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader("cwbAndMoney", sendObject.toString()).getMqException());
 		
 			return 0;
@@ -91,7 +91,7 @@ public class OrderSelectService {
 			logger.error("JMS : Send error: jms:topic:auditBackGoods : cwb : " + cwb + " auditstate:" + state);
 			//写MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsJms")
-					.buildExceptionInfo(e.getMessage()).buildTopic(this.auditBackGoods.getDefaultEndpoint().getEndpointUri())
+					.buildExceptionInfo(e.toString()).buildTopic(this.auditBackGoods.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader( "cwbAndAuditstate", sendObject.toString()).getMqException());
 			return 0;
 		}
@@ -110,7 +110,7 @@ public class OrderSelectService {
 			logger.error("JMS : Send error: jms:topic:auditBackGoodsEgan : cwb : " + cwb + " auditEganstate:" + state);
 			//写MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsEganJms")
-					.buildExceptionInfo(e.getMessage()).buildTopic(this.auditBackGoodsEgan.getDefaultEndpoint().getEndpointUri())
+					.buildExceptionInfo(e.toString()).buildTopic(this.auditBackGoodsEgan.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader( "cwbAndAuditEganstate", sendObject.toString()).getMqException());
 			return 0;
 		}
@@ -129,7 +129,7 @@ public class OrderSelectService {
 			logger.error("JMS : Send error: jms:topic:auditBackGoodsRemark : cwb : " + cwb + " remark:" + remark);
 			//写MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsRemarkJms")
-					.buildExceptionInfo(e.getMessage()).buildTopic(this.auditBackGoodsRemark.getDefaultEndpoint().getEndpointUri())
+					.buildExceptionInfo(e.toString()).buildTopic(this.auditBackGoodsRemark.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader( "cwbAndBackremark", sendObject.toString()).getMqException());
 		
 			return 0;

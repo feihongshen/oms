@@ -148,11 +148,10 @@ public class FlowFromJMSB2cService {
 			String body = null;
 			String headerName = MQ_HEADER_NAME;
 			String headerValue = parm;
-			String exceptionMessage = e1.getMessage();
 			
 			//消费MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(exceptionMessage).buildTopic(fromUri)
+					.buildExceptionInfo(e1.toString()).buildTopic(fromUri)
 					.buildMessageHeader(headerName, headerValue)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
@@ -550,7 +549,7 @@ public class FlowFromJMSB2cService {
 			logger.error("", e);
 			//写MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("sendTodmp")
-					.buildExceptionInfo(e.getMessage()).buildTopic(this.sendBToCToDmpProducer.getDefaultEndpoint().getEndpointUri())
+					.buildExceptionInfo(e.toString()).buildTopic(this.sendBToCToDmpProducer.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader("delIds", json.toString()).getMqException());
 		
 		}
