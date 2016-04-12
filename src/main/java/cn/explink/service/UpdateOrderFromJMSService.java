@@ -70,16 +70,12 @@ public class UpdateOrderFromJMSService {
 	private MqExceptionDAO mqExceptionDAO;
 	
 	private static final String MQ_FROM_URI_GOTO_CLASS = "jms:queue:VirtualTopicConsumers.oms1.gotoClass";
-	private static final String MQ_HEADER_NAME_GOTO_CLASS = "GotoClassAuditing";
 	
 	private static final String MQ_FROM_URI_PAY_UP = "jms:queue:VirtualTopicConsumers.oms1.PayUp";
-	private static final String MQ_HEADER_NAME_PAY_UP = "PayUp";
 	
 	private static final String MQ_FROM_URI_LOSE_CWB = "jms:queue:VirtualTopicConsumers.oms1.loseCwb";
-	private static final String MQ_HEADER_NAME_LOSE_CWB = "loseCwbByEmaildateid";
 	
 	private static final String MQ_FROM_URI_BATCHEDIT = "jms:queue:VirtualTopicConsumers.oms1.batchedit";
-	private static final String MQ_HEADER_NAME_BATCHEDIT = "emaildate";
 
 	@PostConstruct
 	public void init() {
@@ -89,11 +85,11 @@ public class UpdateOrderFromJMSService {
 				public void configure() throws Exception {
 
 					// from("jms:queue:VirtualTopicConsumers.oms1.pdaDeliverPod").to("bean:updateOrderFromJMSService?method=saveDeliverState").routeId("saveDeliverState_topic");
-					from("jms:queue:VirtualTopicConsumers.oms1.gotoClass").to("bean:updateOrderFromJMSService?method=saveGotoClassAuditing").routeId("saveGotoClassAuditing_topic");
-					from("jms:queue:VirtualTopicConsumers.oms1.PayUp").to("bean:updateOrderFromJMSService?method=saveBranchPayamount").routeId("saveBranchPayamount_topic");
-					from("jms:queue:VirtualTopicConsumers.oms1.loseCwb").to("bean:updateOrderFromJMSService?method=updateLoseOrder").routeId("updateLoseOrder");
+					from(MQ_FROM_URI_GOTO_CLASS).to("bean:updateOrderFromJMSService?method=saveGotoClassAuditing").routeId("saveGotoClassAuditing_topic");
+					from(MQ_FROM_URI_PAY_UP).to("bean:updateOrderFromJMSService?method=saveBranchPayamount").routeId("saveBranchPayamount_topic");
+					from(MQ_FROM_URI_LOSE_CWB).to("bean:updateOrderFromJMSService?method=updateLoseOrder").routeId("updateLoseOrder");
 					// from("jms:queue:VirtualTopicConsumers.oms1.datachangerow").to("bean:updateOrderFromJMSService?method=updatedatachangerow").routeId("updatedatachangerow");
-					from("jms:queue:VirtualTopicConsumers.oms1.batchedit").to("bean:updateOrderFromJMSService?method=updatebatchedit").routeId("updatebatchedit");
+					from(MQ_FROM_URI_BATCHEDIT).to("bean:updateOrderFromJMSService?method=updatebatchedit").routeId("updatebatchedit");
 					// from("jms:queue:VirtualTopicConsumers.oms1.editexcel").to("bean:updateOrderFromJMSService?method=editexcel").routeId("editexcel");
 					// from("jms:queue:VirtualTopicConsumers.oms1.editbackreason").to("bean:updateOrderFromJMSService?method=editbackreason").routeId("editbackreason_topic");
 					// from("jms:queue:VirtualTopicConsumers.oms1.editleavereason").to("bean:updateOrderFromJMSService?method=editleavereason").routeId("editleavereason_topic");
@@ -154,17 +150,11 @@ public class UpdateOrderFromJMSService {
 			logger.error("接收了批量更新的通知处理异常");
 			e.printStackTrace();
 			
-			// 把未完成MQ插入到数据库中, start
-			String functionName = "updatebatchedit";
-			String fromUri = MQ_FROM_URI_BATCHEDIT;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_BATCHEDIT;
-			String headerValue = parm;
-			
+			// 把未完成MQ插入到数据库中, start			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("updatebatchedit")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_BATCHEDIT)
+					.buildMessageHeader("emaildate", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}
@@ -251,19 +241,12 @@ public class UpdateOrderFromJMSService {
 				cwbOrderTailDao.delTailByCwbs(cwb);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "updateLoseOrder";
-			String fromUri = MQ_FROM_URI_LOSE_CWB;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_LOSE_CWB;
-			String headerValue = parm;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("updateLoseOrder")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_LOSE_CWB)
+					.buildMessageHeader("loseCwbByEmaildateid", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}

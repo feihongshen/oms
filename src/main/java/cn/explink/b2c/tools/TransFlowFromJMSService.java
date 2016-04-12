@@ -75,7 +75,6 @@ public class TransFlowFromJMSService {
 	private MqExceptionDAO mqExceptionDAO;
 	
 	private static final String MQ_FROM_URI = "jms:queue:VirtualTopicConsumers.omsb2c.transCwbOrderFlow";
-	private static final String MQ_HEADER_NAME = "transCwbOrderFlow";
 
 	@PostConstruct
 	public void init() {
@@ -103,7 +102,7 @@ public class TransFlowFromJMSService {
 				@Override
 				public void configure() throws Exception {
 
-					this.from("jms:queue:VirtualTopicConsumers.omsb2c.transCwbOrderFlow?concurrentConsumers=15").to("bean:transFlowFromJMSService?method=saveTransCwbFlow").routeId("transcwbdetail_");
+					this.from(MQ_FROM_URI + "?concurrentConsumers=15").to("bean:transFlowFromJMSService?method=saveTransCwbFlow").routeId("transcwbdetail_");
 				}
 			});
 
@@ -153,16 +152,10 @@ public class TransFlowFromJMSService {
 		} catch (Exception e1) {
 			this.logger.error("error while handle transorderflow", e1);
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "saveTransCwbFlow";
-			String fromUri = MQ_FROM_URI;
-			String body = null;
-			String headerName = MQ_HEADER_NAME;
-			String headerValue = parm;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e1.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("saveTransCwbFlow")
+					.buildExceptionInfo(e1.toString()).buildTopic(MQ_FROM_URI)
+					.buildMessageHeader("transCwbOrderFlow", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 			

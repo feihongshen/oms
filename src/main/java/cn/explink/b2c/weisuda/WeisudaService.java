@@ -94,16 +94,12 @@ public class WeisudaService {
 	private MqExceptionDAO mqExceptionDAO;
 	
 	private static final String MQ_FROM_URI_SAVE_ZHANDIAN = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.savezhandian";
-	private static final String MQ_HEADER_NAME_SAVE_ZHANDIAN = "branch";
 	
 	private static final String MQ_FROM_URI_DEL_ZHANDIAN = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.delzhandian";
-	private static final String MQ_HEADER_NAME_DEL_ZHANDIAN = "branchid";
 	
 	private static final String MQ_FROM_URI_COURIER_UPDATE = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.courierUpdate";
-	private static final String MQ_HEADER_NAME_COURIER_UPDATE = "user";
 	
 	private static final String MQ_FROM_URI_COURIER_DEL = "jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.carrierDel";
-	private static final String MQ_HEADER_NAME_COURIER_DEL = "";
 
 	@PostConstruct
 	public void init() {
@@ -113,9 +109,9 @@ public class WeisudaService {
 				public void configure() throws Exception {
 
 					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.savezhandian?concurrentConsumers=1").to("bean:weisudaService?method=siteUpdate").routeId("weisuda_更新站点");
-					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.delzhandian?concurrentConsumers=5").to("bean:weisudaService?method=siteDel").routeId("weisuda_撤销站点");
-					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.courierUpdate?concurrentConsumers=1").to("bean:weisudaService?method=courierUpdate").routeId("weisuda_更新快递员");
-					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.carrierDel?concurrentConsumers=5").to("bean:weisudaService?method=carrierDel").routeId("weisuda_删除快递员");
+					this.from(MQ_FROM_URI_DEL_ZHANDIAN + "?concurrentConsumers=5").to("bean:weisudaService?method=siteDel").routeId("weisuda_撤销站点");
+					this.from(MQ_FROM_URI_COURIER_UPDATE + "?concurrentConsumers=1").to("bean:weisudaService?method=courierUpdate").routeId("weisuda_更新快递员");
+					this.from(MQ_FROM_URI_COURIER_DEL + "?concurrentConsumers=5").to("bean:weisudaService?method=carrierDel").routeId("weisuda_删除快递员");
 				}
 			});
 		} catch (Exception e) {
@@ -594,16 +590,10 @@ public class WeisudaService {
 		} catch (Exception e) {
 			this.logger.error("唯速达_05更新站点信息出错" + branch, e);
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "siteUpdate";
-			String fromUri = MQ_FROM_URI_SAVE_ZHANDIAN;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_SAVE_ZHANDIAN;
-			String headerValue = branch;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("siteUpdate")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_SAVE_ZHANDIAN)
+					.buildMessageHeader("branch", branch)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}
@@ -635,16 +625,10 @@ public class WeisudaService {
 		} catch (Exception e) {
 			this.logger.error("站点撤销信息出错" + branchid, e);
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "siteDel";
-			String fromUri = MQ_FROM_URI_DEL_ZHANDIAN;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_DEL_ZHANDIAN;
-			String headerValue = branchid;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("siteDel")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_DEL_ZHANDIAN)
+					.buildMessageHeader("branchid", branchid)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}
@@ -704,16 +688,10 @@ public class WeisudaService {
 			this.logger.error("唯速达_07快递员更新信息出错 ！jsonUser=" + jsonUser, e);
 			
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "courierUpdate";
-			String fromUri = MQ_FROM_URI_COURIER_UPDATE;
-			String body = jsonUser;
-			String headerName = MQ_HEADER_NAME_COURIER_UPDATE;
-			String headerValue = userFlag;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue).buildMessageBody(body)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("courierUpdate")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_UPDATE)
+					.buildMessageHeader("user", userFlag).buildMessageBody(jsonUser)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}
@@ -730,16 +708,10 @@ public class WeisudaService {
 			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
 			
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "carrierDel";
-			String fromUri = MQ_FROM_URI_COURIER_DEL;
-			String body = jsonUser;
-			String headerName = MQ_HEADER_NAME_COURIER_DEL;
-			String headerValue = "";
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue).buildMessageBody(body)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("carrierDel")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_DEL)
+					.buildMessageBody(jsonUser)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}

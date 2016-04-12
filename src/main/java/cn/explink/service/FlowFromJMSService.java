@@ -137,22 +137,19 @@ public class FlowFromJMSService {
 	private MqExceptionDAO mqExceptionDAO;
 	
 	private static final String MQ_FROM_URI_ORDER_FLOW = "jms:queue:VirtualTopicConsumers.oms1.orderFlow";
-	private static final String MQ_HEADER_NAME_ORDER_FLOW = "orderFlow";
 	
 	private static final String MQ_FROM_URI_LOSECWB = "jms:queue:VirtualTopicConsumers.oms1.losecwb";
-	private static final String MQ_HEADER_NAME_LOSECWB = "cwbAndUserid";
 	
 	private static final String MQ_FROM_URI_LOSECWBBATCH = "jms:queue:VirtualTopicConsumers.oms1.losecwbbatch";
-	private static final String MQ_HEADER_NAME_LOSECWBBATCH = "cwbbatchDelete";
-	
+
 	@PostConstruct
 	public void init() throws Exception {
 		camelContext.addRoutes(new RouteBuilder() {
 			@Override
 			public void configure() throws Exception {
-				from("jms:queue:VirtualTopicConsumers.oms1.orderFlow?concurrentConsumers=10").to("bean:flowFromJMSService?method=saveFlow").routeId("floworderRoute");
-				from("jms:queue:VirtualTopicConsumers.oms1.losecwb?concurrentConsumers=10").to("bean:flowFromJMSService?method=deletecwb").routeId("deletecwb");
-				from("jms:queue:VirtualTopicConsumers.oms1.losecwbbatch?concurrentConsumers=10").to("bean:flowFromJMSService?method=deletecwbBatch").routeId("losecwbAll");
+				from(MQ_FROM_URI_ORDER_FLOW + "?concurrentConsumers=10").to("bean:flowFromJMSService?method=saveFlow").routeId("floworderRoute");
+				from(MQ_FROM_URI_LOSECWB + "?concurrentConsumers=10").to("bean:flowFromJMSService?method=deletecwb").routeId("deletecwb");
+				from(MQ_FROM_URI_LOSECWBBATCH + "?concurrentConsumers=10").to("bean:flowFromJMSService?method=deletecwbBatch").routeId("losecwbAll");
 			}
 		});
 	}
@@ -188,16 +185,10 @@ public class FlowFromJMSService {
 			logger.info("数据删除功能：操作人：{}，订单号：{}", cwbAndUserid.split(",")[1], cwb);
 			
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "deletecwb";
-			String fromUri = MQ_FROM_URI_LOSECWB;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_LOSECWB;
-			String headerValue = cwbAndUserid;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("deletecwb")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_LOSECWB)
+					.buildMessageHeader("cwbAndUserid", cwbAndUserid)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}
@@ -233,16 +224,10 @@ public class FlowFromJMSService {
 			logger.info("--订单失效功能：，订单号：{}", cwb);
 			
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "deletecwbBatch";
-			String fromUri = MQ_FROM_URI_LOSECWBBATCH;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_LOSECWBBATCH;
-			String headerValue = cwb;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("deletecwbBatch")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_LOSECWBBATCH)
+					.buildMessageHeader("cwbbatchDelete", cwb)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}
@@ -282,16 +267,10 @@ public class FlowFromJMSService {
 			doSaveFlow(parm);
 		} catch(Exception e) {
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "saveFlow";
-			String fromUri = MQ_FROM_URI_ORDER_FLOW;
-			String body = null;
-			String headerName = MQ_HEADER_NAME_ORDER_FLOW;
-			String headerValue = parm;
-			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
-					.buildMessageHeader(headerName, headerValue)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("saveFlow")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_ORDER_FLOW)
+					.buildMessageHeader("orderFlow", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
 		}

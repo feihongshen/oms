@@ -45,9 +45,9 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 			camelContext.addRoutes(new RouteBuilder() {
 				@Override
 				public void configure() throws Exception {
-					from("jms:queue:VirtualTopicConsumers.cachebase_user.courierUpdate?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_user");
-					from("jms:queue:VirtualTopicConsumers.cachebase_branch.savezhandian?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_branch");
-					from("jms:queue:VirtualTopicConsumers.cachebase_customer.courierUpdate?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_customer");
+					from(MQ_FROM_URI_USER + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_user");
+					from(MQ_FROM_URI_BRANCH + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_branch");
+					from(MQ_FROM_URI_CUSTOMER + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_customer");
 				}
 			});
 		} catch (Exception e) {
@@ -63,14 +63,11 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 			}
 		}catch(Exception e){
 			// 把未完成MQ插入到数据库中, start
-			String functionName = "notifyChange";
-			String fromUri = MQ_FROM_URI_USER;
-			String body = null;
 			Map<String, String> headers = parameters;
 			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(functionName)
-					.buildExceptionInfo(e.toString()).buildTopic(fromUri)
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("notifyChange")
+					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_USER)
 					.buildMessageHeader(headers)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
