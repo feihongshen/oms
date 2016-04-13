@@ -45,9 +45,9 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 			camelContext.addRoutes(new RouteBuilder() {
 				@Override
 				public void configure() throws Exception {
-					from(MQ_FROM_URI_USER + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_user");
-					from(MQ_FROM_URI_BRANCH + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_branch");
-					from(MQ_FROM_URI_CUSTOMER + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange").routeId("cachebase_customer");
+					from(MQ_FROM_URI_USER + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange(user)").routeId("cachebase_user");
+					from(MQ_FROM_URI_BRANCH + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange(branch)").routeId("cachebase_branch");
+					from(MQ_FROM_URI_CUSTOMER + "?concurrentConsumers=1").to("bean:fromBaseService?method=notifyChange(customer)").routeId("cachebase_customer");
 				}
 			});
 		} catch (Exception e) {
@@ -56,18 +56,26 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 
 	}
 
-	public void notifyChange(@Headers() Map<String, String> parameters, @Header("MessageHeaderUUID") String messageHeaderUUID) {
+	public void notifyChange(String type, @Headers() Map<String, String> parameters, @Header("MessageHeaderUUID") String messageHeaderUUID) {
 		try{
 			for (CacheBaseListener cacheBaseListener : cacheBaseListeners) {
 				cacheBaseListener.onChange(parameters);
 			}
 		}catch(Exception e){
 			// 把未完成MQ插入到数据库中, start
+			String topic = null;
+			if(type.equals("user")) {
+				topic = MQ_FROM_URI_USER;
+			} else if(type.equals("branch")) {
+				topic = MQ_FROM_URI_BRANCH;
+			} else if(type.equals("customer")) {
+				topic = MQ_FROM_URI_CUSTOMER;
+			}
 			Map<String, String> headers = parameters;
 			
 			//消费MQ异常表
 			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("notifyChange")
-					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_USER)
+					.buildExceptionInfo(e.toString()).buildTopic(topic)
 					.buildMessageHeader(headers)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
 			// 把未完成MQ插入到数据库中, end
