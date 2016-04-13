@@ -178,7 +178,7 @@ public class WeisudaDAO {
 			}
 			return this.jdbcTemplate
 					.query("select * from express_b2cdata_weisuda  where istuisong=? and ordertype=? "
-							+ " and sendedcount >= 1 and sendedcount <= 50 limit 0,"
+							+ " and sendedcount >= 1 and sendedcount <= 20 limit 0,"
 							+ maxcount, new WSMapper(), istuisong, orderType);
 		} catch (Exception e) {
 			return null;
