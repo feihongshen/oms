@@ -143,7 +143,7 @@ public class FlowFromJMSB2cService {
 			this.logger.error("error while handle orderflow", e1);
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "saveFlowB2cSend")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".saveFlowB2cSend")
 					.buildExceptionInfo(e1.toString()).buildTopic(MQ_FROM_URI)
 					.buildMessageHeader("orderFlow", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -541,7 +541,7 @@ public class FlowFromJMSB2cService {
 		} catch (CamelExecutionException e) {
 			logger.error("", e);
 			//写MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "sendTodmp")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".sendTodmp")
 					.buildExceptionInfo(e.toString()).buildTopic(this.sendBToCToDmpProducer.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader("delIds", json.toString()).getMqException());
 		
