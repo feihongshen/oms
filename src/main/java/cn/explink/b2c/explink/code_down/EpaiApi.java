@@ -18,7 +18,22 @@ public class EpaiApi {
 	private String feedback_url; // 状态回传url
 	private long warehouseid; // 订单导入站点
 	private int state; // 状态 1，有效，2失效 目前暂不用 采用删除的方式
+
+	private int isopenflag; // 是否开启对接 下载
+	private int isfeedbackflag; // 是否开启反馈 0关闭， 1开启
+	private int isPassiveReception;//1主动下载，  2，被动接收
 	private int ispostflag; // 传输方式 0 数据流 1 POST参数
+
+	private int open_ordertrackflag;
+	private String ordertrack_url;
+	
+	public int getIsPassiveReception() {
+		return isPassiveReception;
+	}
+
+	public void setIsPassiveReception(int isPassiveReception) {
+		this.isPassiveReception = isPassiveReception;
+	}
 
 	public int getIspostflag() {
 		return ispostflag;
@@ -27,9 +42,6 @@ public class EpaiApi {
 	public void setIspostflag(int ispostflag) {
 		this.ispostflag = ispostflag;
 	}
-
-	private int isopenflag; // 是否开启对接 下载
-	private int isfeedbackflag; // 是否开启反馈 //是否开启反馈 0关闭， 1开启
 
 	public int getIsfeedbackflag() {
 		return isfeedbackflag;
@@ -125,6 +137,22 @@ public class EpaiApi {
 
 	public void setWarehouseid(long warehouseid) {
 		this.warehouseid = warehouseid;
+	}
+
+	public int getOpen_ordertrackflag() {
+		return open_ordertrackflag;
+	}
+
+	public void setOpen_ordertrackflag(int open_ordertrackflag) {
+		this.open_ordertrackflag = open_ordertrackflag;
+	}
+
+	public String getOrdertrack_url() {
+		return ordertrack_url;
+	}
+
+	public void setOrdertrack_url(String ordertrack_url) {
+		this.ordertrack_url = ordertrack_url;
 	}
 
 }
