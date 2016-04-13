@@ -153,7 +153,7 @@ public class TransFlowFromJMSService {
 			this.logger.error("error while handle transorderflow", e1);
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("saveTransCwbFlow")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "saveTransCwbFlow")
 					.buildExceptionInfo(e1.toString()).buildTopic(MQ_FROM_URI)
 					.buildMessageHeader("transCwbOrderFlow", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());

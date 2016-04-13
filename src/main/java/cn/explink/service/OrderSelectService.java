@@ -70,7 +70,7 @@ public class OrderSelectService {
 		} catch (Exception e) {
 			logger.error("JMS : Send : jms:topic:updateOrderMoney : cwb : " + cwb);
 			//写MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("updateOrderMoneySendJms")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "updateOrderMoneySendJms")
 					.buildExceptionInfo(e.toString()).buildTopic(this.sendUpdateOrderMoney.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader("cwbAndMoney", sendObject.toString()).getMqException());
 		
@@ -90,7 +90,7 @@ public class OrderSelectService {
 		} catch (Exception e) {
 			logger.error("JMS : Send error: jms:topic:auditBackGoods : cwb : " + cwb + " auditstate:" + state);
 			//写MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsJms")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "auditBackGoodsJms")
 					.buildExceptionInfo(e.toString()).buildTopic(this.auditBackGoods.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader( "cwbAndAuditstate", sendObject.toString()).getMqException());
 			return 0;
@@ -109,7 +109,7 @@ public class OrderSelectService {
 		} catch (Exception e) {
 			logger.error("JMS : Send error: jms:topic:auditBackGoodsEgan : cwb : " + cwb + " auditEganstate:" + state);
 			//写MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsEganJms")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "auditBackGoodsEganJms")
 					.buildExceptionInfo(e.toString()).buildTopic(this.auditBackGoodsEgan.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader( "cwbAndAuditEganstate", sendObject.toString()).getMqException());
 			return 0;
@@ -128,7 +128,7 @@ public class OrderSelectService {
 		} catch (Exception e) {
 			logger.error("JMS : Send error: jms:topic:auditBackGoodsRemark : cwb : " + cwb + " remark:" + remark);
 			//写MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("auditBackGoodsRemarkJms")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "auditBackGoodsRemarkJms")
 					.buildExceptionInfo(e.toString()).buildTopic(this.auditBackGoodsRemark.getDefaultEndpoint().getEndpointUri())
 					.buildMessageHeader( "cwbAndBackremark", sendObject.toString()).getMqException());
 		

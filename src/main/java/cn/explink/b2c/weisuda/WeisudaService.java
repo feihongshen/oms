@@ -591,7 +591,7 @@ public class WeisudaService {
 			this.logger.error("唯速达_05更新站点信息出错" + branch, e);
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("siteUpdate")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "siteUpdate")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_SAVE_ZHANDIAN)
 					.buildMessageHeader("branch", branch)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -626,7 +626,7 @@ public class WeisudaService {
 			this.logger.error("站点撤销信息出错" + branchid, e);
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("siteDel")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "siteDel")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_DEL_ZHANDIAN)
 					.buildMessageHeader("branchid", branchid)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -689,7 +689,7 @@ public class WeisudaService {
 			
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("courierUpdate")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "courierUpdate")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_UPDATE)
 					.buildMessageHeader("user", userFlag).buildMessageBody(jsonUser)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -709,7 +709,7 @@ public class WeisudaService {
 			
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("carrierDel")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "carrierDel")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_DEL)
 					.buildMessageBody(jsonUser)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());

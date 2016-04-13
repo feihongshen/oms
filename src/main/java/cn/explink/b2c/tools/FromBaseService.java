@@ -74,7 +74,7 @@ public class FromBaseService implements ApplicationListener<ContextRefreshedEven
 			Map<String, String> headers = parameters;
 			
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("notifyChange")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass() + "notifyChange")
 					.buildExceptionInfo(e.toString()).buildTopic(topic)
 					.buildMessageHeader(headers)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
