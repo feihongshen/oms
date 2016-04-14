@@ -60,7 +60,7 @@ public class WeisudaDAO {
 	
 	public List<WeisudaCwb> getBoundWeisudaCwbsRepeat(String istuisong,long cwbordertypeid,int maxcount,int orderType) {
 		try {
-			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=? and sendedcount >= 1 and sendedcount <= 50  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid,orderType);
+			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=? and sendedcount >= 1 and sendedcount <= 20  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid,orderType);
 		} catch (Exception e) {
 			return null;
 		}
