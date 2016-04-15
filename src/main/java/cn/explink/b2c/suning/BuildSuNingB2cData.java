@@ -45,7 +45,10 @@ public class BuildSuNingB2cData {
 			return null;
 		}
 		User user=this.cacheBaseListener.getUser(orderFlow.getUserid());//操作人信息
-		User deliveryman = this.cacheBaseListener.getUser(cwbOrder.getDeliverid());//小件员信息
+		User deliveryman = null;
+		if(cwbOrder.getDeliverid() >0){
+			deliveryman = this.cacheBaseListener.getUser(cwbOrder.getDeliverid());//灏忎欢鍛樹俊鎭�
+		}
 		String work_status = "01";
 		if((receivedStatus!=null)&&("03").equals(receivedStatus)){
 			if((delivery_state == DeliveryStateEnum.QuanBuTuiHuo.getValue())
