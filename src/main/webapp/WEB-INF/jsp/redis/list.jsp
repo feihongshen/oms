@@ -72,18 +72,11 @@ function testDelAll(){
 	<form action="" method="post" id="searchForm" method="post" >
 		缓存名：<select id="cacheName" name="cacheName" class="input_text1" style="height:21px;">
 		    <option value=""></option>
-			<option value="YonghuiController" <%if(cacheName.equals("YonghuiController")){%>selected<%} %>>YonghuiController</option>
-			<option value="YihaodianController" <%if(cacheName.equals("YihaodianController")){%>selected<%} %>>YihaodianController</option>
-			<option value="JobUtilController" <%if(cacheName.equals("JobUtilController")){%>selected<%} %>>JobUtilController</option>
-			<option value="JobUtil" <%if(cacheName.equals("JobUtil")){%>selected<%} %>>JobUtil</option>
-			<option value="RufengdaController" <%if(cacheName.equals("RufengdaController")){%>selected<%} %>>RufengdaController</option>
-			<option value="ServiceUtil" <%if(cacheName.equals("ServiceUtil")){%>selected<%} %>>ServiceUtil</option>
-			<option value="ScheduledTaskEnv" <%if(cacheName.equals("ScheduledTaskEnv")){%>selected<%} %>>ScheduledTaskEnv</option>
+			<option value="dmpListCache" <%if(cacheName.equals("dmpListCache")){%>selected<%} %>>dmpListCache</option>
 			<option value="userCache" <%if(cacheName.equals("userCache")){%>selected<%} %>>userCache</option>
-			<option value="customerCache" <%if(cacheName.equals("customerCache")){%>selected<%} %>>customerCache</option>
 			<option value="branchCache" <%if(cacheName.equals("branchCache")){%>selected<%} %>>branchCache</option>
-			<option value="jointCache" <%if(cacheName.equals("jointCache")){%>selected<%} %>>jointCache</option>
-			<option value="reasonCache" <%if(cacheName.equals("reasonCache")){%>selected<%} %>>reasonCache</option>
+			<option value="customerCache" <%if(cacheName.equals("customerCache")){%>selected<%} %>>customerCache</option>
+			<option value="JobUtil" <%if(cacheName.equals("JobUtil")){%>selected<%} %>>JobUtil</option>
 			<option value="default" <%if(cacheName.equals("default")){%>selected<%} %>>default</option>
 		 </select> * &nbsp;&nbsp;&nbsp;
 		key：<input type="text" id="key" name="key" class="input_text1"/>
