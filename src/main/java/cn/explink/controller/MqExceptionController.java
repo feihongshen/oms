@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.MqExceptionDAO;
 import cn.explink.dao.UserDAO;
 import cn.explink.domain.MqException;
 import cn.explink.domain.User;
-import cn.explink.service.ExplinkUserDetail;
 import cn.explink.service.MqExceptionService;
 import cn.explink.service.UserService;
 import cn.explink.util.Page;
@@ -38,13 +37,14 @@ public class MqExceptionController {
 	private MqExceptionService mqExceptionService; 
 	
 	@Autowired
-	SecurityContextHolderStrategy securityContextHolderStrategy;
+	GetDmpDAO getDmpDAO;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private User getSessionUser() {
-		ExplinkUserDetail userDetail = (ExplinkUserDetail) securityContextHolderStrategy.getContext().getAuthentication().getPrincipal();
-		return userDetail.getUser();
+	private User getSessionUser(HttpServletRequest request) {
+		String dmpid = request.getSession().getAttribute("dmpid") == null ? "" : request.getSession().getAttribute("dmpid").toString();
+		User user = getDmpDAO.getLogUser(dmpid);
+		return user;
 	}
 
 	@RequestMapping("/list/{page}")
@@ -83,7 +83,7 @@ public class MqExceptionController {
 			@RequestParam(value = "messageHeader", required = false, defaultValue = "") String messageHeader,
 			@RequestParam(value = "handleCount", required = false, defaultValue = "0") int handleCount,
 			@RequestParam(value = "remarks", required = false, defaultValue = "") String remarks,
-			@RequestParam(value = "isAutoResend", required = false, defaultValue = "0") int isAutoResend)
+			@RequestParam(value = "isAutoResend", required = false, defaultValue = "0") int isAutoResend, HttpServletRequest request)
 			throws Exception {
 		MqException mqException = mqExceptionDAO.getMqExceptionById(id);
 		if (mqException == null) {
@@ -94,10 +94,14 @@ public class MqExceptionController {
 			mqException.setHandleCount(handleCount);
 			mqException.setRemarks(remarks.trim());
 			mqException.setIsAutoResend(isAutoResend == 0 ? false : true);
-			mqException.setUpdatedByUser(getSessionUser().getUsername());//更新人
-			mqException.setUpdatedOffice(getSessionUser().getBranchid() + "");//更新机构
+			
+			User user = getSessionUser(request);
+			if(user != null) {
+				mqException.setUpdatedByUser(user.getUsername());//更新人
+				mqException.setUpdatedOffice(user.getBranchid() + "");//更新机构
+			}
 			mqExceptionService.updateMqException(mqException);
-			logger.info("operatorUser={},mq异常记录修改 设置->save", getSessionUser().getUsername());
+			logger.info("operatorUser={},mq异常记录修改 设置->save", user == null ? "" : user.getUsername());
 			return "{\"errorCode\":0,\"error\":\"保存成功\"}";
 		}
 	}
