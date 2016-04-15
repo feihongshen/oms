@@ -546,6 +546,7 @@ public class FlowFromJMSService {
 			of.setEmaildate(new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dmpCwbOrder.getEmaildate()).getTime()));
 			of.setShiptime(new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dmpCwbOrder.getEmaildate()).getTime()));
 		} catch (ParseException e) {
+			this.logger.error("", e);
 		}
 		of.setCustomerid((int) dmpCwbOrder.getCustomerid());
 		of.setEmaildateid(dmpCwbOrder.getEmaildateid());
