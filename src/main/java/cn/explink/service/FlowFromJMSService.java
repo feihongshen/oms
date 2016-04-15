@@ -186,7 +186,7 @@ public class FlowFromJMSService {
 			
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("deletecwb")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".deletecwb")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_LOSECWB)
 					.buildMessageHeader("cwbAndUserid", cwbAndUserid)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -225,7 +225,7 @@ public class FlowFromJMSService {
 			
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("deletecwbBatch")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".deletecwbBatch")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_LOSECWBBATCH)
 					.buildMessageHeader("cwbbatchDelete", cwb)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -268,7 +268,7 @@ public class FlowFromJMSService {
 		} catch(Exception e) {
 			// 把未完成MQ插入到数据库中, start
 			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode("saveFlow")
+			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".saveFlow")
 					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_ORDER_FLOW)
 					.buildMessageHeader("orderFlow", parm)
 					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
@@ -546,6 +546,7 @@ public class FlowFromJMSService {
 			of.setEmaildate(new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dmpCwbOrder.getEmaildate()).getTime()));
 			of.setShiptime(new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dmpCwbOrder.getEmaildate()).getTime()));
 		} catch (ParseException e) {
+			this.logger.error("", e);
 		}
 		of.setCustomerid((int) dmpCwbOrder.getCustomerid());
 		of.setEmaildateid(dmpCwbOrder.getEmaildateid());
