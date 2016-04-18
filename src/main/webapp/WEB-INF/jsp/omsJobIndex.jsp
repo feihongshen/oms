@@ -180,7 +180,7 @@ function doExcuteNow(){
 		return null;
 	}
 	
-	$.messager.confirm("操作提醒", "您确定要暂停选中的定时任务吗？", function (data) {
+	$.messager.confirm("操作提醒", "您确定要立即执行选中的定时任务吗？", function (data) {
 		if(data){
 			var param = {
 					jobName:rows[0].jobName,
