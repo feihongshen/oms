@@ -324,20 +324,20 @@ public class FlowFromJMSB2cService {
 
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiShenHe.getValue()) { // pos支付，直接存储到对接表中
 				DmpDeliveryState ds = cwbOrderWithDeliveryState.getDeliveryState();
-				if ((ds.getPos().compareTo(BigDecimal.ZERO) > 0) && ds.getPosremark().equals("POS刷卡")) {// pos支付，已经推送过，不再存储
+				if (null != ds && (ds.getPos().compareTo(BigDecimal.ZERO) > 0) && ds.getPosremark().equals("POS刷卡")) {// pos支付，已经推送过，不再存储
 					this.logger.info("RE: orderFlow send b2c pos支付，已经推送过，不再存储,{}", ds.getCwb());
 					return;
 				}
 				// /=======================新增POS开关==================================================
 				if (posSendflag == 1) {
-					if (((ds.getDeliverystate() == DeliveryStateEnum.PeiSongChengGong.getValue()) || (ds.getDeliverystate() == DeliveryStateEnum.ShangMenHuanChengGong.getValue()) || (ds
+					if (null != ds && ((ds.getDeliverystate() == DeliveryStateEnum.PeiSongChengGong.getValue()) || (ds.getDeliverystate() == DeliveryStateEnum.ShangMenHuanChengGong.getValue()) || (ds
 							.getDeliverystate() == DeliveryStateEnum.ShangMenTuiChengGong.getValue())) && ds.getPosremark().contains("POS反馈")) {// pos支付，已经推送过，不再存储
 						this.logger.info("RE: orderFlow send b2c pos-现金和0款反馈，已经推送过，不再存储,{}", ds.getCwb());
 						return;
 					}
 				}
 				if (posSendflag == 2) {
-					if (ds.getPosremark().contains("POS反馈")) { // pos反馈，已经推送过，不再存储
+					if (null != ds && ds.getPosremark().contains("POS反馈")) { // pos反馈，已经推送过，不再存储
 						this.logger.info("RE: orderFlow send b2c pos-所有反馈，已经推送过，不再存储,{}", ds.getCwb());
 						return;
 					}
