@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import cn.explink.b2c.vipshop.VipShop;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
 import cn.explink.domain.SystemInstall;
@@ -275,6 +274,9 @@ public class B2CDataDAO {
 			sql += "  order by posttime,flowordertype LIMIT 0," + maxCount;
 
 			this.logger.info("b2c-sql:" + sql);
+			
+			//System.out.println("===sql==="+sql);
+			
 			try {
 				return this.jdbcTemplate.query(sql, new ComMapper());
 			} catch (DataAccessException e) {
@@ -945,5 +947,43 @@ public class B2CDataDAO {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 获取指定订单类型的需要反馈的数据
+	 * @author leo01.liao
+	 * @param flowordertype
+	 * @param customerids
+	 * @param cwbordertypeid
+	 * @param maxCount
+	 * @return
+	 */
+	public List<B2CData> getB2cDataList(long flowordertype, String customerids, int cwbordertypeid, long maxCount) {
+		SystemInstall useAudit = this.getDmpDAO.getSystemInstallByName("useAudit");
+		if ((useAudit != null) && "no".equals(useAudit.getValue())) {// 不需要归班
+			String nowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			return this.getDataListByB2cSendByNotAudit(flowordertype, customerids, nowTime, maxCount);
+		} else {
+			String sql = "select * from express_send_b2c_data where send_b2c_flag=0  and  customerid in (" + customerids + ") ";
+			if (flowordertype > 0) {
+				sql += " and flowordertype=" + flowordertype;
+			}
+			
+			//只取指定订单类型
+			sql += " and POSITION('\"cwbordertypeid\":"+cwbordertypeid+",' IN jsoncontent) > 0 ";
+			
+			sql += "  order by posttime,flowordertype LIMIT 0," + maxCount;
+
+			this.logger.info("b2c-sql:" + sql);
+			
+			try {
+				return this.jdbcTemplate.query(sql, new ComMapper());
+			} catch (DataAccessException e) {
+				// TODO Auto-generated catch block
+				this.logger.error("sql查询异常!", e);
+				return null;
+			}
+		}
+
 	}
 }
