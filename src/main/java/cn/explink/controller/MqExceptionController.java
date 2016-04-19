@@ -1,5 +1,7 @@
 package cn.explink.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -104,5 +106,11 @@ public class MqExceptionController {
 			logger.info("operatorUser={},mq异常记录修改 设置->save", user == null ? "" : user.getUsername());
 			return "{\"errorCode\":0,\"error\":\"保存成功\"}";
 		}
+	}
+	
+	@RequestMapping("/loadExceptionCode")
+	public @ResponseBody List<String> loadExceptionCode() {
+		List<String> exceptionCodeList = mqExceptionDAO.loadExceptionCode();
+		return exceptionCodeList;
 	}
 }
