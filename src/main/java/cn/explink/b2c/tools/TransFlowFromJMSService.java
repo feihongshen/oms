@@ -135,7 +135,9 @@ public class TransFlowFromJMSService {
 				return;
 			}
 			
-			if (this.transflowdataDAO.checkIsRepeatDataFlag(cwbOrderWithDeliveryState.getTransCwbDetail().getTranscwb(), transCwbOrderFlow.getFlowordertype(), DateTimeUtil.formatDate(transCwbOrderFlow.getCredate())) > 0) {
+			//2016-04-18 解决MQ消费中出现的NullPointer
+			if (cwbOrderWithDeliveryState.getTransCwbDetail()!=null &&
+					this.transflowdataDAO.checkIsRepeatDataFlag(cwbOrderWithDeliveryState.getTransCwbDetail().getTranscwb(), transCwbOrderFlow.getFlowordertype(), DateTimeUtil.formatDate(transCwbOrderFlow.getCredate())) > 0) {
 				this.logger.info("RE: transOrderFlow send b2c 环节信息重复,已过滤,{}", parm);
 				return;
 			}
