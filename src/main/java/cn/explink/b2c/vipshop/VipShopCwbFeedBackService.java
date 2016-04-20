@@ -410,7 +410,7 @@ public class VipShopCwbFeedBackService {
 				}
 			}catch(Exception ex){
 				logger.error("当前推送唯品会配送单[cwb={}]异常,ExceptMsg={}", b2cData.getCwb()==null?"":b2cData.getCwb(), ex.getMessage());
-			}			
+			}
 		}
 		sub1.append("</traces>");
 		sub1.append("</request>");
@@ -440,46 +440,57 @@ public class VipShopCwbFeedBackService {
 			sub1.append("</head>");
 			sub1.append("<traces>");
 			for (B2CData b2cData : vipshopDataList) {
-				String jsoncontent = b2cData.getJsoncontent();
-				VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
-
-				if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue()) {
-					this.logger.info("当前推送唯品会{}过滤揽退单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
-					continue;
-				}
-
-				String order_status_info = note.getOrder_status_info();
-				if (!note.getOrder_status().equals("33")) {
-					order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
-				}
-
-				sub1.append("<trace>");
-				sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
-				sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
-				sub1.append("<order_status>" + note.getOrder_status() + "</order_status>");
-				sub1.append("<order_status_info>" + order_status_info + "</order_status_info>");
-				sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
-				sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
-				sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
-				
-				sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
-				sub1.append("</trace>");
-
-				if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
-
-					String order_status_msg = "货物已达[" + note.getDeliverBranch() + "]由派送员[" + note.getDeliverUser() + "]开始派送，投递员电话：[" + note.getDeliverMobile() + "]";
-					note.setOrder_status_info_temp(order_status_msg);
+				//Added by leoliao at 2016-04-19 预防jsoncontent格式有错导致整批反馈有问题：增加了try{}catch(){}
+				try{
+					String jsoncontent = b2cData.getJsoncontent();
+					VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
+					
+					if(note== null){
+						this.logger.info("(AppendXMLStringMD5Hepler)当前推送唯品会配送单cwb={}的jsoncontent格式有错，无法解析！jsoncontent={}", b2cData.getCwb(), jsoncontent);
+						continue;
+					}
+	
+					if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Peisong.getValue()) {
+						this.logger.info("(AppendXMLStringMD5Hepler)当前推送唯品会{}过滤揽退单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
+						continue;
+					}
+	
+					String order_status_info = note.getOrder_status_info();
+					if (!note.getOrder_status().equals("33")) {
+						order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
+					}
+	
 					sub1.append("<trace>");
-					sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
+					sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
 					sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
-					sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
-					sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
+					sub1.append("<order_status>" + note.getOrder_status() + "</order_status>");
+					sub1.append("<order_status_info>" + order_status_info + "</order_status_info>");
 					sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 					sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 					sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
-					sub1.append("<is_unpacked></is_unpacked>");
+					
+					sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
 					sub1.append("</trace>");
+	
+					if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
+	
+						String order_status_msg = "货物已达[" + note.getDeliverBranch() + "]由派送员[" + note.getDeliverUser() + "]开始派送，投递员电话：[" + note.getDeliverMobile() + "]";
+						note.setOrder_status_info_temp(order_status_msg);
+						sub1.append("<trace>");
+						sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
+						sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
+						sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
+						sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
+						sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
+						sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
+						sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+						sub1.append("<is_unpacked></is_unpacked>");
+						sub1.append("</trace>");
+					}				
+				}catch(Exception ex){
+					logger.error("(AppendXMLStringMD5Hepler)当前推送唯品会配送单[cwb={}]异常,ExceptMsg={}", b2cData.getCwb()==null?"":b2cData.getCwb(), ex.getMessage());
 				}
+				//Added end
 			}
 			sub1.append("</traces>");
 			sub1.append("</request>");
@@ -509,46 +520,57 @@ public class VipShopCwbFeedBackService {
 				sub1.append("</head>");
 				sub1.append("<traces>");
 				for (B2CData b2cData : vipshopDataList) {
-					String jsoncontent = b2cData.getJsoncontent();
-					VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
-
-					if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.OXO.getValue()) {
-						this.logger.info("当前推送唯品会{}过滤非OXO订单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
-						continue;
-					}
-
-					String order_status_info = note.getOrder_status_info();
-					if (!note.getOrder_status().equals("33")) {
-						order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
-					}
-
-					sub1.append("<trace>");
-					sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
-					sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
-					sub1.append("<order_status>" + note.getOrder_status() + "</order_status>");
-					sub1.append("<order_status_info>" + order_status_info + "</order_status_info>");
-					sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
-					sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
-					sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
-					
-					sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
-					sub1.append("</trace>");
-
-					if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
-
-						String order_status_msg = "货物已达[" + note.getDeliverBranch() + "]由派送员[" + note.getDeliverUser() + "]开始派送，投递员电话：[" + note.getDeliverMobile() + "]";
-						note.setOrder_status_info_temp(order_status_msg);
+					//Added by leoliao at 2016-04-19 预防jsoncontent格式有错导致整批反馈有问题：增加了try{}catch(){}
+					try{
+						String jsoncontent = b2cData.getJsoncontent();
+						VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
+						if(note== null){
+							this.logger.info("(AppendXMLStringMD5HeplerOXO)当前推送唯品会OXO单cwb={}的jsoncontent格式有错，无法解析！jsoncontent={}", b2cData.getCwb(), jsoncontent);
+							continue;
+						}
+	
+						if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.OXO.getValue()) {
+							this.logger.info("(AppendXMLStringMD5HeplerOXO)当前推送唯品会{}过滤非OXO订单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
+							continue;
+						}
+	
+						String order_status_info = note.getOrder_status_info();
+						if (!note.getOrder_status().equals("33")) {
+							order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
+						}
+	
 						sub1.append("<trace>");
-						sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
+						sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "")) + "</cust_data_id>");
 						sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
-						sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
-						sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
+						sub1.append("<order_status>" + note.getOrder_status() + "</order_status>");
+						sub1.append("<order_status_info>" + order_status_info + "</order_status_info>");
 						sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
 						sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
 						sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
-						sub1.append("<is_unpacked></is_unpacked>");
+						
+						sub1.append("<is_unpacked>" +(note.getIs_unpacked()==null?"":note.getIs_unpacked())+ "</is_unpacked>");
 						sub1.append("</trace>");
+	
+						if (note.getOrder_status().equals("33")) { // 如果是33状态 则自动创建虚拟 领货状态
+	
+							String order_status_msg = "货物已达[" + note.getDeliverBranch() + "]由派送员[" + note.getDeliverUser() + "]开始派送，投递员电话：[" + note.getDeliverMobile() + "]";
+							note.setOrder_status_info_temp(order_status_msg);
+							sub1.append("<trace>");
+							sub1.append("<cust_data_id>" + (VipShopCwbFeedBackService.parseStrAdd(b2cData.getB2cid() + "_temp")) + "</cust_data_id>");
+							sub1.append("<order_sn>" + note.getOrder_sn() + "</order_sn>");
+							sub1.append("<order_status>" + VipShopFlowEnum.FenZhanLingHuo_temp.getVipshop_state() + "</order_status>");
+							sub1.append("<order_status_info>" + order_status_msg + "</order_status_info>");
+							sub1.append("<current_city_name>" + note.getCurrent_city_name() + "</current_city_name>");
+							sub1.append("<order_status_time>" + note.getOrder_status_time() + "</order_status_time>");
+							sub1.append("<sign_man>" + note.getSign_man() + "</sign_man>");
+							sub1.append("<is_unpacked></is_unpacked>");
+							sub1.append("</trace>");
+						}
+					
+					}catch(Exception ex){
+						logger.error("(AppendXMLStringMD5HeplerOXO)当前推送唯品会揽退单[cwb={}]异常,ExceptMsg={}", b2cData.getCwb()==null?"":b2cData.getCwb(), ex.getMessage());
 					}
+					//Added end
 				}
 				sub1.append("</traces>");
 				sub1.append("</request>");
@@ -1088,9 +1110,14 @@ public class VipShopCwbFeedBackService {
 
 		for (B2CData b2cData : vipshopDataList) {
 			String jsoncontent = b2cData.getJsoncontent();
-			VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);
+			VipShopXMLNote note = this.getVipShopXMLNoteMethod(jsoncontent);			
+			if(note== null){
+				this.logger.info("(sendCreateMD5Str_lantui)当前推送唯品会揽退单cwb={}的jsoncontent格式有错，无法解析！jsoncontent={}", b2cData.getCwb(), jsoncontent);
+				continue;
+			}
+			
 			if (note.getCwbordertypeid() != CwbOrderTypeIdEnum.Shangmentui.getValue()) {
-				this.logger.info("当前推送唯品会{}过滤配送单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
+				this.logger.info("(sendCreateMD5Str_lantui)当前推送唯品会{}过滤配送单,flowordertype={}", b2cData.getCwb(), b2cData.getFlowordertype());
 				continue;
 			}
 			String order_status_info = note.getOrder_status_info();
