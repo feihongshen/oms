@@ -896,9 +896,17 @@ public class JobUtil {
 		try {
 			//Commented by leoliao at 2016-04-01 全部统一使用批量同步方式
 			//this.weisudaService.getUnVerifyOrdersOfCount();
+			
+			long timeA = System.currentTimeMillis();			
 			this.weisudaService.getback_getAppOrdersCounts();
 			
+			long timeB = System.currentTimeMillis();			
+			this.logger.info("执行上门退订单签收信息同步耗时:{}秒", ((timeB - timeA) / 1000));
+			
 			this.weisudaServiceDeliveryResult.getDeliveryResult();
+			
+			long timeC = System.currentTimeMillis();			
+			this.logger.info("执行配送订单签收信息同步耗时:{}秒", ((timeC - timeB) / 1000));
 
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达签收结果同步定时器异常!", e);
