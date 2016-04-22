@@ -171,7 +171,9 @@ public class WeisudaServiceExtends {
 	private void buildBoundXml(StringBuffer sub, WeisudaCwb data) {
 		String courier_code = data.getCourier_code();
 		String cwb = data.getCwb();
-		Date datetime = DateTimeUtil.formatToDate(data.getOperationTime());
+		//Date datetime = DateTimeUtil.formatToDate(data.getOperationTime());
+		//Added by leoliao at 2016-04-22 改为24小时制
+		Date datetime = DateTimeUtil.formatToDate(data.getOperationTime(), "yyyy-MM-dd HH:mm:ss"); 
 		String timestamp = (datetime.getTime() / 1000) + "";
 
 		sub.append("<item>" 
