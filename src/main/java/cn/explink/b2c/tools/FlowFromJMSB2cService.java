@@ -536,6 +536,7 @@ public class FlowFromJMSB2cService {
 				
 				json.put("ids", delIds);
 				json.put("pushtime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+				this.logger.info("消息发送端：sendBToCToDmpProducer, delIds={}", json.toString());
 				this.sendBToCToDmpProducer.sendBodyAndHeader(null, "delIds", json.toString());
 			}
 		} catch (CamelExecutionException e) {

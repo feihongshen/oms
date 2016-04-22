@@ -65,6 +65,7 @@ public class OrderSelectService {
 		sendObject.put("cwb", cwb);
 		sendObject.put("money", money);
 		try {
+			this.logger.info("消息发送端：sendUpdateOrderMoney, cwbAndMoney={}", sendObject.toString());
 			sendUpdateOrderMoney.sendBodyAndHeader(null, "cwbAndMoney", sendObject.toString());
 			return 1;
 		} catch (Exception e) {
@@ -84,6 +85,7 @@ public class OrderSelectService {
 		sendObject.put("cwb", cwb);
 		sendObject.put("auditstate", state);
 		try {
+			this.logger.info("消息发送端：auditBackGoods, cwbAndAuditstate={}", sendObject.toString());
 			auditBackGoods.sendBodyAndHeader(null, "cwbAndAuditstate", sendObject.toString());
 			logger.error("JMS : Send success: jms:topic:auditBackGoods : cwb : " + cwb + " auditstate:" + state);
 			return 1;
@@ -103,6 +105,7 @@ public class OrderSelectService {
 		sendObject.put("cwb", cwb);
 		sendObject.put("auditEganstate", state);
 		try {
+			this.logger.info("消息发送端：auditBackGoodsEgan, cwbAndAuditEganstate={}", sendObject.toString());
 			auditBackGoodsEgan.sendBodyAndHeader(null, "cwbAndAuditEganstate", sendObject.toString());
 			logger.error("JMS : Send success: jms:topic:auditBackGoodsEgan : cwb : " + cwb + " auditEganstate:" + state);
 			return 1;
@@ -122,6 +125,7 @@ public class OrderSelectService {
 		sendObject.put("cwb", cwb);
 		sendObject.put("remark", remark);
 		try {
+			this.logger.info("消息发送端：auditBackGoodsRemark, cwbAndBackremark={}", sendObject.toString());
 			auditBackGoodsRemark.sendBodyAndHeader(null, "cwbAndBackremark", sendObject.toString());
 			logger.error("JMS : Send success: jms:topic:auditBackGoodsRemark : cwb : " + cwb + " remark:" + remark);
 			return 1;
