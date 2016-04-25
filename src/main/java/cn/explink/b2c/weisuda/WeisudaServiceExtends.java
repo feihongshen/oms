@@ -15,11 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.weisuda.xml.ObjectUnMarchal;
 import cn.explink.b2c.weisuda.xml.bound.RespRootOrder;
+import cn.explink.b2c.weisuda.xml.bound.RespRootOrder.ErrorItem;
 import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WeisudaDAO;
@@ -59,11 +61,6 @@ public class WeisudaServiceExtends {
 	public void boundsDeliveryToApp(boolean isRepeat) {
 		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
 			this.logger.info("唯速达_01未开启[唯速达]接口");
-			return;
-		}
-		
-		Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-		if(weisuda.getOpenbatchflag()==0){ //开启批量之后退出
 			return;
 		}
 		
@@ -200,50 +197,37 @@ public class WeisudaServiceExtends {
 			UnsupportedEncodingException {
 		
 		RespRootOrder respOrders=(RespRootOrder) ObjectUnMarchal.XmltoPOJO(response, new RespRootOrder());
-		List<String> orderIds=respOrders.getOrder_id();
-		String cwbs="";
-		if(respOrders!=null&&orderIds!=null){
-			for(String orderId:orderIds){
-				cwbs+="'"+orderId+"',";
+		List<String> orderIds = respOrders.getOrder_id();
+		String cwbs = "";
+		if (respOrders != null && orderIds != null) {
+			for (String orderId : orderIds) {
+				cwbs += "'" + orderId + "',";
 			}
 		}
 		
-		if(cwbs.length()>0){
-			cwbs=cwbs.substring(0,cwbs.length()-1);
+		if (cwbs.length() > 0) {
+			cwbs = cwbs.substring(0, cwbs.length() - 1);
 		}
 		
-	   String failCwbs =getFailCwbs(boundList, cwbs);
-		
-		if (version == 1) {
-			if(cwbs.length()>0){
-				this.weisudaDAO.updateBoundState(cwbs, "1","成功");
-			}
-			if(failCwbs!=null&&!failCwbs.isEmpty()){
+	    // 更新成功的
+		if (cwbs.length() > 0) {
+			this.weisudaDAO.updateBoundState(cwbs, "1", "成功");
+		}
+		// 更新失败的
+		List<ErrorItem> errorList = respOrders.getErrors();
+		if (!CollectionUtils.isEmpty(errorList)) {
+			String failCwbs = null;
+			for (ErrorItem errorItem : errorList) {
+				failCwbs = "'" +errorItem.getOrderId()+ "'";
 				if (!isRepeat) {
-					this.weisudaDAO.updateBoundState(failCwbs, "2","失败");
+					this.weisudaDAO.updateBoundState(failCwbs, "2", errorItem.getErrorMsg());
 				} else {
-					this.weisudaDAO.updateBoundStateRepeat(failCwbs, "2","失败");
+					this.weisudaDAO.updateBoundStateRepeat(failCwbs, "2", errorItem.getErrorMsg());
 				}
-				
 			}
-			
-		} 
+		}
 	}
 
-	private String getFailCwbs(List<WeisudaCwb> boundList, String cwbs) {
-		String failCwbs="";
-		for(WeisudaCwb wsdCwb:boundList){
-			if(!cwbs.contains(wsdCwb.getCwb())){
-				failCwbs+="'"+wsdCwb.getCwb()+"',";
-			}
-		}
-		if(failCwbs.length()>0){
-			failCwbs=failCwbs.substring(0,failCwbs.length()-1);
-		}
-		return failCwbs;
-	}
-	
-	
 	private String check(Weisuda weisuda, String params, String value, int type) {
 		String timestamp = (System.currentTimeMillis() / 1000) + "";
 		String code = weisuda.getCode();

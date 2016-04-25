@@ -852,7 +852,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 1);
 		try {
-			this.weisudaService.boundDeliveryToApp(true); //重推单票
+			// 只使用批量推送，delete by jian_xie
+//			this.weisudaService.boundDeliveryToApp(true); //重推单票
 			this.weisudaServiceExtends.boundsDeliveryToApp(true);//重推批量
 
 		} catch (Exception e) {
@@ -872,7 +873,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
 		try {
-			this.weisudaService.boundDeliveryToApp(false); //首次单票
+			// 只使用批量推送，delete by jian_xie
+//			this.weisudaService.boundDeliveryToApp(false); //首次单票
 			this.weisudaServiceExtends.boundsDeliveryToApp(false);//首次批量
 
 		} catch (Exception e) {
