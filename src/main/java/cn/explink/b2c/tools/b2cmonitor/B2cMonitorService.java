@@ -22,6 +22,9 @@ import org.springframework.jdbc.support.rowset.ResultSetWrappingSqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.Customer;
@@ -47,6 +50,8 @@ public class B2cMonitorService {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public void exportB2cDataExptInfo(String cwb, long customerid, long flowordertypeid, String starttime, String endtime, HttpServletResponse response) {
 
 		String[] cloumnName1 = new String[7]; // 导出的列名
