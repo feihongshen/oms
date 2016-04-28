@@ -76,6 +76,9 @@ public enum B2cEnum {
 	VipShop_cangku6(20124, "唯品会_仓库6", "vipshop_cangku6"),
 	VipShop_cangku7(20125, "唯品会_仓库7", "vipshop_cangku7"),
 	VipShop_cangku8(20126, "唯品会_仓库8", "vipshop_cangku8"),
+	VipShop_cangku9(29001, "唯品会_仓库9", "vipshop_cangku9"),
+	VipShop_cangku10(29002, "唯品会_仓库10", "vipshop_cangku10"),
+	VipShop_cangku11(29003, "唯品会_仓库11", "vipshop_cangku11"),
 	
 	SuNing(20127,"苏宁易购","suning"),
 	
