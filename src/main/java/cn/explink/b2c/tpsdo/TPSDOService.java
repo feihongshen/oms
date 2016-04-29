@@ -170,7 +170,7 @@ public class TPSDOService {
 		request.setJoinTime(requestVo.getJoinTime());
 		request.setOrderSource(requestVo.getOrderSource());
 		request.setOrderType(requestVo.getOrderType());
-		request.setPayment(requestVo.getPayment());
+		request.setPayment(requestVo.getPayment() + "");
 		request.setPayType(requestVo.getPayType() + "");
 		request.setPickerTime(requestVo.getPickerTime());
 		request.setSendCarrierCode(requestVo.getSendCarrierCode());

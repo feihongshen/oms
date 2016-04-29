@@ -19,6 +19,7 @@ import net.sf.json.JSONObject;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
+import cn.explink.b2c.tools.CacheBaseListenerImp;
 import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DORequestVo;
@@ -197,27 +198,19 @@ public class TPOSendDoInfService {
 		int paywayid = (int)cwbOrder.getPaywayid();
 		if(paywayid == PaytypeEnum.Xianjin.getValue()){
 			thirdPartyOrder2DORequestVo.setActualPayType(0);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(0));
+			thirdPartyOrder2DORequestVo.setPayment(0);
 		}
 		else if(paywayid == PaytypeEnum.Pos.getValue()){
 			thirdPartyOrder2DORequestVo.setActualPayType(1);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(1));
+			thirdPartyOrder2DORequestVo.setPayment(1);
 		}
 		else if(paywayid == PaytypeEnum.CodPos.getValue()){
 			thirdPartyOrder2DORequestVo.setActualPayType(2);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(2));
-		}
-		else if(paywayid == PaytypeEnum.Zhipiao.getValue()){
-			thirdPartyOrder2DORequestVo.setActualPayType(13);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(13));
-		}
-		else if(paywayid == PaytypeEnum.Qita.getValue()){
-			thirdPartyOrder2DORequestVo.setActualPayType(14);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(14));
+			thirdPartyOrder2DORequestVo.setPayment(2);
 		}
 		else{
-			thirdPartyOrder2DORequestVo.setActualPayType(null);
-			thirdPartyOrder2DORequestVo.setPayment("");
+			thirdPartyOrder2DORequestVo.setActualPayType(-1);
+			thirdPartyOrder2DORequestVo.setPayment(-1);
 		}
 		
 		//thirdPartyOrder2DORequestVo.setAssuranceFee(BigDecimal.ZERO);
@@ -264,9 +257,6 @@ public class TPOSendDoInfService {
 			 thirdPartyOrder2DORequestVo.setCodAmount(cwbOrder.getReceivablefee());
          }else{
         	 thirdPartyOrder2DORequestVo.setIsCod(0);
-        	 //如果非代收货款，支付方式设为空
-        	 thirdPartyOrder2DORequestVo.setActualPayType(null);
- 			 thirdPartyOrder2DORequestVo.setPayment("");
          }
 		thirdPartyOrder2DORequestVo.setCustCode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));
 		thirdPartyOrder2DORequestVo.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
@@ -479,27 +469,19 @@ public class TPOSendDoInfService {
 		int paywayid = StringUtils.isNotEmpty(cwbOrder.getPaytype()) ? Integer.valueOf(cwbOrder.getPaytype()) : PaytypeEnum.Qita.getValue() ;
 		if(paywayid == PaytypeEnum.Xianjin.getValue()){
 			thirdPartyOrder2DORequestVo.setActualPayType(0);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(0));
+			thirdPartyOrder2DORequestVo.setPayment(0);
 		}
 		else if(paywayid == PaytypeEnum.Pos.getValue()){
 			thirdPartyOrder2DORequestVo.setActualPayType(1);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(1));
+			thirdPartyOrder2DORequestVo.setPayment(1);
 		}
 		else if(paywayid == PaytypeEnum.CodPos.getValue()){
 			thirdPartyOrder2DORequestVo.setActualPayType(2);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(2));
-		}
-		else if(paywayid == PaytypeEnum.Zhipiao.getValue()){
-			thirdPartyOrder2DORequestVo.setActualPayType(13);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(13));
-		}
-		else if(paywayid == PaytypeEnum.Qita.getValue()){
-			thirdPartyOrder2DORequestVo.setActualPayType(14);
-			thirdPartyOrder2DORequestVo.setPayment(String.valueOf(14));
+			thirdPartyOrder2DORequestVo.setPayment(2);
 		}
 		else{
-			thirdPartyOrder2DORequestVo.setActualPayType(null);
-			thirdPartyOrder2DORequestVo.setPayment("");
+			thirdPartyOrder2DORequestVo.setActualPayType(-1);
+			thirdPartyOrder2DORequestVo.setPayment(-1);
 		}
 		
 		//thirdPartyOrder2DORequestVo.setAssuranceFee(BigDecimal.ZERO);
@@ -546,9 +528,6 @@ public class TPOSendDoInfService {
 			 thirdPartyOrder2DORequestVo.setCodAmount(cwbOrder.getReceivablefee());
          }else{
         	 thirdPartyOrder2DORequestVo.setIsCod(0);
-        	 //如果非代收货款，支付方式设为空
-        	 thirdPartyOrder2DORequestVo.setActualPayType(null);
- 			 thirdPartyOrder2DORequestVo.setPayment("");
          }
 		thirdPartyOrder2DORequestVo.setCustCode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));
 		thirdPartyOrder2DORequestVo.setCustName(StringUtil.nullConvertToEmptyString(customer.getCustomername()));
