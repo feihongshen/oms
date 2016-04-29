@@ -82,7 +82,14 @@ public class SubExcuteWeisudaTask implements Runnable{
 				}
 				
 				String json = this.buliderJson(item, cwb);
+				
+				long timeA = System.currentTimeMillis();
+				
+				//请求DMP进行签收处理
 				String result = sendDmpFlow(json);
+				
+				long timeB = System.currentTimeMillis();			
+				this.logger.info("执行订单cwb="+cwb+"签收,签收处理结果:"+result+",信息同步耗时:{}秒，", ((timeB - timeA) / 1000));
 				
 				mapResult.put(cwb, result);
 				//dealWithDmpFeedbackResult(item, result,weisuda);
@@ -361,7 +368,12 @@ public class SubExcuteWeisudaTask implements Runnable{
 		
 		//DMP签收成功或已经签收的需要反馈给品骏达
 		if(listOrderIdSuccess.size() > 0){
+			long timeA = System.currentTimeMillis();
+			
 			this.updateUnVerifyOrders(listOrderIdSuccess, weisuda);
+			
+			long timeB = System.currentTimeMillis();			
+			this.logger.info("执行唯速达_03APP包裹签收信息同步结果给品骏达耗时:{}秒，", ((timeB - timeA) / 1000));
 		}
 	}
 	

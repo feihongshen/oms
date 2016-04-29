@@ -774,11 +774,38 @@ public class DateTimeUtil {
 	}
 
 	// 获取当前日期前一个月的日期
-		public static String getMonthBefore() {
-			java.util.Date date = new java.util.Date();
-			Calendar calendar = Calendar.getInstance();// 日历对象
-			calendar.setTime(date);// 设置当前日期
-			calendar.add(Calendar.MONTH, -1);// 月份减一
-			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+	public static String getMonthBefore() {
+		java.util.Date date = new java.util.Date();
+		Calendar calendar = Calendar.getInstance();// 日历对象
+		calendar.setTime(date);// 设置当前日期
+		calendar.add(Calendar.MONTH, -1);// 月份减一
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+	}
+	
+	/**
+	 * 字符串转日期
+	 * @author leo01.liao
+	 * @param time
+	 * @param format
+	 * @return
+	 */
+	public static java.util.Date formatToDate(String time, String format) {
+		try {
+			if(time == null || time.trim().equals("")){
+				return null;
+			}
+			
+			if(format == null || format.trim().equals("")){
+				format = "yyyy-MM-dd HH:mm:ss";
+			}
+			
+			SimpleDateFormat sim = new SimpleDateFormat(format);
+			java.util.Date d = sim.parse(time);
+			return d;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new java.util.Date();
 		}
+	}	
 }

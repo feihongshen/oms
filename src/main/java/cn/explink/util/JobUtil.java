@@ -852,7 +852,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 1);
 		try {
-			this.weisudaService.boundDeliveryToApp(true); //重推单票
+			// 只使用批量推送，delete by jian_xie
+//			this.weisudaService.boundDeliveryToApp(true); //重推单票
 			this.weisudaServiceExtends.boundsDeliveryToApp(true);//重推批量
 
 		} catch (Exception e) {
@@ -872,7 +873,8 @@ public class JobUtil {
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
 		try {
-			this.weisudaService.boundDeliveryToApp(false); //首次单票
+			// 只使用批量推送，delete by jian_xie
+//			this.weisudaService.boundDeliveryToApp(false); //首次单票
 			this.weisudaServiceExtends.boundsDeliveryToApp(false);//首次批量
 
 		} catch (Exception e) {
@@ -896,9 +898,17 @@ public class JobUtil {
 		try {
 			//Commented by leoliao at 2016-04-01 全部统一使用批量同步方式
 			//this.weisudaService.getUnVerifyOrdersOfCount();
+			
+			long timeA = System.currentTimeMillis();			
 			this.weisudaService.getback_getAppOrdersCounts();
 			
+			long timeB = System.currentTimeMillis();			
+			this.logger.info("执行上门退订单签收信息同步耗时:{}秒", ((timeB - timeA) / 1000));
+			
 			this.weisudaServiceDeliveryResult.getDeliveryResult();
+			
+			long timeC = System.currentTimeMillis();			
+			this.logger.info("执行配送订单签收信息同步耗时:{}秒", ((timeC - timeB) / 1000));
 
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达签收结果同步定时器异常!", e);
