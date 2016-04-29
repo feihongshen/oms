@@ -171,7 +171,7 @@ public class WeisudaServiceExtends {
 		//Date datetime = DateTimeUtil.formatToDate(data.getOperationTime());
 		//Added by leoliao at 2016-04-22 改为24小时制
 		Date datetime = DateTimeUtil.formatToDate(data.getOperationTime(), "yyyy-MM-dd HH:mm:ss"); 
-		String timestamp = (datetime.getTime() / 1000) + "";
+		String timestamp = (datetime.getTime() / 1000L) + "";
 
 		sub.append("<item>" 
 					+ "<courier_code>" + courier_code.toUpperCase() + "</courier_code>" 
