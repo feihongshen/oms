@@ -16,6 +16,9 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
 import cn.explink.domain.SystemInstall;
@@ -75,6 +78,8 @@ public class B2CDataDAO {
 		return this.jdbcTemplate.queryForLong(sql);
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<B2CData> selectB2cMonitorDataList(String customerid, long page) {
 		String sql = "SELECT * FROM  express_send_b2c_data where send_b2c_flag in(0,2)  ";
 		sql += this.whereSqlByB2cMonitorData(customerid);
@@ -109,6 +114,8 @@ public class B2CDataDAO {
 		return this.jdbcTemplate.query(sql, new ComGroupMapper());
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public long selectB2cMonitorDataCount(String customerid) {
 		String sql = "SELECT count(1) FROM  express_send_b2c_data where  send_b2c_flag in(0,2)  ";
 		sql += this.whereSqlByB2cMonitorData(customerid);
@@ -909,6 +916,8 @@ public class B2CDataDAO {
 		return this.jdbcTemplate.queryForLong(sql, today);
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<B2CData> getB2cMonitorDataList(String cwb, long customerid, long flowordertypeid, String starttime, String endtime, long page) {
 		String sql = "SELECT * FROM  express_send_b2c_data where 1=1 ";
 		sql = this.creContent(cwb, customerid, flowordertypeid, starttime, endtime, sql);
@@ -917,6 +926,8 @@ public class B2CDataDAO {
 		return this.jdbcTemplate.query(sql, new ComMapper());
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public Long getB2cMonitorDataListCount(String cwb, long customerid, long flowordertypeid, String starttime, String endtime) {
 		String sql = "SELECT count(1) FROM  express_send_b2c_data where 1=1 ";
 		sql = this.creContent(cwb, customerid, flowordertypeid, starttime, endtime, sql);

@@ -5,6 +5,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
         classpath*:META-INF/spring/property-placeholder.xml,
+        classpath:datasource-aop.xml,
         classpath*:META-INF/spring/applicationContext*.xml
     </param-value>
   </context-param>
