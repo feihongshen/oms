@@ -77,7 +77,7 @@ public class WeisudaServiceExtends {
 			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
 			
 			//Added by leoliao at 2016-03-08 改为一次获取需要发送的订单，然后分批发送。
-			int cntLoop = 10;
+			int cntLoop = 30;
 			
 			List<WeisudaCwb> boundList = null;
 			if (!isRepeat) {
