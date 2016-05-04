@@ -77,11 +77,13 @@ public class WeisudaServiceExtends {
 			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
 			
 			//Added by leoliao at 2016-03-08 改为一次获取需要发送的订单，然后分批发送。
-			int cntLoop = 10;
+			int cntLoop = 30;
 			
 			List<WeisudaCwb> boundList = null;
 			if (!isRepeat) {
-				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
+				//Added by leoliao at 2016-05-04 加上过滤已签收的条件,即已签收的不再发小件员绑定关系给品骏达
+				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0, "0");
+				//boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
 				if ((boundList == null) || (boundList.size() == 0)) {
 					this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
 					return;
