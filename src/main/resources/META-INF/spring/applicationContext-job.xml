@@ -1094,6 +1094,27 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>  
+	
+	<!-- 【梦芭莎】定时任务配置信息 --> 
+	<bean id="doTime_moonbasa" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="moonbasa" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="moonbasa" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>moonbasa_feedback</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>  
 	<!-- 飞牛网（http） -->
 	 <bean id="doTime_feiniuwang" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
            <property name="jobDetail">
