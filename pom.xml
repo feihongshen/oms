@@ -392,7 +392,7 @@
 		  <groupId>com.pjbest</groupId>
 		  <artifactId>pjdeliveryorder-service-api</artifactId>
 		  <!-- <version>1.14.0_26</version> -->
-		  <version>1.15.0_09</version>
+		  <version>1.16.2_03</version>
 		</dependency>
 			   
 	    <dependency>
