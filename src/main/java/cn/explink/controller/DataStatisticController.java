@@ -1926,7 +1926,7 @@ public class DataStatisticController {
 		Map<Long, String> brachmap = new HashMap<Long, String>();
 		Map<Long, String> customermap = new HashMap<Long, String>();
 
-		if ((user == null) || (user.getUserid() != 0)) {// 如果登录失效，提示登录失败
+		if ((user == null) || (user.getUserid() == 0)) {// 如果登录失效，提示登录失败
 			model.addAttribute("nouser", "nouser");
 		} else if (isshow == 1) {// 如果是点击查询按钮，封装查询数据
 			List<Branch> branchs = this.getDmpDAO.getAllBranchs();
