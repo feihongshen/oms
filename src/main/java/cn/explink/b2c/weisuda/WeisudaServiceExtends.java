@@ -3,14 +3,17 @@ package cn.explink.b2c.weisuda;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
 import net.sf.json.JSONObject;
 
 import org.apache.camel.CamelContext;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,9 +202,11 @@ public class WeisudaServiceExtends {
 		RespRootOrder respOrders=(RespRootOrder) ObjectUnMarchal.XmltoPOJO(response, new RespRootOrder());
 		List<String> orderIds = respOrders.getOrder_id();
 		String cwbs = "";
+		Set<String> idSet = new HashSet<String>();
 		if (respOrders != null && orderIds != null) {
 			for (String orderId : orderIds) {
 				cwbs += "'" + orderId + "',";
+				idSet.add(orderId);
 			}
 		}
 		
@@ -218,6 +223,7 @@ public class WeisudaServiceExtends {
 		if (!CollectionUtils.isEmpty(errorList)) {
 			String failCwbs = null;
 			for (ErrorItem errorItem : errorList) {
+				idSet.add(errorItem.getOrderId());
 				failCwbs = "'" +errorItem.getOrderId()+ "'";
 				if (!isRepeat) {
 					this.weisudaDAO.updateBoundState(failCwbs, "2", errorItem.getErrorMsg());
@@ -226,6 +232,28 @@ public class WeisudaServiceExtends {
 				}
 			}
 		}
+		// 处理没有任何返回的
+		String leftId = getLeftId(idSet, boundList);
+		if(StringUtils.isNotEmpty(leftId)){
+			if (!isRepeat) {
+				this.weisudaDAO.updateBoundState(leftId, "2", "已发送，没有返回");
+			} else {
+				this.weisudaDAO.updateBoundStateRepeat(leftId, "2", "已发送，没有返回");
+			}
+		}
+	}
+	
+	private String getLeftId(Set<String> idSet, List<WeisudaCwb> boundList) {
+		String failCwbs = "";
+		for (WeisudaCwb wsdCwb : boundList) {
+			if (!idSet.contains(wsdCwb.getCwb())) {
+				failCwbs += "'" + wsdCwb.getCwb() + "',";
+			}
+		}
+		if (failCwbs.length() > 0) {
+			failCwbs = failCwbs.substring(0, failCwbs.length() - 1);
+		}
+		return failCwbs;
 	}
 
 	private String check(Weisuda weisuda, String params, String value, int type) {
