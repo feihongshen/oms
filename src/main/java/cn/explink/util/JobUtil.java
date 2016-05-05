@@ -47,6 +47,7 @@ import cn.explink.b2c.maikolin.MaikolinService;
 import cn.explink.b2c.maisike.MaisikeService_Send2LvBranch;
 import cn.explink.b2c.meilinkai.MLKService;
 import cn.explink.b2c.mmb.MmbService;
+import cn.explink.b2c.moonbasa.MoonbasaService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfexpress.SfexpressService_searchOrderStatus;
 import cn.explink.b2c.sfexpress.SfexpressService_sendOrder;
@@ -235,6 +236,8 @@ public class JobUtil {
 	OtherOrderTrackSendService otherOrderTrackSendService;
 	@Autowired
 	VipmpsFeedbackService vipmpsFeedbackService;
+	@Autowired
+	MoonbasaService moonbasaService;
 	
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -1099,6 +1102,19 @@ public class JobUtil {
 		}catch(Exception e){
 			this.logger.error("执行了【玫琳凯】状态回传定时器异常,原因:{}",e);
 		}
+	}
+	
+	/**
+	 * 【梦芭莎】数据回传
+	 */
+	
+	public void moonbasa_feedback(){
+		try{
+			this.moonbasaService.feedback_status();
+		}catch(Exception e){
+			this.logger.error("执行了【梦芭莎】状态回传定时器异常,原因:{}",e);
+		}
+		this.logger.info("执行了【梦芭莎】定时器任务!");
 	}
 	
 	/**
