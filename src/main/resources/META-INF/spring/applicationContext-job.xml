@@ -78,6 +78,7 @@
 							<!--  <ref bean="doTime_PJD"/> -->
 							 <ref bean="doTime_suning"/>
 							 <ref bean="doTime_marykay"></ref>
+							 <ref bean="doTime_moonbasa"/>
 							 <ref bean="doTime_feiniuwang" />
 							 <ref bean="doTime_huanqiugouwu" />
 							 <ref bean="doTime_yonghuihh" />	
