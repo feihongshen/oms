@@ -18,6 +18,7 @@ public class DeliveryInfoSyn {
 	private String rps_Reason = ""; // 滞留或拒收原因
 	private String rps_PaymentType; // 支付方式
 	private String rps_Comments; // 具体描述 s
+	private String rps_DeliveryManPhone = "";//配送员联系方式
 
 	public String getRps_OrderNo() {
 		return rps_OrderNo;
@@ -97,6 +98,14 @@ public class DeliveryInfoSyn {
 
 	public void setRps_Comments(String rps_Comments) {
 		this.rps_Comments = rps_Comments;
+	}
+	
+	public String getRps_DeliveryManPhone() {
+		return rps_DeliveryManPhone;
+	}
+
+	public void setRps_DeliveryManPhone(String rps_DeliveryManPhone) {
+		this.rps_DeliveryManPhone = rps_DeliveryManPhone;
 	}
 
 	public static void main(String[] args) {

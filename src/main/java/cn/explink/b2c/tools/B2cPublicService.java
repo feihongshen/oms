@@ -11,6 +11,7 @@ import cn.explink.b2c.amazon.AmazonService_CommitDeliverInfo;
 import cn.explink.b2c.dangdang.DangDangService;
 import cn.explink.b2c.gome.GomeService_CommitDeliverInfo;
 import cn.explink.b2c.jumeiyoupin.JumeiYoupinService;
+import cn.explink.b2c.moonbasa.MoonbasaService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.smile.SmileService;
 import cn.explink.b2c.tmall.TmallService;
@@ -41,6 +42,9 @@ public class B2cPublicService {
 	YangGuangService_upload yangGuangService_upload;
 	@Autowired
 	AmazonService_CommitDeliverInfo amazonService_CommitDeliverInfo;
+	//2016-04-23 由于D3服务器不可用，把梦芭莎轨迹推送放到这里
+	@Autowired
+	MoonbasaService moonbasaService;
 
 	private Logger logger = LoggerFactory.getLogger(B2cPublicService.class);
 
@@ -83,6 +87,9 @@ public class B2cPublicService {
 			// count =
 			// yangGuangService_upload.sendByCwbs(getCwbs(cwbs),send_b2c_flag);
 		}
+		if (b2cEnumkey.equals(getB2cEnumKeys(customer, "moonbasa"))) {
+			count = moonbasaService.sendByCwbs(getCwbs(cwbs), send_b2c_flag);
+		}
 		return count;
 	}
 
@@ -117,6 +124,9 @@ public class B2cPublicService {
 		if (b2cEnumkey.equals(B2cEnum.Amazon.getKey() + "")) {
 			amazonService_CommitDeliverInfo.commitDeliverInfo_interface();
 			amazonService_CommitDeliverInfo.commitDeliver_Cod();
+		}
+		if (b2cEnumkey.equals(getB2cEnumKeys(customer, "moonbasa"))) {
+			moonbasaService.sendByCwbs(null, Integer.parseInt(b2cEnumkey));
 		}
 	}
 

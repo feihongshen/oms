@@ -1,5 +1,6 @@
 package cn.explink.b2c.tools;
 
+/**------------------------注意！ 【29】开头的枚举约定为唯品会备用！-----------------------------------*/
 public enum B2cEnum {
 	LieBo(20001, "裂帛", "liebo"), // 裂帛
 	DangDang(20002, "当当", "dangdang"), // 当当
@@ -79,6 +80,7 @@ public enum B2cEnum {
 	VipShop_cangku9(29001, "唯品会_仓库9", "vipshop_cangku9"),
 	VipShop_cangku10(29002, "唯品会_仓库10", "vipshop_cangku10"),
 	VipShop_cangku11(29003, "唯品会_仓库11", "vipshop_cangku11"),
+	/*------------------------注意！ 【29】开头的枚举约定为唯品会备用！-----------------------------------*/
 	
 	SuNing(20127,"苏宁易购","suning"),
 	
