@@ -12,12 +12,12 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
  */
 public class RoutingDataSource extends AbstractRoutingDataSource {
 
-	private static final Logger logger = LoggerFactory.getLogger(RoutingDataSource.class);
+//	private static final Logger logger = LoggerFactory.getLogger(RoutingDataSource.class);
 
 	@Override
 	protected Object determineCurrentLookupKey() {
-		logger.info(">>> RoutingDataSource determineCurrentLookupKey thread : {}", Thread.currentThread().getName());
-		logger.info(">>> RoutingDataSource : {}", DatabaseContextHolder.peekDatabaseType());
+//		logger.info(">>> RoutingDataSource determineCurrentLookupKey thread : {}", Thread.currentThread().getName());
+//		logger.info(">>> RoutingDataSource : {}", DatabaseContextHolder.peekDatabaseType());
 		return DatabaseContextHolder.peekDatabaseType();
 	}
 
