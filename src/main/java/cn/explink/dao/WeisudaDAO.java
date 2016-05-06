@@ -123,7 +123,7 @@ public class WeisudaDAO {
 
 	public void updateBoundState(String cwbs, String flag,String remark) {
 
-		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW(),sendedcount = 1 where cwb in ("+cwbs+") ");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW(),sendedcount = sendedcount + 1 where cwb in ("+cwbs+") ");
 	}
 	public void updateBoundStateRepeat(String cwbs, String flag,String remark) {
 
