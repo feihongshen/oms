@@ -22,6 +22,7 @@ import cn.explink.b2c.gxdx.xmldto.util.XmlToBean;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
@@ -202,7 +203,7 @@ public class GuangXinDidanXinService {
 	}
 
 	public OrderStatesList getGuangXinDianXinMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, OrderStatesList.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, OrderStatesList.class);
 	}
 
 

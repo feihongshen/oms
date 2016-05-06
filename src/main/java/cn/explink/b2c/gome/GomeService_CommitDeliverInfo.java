@@ -12,6 +12,7 @@ import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.ExceptionTrace;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.Mail;
 import cn.explink.domain.B2CData;
 import cn.explink.util.WebServiceHandler;
@@ -66,7 +67,7 @@ public class GomeService_CommitDeliverInfo extends GuomeiService {
 				} else {
 					try {
 						for (B2CData b2cData : datalist) {
-							DeliveryInfo deliveryInfo = new ObjectMapper().readValue(b2cData.getJsoncontent(), DeliveryInfo.class); // 构建DeliveryInfoSyn对象
+							DeliveryInfo deliveryInfo = JacksonMapper.getInstance().readValue(b2cData.getJsoncontent(), DeliveryInfo.class); // 构建DeliveryInfoSyn对象
 							String xml = getXml(deliveryInfo, gome);
 							String method = "setTntInformationsByXmlStr";
 							String pram = xml.replaceAll("null", "");
@@ -86,8 +87,8 @@ public class GomeService_CommitDeliverInfo extends GuomeiService {
 						// String
 						// expt="[国美]状态反馈发生未知异,flowordertype="+flowordertype;
 						// try {
-						// expt += ",datalist=["+new
-						// ObjectMapper().writeValueAsString(datalist);
+						// expt += ",datalist=["+
+						// JacksonMapper.getObjectMapper().writeValueAsString(datalist);
 						// } catch (Exception e1) {
 						// e1.printStackTrace();
 						// }
@@ -121,7 +122,7 @@ public class GomeService_CommitDeliverInfo extends GuomeiService {
 			try {
 				int i = 0;
 				for (B2CData b2cData : datalist) {
-					DeliveryInfo deliveryInfo = new ObjectMapper().readValue(b2cData.getJsoncontent(), DeliveryInfo.class); // 构建DeliveryInfoSyn对象
+					DeliveryInfo deliveryInfo = JacksonMapper.getInstance().readValue(b2cData.getJsoncontent(), DeliveryInfo.class); // 构建DeliveryInfoSyn对象
 					String xml = getXml(deliveryInfo, gome);
 					String method = "setTntInformationsByXmlStr";
 					String pram = xml.replaceAll("null", "");

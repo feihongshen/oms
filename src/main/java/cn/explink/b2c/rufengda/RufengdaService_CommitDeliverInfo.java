@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
 import cn.explink.domain.SystemInstall;
@@ -112,7 +113,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 							DeliveryInfoSyn sendrfd = getDeliveryInfoSyn(data);
 							List<DeliveryInfoSyn> sendList = new ArrayList<DeliveryInfoSyn>();
 							sendList.add(sendrfd);
-							String deliverInfos = new ObjectMapper().writeValueAsString(sendList); // 转化为json对象
+							String deliverInfos = JacksonMapper.getInstance().writeValueAsString(sendList); // 转化为json对象
 							deliverInfos = deliverInfos.replaceAll("rps_", "");
 							String deliverInfosSign = "";
 							if (rfd.getIsopensignflag() == 1) {
@@ -142,7 +143,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 
 						String expt = "[如风达]状态反馈发生未知异,flowordertype=" + flowordertype;
 						try {
-							expt += ",datalist=[" + new ObjectMapper().writeValueAsString(datalist);
+							expt += ",datalist=[" + JacksonMapper.getInstance().writeValueAsString(datalist);
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
@@ -181,7 +182,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 				} else {
 					try {
 						List<DeliveryInfoSyn> sendrfdlist = getDeliveryInfoSynListByMap(datalist);
-						String deliverInfos = new ObjectMapper().writeValueAsString(sendrfdlist); // 转化为json对象
+						String deliverInfos = JacksonMapper.getInstance().writeValueAsString(sendrfdlist); // 转化为json对象
 						deliverInfos = deliverInfos.replaceAll("rps_", "");
 						String deliverInfosSign = "";
 						if (rfd.getIsopensignflag() == 1) {
@@ -213,7 +214,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 
 						String expt = "[如风达]状态反馈发生未知异,flowordertype=" + flowordertype;
 						try {
-							expt += ",datalist=[" + new ObjectMapper().writeValueAsString(datalist);
+							expt += ",datalist=[" + JacksonMapper.getInstance().writeValueAsString(datalist);
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
@@ -327,7 +328,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 		List<DeliveryInfoSyn> sendrfdlist = new ArrayList<DeliveryInfoSyn>();
 		for (B2CData b2cData : datalist) {
 
-			DeliveryInfoSyn deliveryInfoSyn = new ObjectMapper().readValue(b2cData.getJsoncontent(), DeliveryInfoSyn.class); // 构建DeliveryInfoSyn对象
+			DeliveryInfoSyn deliveryInfoSyn = JacksonMapper.getInstance().readValue(b2cData.getJsoncontent(), DeliveryInfoSyn.class); // 构建DeliveryInfoSyn对象
 			sendrfdlist.add(deliveryInfoSyn);
 		}
 		return sendrfdlist;
@@ -355,7 +356,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 			while (it.hasNext()) {
 				String key = it.next().toString();
 				String value = cwbMap.get(key);
-				DeliveryInfoSyn deliveryInfoSyn = new ObjectMapper().readValue(value, DeliveryInfoSyn.class); // 构建DeliveryInfoSyn对象
+				DeliveryInfoSyn deliveryInfoSyn = JacksonMapper.getInstance().readValue(value, DeliveryInfoSyn.class); // 构建DeliveryInfoSyn对象
 				sendrfdlist.add(deliveryInfoSyn);
 			}
 		}
@@ -364,7 +365,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 
 	private DeliveryInfoSyn getDeliveryInfoSyn(B2CData data) throws Exception {
 
-		DeliveryInfoSyn deliveryInfoSyn = new ObjectMapper().readValue(data.getJsoncontent(), DeliveryInfoSyn.class); // 构建DeliveryInfoSyn对象
+		DeliveryInfoSyn deliveryInfoSyn = JacksonMapper.getInstance().readValue(data.getJsoncontent(), DeliveryInfoSyn.class); // 构建DeliveryInfoSyn对象
 
 		return deliveryInfoSyn;
 	}

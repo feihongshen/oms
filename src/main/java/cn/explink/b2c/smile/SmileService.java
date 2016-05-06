@@ -32,6 +32,7 @@ import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.ExceptionTrace;
 import cn.explink.b2c.tools.FlowFromJMSB2cService;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.b2c.tools.Mail;
 import cn.explink.dao.GetDmpDAO;
@@ -256,7 +257,7 @@ public class SmileService {
 	// 获取tmall XML Note
 	public SmileXMLNote getSmileXMLNoteMethod(String jsoncontent) {
 		try {
-			return new ObjectMapper().readValue(jsoncontent, SmileXMLNote.class);
+			return JacksonMapper.getInstance().readValue(jsoncontent, SmileXMLNote.class);
 		} catch (Exception e) {
 			logger.error("获取SmileXMLNote异常！jsoncontent:" + jsoncontent + e);
 			return null;

@@ -19,6 +19,7 @@ import cn.explink.b2c.explink.xmldto.OrderFlowDto;
 import cn.explink.b2c.explink.xmldto.ReturnDto;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.FlowFromJMSB2cService;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.CustomWareHouseDAO;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.GetDmpDAO;
@@ -157,7 +158,7 @@ public class EpaiApiService {
 	}
 
 	public OrderFlowDto getEPaiXMLNote(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, OrderFlowDto.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, OrderFlowDto.class);
 	}
 
 }

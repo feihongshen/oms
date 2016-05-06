@@ -101,7 +101,7 @@ public class SuNingService {
 	
 	//获取需要反馈给【苏宁易购】的信息封装对象
 	public WorkStatu getWorkStatuMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent,new WorkStatu().getClass());
+		return JacksonMapper.getInstance().readValue(jsoncontent,new WorkStatu().getClass());
 	}
 	
 	/**
@@ -370,14 +370,14 @@ public class SuNingService {
 		SuNing suning = new SuNing();
 		String str1;
 		try {
-			str1 = new ObjectMapper().writeValueAsString(suning);
+			str1 = JacksonMapper.getInstance().writeValueAsString(suning);
 			System.out.println(str1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		setSuning(suning);
 		try {
-			String str2 = new ObjectMapper().writeValueAsString(suning);
+			String str2 = JacksonMapper.getInstance().writeValueAsString(suning);
 			System.out.println(str2);
 		} catch (Exception e) {
 			e.printStackTrace();

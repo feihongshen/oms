@@ -259,7 +259,7 @@ public class HuanqiugouService {
 	//获取tmall XML Note
 	public HuanqiugouNote getSmileXMLNoteMethod(String jsoncontent) {
 			try {
-				return new ObjectMapper().readValue(jsoncontent,HuanqiugouNote.class);
+				return JacksonMapper.getInstance().readValue(jsoncontent,HuanqiugouNote.class);
 			} catch (Exception e) {
 				logger.error("获取SmileXMLNote异常！jsoncontent:"+jsoncontent+e);
 				return null;

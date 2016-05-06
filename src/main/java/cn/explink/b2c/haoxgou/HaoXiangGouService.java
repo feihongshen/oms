@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.Mail;
 import cn.explink.domain.B2CData;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -272,7 +273,7 @@ public class HaoXiangGouService {
 	}
 
 	public HaoXiangGouXMLNote getHaoXiangGouXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, HaoXiangGouXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, HaoXiangGouXMLNote.class);
 	}
 
 	public String getHXGFlowEnum(long flowordertype, long deliverystate) {

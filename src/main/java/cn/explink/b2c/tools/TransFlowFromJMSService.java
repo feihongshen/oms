@@ -65,7 +65,7 @@ public class TransFlowFromJMSService {
 
 
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = JacksonMapper.getInstance();
 	private ObjectReader dmpOrderFlowMapper = this.objectMapper.reader(DmpTranscwbOrderFlow.class);
 
 	private Logger logger = LoggerFactory.getLogger(TransFlowFromJMSService.class);

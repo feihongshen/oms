@@ -23,6 +23,7 @@ import cn.explink.b2c.haoyigou.dto.PeisongAndTuihuoData;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.domain.B2CData;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.util.DateTimeUtil;
@@ -387,7 +388,7 @@ public class HyGService {
 	}
 	//解析send_b2c_data 存储字段jsoncontent 
 	public PeisongAndTuihuoData getPSObjectsMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, PeisongAndTuihuoData.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, PeisongAndTuihuoData.class);
 	}
 	
 }
