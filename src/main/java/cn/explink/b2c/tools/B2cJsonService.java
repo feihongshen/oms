@@ -203,6 +203,9 @@ public class B2cJsonService {
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Moonbasa.getKey()))) {
 
 			this.b2cDatasearchService.buildB2cData(cwbOrderWothDeliverystate, orderFlow, flowOrdertype, delivery_state, customer);
+			//2016-5-6 从D3服务器（用Gztl这个枚举）迁移到梦芭莎独立反馈接口，而JSON生成器仍用GZTL的
+			return this.buildB2cDataMaster.getBuildGztlB2cData().buildGztlMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
+					cwbOrderWothDeliverystate.getDeliveryState(), customer,this.objectMapper);
 		}
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Liantong.getKey()))) {
 
