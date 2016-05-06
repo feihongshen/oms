@@ -133,7 +133,7 @@ public class BuildHomegobjB2cData {
 				+ "</app_id>" + "<charset>01</charset>" + "<sign_type>02</sign_type>" + "<signed>" + signed.toUpperCase() + "</signed>" + "<data_type>01</data_type>" + "<request_time>"
 				+ DateTimeUtil.formatDate(orderFlow.getCredate(), "yyyyMMddHHmmss") + "</request_time>" + "</header>" + "<body>" + "<orders>" + "<order>" + "<invc_id>" + cwbOrder.getCwb()
 				+ "</invc_id>" + "<ord_id>" + cwbOrder.getTranscwb() + "</ord_id>" + "<ord_stat>" + dmsReceiveStatus + "</ord_stat>" + "<remark>" + exptRemark + "</remark>" + "<steps>" + "<step>"
-				+ "<step_time>" + DateTimeUtil.formatDate(orderFlow.getCredate(), "yyyyMMddHHmmss") + "</step_time>" + "<step_address>" + orderFlowDetail.getDetail(orderFlow) + "</step_address>"
+				+ "<step_time>" + DateTimeUtil.formatDate(orderFlow.getCredate(), "yyyyMMddHHmmss") + "</step_time>" + "<step_address>" + getDetail(orderFlow) + "</step_address>"
 				+ "</step>" + "</steps>" + "</order>" + "</orders>" + "</body>" + "</Jiayou>";
 		return xml;
 	}
