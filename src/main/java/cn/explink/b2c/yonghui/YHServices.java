@@ -114,22 +114,25 @@ public class YHServices {
 	}
 
 	private void DealWithBuildXMLAndSending(YongHui yh, List<B2CData> datalist) throws Exception {
-
+        String orderState_url=yh.getOrderState_url();
 		for (B2CData b2cdata : datalist) {
-			String jsoncontent = b2cdata.getJsoncontent();
-			logger.info("永辉推送信息cwb"+b2cdata.getCwb()+",flowordertype="+b2cdata.getFlowordertype()+",json:"+jsoncontent);
-			String responseInfo = MySSLProtocolSocketFactory.callRestful(jsoncontent, yh.getOrderState_url(), null);
-
-			// String responseInfo = HttpClienCommon.post(paramsMap, null,
-			// yh.getOrderState_url(), 5000, 5000, "utf-8");
-
-			this.logger.info("状态反馈-永辉-[返回信息]-json={}", responseInfo);
-
-			OrderBack returnDto = JacksonMapper.getInstance().readValue(responseInfo, OrderBack.class);
-			String remark = "00".equals(returnDto.getStatus()) ? "成功" : (returnDto.getStatus() + returnDto.getMessage());
-			int sendflag = "00".equals(returnDto.getStatus()) ? 1 : 2;
-			this.b2cDataDAO.updateFlagAndRemarkByCwb(b2cdata.getB2cid(), sendflag, remark);
-
+			try {
+				String jsoncontent = b2cdata.getJsoncontent();
+				logger.info("永辉推送信息cwb"+b2cdata.getCwb()+",flowordertype="+b2cdata.getFlowordertype()+",json:"+jsoncontent);
+				String responseInfo = MySSLProtocolSocketFactory.callRestful(jsoncontent,orderState_url, null);
+		
+				// String responseInfo = HttpClienCommon.post(paramsMap, null,
+				// yh.getOrderState_url(), 5000, 5000, "utf-8");
+		
+				this.logger.info("状态反馈-永辉-[返回信息]-json={}", responseInfo);
+		
+				OrderBack returnDto = JacksonMapper.getInstance().readValue(responseInfo, OrderBack.class);
+				String remark = "00".equals(returnDto.getStatus()) ? "成功" : (returnDto.getStatus() + returnDto.getMessage());
+				int sendflag = "00".equals(returnDto.getStatus()) ? 1 : 2;
+				this.b2cDataDAO.updateFlagAndRemarkByCwb(b2cdata.getB2cid(), sendflag, remark);
+			} catch (Exception e) {
+				logger.error("反馈永辉轨迹出现未知问题,cwb="+b2cdata.getCwb()+",flowordertype="+b2cdata.getFlowordertype()+",json:"+b2cdata.getJsoncontent()+"异常信息:"+e);
+			}
 		}
 	}
 }
