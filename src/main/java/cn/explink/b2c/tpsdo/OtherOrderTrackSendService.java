@@ -97,6 +97,8 @@ public class OtherOrderTrackSendService {
 				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
 				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
 				if(req!=null){
+					logger.info("上传外单cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
+					
 					send(req,60000);
 					otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
 				}else{
