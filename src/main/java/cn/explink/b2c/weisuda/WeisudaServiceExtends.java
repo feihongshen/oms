@@ -3,14 +3,17 @@ package cn.explink.b2c.weisuda;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
 import net.sf.json.JSONObject;
 
 import org.apache.camel.CamelContext;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,11 +80,13 @@ public class WeisudaServiceExtends {
 			int maxBounds = weisuda.getMaxBoundCount()==0?100:weisuda.getMaxBoundCount();
 			
 			//Added by leoliao at 2016-03-08 改为一次获取需要发送的订单，然后分批发送。
-			int cntLoop = 10;
+			int cntLoop = 30;
 			
 			List<WeisudaCwb> boundList = null;
 			if (!isRepeat) {
-				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
+				//Added by leoliao at 2016-05-04 加上过滤已签收的条件,即已签收的不再发小件员绑定关系给品骏达
+				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0, "0");
+				//boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
 				if ((boundList == null) || (boundList.size() == 0)) {
 					this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
 					return;
@@ -171,7 +176,7 @@ public class WeisudaServiceExtends {
 		//Date datetime = DateTimeUtil.formatToDate(data.getOperationTime());
 		//Added by leoliao at 2016-04-22 改为24小时制
 		Date datetime = DateTimeUtil.formatToDate(data.getOperationTime(), "yyyy-MM-dd HH:mm:ss"); 
-		String timestamp = (datetime.getTime() / 1000) + "";
+		String timestamp = (datetime.getTime() / 1000L) + "";
 
 		sub.append("<item>" 
 					+ "<courier_code>" + courier_code.toUpperCase() + "</courier_code>" 
@@ -199,9 +204,11 @@ public class WeisudaServiceExtends {
 		RespRootOrder respOrders=(RespRootOrder) ObjectUnMarchal.XmltoPOJO(response, new RespRootOrder());
 		List<String> orderIds = respOrders.getOrder_id();
 		String cwbs = "";
+		Set<String> idSet = new HashSet<String>();
 		if (respOrders != null && orderIds != null) {
 			for (String orderId : orderIds) {
 				cwbs += "'" + orderId + "',";
+				idSet.add(orderId);
 			}
 		}
 		
@@ -218,6 +225,7 @@ public class WeisudaServiceExtends {
 		if (!CollectionUtils.isEmpty(errorList)) {
 			String failCwbs = null;
 			for (ErrorItem errorItem : errorList) {
+				idSet.add(errorItem.getOrderId());
 				failCwbs = "'" +errorItem.getOrderId()+ "'";
 				if (!isRepeat) {
 					this.weisudaDAO.updateBoundState(failCwbs, "2", errorItem.getErrorMsg());
@@ -226,6 +234,28 @@ public class WeisudaServiceExtends {
 				}
 			}
 		}
+		// 处理没有任何返回的
+		String leftId = getLeftId(idSet, boundList);
+		if(StringUtils.isNotEmpty(leftId)){
+			if (!isRepeat) {
+				this.weisudaDAO.updateBoundState(leftId, "2", "已发送，没有返回");
+			} else {
+				this.weisudaDAO.updateBoundStateRepeat(leftId, "2", "已发送，没有返回");
+			}
+		}
+	}
+	
+	private String getLeftId(Set<String> idSet, List<WeisudaCwb> boundList) {
+		String failCwbs = "";
+		for (WeisudaCwb wsdCwb : boundList) {
+			if (!idSet.contains(wsdCwb.getCwb())) {
+				failCwbs += "'" + wsdCwb.getCwb() + "',";
+			}
+		}
+		if (failCwbs.length() > 0) {
+			failCwbs = failCwbs.substring(0, failCwbs.length() - 1);
+		}
+		return failCwbs;
 	}
 
 	private String check(Weisuda weisuda, String params, String value, int type) {

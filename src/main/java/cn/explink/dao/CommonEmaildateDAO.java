@@ -13,6 +13,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.domain.CommonEmaildate;
 import cn.explink.util.Page;
 
@@ -38,6 +41,8 @@ public class CommonEmaildateDAO {
 		return jdbcTemplate.query("select * from common_emaildate ", new CommonEmaildateRowMapper());
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<CommonEmaildate> getAllCommonEmaildatePage(String commoncode, String startdate, String enddate, long page) {
 		String sql = "select * from common_emaildate ";
 		sql = getSqlByCommonCodeEmaildatePage(sql, commoncode, startdate, enddate);
@@ -45,6 +50,8 @@ public class CommonEmaildateDAO {
 		return jdbcTemplate.query(sql, new CommonEmaildateRowMapper());
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public long getAllCommonEmaildateCount(String commoncode, String startdate, String enddate) {
 		String sql = "select count(1) from common_emaildate ";
 		sql = getSqlByCommonCodeEmaildatePage(sql, commoncode, startdate, enddate);
@@ -90,6 +97,8 @@ public class CommonEmaildateDAO {
 		return sql;
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public CommonEmaildate getAllCommonEmaildateByEmaildateid(long emaildateid) {
 		CommonEmaildate ce = new CommonEmaildate();
 		try {

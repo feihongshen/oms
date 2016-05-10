@@ -1,12 +1,13 @@
 package cn.explink.b2c.moonbasa;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
-
-import net.sf.json.JSONObject;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.xfire.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,17 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.cwbsearch.B2cDatasearch;
 import cn.explink.b2c.cwbsearch.B2cDatasearchDAO;
+import cn.explink.b2c.gztl.GztlXmlNote;
+import cn.explink.b2c.tools.B2CDataDAO;
+import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.WsUtil;
+import cn.explink.domain.B2CData;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.util.DateTimeUtil;
+import cn.explink.util.JsonUtil;
+import net.sf.json.JSONObject;
 
 @Service
 public class MoonbasaService {
@@ -26,7 +34,11 @@ public class MoonbasaService {
 	@Autowired
 	B2cDatasearchDAO b2cDatasearchDAO;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-
+	@Autowired
+	private B2cTools b2cTools;
+	@Autowired
+	private B2CDataDAO b2CDataDAO;
+	
 	// 获取配置信息
 	public Moonbasa getMoonbasa(int key) {
 		Moonbasa mbs = null;
@@ -48,7 +60,7 @@ public class MoonbasaService {
 	 * @throws JsonMappingException
 	 * @throws JsonGenerationException
 	 */
-
+	@Deprecated
 	public String requestCwbSearchInterface(Moonbasa mbs, String from, String to) throws Exception {
 
 		try {
@@ -126,5 +138,146 @@ public class MoonbasaService {
 
 		return "";
 	}
+	/**
+	 * 
+	 * @param deliveryCode
+	 * @param status
+	 * @param desc
+	 * @param time
+	 * @param signer
+	 * @param deliverEmp
+	 * @param deliverMobile
+	 * @return
+	 */
+	public String transformData(String deliveryCode, String status, String desc, String time, String signer,
+			  String deliverEmp, String deliverMobile)
+	{
+	    MBSArrayOfDeliveryInfo info = new MBSArrayOfDeliveryInfo();
+	    MBSDeliveryInfo in = new MBSDeliveryInfo();
+//	    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//	    String time = format.format(obj.getOpTm());
+	    String _signer = signer == null ? "本人" : signer; 
+	    in.setDeliveryCode(deliveryCode);
+	    in.setStatus(status);
+	    in.setDesc(desc );
+	    in.setSignDate(time);
+	    in.setSubscriber(_signer);
+	    in.setCarrier(deliverEmp );
+	    in.setPhone(deliverMobile );
+	    info.setDeliveryInfo(in);
 
+	    String StrXml = WsUtil.getXmlStrWithBlank(info);
+	    if (logger.isDebugEnabled())
+	    {
+	      logger.debug("-----------------梦芭莎发送Str报文：" + StrXml);
+	    }
+	    return StrXml;
+	}
+	
+    /**返回值说明: <br>
+	   1	成功<br>
+	  -1	用户名或密码错误<br>
+	  -2	xml格式错误<br>
+	  -3	异常<br>
+	  -4	登陆过多次<br>
+	  -5	传入参数不正确<br>
+	  -6	无上传数据<br>
+	  -7	xml格式错误2<br>
+	  -8	记录数大于5000条<br>
+	  -9	全部包裹均无效<br>
+	*/
+	public String sendData(Moonbasa moonbasa, String xmlStr)
+	  {
+	    String url = moonbasa.getSearch_url();
+	    String user = moonbasa.getCustcode();
+	    String password = moonbasa.getPwd();
+	    Object[] result1 = (Object[])null;
+	    Client client = null;
+	    try {
+	      client = new Client(new URL(url));
+	      result1 = client.invoke("UploadData", new Object[] { user, password, xmlStr });
+	    } catch (MalformedURLException e) {
+	      logger.error(e.getMessage(), e);
+	    } catch (Exception e) {
+	      logger.error(e.getMessage(), e);
+	    }
+	    if (logger.isDebugEnabled())
+	    {
+	      logger.debug("-----------------梦芭莎反馈回来的Str报文：" + (Integer)result1[0]);
+	    }
+
+	    return Integer.toString(((Integer)result1[0]).intValue());
+	}
+	
+	/**
+	 * 
+	 * @param cwbs  为NULL时是自动抓数据推送，非NULL时是手动推
+	 * @param send_b2c_flag
+	 * @return
+	 */
+	public int sendByCwbs(String cwbs, long send_b2c_flag) {
+		Moonbasa mbs = getMoonbasa(B2cEnum.Moonbasa.getKey());
+		if (!b2cTools.isB2cOpen(B2cEnum.Moonbasa.getKey())) {
+			logger.info("未开[梦芭莎]状态反馈对接!");
+			return 0;
+		}
+		
+		List<B2CData> datalist; 
+		if(cwbs==null){
+			datalist = b2CDataDAO.getDataListByFlowStatus(mbs.getCustomerid(), 5000);
+		} else {
+			datalist = b2CDataDAO.getDataListByCwb(cwbs, send_b2c_flag);
+		}
+		if (datalist == null || datalist.size() == 0) {
+			logger.info("当前没有推送给[梦芭莎]的订单数据");
+			return 0;
+		} else {
+			try {
+				int i = 0;
+				for (B2CData b2cData : datalist) { //单条发送，以免互相影响
+					GztlXmlNote jsonContent = JsonUtil.readValue(b2cData.getJsoncontent(), GztlXmlNote.class);
+					String phone = (""+jsonContent.getReturnStatedesc()).replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" );
+					if(phone.length()>20) phone="";
+					String xml = transformData(b2cData.getCwb(), getStatus(b2cData.getFlowordertype(), b2cData.getDeliverystate()), 
+							jsonContent.getReturnStatedesc(),jsonContent.getOpDt(), jsonContent.getSignname(), jsonContent.getEmp(), 
+							phone );
+					String pram = xml.replaceAll("null", "");
+					logger.info("当前推送给[梦芭莎]的订单数据,pram：{}", pram);
+					String result = sendData(mbs, xml);
+					logger.info("当前推送给[梦芭莎]订单信息={},当前[梦芭莎]返回 xml={}", b2cData.getCwb(), result);
+					b2CDataDAO.updateB2cIdSQLResponseStatus(b2cData.getB2cid(), "1".equals(result)?1:2, result);
+					i++;
+				}
+				return i;
+			} catch (Exception e) {
+				logger.error("[梦芭莎]状态反馈发生未知异", e);
+				return 0;
+			}
+		}
+	}
+
+	/**
+	 * 反馈[梦芭莎]订单信息
+	 */
+	public void feedback_status() {
+
+		if (!b2ctools.isB2cOpen(B2cEnum.Moonbasa.getKey())) {
+			logger.info("未开梦芭莎的对接!");
+			return;
+		} 
+		sendByCwbs(null,  B2cEnum.Moonbasa.getKey() );
+	}
+	
+	public static void main(String...s) throws MalformedURLException, Exception{
+		
+		Client client = new Client(new URL("http://api.moonbasa.com:8000/Delivery.asmx?WSDL"));
+		Object[]  result1 = client.invoke("UploadData", new Object[] { "GZTL", "GZTL001", 
+		 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ArrayOfDeliveryInfo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><DeliveryInfo><DeliveryCode>1P33317441</DeliveryCode><Status>1</Status><Desc>货物已到[人和站]，联系方式[13032467283]</Desc><SignDate>2016-04-21 14:23:17</SignDate><Subscriber></Subscriber><Carrier>M1姜山</Carrier><Phone>货物已到[人和站]，联系方式[13032467283]</Phone></DeliveryInfo></ArrayOfDeliveryInfo>"
+		});
+		//"<?xml version=\"1.0\" encoding=\"UTF-8\"?><ArrayOfDeliveryInfo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><DeliveryInfo><DeliveryCode>2P33268977</DeliveryCode><Status>1</Status><Desc>货物已到 ，联系方式 </Desc><SignDate>2016-4-21 14:23:17</SignDate><Subscriber>不知道</Subscriber><Carrier>M1姜山</Carrier><Phone>123</Phone></DeliveryInfo></ArrayOfDeliveryInfo>" });
+		//
+		System.out.println((result1[0].toString()).replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
+		System.out.println(("货物已由[员村站]的小件员[G4陈清华]反馈为[配送成功],电话[13751818887]").replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
+		System.out.println(("货物由[梅州站]的派件员[P1何志勇]正在派件..电话[13430151547]").replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
+	}
 }

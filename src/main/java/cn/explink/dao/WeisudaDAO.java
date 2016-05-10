@@ -50,9 +50,20 @@ public class WeisudaDAO {
 		}
 	}
 	
-	public List<WeisudaCwb> getBoundWeisudaCwbs(String istuisong,long cwbordertypeid,int maxcount,int orderType) {
+	public List<WeisudaCwb> getBoundWeisudaCwbs(String istuisong, long cwbordertypeid, int maxcount, int orderType, String isqianshou) {
 		try {
-			return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=?  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid,orderType);
+			String strSql = "select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=? ";
+			
+			//Added by leoliao at 2016-05-04 加上过滤已签收的条件,即已签收的不再发小件员绑定关系给品骏达
+			if(isqianshou != null && !isqianshou.trim().equals("")){
+				strSql += " and isqianshou='" + isqianshou.trim() + "' ";
+			}
+			//Added end
+			
+			strSql += " limit 0,"+maxcount;
+			
+			return this.jdbcTemplate.query(strSql, new WSMapper(), istuisong,cwbordertypeid,orderType);
+			//return this.jdbcTemplate.query("select * from express_b2cdata_weisuda  where istuisong=? and cwbordertypeid=? and ordertype=?  limit 0,"+maxcount, new WSMapper(), istuisong,cwbordertypeid,orderType);
 		} catch (Exception e) {
 			return null;
 		}
@@ -112,7 +123,7 @@ public class WeisudaDAO {
 
 	public void updateBoundState(String cwbs, String flag,String remark) {
 
-		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW(),sendedcount = 1 where cwb in ("+cwbs+") ");
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set remark='"+remark+"',istuisong='" + flag + "',bound_time=NOW(),sendedcount = sendedcount + 1 where cwb in ("+cwbs+") ");
 	}
 	public void updateBoundStateRepeat(String cwbs, String flag,String remark) {
 

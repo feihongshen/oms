@@ -70,6 +70,7 @@ public class BulidRufengdaB2cData {
 			deliveryInfoSyn.setRps_OperateTime(DateTimeUtil.formatDate(orderFlow.getCredate()));
 
 			deliveryInfoSyn.setRps_DeliveryMan("");
+			deliveryInfoSyn.setRps_DeliveryManPhone("");
 
 			String reason_code = "";
 
@@ -77,7 +78,7 @@ public class BulidRufengdaB2cData {
 				User user = getDmpdao.getUserById(deliveryState.getDeliveryid());
 				deliveryInfoSyn.setRps_DeliveryMan(user.getRealname() == null ? "" : user.getRealname());
 				deliveryInfoSyn.setRps_DeliverManCode(user.getDeliverManCode() == null ? "" : user.getDeliverManCode());
-
+				deliveryInfoSyn.setRps_DeliveryManPhone(user.getUsermobile() == null ? "" : user.getUsermobile());
 				reason_code = b2ctools.getExptReasonByB2c(cwbOrder.getLeavedreasonid(), cwbOrder.getBackreasonid(), cwbOrder.getCustomerid() + "", deliveryState.getDeliverystate()).getExpt_code();
 				if (reason_code == null || "".equals(reason_code)) {
 
