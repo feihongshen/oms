@@ -26,6 +26,7 @@ public class VipShop {
 	private String lefengCustomerid; //乐蜂customerid 
 	private int daysno;//干线回单重发天数
 	private long selb2cnum;//货态重发次数
+	private String oxoState_URL;//获取OXO订单揽收状态URL
 	public int getDaysno() {
 		return daysno;
 	}
@@ -205,6 +206,14 @@ public class VipShop {
 
 	public void setCustomerids(String customerids) {
 		this.customerids = customerids;
+	}
+
+	public String getOxoState_URL() {
+		return oxoState_URL;
+	}
+
+	public void setOxoState_URL(String oxoState_URL) {
+		this.oxoState_URL = oxoState_URL;
 	}
 
 }
