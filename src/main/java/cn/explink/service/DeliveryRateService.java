@@ -22,6 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.constant.Constants;
 import cn.explink.dao.CwbOrderTailDao;
 import cn.explink.dao.DeliveryRateConditionDAO;
@@ -427,6 +430,8 @@ public class DeliveryRateService {
 		}
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<DeliveryRateCondition> listMobileDeliveryRate(Long userId, String name, Integer selectType) {
 		return deliveryRateConditionDAO.listConditionByUser(userId, name, selectType);
 	}

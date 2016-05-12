@@ -269,6 +269,16 @@
 			<artifactId>aspectjrt</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>3.2.2</version>
+		</dependency>
 		<!-- <dependency> <groupId>net.sourceforge.jtds</groupId> <artifactId>jtds</artifactId> 
 			<version>1.2.4</version> </dependency> -->
 		<dependency>
@@ -375,11 +385,6 @@
 			<version>2.10.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.10.4</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-client</artifactId>
 			<version>5.9.1</version>
@@ -392,7 +397,7 @@
 		  <groupId>com.pjbest</groupId>
 		  <artifactId>pjdeliveryorder-service-api</artifactId>
 		  <!-- <version>1.14.0_26</version> -->
-		  <version>1.15.0_09</version>
+		  <version>1.16.2_06</version>
 		</dependency>
 			   
 	    <dependency>
@@ -489,6 +494,11 @@
 	      <version>1.2.0</version>
 	    </dependency>
 	    
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.5</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>oms_pj</finalName>

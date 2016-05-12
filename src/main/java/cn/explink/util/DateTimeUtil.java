@@ -763,7 +763,7 @@ public class DateTimeUtil {
 	}
 	public static java.util.Date formatToDate(String time) {
 		try {
-			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			java.util.Date d = sim.parse(time);
 			return d;
 		} catch (Exception e) {

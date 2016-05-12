@@ -58,11 +58,11 @@ public class ThirdPartyOrder2DORequestVo {
 	private BigDecimal assuranceValue = BigDecimal.ZERO; //保价金额默认0.00
 	private BigDecimal assuranceFee = BigDecimal.ZERO;//保费默认0.00
 	private int payType = -1; //支付方式。默认-1，0：月1：现付2：到付
-	private int payment = -1; //付款方式。默认-1，0：现金1：pos 2：支付宝
+	private String payment =""; //付款方式。默认-1，0：现金1：pos 2：支付宝
 	private BigDecimal actualFee = BigDecimal.ZERO;; //实收运费  	默认0.00
 	private String distributer; //快件员id派件员
 	private String sendCarrierCode; //派送承运商派送承运商, TMS 承运商编码
-	private int actualPayType=-1; // 实际付款方式默认-1，0：现金1：pos 2：支付宝
+	private Integer actualPayType; // 实际付款方式默认-1，0：现金1：pos 2：支付宝
 	
 	private List<OrderCargoInfo> details;
 	private List<Boxinfo> boxinfos;
@@ -356,10 +356,10 @@ public class ThirdPartyOrder2DORequestVo {
 	public void setPayType(int payType) {
 		this.payType = payType;
 	}
-	public int getPayment() {
+	public String getPayment() {
 		return payment;
 	}
-	public void setPayment(int payment) {
+	public void setPayment(String payment) {
 		this.payment = payment;
 	}
 	public BigDecimal getActualFee() {
@@ -380,10 +380,10 @@ public class ThirdPartyOrder2DORequestVo {
 	public void setSendCarrierCode(String sendCarrierCode) {
 		this.sendCarrierCode = sendCarrierCode;
 	}
-	public int getActualPayType() {
+	public Integer getActualPayType() {
 		return actualPayType;
 	}
-	public void setActualPayType(int actualPayType) {
+	public void setActualPayType(Integer actualPayType) {
 		this.actualPayType = actualPayType;
 	}
 	public List<OrderCargoInfo> getDetails() {

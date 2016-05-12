@@ -10,6 +10,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.domain.WarehouseToCommen;
 import cn.explink.util.Page;
 
@@ -125,6 +128,8 @@ public class WarehouseCommenDAO {
 	 * @param emaildateid
 	 * @return
 	 */
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public long getCountByEmaildateIdAndStatetime(long emaildateid) {
 		String sql = " SELECT COUNT(1) FROM commen_cwb_order  WHERE emaildateid='" + emaildateid + "'";
 		return jdbcTemplate.queryForLong(sql);
@@ -136,6 +141,8 @@ public class WarehouseCommenDAO {
 	 * @param emaildateid
 	 * @return
 	 */
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<WarehouseToCommen> getCountByEmaildateId(long emaildateid) {
 		String sql = " SELECT * FROM commen_cwb_order  WHERE emaildateid='" + emaildateid + "'";
 		return jdbcTemplate.query(sql, new WarehouseToCommenRowMapper());
@@ -147,6 +154,8 @@ public class WarehouseCommenDAO {
 	 * @param string
 	 * @return
 	 */
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<WarehouseToCommen> getCountByCwbs(String cwbs) {
 		String sql = " SELECT * FROM commen_cwb_order  WHERE cwb in(" + cwbs + ")";
 		return jdbcTemplate.query(sql, new WarehouseToCommenRowMapper());

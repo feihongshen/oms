@@ -1059,7 +1059,7 @@ public class WeisudaService {
 				String courier_code = data.getCourier_code();
 				cwb = data.getCwb();
 				Date datetime = DateTimeUtil.formatToDate(data.getOperationTime());
-				String timestamp = (datetime.getTime() / 1000) + "";
+				String timestamp = (datetime.getTime() / 1000L) + "";
 
 				upflagString = "唯速达_01";
 				int url = WeisudsInterfaceEnum.pushOrders.getValue();

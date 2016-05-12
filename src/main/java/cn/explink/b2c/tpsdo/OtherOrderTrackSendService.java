@@ -1,6 +1,7 @@
 package cn.explink.b2c.tpsdo;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import cn.explink.domain.Branch;
 import cn.explink.domain.User;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
+import cn.explink.enumutil.PaytypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
@@ -95,6 +97,8 @@ public class OtherOrderTrackSendService {
 				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
 				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
 				if(req!=null){
+					logger.info("上传外单cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
+					
 					send(req,60000);
 					otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
 				}else{
@@ -219,7 +223,33 @@ public class OtherOrderTrackSendService {
 		
 		if(cwbOrder.getInfactfare()!=null&&cwbOrder.getInfactfare().doubleValue()>0){
 			req.setActualFee(cwbOrder.getInfactfare().doubleValue());
-			req.setActualPayType(cwbOrder.getNewpaywayid());//cwbOrder.getPaywayid()???
+			/**
+			 *  需要根据dmp的支付方式映射成TPS的支付方式 updated by gordon.zhou 2016.5.3
+			 */
+			String newpaywayidStr = cwbOrder.getNewpaywayid();
+			try{
+				int newpaywayid = Integer.valueOf(newpaywayidStr);
+				if(newpaywayid == PaytypeEnum.Xianjin.getValue()){
+					req.setActualPayType(String.valueOf(0));
+				}
+				else if(newpaywayid == PaytypeEnum.Pos.getValue()){
+					req.setActualPayType(String.valueOf(1));
+				}
+				else if(newpaywayid == PaytypeEnum.CodPos.getValue()){
+					req.setActualPayType(String.valueOf(2));
+				}
+				else if(newpaywayid == PaytypeEnum.Zhipiao.getValue()){
+					req.setActualPayType(String.valueOf(13));
+				}
+				else if(newpaywayid == PaytypeEnum.Qita.getValue()){
+					req.setActualPayType(String.valueOf(14));
+				}
+				else{
+					req.setActualPayType(null);
+				}
+			}catch(Exception e){
+				
+			}
 		}
 		
 		String nextOrg=null;
