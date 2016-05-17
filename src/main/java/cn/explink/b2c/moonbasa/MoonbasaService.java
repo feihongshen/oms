@@ -110,8 +110,10 @@ public class MoonbasaService {
 		if((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue() && deliverystate.indexOf("配送成功")>=0)
 				||flowordertype == FlowOrderTypeEnum.GongHuoShangTuiHuoChenggong.getValue()) {
 			return "1";
+		} else if((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue() && deliverystate.indexOf("配送失败")>=0)) {
+			return "0";
 		} else {
-			return "5";
+			return "2";
 		}
 		
 		/*if (flowordertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
@@ -250,8 +252,8 @@ public class MoonbasaService {
 						continue;
 					}
 					GztlXmlNote jsonContent = JsonUtil.readValue(b2cData.getJsoncontent(), GztlXmlNote.class);
-					String phone = (""+jsonContent.getReturnStatedesc()).replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" );
-					if(phone.length()>20) phone="";
+					String phone = (""+jsonContent.getReturnStatedesc()).replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([0-9]+[\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" );
+					if(phone.length()>20 || !phone.matches("[0-9]+[\\s\\S]+")) phone="";
 					String status = getStatus(b2cData.getFlowordertype(), jsonContent.getState()); 
 					String xml = transformData(b2cData.getCwb(), status, 
 							jsonContent.getReturnStatedesc(),jsonContent.getOpDt(), jsonContent.getSignname(), jsonContent.getEmp(), 
@@ -261,7 +263,7 @@ public class MoonbasaService {
 					String result = sendData(mbs, xml);
 					logger.info("当前推送给[梦芭莎]订单信息={},当前[梦芭莎]返回 xml={}", b2cData.getCwb(), result);
 					b2CDataDAO.updateB2cIdSQLResponseStatus(b2cData.getB2cid(), "1".equals(result)?1:2, result);
-					if(status.equals("1"))successOrders.add(b2cData.getCwb());//已经发送1（配送成功/供货商退货成功）的，后面就不要发5 了
+					if(status.equals("1"))successOrders.add(b2cData.getCwb());//已经发送1（配送成功/供货商退货成功）的，后面就不要发了
 					i++;
 				}
 				return i;
@@ -288,12 +290,13 @@ public class MoonbasaService {
 		
 		Client client = new Client(new URL("http://api.moonbasa.com:10000/Delivery.asmx?WSDL"));
 		Object[]  result1 = client.invoke("UploadData", new Object[] { "GZTL", "moonbasa123",//"GZTL001", 
-		 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ArrayOfDeliveryInfo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><DeliveryInfo><DeliveryCode>1P33317441</DeliveryCode><Status>1</Status><Desc>货物已到[人和站]，联系方式[13032467283]</Desc><SignDate>2016-04-21 14:23:17</SignDate><Subscriber></Subscriber><Carrier>M1姜山</Carrier><Phone>货物已到[人和站]，联系方式[13032467283]</Phone></DeliveryInfo></ArrayOfDeliveryInfo>"
+		 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ArrayOfDeliveryInfo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><DeliveryInfo><DeliveryCode>1P33406161</DeliveryCode><Status>2</Status><Desc>货物已到[人和站]，联系方式[13032467283]</Desc><SignDate>2016-04-21 14:23:17</SignDate><Subscriber></Subscriber><Carrier>M1姜山</Carrier><Phone>13032467283</Phone></DeliveryInfo></ArrayOfDeliveryInfo>"
 		});
 		//"<?xml version=\"1.0\" encoding=\"UTF-8\"?><ArrayOfDeliveryInfo xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><DeliveryInfo><DeliveryCode>2P33268977</DeliveryCode><Status>1</Status><Desc>货物已到 ，联系方式 </Desc><SignDate>2016-4-21 14:23:17</SignDate><Subscriber>不知道</Subscriber><Carrier>M1姜山</Carrier><Phone>123</Phone></DeliveryInfo></ArrayOfDeliveryInfo>" });
 		//
 		System.out.println((result1[0].toString()).replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
-		System.out.println(("货物已由[员村站]的小件员[G4陈清华]反馈为[配送成功],电话[13751818887]").replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
-		System.out.println(("货物由[梅州站]的派件员[P1何志勇]正在派件..电话[13430151547]").replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
+		System.out.println(("货物已由[员村站]的小件员[G4陈清华]反馈为[配送成功],电话[13751818887]").replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([0-9]+[\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
+		System.out.println(("货物由[梅州站]的派件员[P1何志勇]正在派件..电话[13430151547]").replaceAll( "([\u4e00-\u9fa5\\s\\S]*电话\\[)([0-9]+[\\s\\S]+)(\\][\u4e00-\u9fa5\\s\\S]*)" , "$2" ));
+		System.out.println(("137-6332-1111").matches("[0-9]+[\\s\\S]+") );
 	}
 }
