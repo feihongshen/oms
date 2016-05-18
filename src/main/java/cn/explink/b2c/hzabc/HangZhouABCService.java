@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.Mail;
 import cn.explink.domain.B2CData;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -252,7 +253,7 @@ public class HangZhouABCService {
 	}
 
 	public HangZhouXMLNote getHangZhouABCXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, HangZhouXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, HangZhouXMLNote.class);
 	}
 
 	public String postHTTPData_toHangZhouABC(String xml, String url, String expressCode, String private_key) throws Exception {

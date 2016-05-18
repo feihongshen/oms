@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.domain.B2CData;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -193,7 +194,7 @@ public class MLKService {
 	
 	//将json字符串反序列化为任一个对象 ====LX=====(首先定义好一个javabean) 
 	public <T> T getMLKdataMethod(String jsoncontent,Class<T> cla) throws JsonParseException, JsonMappingException, IOException {
-		return (T) new ObjectMapper().readValue(jsoncontent,cla);
+		return (T) JacksonMapper.getInstance().readValue(jsoncontent,cla);
 	}
 	
 	/**

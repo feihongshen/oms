@@ -1,7 +1,6 @@
 package cn.explink.b2c.chinamobile;
 
 import java.io.IOException;
-
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
@@ -139,7 +139,7 @@ public class ChinamobileService {
 	}
 
 	public ChinamobileXMLNote getChinaMobileXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, ChinamobileXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, ChinamobileXMLNote.class);
 	}
 
 	private void DealWithBuildXMLAndSending(Chinamobile cm, List<B2CData> datalist) throws Exception {

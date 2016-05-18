@@ -83,7 +83,7 @@ public class FlowFromJMSB2cService {
 	@Produce(uri = "jms:queue:sendBToCToDmp")
 	ProducerTemplate sendBToCToDmpProducer;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper = JacksonMapper.getInstance();
 	private ObjectReader dmpOrderFlowMapper = this.objectMapper.reader(DmpOrderFlow.class);
 	private ObjectReader cwbOrderWithDeliveryStateReader = this.objectMapper.reader(CwbOrderWithDeliveryState.class);
 	private ObjectReader dmpOrderReader = this.objectMapper.reader(DmpCwbOrder.class);
@@ -168,7 +168,7 @@ public class FlowFromJMSB2cService {
 			}
 			
 			
-			CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail(), CwbOrderWithDeliveryState.class);
+			CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail(), CwbOrderWithDeliveryState.class);
 			
 			/**
 			 * 如果是一票多件的订单，那么将慢的flowordertype(mpsoptstate)赋值给flowordertype

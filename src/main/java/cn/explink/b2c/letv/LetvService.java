@@ -21,6 +21,7 @@ import cn.explink.b2c.letv.bean.LetvResponse;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
@@ -164,7 +165,7 @@ public class LetvService {
 	// parmsMap.put("content", requestXML);
 
 	public LetvXMLNote getYeMaiJiuXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, LetvXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, LetvXMLNote.class);
 	}
 
 	private void DealWithBuildXMLAndSending(Letv letv, List<B2CData> datalist) throws Exception {

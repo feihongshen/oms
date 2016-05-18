@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 
 @Service
 public class DongFangCJService {
@@ -35,7 +36,7 @@ public class DongFangCJService {
 	}
 
 	public DongFangCJXMLNote getXMLNoteObjectsMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, DongFangCJXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, DongFangCJXMLNote.class);
 	}
 
 }

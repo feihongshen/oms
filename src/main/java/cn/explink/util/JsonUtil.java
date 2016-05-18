@@ -9,9 +9,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
+import cn.explink.b2c.tools.JacksonMapper;
+
 public class JsonUtil {
 
-	private static ObjectMapper objectMapper = new ObjectMapper();
+	private static ObjectMapper objectMapper = JacksonMapper.getInstance();
 
 	static {
 		objectMapper.getSerializationConfig().withSerializationInclusion(Inclusion.NON_EMPTY);

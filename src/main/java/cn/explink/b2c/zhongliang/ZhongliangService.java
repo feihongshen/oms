@@ -159,7 +159,7 @@ public class ZhongliangService {
 	}
 
 	public Request_orderStatus getXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, Request_orderStatus.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, Request_orderStatus.class);
 	}
 
 	private void DealWithBuildXMLAndSending(Zhongliang zl, List<B2CData> datalist) throws Exception {
