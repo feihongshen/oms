@@ -121,7 +121,7 @@ public class LechongService {
 	}
 
 	public LechongXmlNote getXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, LechongXmlNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, LechongXmlNote.class);
 	}
 
 	private void DealWithBuildXMLAndSending(Lechong wx, List<B2CData> datalist) throws Exception {

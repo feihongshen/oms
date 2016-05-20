@@ -32,6 +32,7 @@ import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.ExceptionTrace;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.b2c.tools.Mail;
 import cn.explink.dao.GetDmpDAO;
@@ -143,7 +144,7 @@ public class YeMaiJiuService {
 	}
 
 	public YeMaiJiuXMLNote getYeMaiJiuXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, YeMaiJiuXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, YeMaiJiuXMLNote.class);
 	}
 
 	private void DealWithBuildXMLAndSending(YeMaiJiu yemaijiu, List<B2CData> yemaijiuDataList) throws Exception {

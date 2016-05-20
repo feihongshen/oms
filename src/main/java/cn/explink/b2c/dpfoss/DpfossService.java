@@ -133,7 +133,7 @@ public class DpfossService {
 					b2cids += data.getB2cid() + ",";
 				}
 
-				String signRequest = new ObjectMapper().writeValueAsString(signlist);
+				String signRequest = JacksonMapper.getInstance().writeValueAsString(signlist);
 
 				logger.info(b2ckey + "状态推送至德邦 userName=" + dpfoss.getAgent() + ",request={},url={}", signRequest, dpfoss.getUploadSign_url());
 
@@ -176,7 +176,7 @@ public class DpfossService {
 	}
 
 	public UploadSignRequest getDPFossXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, UploadSignRequest.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, UploadSignRequest.class);
 	}
 
 	public String getDpfossTrackEnum(long flowordertype, long deliverystate) {
@@ -198,7 +198,7 @@ public class DpfossService {
 
 	public UploadSignRequest getDpfossSignedXMLNoteMethod(String jsoncontent) {
 		try {
-			return new ObjectMapper().readValue(jsoncontent, UploadSignRequest.class);
+			return JacksonMapper.getInstance().readValue(jsoncontent, UploadSignRequest.class);
 		} catch (Exception e) {
 			logger.error("获取DpfossSigned异常！jsoncontent:" + jsoncontent + e);
 			return null;

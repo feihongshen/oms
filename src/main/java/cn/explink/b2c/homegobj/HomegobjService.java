@@ -167,7 +167,7 @@ public class HomegobjService {
 		}
 
 		public HomegobjXmlNote getXMLNoteMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-			return new ObjectMapper().readValue(jsoncontent,HomegobjXmlNote.class);
+			return JacksonMapper.getInstance().readValue(jsoncontent,HomegobjXmlNote.class);
 		}
 		
 		private void DealWithBuildXMLAndSending(Homegobj wx, List<B2CData> datalist)throws Exception {

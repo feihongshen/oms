@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import cn.explink.b2c.tools.JacksonMapper;
+
 
 @Controller
 @RequestMapping(value = "/omsJob")
@@ -485,7 +487,7 @@ class CronTriggerVo{
 	}
  
   class Tools {
-	  static ObjectMapper mapper = new ObjectMapper();
+	  static ObjectMapper mapper = JacksonMapper.getInstance();
 		public static String obj2json(Object obj) {
 			try {
 				if (obj == null) {

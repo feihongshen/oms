@@ -154,7 +154,7 @@ public class AmazonService_CommitDeliverInfo extends AmazonaService {
 					StringBuffer fileXml = new StringBuffer();
 					fileXml.append(setHeadXml(amazon));
 					for (B2CData b2cData : datalist) {
-						AmazonInfo deliveryInfo = new ObjectMapper().readValue(b2cData.getJsoncontent(), AmazonInfo.class); // 构建DeliveryInfoSyn对象
+						AmazonInfo deliveryInfo = JacksonMapper.getInstance().readValue(b2cData.getJsoncontent(), AmazonInfo.class); // 构建DeliveryInfoSyn对象
 						String orderxml = "";
 						if (amazon.getIsHebingTuotou() == 0) {
 							orderxml += setOrderToXml(deliveryInfo, amazon);

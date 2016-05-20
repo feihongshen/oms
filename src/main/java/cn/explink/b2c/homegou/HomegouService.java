@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.dongfangcj.DongFangCJXMLNote;
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 
 @Service
 public class HomegouService {
@@ -36,7 +37,7 @@ public class HomegouService {
 	}
 
 	public HomegouXMLNote getXMLNoteObjectsMethod(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, HomegouXMLNote.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, HomegouXMLNote.class);
 	}
 
 }

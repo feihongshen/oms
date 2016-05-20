@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.CwbOrderTailDao;
 import cn.explink.dao.CwbTiHuoDAO;
@@ -127,7 +128,7 @@ public class FlowFromJMSService {
 	@Autowired
 	ExpressSysMonitorDAO expressSysMonitorDAO;
 
-	ObjectMapper objectMapper = new ObjectMapper();
+	ObjectMapper objectMapper = JacksonMapper.getInstance();
 	ObjectReader dmpOrderFlowReader = objectMapper.reader(DmpOrderFlow.class);
 	ObjectReader cwbOrderWithDeliveryStateReader = objectMapper.reader(CwbOrderWithDeliveryState.class);
 

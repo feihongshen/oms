@@ -68,7 +68,7 @@ public class B2cJsonService {
 		this.logger.info("orderToJson执行了B2C对接状态的封装，cwb={},flowordertype={}", orderFlow.getCwb(), flowOrdertype);
 
 		long delivery_state = cwbOrderWothDeliverystate.getDeliveryState() == null ? 0 : cwbOrderWothDeliverystate.getDeliveryState().getDeliverystate(); // 反馈状态
-		// ObjectMapper objectMapper=new ObjectMapper();
+		// ObjectMapper objectMapper=JacksonMapper.getInstance();
 		long customerid = cwbOrderWothDeliverystate.getCwbOrder().getCustomerid();
 
 		Customer customer = this.cacheBaseListener.getCustomer(customerid);

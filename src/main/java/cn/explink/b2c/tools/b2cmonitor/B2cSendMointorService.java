@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.B2CDataDAO;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.domain.B2CData;
 
 /**
@@ -30,7 +31,7 @@ public class B2cSendMointorService {
 	 */
 	public int SendB2cDataJMS(List<B2CMonitorData> b2cdatalist) {
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
+			ObjectMapper objectMapper = JacksonMapper.getInstance();
 			// b2cDataResultSend.sendBodyAndHeader(null, "monitorb2cdata",
 			// objectMapper.writeValueAsString(b2cdatalist));
 			logger.info("OMS Send Dmp b2cData success");
