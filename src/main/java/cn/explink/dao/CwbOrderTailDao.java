@@ -15,6 +15,9 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.domain.CwbOrderTail;
 import cn.explink.domain.FinanceAuditStatusEnum;
 import cn.explink.domain.GoodsTypeEnum;
@@ -272,6 +275,8 @@ public class CwbOrderTailDao {
 
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<CwbOrderTail> getTailList(CwbOrderTail tail, long page) {
 		String sql = "SELECT * FROM commen_cwb_order_tail ";
 		sql = setWhereSql(sql, tail);
@@ -279,6 +284,8 @@ public class CwbOrderTailDao {
 		return jdbcTemplate.query(sql, new CwbOrderTailRowMapper());
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public CwbOrderTail getTailSum(CwbOrderTail tail) {
 		String sql = "SELECT count(1) as id, sum(receivablefee) as receivablefee,sum(paybackfee) as paybackfee FROM commen_cwb_order_tail  ";
 		sql = setWhereSql(sql, tail);
