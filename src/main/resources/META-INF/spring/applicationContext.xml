@@ -55,7 +55,7 @@
 <jaxws:client id="sfexpressService" serviceClass="cn.explink.b2c.sfexpress.wsdl.ISfexpressService"
 		address="http://bsp-oisp.sf-express.com/bsp-oisp/ws/expressService" />
 		
-    <bean id="dataSource"  
+    <bean id="dataSourceMaster"  
         class="org.apache.commons.dbcp.BasicDataSource"  
         destroy-method="close">  
         <property name="driverClassName" value="${drivers}" />  
@@ -65,6 +65,25 @@
         <property name="testOnBorrow" value="true"/>
         <property name="validationQuery" value="SELECT 1"/>
     </bean>     
+    <!-- 从库配置 -->
+    <bean id="dataSourceReplica" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">  
+        <property name="driverClassName" value="${replica.drivers}" />  
+        <property name="url" value="${replica.expressurl.url}" />  
+        <property name="username" value="${replica.expressurl.user}" />  
+        <property name="password" value="${replica.expressurl.password}" />  
+        <property name="testOnBorrow" value="true"/>
+        <property name="validationQuery" value="SELECT 1"/>
+    </bean>     
+    
+    <bean id="dataSource" class="com.pjbest.splitting.routing.RoutingDataSource">
+		<property name="targetDataSources">
+			<map key-type="com.pjbest.splitting.routing.DatabaseType">
+				<entry key="MASTER" value-ref="dataSourceMaster" />
+				<entry key="REPLICA" value-ref="dataSourceReplica" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="dataSourceMaster" />
+	</bean>
 
 	<tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
     <bean id = "transactionManager"   

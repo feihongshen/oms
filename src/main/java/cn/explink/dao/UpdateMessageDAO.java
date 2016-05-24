@@ -10,6 +10,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.domain.UpdateMessage;
 
 @Component
@@ -40,6 +43,8 @@ public class UpdateMessageDAO {
 		jdbcTemplate.update(sql, lastupdatetime, menunvalue);
 	}
 
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public UpdateMessage getUpdateMessageByMenunvalue(long menunvalue) {
 		try {
 			String sql = "select * from set_updatemessage where menunvalue=?";

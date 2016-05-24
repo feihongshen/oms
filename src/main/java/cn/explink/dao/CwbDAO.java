@@ -23,6 +23,9 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
+
 import cn.explink.domain.CwbOrder;
 import cn.explink.domain.CwbOrderCopyForDmp;
 import cn.explink.domain.CwbOrderTail;
@@ -1793,6 +1796,8 @@ public class CwbDAO {
 	 * @param page
 	 * @return
 	 */
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<CwbOrder> getCwbByEmaildate(long emaildateid, long page) {
 		String sql = "SELECT cd.* FROM `express_ops_cwb_detail`  cd  LEFT JOIN commen_cwb_order co ON cd.cwb=co.cwb WHERE cd.state=1 and co.emaildateid='" + emaildateid + "'";
 		sql += " limit " + (page - 1) * Page.ONE_PAGE_NUMBER + "," + Page.ONE_PAGE_NUMBER;
@@ -1818,6 +1823,8 @@ public class CwbDAO {
 	 * @param page
 	 * @return
 	 */
+	//读从库
+	@DataSource(DatabaseType.REPLICA)
 	public List<CwbOrder> getCwbByCwbsAndEmaildate(String cwbs, long page) {
 		String sql = "SELECT cd.*  FROM `express_ops_cwb_detail`  cd  LEFT JOIN commen_cwb_order co ON cd.cwb=co.cwb WHERE cd.state=1 and co.cwb IN(" + cwbs + ")";
 		sql += " limit " + (page - 1) * Page.ONE_PAGE_NUMBER + "," + Page.ONE_PAGE_NUMBER;
