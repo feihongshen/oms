@@ -87,6 +87,7 @@
 							 <ref bean="doTime_otherorderhousekeep" />
 							 <ref bean="doTime_vipmps" />
 							 <ref bean="mqExceptionHandler"/>
+							 <ref bean="doTime_resetGanXianHuiDan"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -112,6 +113,7 @@
              <property name="cronExpression">
                <value>0 */15 * * * ?</value>
            </property>
+           <property name="description" value="反馈订单物流状态给当当网"/>
       </bean>
      
      <bean id="getDangDangTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
@@ -131,6 +133,7 @@
              <property name="cronExpression">
                <value>0 0 02 * * ?</value>
            </property>
+           <property name="description" value="删除某段时间(60天)之前推送B2C成功的数据的定时器"/>
       </bean>
      
      <bean id="deleteSendB2cDataTask " class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
@@ -149,6 +152,7 @@
              <property name="cronExpression">
                <value>0 */15 * * * ?</value>
            </property>
+           <property name="description" value="反馈订单物流状态给tmall"/>
       </bean>
      
      <bean id="getTmallTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
@@ -167,6 +171,7 @@
              <property name="cronExpression">
                <value>0 */15 * * * ?</value>
            </property>
+           <property name="description" value="反馈vipshop订单物流状态给TMS"/>
       </bean>
      
      <bean id="getVipShopTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
@@ -185,6 +190,7 @@
              <property name="cronExpression">
                <value>0 */15 * * * ?</value>
            </property>
+           <property name="description" value="反馈订单物流状态给聚美优品"/>
       </bean>
      
      <bean id="getJuMeiTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
@@ -1293,6 +1299,27 @@
      </bean>
      
      <bean id="mqExceptionHandlerService" class="cn.explink.b2c.tools.MqExceptionHandlerUtil">
+	</bean>
+	
+	<!-- 重置干线回单物流状态发送标识为0 -->
+    <bean id="doTime_resetGanXianHuiDan" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="resetGanXianHuiDan" />
+		</property>
+		<property name="cronExpression">
+			<value>0 * */2 * * ?</value>
+		</property>
+		<property name="description" value="重置干线回单物流状态发送标识为0"/>
+	</bean>
+
+	<bean id="resetGanXianHuiDan" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>resetGanXianHuiDan</value>
+		</property>
+		<property name="concurrent" value="false" />
 	</bean>
 	
 	<!-- MQ 异常处理 定时器   配置结束--> 
