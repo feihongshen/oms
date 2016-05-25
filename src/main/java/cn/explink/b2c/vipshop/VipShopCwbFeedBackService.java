@@ -963,7 +963,8 @@ public class VipShopCwbFeedBackService {
 			int cntLoop = 30;
 			int cntSend = (vipshop.getSendMaxCount()<=0?100 : vipshop.getSendMaxCount());
 			
-			List<B2CData> vipshopDataList = this.b2cDataDAO.getB2cDataList(flowordertype, vipshop.getCustomerids(), CwbOrderTypeIdEnum.Shangmentui.getValue(), cntSend*cntLoop);
+			String lefengCustomerid = (vipshop.getLefengCustomerid()==null||vipshop.getLefengCustomerid().isEmpty()?vipshop.getCustomerids() : vipshop.getLefengCustomerid());
+			List<B2CData> vipshopDataList = this.b2cDataDAO.getB2cDataList(flowordertype, vipshop.getCustomerids() + "," + lefengCustomerid, CwbOrderTypeIdEnum.Shangmentui.getValue(), cntSend*cntLoop);
 			if ((vipshopDataList == null) || (vipshopDataList.size() == 0)) {
 				this.logger.info("当前没有要推送[vipshop]的揽退订单轨迹数据,状态:flowordertype={},customerid={}", flowordertype, vipshop.getCustomerids());
 				return 0;
