@@ -46,10 +46,6 @@ public class MobileAppService {
 
 		this.logger.info("执行了CODApp接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 		
-		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChongZhiFanKui.getValue()) {
-			return;
-		}
-		
 		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue()) {
 
 			if (this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {

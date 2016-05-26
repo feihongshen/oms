@@ -78,6 +78,7 @@ import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 import cn.explink.util.DateTimeUtil;
+import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 
 @Service
 public class FlowFromJMSService {
@@ -129,6 +130,8 @@ public class FlowFromJMSService {
 	CwbOrderTailDao cwbOrderTailDao;
 	@Autowired
 	ExpressSysMonitorDAO expressSysMonitorDAO;
+	@Autowired
+	OtherOrderTrackSendService otherOrderTrackSendService;
 
 	ObjectMapper objectMapper = JacksonMapper.getInstance();
 	ObjectReader dmpOrderFlowReader = objectMapper.reader(DmpOrderFlow.class);
@@ -1724,6 +1727,7 @@ public class FlowFromJMSService {
 			long flowordertype = request.getParameter("flowordertype") == null ? 0 : Long.parseLong(request.getParameter("flowordertype").toString());
 			long currentbranchid = request.getParameter("currentbranchid") == null ? 0 : Long.parseLong(request.getParameter("currentbranchid").toString());
 			long deliverystate = request.getParameter("deliverystate") == null ? 0 : Long.parseLong(request.getParameter("deliverystate").toString());
+			long customerid = request.getParameter("customerid") == null ? 0 : Long.parseLong(request.getParameter("customerid").toString());
 			// 订单表
 			cwbDAO.updateForChongZhiShenHe(cwb, nextbranchid, flowordertype, currentbranchid, deliverystate);
 			// 综合查询表
@@ -1734,6 +1738,21 @@ public class FlowFromJMSService {
 			deliveryZhiLiuDAO.deleteDeliveryZhiLiu(cwb);
 			// 妥投订单
 			deliverySuccessfulDAO.deleteDeliverySuccessful(cwb);
+			
+			//外单时把重置反馈状态推给TPS
+			if(customerid>0){
+				DmpCwbOrder cwbOrder=new DmpCwbOrder();
+				cwbOrder.setCustomerid(customerid);
+				//CwbOrderWithDeliveryState deliveryState=new CwbOrderWithDeliveryState();//json转bean有异常
+				//deliveryState.setCwbOrder(cwbOrder);
+				DmpOrderFlow orderFlow=new DmpOrderFlow();
+				orderFlow.setCwb(cwb);
+				orderFlow.setFlowordertype(FlowOrderTypeEnum.ChongZhiFanKui.getValue());
+				orderFlow.setCredate(new Timestamp(System.currentTimeMillis()));
+				otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,null,cwbOrder);
+			}else{
+				logger.info("外单时重置反馈状态不保存,cwb={}",cwb);
+			}
 		}
 		else if (type == 2) {// 修改订单金额
 			BigDecimal receivablefee = new BigDecimal(request.getParameter("receivablefee") == null ? "0" : request.getParameter("receivablefee"));

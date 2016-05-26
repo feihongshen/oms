@@ -114,7 +114,7 @@ public class OtherOrderTrackSendService {
 					}
 				}else{
 					//推送重置反馈
-					PjDoStatusRequest req=prepareResetStateRequest(msgVo,orderFlow,orderWithState);
+					PjDoStatusRequest req=prepareResetStateRequest(msgVo,orderFlow);
 					if(req!=null){
 						logger.info("上传外单cwb={}重置反馈报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
 						sendResetState(req,6000);
@@ -325,21 +325,16 @@ public class OtherOrderTrackSendService {
 		}
 		
 	}
-	private PjDoStatusRequest prepareResetStateRequest(OtherOrderTrackVo msgVo,DmpOrderFlow orderFlow,CwbOrderWithDeliveryState orderWithState){
+	private PjDoStatusRequest prepareResetStateRequest(OtherOrderTrackVo msgVo,DmpOrderFlow orderFlow){
 		if(msgVo.getTpsno()==null){
 			throw new RuntimeException("TPS运单号为空..");
 		}
 		
-		if(orderWithState==null){
-			throw new RuntimeException("订单及归班报文数据为空..");
-		}
-		
-		DmpCwbOrder cwbOrder=orderWithState.getCwbOrder();
-		if(cwbOrder==null){
-			throw new RuntimeException("订单报文数据为空..");
+		if(orderFlow.getCwb()==null){
+			throw new RuntimeException("订单号为空..");
 		}
 
-		ApplyEditDeliverystate aeds=getDmpDAO.getApplyEditDeliverystate(cwbOrder.getCwb());
+		ApplyEditDeliverystate aeds=getDmpDAO.getApplyEditDeliverystate(orderFlow.getCwb());
 		if(aeds==null){
 			throw new RuntimeException("从dmp没有获取到重置反馈信息");
 		}
@@ -433,7 +428,7 @@ public class OtherOrderTrackSendService {
 
 	}
 	
-	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState){
+	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
 		try {
 	   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
 			if(pushCfg == null){
@@ -447,10 +442,14 @@ public class OtherOrderTrackSendService {
 			this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 
 			boolean isOther=false;
-			DmpCwbOrder cwbOrder=deliveryState.getCwbOrder();
+			DmpCwbOrder cwbOrder=(deliveryState==null)?null:deliveryState.getCwbOrder();
+			if(cwbOrder==null){
+				cwbOrder=co;
+			}
 			if(cwbOrder!=null){
-				//isOther=true; 
-				isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
+				if(cwbOrder.getCustomerid()>0){ 
+					isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
+				}
 			}
 			if(!isOther){
 				this.logger.info("不是外单，轨迹数据不作处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());

@@ -123,7 +123,6 @@ public class FlowFromJMSB2cService {
 			this.flowList.add(FlowOrderTypeEnum.BaoGuoweiDao.getMethod()); // 包裹未到（亚马逊对接使用）
 			this.flowList.add(FlowOrderTypeEnum.ZhongZhuanyanwu.getMethod()); // 中转延误（亚马逊对接使用）
 			this.flowList.add(FlowOrderTypeEnum.ShouGongdiushi.getMethod()); // 货物丢失（亚马逊对接使用）
-			this.flowList.add(FlowOrderTypeEnum.ChongZhiFanKui.getMethod()); // 重置反馈
 			this.camelContext.addRoutes(new RouteBuilder() {
 				@Override
 				public void configure() throws Exception {
@@ -209,7 +208,7 @@ public class FlowFromJMSB2cService {
 			this.AddExcuteFlowStatusMethod(orderFlow);
 			
 			//外单轨迹数据保存到临时表
-			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState);
+			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
 			
 			try {
 				// TODO jms异常写入监控表
@@ -267,10 +266,6 @@ public class FlowFromJMSB2cService {
 	public void excuteFlowStatusMethod_Contains35(DmpOrderFlow orderFlow, CwbOrderWithDeliveryState cwbOrderWithDeliveryState) {
 
 		try {
-			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChongZhiFanKui.getValue()) {
-				return;
-			}
-			
 			String Jsoncontent = this.telecomJsonService.orderToJson(cwbOrderWithDeliveryState, orderFlow, orderFlow.getFlowordertype());
 			if (Jsoncontent == null) {
 				return;
@@ -304,10 +299,6 @@ public class FlowFromJMSB2cService {
 	 */
 	private void AddExcuteFlowStatusMethod(DmpOrderFlow orderFlow) throws Exception {
 		
-		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChongZhiFanKui.getValue()) {
-			return;
-		}
-
 		SystemInstall useAudit = this.getDmpDAO.getSystemInstallByName("useAudit");
 		if ((useAudit != null) && "no".equals(useAudit.getValue())) {// 不需要归班
 			this.AddExcuteFlowStatusMethodByNotAudit(orderFlow);
