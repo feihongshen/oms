@@ -1727,7 +1727,8 @@ public class FlowFromJMSService {
 			long flowordertype = request.getParameter("flowordertype") == null ? 0 : Long.parseLong(request.getParameter("flowordertype").toString());
 			long currentbranchid = request.getParameter("currentbranchid") == null ? 0 : Long.parseLong(request.getParameter("currentbranchid").toString());
 			long deliverystate = request.getParameter("deliverystate") == null ? 0 : Long.parseLong(request.getParameter("deliverystate").toString());
-			long customerid = request.getParameter("customerid") == null ? 0 : Long.parseLong(request.getParameter("customerid").toString());
+			long customerid = (request.getParameter("customerid") == null
+					||request.getParameter("customerid").trim().length()<1)? 0 : Long.parseLong(request.getParameter("customerid").toString());
 			// 订单表
 			cwbDAO.updateForChongZhiShenHe(cwb, nextbranchid, flowordertype, currentbranchid, deliverystate);
 			// 综合查询表
