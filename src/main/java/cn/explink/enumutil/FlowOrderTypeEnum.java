@@ -17,7 +17,8 @@ public enum FlowOrderTypeEnum {
 			"ShenHeWeiZaiTou"), YiFanKui(35, "反馈", "yifankui"), YiShenHe(36, "审核", "yishenhe"), BaoGuoweiDao(50, "包裹未到", "包裹未到"), // 亚马逊对接使用
 	ZhongZhuanyanwu(51, "中转延误", "中转延误"), // 亚马逊对接使用
 	ShouGongdiushi(52, "货物丢失", "货物丢失"), ZiTiYanWu(53, "自提已超5天", "自提已超5天"), // 亚马逊对接使用
-	KuDuiKuChuKuSaoMiao(46, "库对库出库", "库对库出库"),UpdatePickBranch(63,"更新提货站","更新提货站");
+	KuDuiKuChuKuSaoMiao(46, "库对库出库", "库对库出库"),UpdatePickBranch(63,"更新提货站","更新提货站"),
+	ChongZhiFanKui(64,"重置反馈","重置反馈");
 	private int value;
 	private String text;
 	private String method;

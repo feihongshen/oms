@@ -63,7 +63,10 @@ public class EPaiInterfaceService {
 	 * 构建派送信息发送上游易派Api
 	 */
 	public void buildFlowOrdersToEPaiAPI(CwbOrderWithDeliveryState cwbOrderWithDeliveryState, DmpOrderFlow orderFlow) {
-
+		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChongZhiFanKui.getValue()) {
+			return;
+		}
+		
 		String cwb = "";
 		try {
 

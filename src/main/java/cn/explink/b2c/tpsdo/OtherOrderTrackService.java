@@ -24,7 +24,7 @@ public class OtherOrderTrackService {
 	@Autowired
 	CustomerDAO customerDAO;
 	
-	private final static String OTHER_ORDER_TRACK_SAVE_SQL="insert into tpo_other_order_track (cwb,floworderid,flowmsg,deliverymsg,tracktime,createtime,status,trytime,errinfo) values(?,?,?,?,?,CURRENT_TIMESTAMP,?,?,?)";
+	private final static String OTHER_ORDER_TRACK_SAVE_SQL="insert into tpo_other_order_track (cwb,floworderid,flowmsg,deliverymsg,tracktime,createtime,status,trytime,errinfo,flowordertype) values(?,?,?,?,?,CURRENT_TIMESTAMP,?,?,?,?)";
 	private final static String OTHER_ORDER_TRACK_QUERY_SQL="select * from tpo_other_order_track where status in (1,3) and trytime<? order by tracktime limit ?";
 	private final static String OTHER_ORDER_TRACK_UPDATE_SQL="update tpo_other_order_track set status=?,errinfo=?,trytime=trytime+1 where cwb=? and floworderid=?";
 
@@ -34,7 +34,7 @@ public class OtherOrderTrackService {
 	@Transactional
 	public void saveOtherOrderTrack(OtherOrderTrackVo vo){
 		this.jdbcTemplate.update(OTHER_ORDER_TRACK_SAVE_SQL, vo.getCwb(), vo.getFloworderid(),
-				vo.getOrderFlowJson(), vo.getDeliveryStateJson(), vo.getTracktime(), vo.getStatus(),vo.getTrytime(),vo.getErrinfo());
+				vo.getOrderFlowJson(), vo.getDeliveryStateJson(), vo.getTracktime(), vo.getStatus(),vo.getTrytime(),vo.getErrinfo(),vo.getFlowordertype());
 	}
 	
 	@Transactional
@@ -132,6 +132,7 @@ public class OtherOrderTrackService {
 			vo.setOrderFlowJson(rs.getString("flowmsg"));
 			vo.setStatus(rs.getInt("status"));
 			//vo.setTpsno(rs.getString("transportno"));
+			vo.setFlowordertype(rs.getLong("flowordertype"));
 			
 			return vo;
 		}

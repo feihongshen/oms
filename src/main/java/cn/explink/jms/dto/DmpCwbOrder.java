@@ -123,7 +123,9 @@ public class DmpCwbOrder {
 
 	private int ismpsflag; // 是否一票多件：0默认；1是一票多件   注意：这里只描述开启集单模式才起作用
 	
-
+	private long firstchangereasonid=0l;//待中转一级原因
+	private long changereasonid=0l;//待中转二级级原因
+	
 	public int getMpsoptstate() {
 		return mpsoptstate;
 	}
@@ -969,6 +971,22 @@ public class DmpCwbOrder {
 
 	public void setInfactfare(BigDecimal infactfare) {
 		this.infactfare = infactfare;
+	}
+
+	public long getFirstchangereasonid() {
+		return firstchangereasonid;
+	}
+
+	public void setFirstchangereasonid(long firstchangereasonid) {
+		this.firstchangereasonid = firstchangereasonid;
+	}
+
+	public long getChangereasonid() {
+		return changereasonid;
+	}
+
+	public void setChangereasonid(long changereasonid) {
+		this.changereasonid = changereasonid;
 	}
 
 }
