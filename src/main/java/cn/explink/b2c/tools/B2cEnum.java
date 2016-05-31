@@ -92,7 +92,9 @@ public enum B2cEnum {
 	Zhongliang_bak1(21001, "中粮(我买网)_备用1", "zhongliang_bak1"),
 	Zhongliang_bak2(21002, "中粮(我买网)_备用2", "zhongliang_bak2"),
 	ThirdPartyOrder_2_DO(20129, "外单推DO", "thirdPartyOrder2DO"),
-	VipShop_TPSAutomate(20227, "TPS自动化", "vipshop_tps_automate")
+	VipShop_TPSAutomate(20227, "TPS自动化", "vipshop_tps_automate"),
+	Shenzhoushuma(20137,"神州数码","shenzhoushuma"),
+	ZheMeng_track(23001, "哲盟_轨迹", "zhemeng_track");
 	; 
 	private int key;
 	private String text;

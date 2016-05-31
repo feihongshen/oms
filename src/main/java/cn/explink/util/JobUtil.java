@@ -52,6 +52,7 @@ import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfexpress.SfexpressService_searchOrderStatus;
 import cn.explink.b2c.sfexpress.SfexpressService_sendOrder;
 import cn.explink.b2c.sfxhm.SfxhmService;
+import cn.explink.b2c.shenzhoushuma.ShenzhoushumaService;
 import cn.explink.b2c.smile.SmileService;
 import cn.explink.b2c.smiled.SmiledService_SendBranch;
 import cn.explink.b2c.suning.SuNingService;
@@ -78,6 +79,7 @@ import cn.explink.b2c.yihaodian.YihaodianService;
 import cn.explink.b2c.yonghui.YHServices;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.b2c.zhemeng.ZhemengService;
+import cn.explink.b2c.zhemeng.track.ZhemengTrackService;
 import cn.explink.b2c.zhongliang.ZhongliangService;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.ExpressSysMonitorDAO;
@@ -238,6 +240,10 @@ public class JobUtil {
 	VipmpsFeedbackService vipmpsFeedbackService;
 	@Autowired
 	MoonbasaService moonbasaService;
+	@Autowired
+	ShenzhoushumaService shenzhoushumaService;
+	@Autowired
+	ZhemengTrackService zhemengTrackService;
 	
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -252,6 +258,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
 		JobUtil.threadMap.put("otherorderhousekeep", 0);
 		JobUtil.threadMap.put("vipmps",0);
+		JobUtil.threadMap.put("shenzhoushuma",0);
 	}
 
 	/**
@@ -265,6 +272,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("otherordertrack", 0);
 		JobUtil.threadMap.put("otherorderhousekeep", 0);
 		JobUtil.threadMap.put("vipmps",0);
+		JobUtil.threadMap.put("shenzhoushuma",0);
 		this.logger.info("系统自动初始化定时器完成");
 	}
 
@@ -1227,6 +1235,26 @@ public class JobUtil {
 		}
 		this.logger.info("执行了唯品会集包定时器任务!");
 	}
-}
 	
+	/**
+	 * 神州数码状态反馈
+	 */
+	public void getShenZhouShuMa_Task(){
+		if (JobUtil.threadMap.get("shenzhoushuma") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出shenzhoushuma");
+			return;
+		}
+		JobUtil.threadMap.put("shenzhoushuma", 1);
+		
+		try{
+			this.shenzhoushumaService.feedback_status();;
+		}catch(Exception e){
+			this.logger.error("执行了神州数码状态反馈定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("shenzhoushuma", 0);
+		}
+		this.logger.info("执行了【神州数码状态反馈】定时器任务!");
+	}
+
+}	
 
