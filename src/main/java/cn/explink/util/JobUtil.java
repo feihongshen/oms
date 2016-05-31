@@ -79,7 +79,6 @@ import cn.explink.b2c.yihaodian.YihaodianService;
 import cn.explink.b2c.yonghui.YHServices;
 import cn.explink.b2c.yonghuics.YonghuiService;
 import cn.explink.b2c.zhemeng.ZhemengService;
-import cn.explink.b2c.zhemeng.track.ZhemengTrackService;
 import cn.explink.b2c.zhongliang.ZhongliangService;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.ExpressSysMonitorDAO;
@@ -242,8 +241,6 @@ public class JobUtil {
 	MoonbasaService moonbasaService;
 	@Autowired
 	ShenzhoushumaService shenzhoushumaService;
-	@Autowired
-	ZhemengTrackService zhemengTrackService;
 	
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -1273,5 +1270,4 @@ public class JobUtil {
 		this.logger.info("执行了【神州数码状态反馈】定时器任务!");
 	}
 
-}	
-
+}
