@@ -46,7 +46,6 @@ import cn.explink.b2c.yihaodian.BulidYihaodianB2cData;
 import cn.explink.b2c.yixun.BulidYiXunB2cData;
 import cn.explink.b2c.yonghui.BuildYongHuiB2cData;
 import cn.explink.b2c.yonghuics.BulidYonghuiB2cData;
-import cn.explink.b2c.zhemeng.track.BulidZhemengTrackB2cData;
 import cn.explink.b2c.zhongliang.BuildZhongliangB2cData;
 
 @Service
