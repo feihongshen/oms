@@ -1237,6 +1237,23 @@ public class JobUtil {
 	}
 	
 	/**
+	 * 重置干线回单物流状态发送标识为0，以便重推物流轨迹给TMS
+	 * @author leo01.liao
+	 * @return void
+	 */
+	public void resetGanXianHuiDan(){
+		try{
+			for (B2cEnum enums : B2cEnum.values()) {
+				if (enums.getMethod().contains("vipshop")) {
+					this.vipshopService.resetGanXianHuiDan(enums.getKey());
+				}
+			}			
+		}catch(Exception ex){
+			this.logger.error("执行重置干线回单物流状态发送标识为0定时器异常", ex);
+		}
+	}
+	
+	/**
 	 * 神州数码状态反馈
 	 */
 	public void getShenZhouShuMa_Task(){
