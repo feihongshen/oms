@@ -87,6 +87,7 @@
 							 <ref bean="doTime_otherorderhousekeep" />
 							 <ref bean="doTime_vipmps" />
 							 <ref bean="mqExceptionHandler"/>
+							 <ref bean="shenzhoushuma"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -1296,4 +1297,27 @@
 	</bean>
 	
 	<!-- MQ 异常处理 定时器   配置结束--> 
+	
+	
+	<!--神州数码状态反馈-->
+    <bean id="shenzhoushuma" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="shenzhoushumaBean" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="shenzhoushumaBean" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getShenZhouShuMa_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
 </beans>
