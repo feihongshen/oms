@@ -66,7 +66,7 @@ public class BuildShenzhoushumaB2cData {
 		if (flowOrdertype == FlowOrderTypeEnum.YiShenHe.getValue()) {//已审核
 			if(deliveryState.getDeliverystate() == DeliveryStateEnum.PeiSongChengGong.getValue()
 					||deliveryState.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue()){
-				busiOperateTime=deliveryState.getSign_time()==""?deliveryState.getCreatetime():deliveryState.getSign_time();
+				//busiOperateTime=deliveryState.getSign_time()==""?deliveryState.getCreatetime():deliveryState.getSign_time();
 				busiOperator = deliveryState.getSign_man()==""?cwbOrder.getConsigneename():deliveryState.getSign_man();
 			}
 			if(deliveryState.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue()){
