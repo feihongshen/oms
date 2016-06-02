@@ -32,6 +32,7 @@ import cn.explink.b2c.meilinkai.BuildMLKB2cData;
 import cn.explink.b2c.mmb.BuildmmbB2cData;
 import cn.explink.b2c.rufengda.BulidRufengdaB2cData;
 import cn.explink.b2c.sfxhm.BuildSfxhmB2cData;
+import cn.explink.b2c.shenzhoushuma.BuildShenzhoushumaB2cData;
 import cn.explink.b2c.smile.BulidSmileB2cData;
 import cn.explink.b2c.suning.BuildSuNingB2cData;
 import cn.explink.b2c.telecomsc.BuildTelecomshopB2cData;
@@ -139,6 +140,19 @@ public class BuildB2cDataMaster {
 	@Autowired
 	BuildYongHuiB2cData buildYongHuiB2cData;
 	
+	@Autowired
+	BuildShenzhoushumaB2cData buildShenzhoushumaB2cData;
+	
+	
+	public BuildShenzhoushumaB2cData getBuildShenzhoushumaB2cData() {
+		return buildShenzhoushumaB2cData;
+	}
+
+	public void setBuildShenzhoushumaB2cData(
+			BuildShenzhoushumaB2cData buildShenzhoushumaB2cData) {
+		this.buildShenzhoushumaB2cData = buildShenzhoushumaB2cData;
+	}
+
 	public BuildYongHuiB2cData getBuildYongHuiB2cData() {
 		return buildYongHuiB2cData;
 	}

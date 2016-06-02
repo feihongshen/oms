@@ -322,6 +322,13 @@ public class B2cJsonService {
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
 		
+		//神州数码
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Shenzhoushuma.getKey()))) {
+			return this.buildB2cDataMaster.getBuildShenzhoushumaB2cData().buildShenzhoushumaMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), 
+					delivery_state, this.objectMapper);
+		}
+		
+		
 		return null;
 
 	}
