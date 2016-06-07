@@ -628,6 +628,7 @@ public class TPOSendDoInfService {
 		try {
 			requestVo = JsonUtil.readValue(tPOSendDoInf.getReqObjJson(),ThirdPartyOrder2DORequestVo.class);
 			requestVo.setOperateType(new Integer(TPOOperateTypeEnum.CANCEL.getValue()));
+			requestVo.setTransportNo(tPOSendDoInf.getTransportno() == null ? "" : tPOSendDoInf.getTransportno());
 			String reqObjJson =  JsonUtil.translateToJson(requestVo);
 			tPOSendDoInf.setReqObjJson(reqObjJson);
 		} catch (Exception e) {
@@ -657,6 +658,7 @@ public class TPOSendDoInfService {
 		try {
 			requestVo = JsonUtil.readValue(tPOSendDoInf.getReqObjJson(),ThirdPartyOrder2DORequestVo.class);
 			requestVo.setOperateType(new Integer(TPOOperateTypeEnum.UPDATE.getValue()));
+			requestVo.setTransportNo(tPOSendDoInf.getTransportno() == null ? "" : tPOSendDoInf.getTransportno());
 		} catch (Exception e) {
 			this.logger.error("修改操作类型外单推送DO请求参数json串转对象失败，cwb="+tPOSendDoInf.getCwb(), e);
 			return;
