@@ -1,5 +1,8 @@
 package cn.explink.b2c.tpsdo;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderService;
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderServiceHelper;
+import com.pjbest.deliveryorder.bizservice.PjDoStatusRequest;
+import com.pjbest.deliveryorder.bizservice.PjDoStatusResponse;
 import com.pjbest.deliveryorder.service.DeliveryTrack;
 import com.pjbest.deliveryorder.service.DoTrackFeedbackRequest;
 import com.pjbest.deliveryorder.service.ExceptionTrack;
@@ -20,6 +25,7 @@ import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.domain.ApplyEditDeliverystate;
 import cn.explink.domain.Branch;
 import cn.explink.domain.User;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -95,14 +101,27 @@ public class OtherOrderTrackSendService {
 			try {
 				DmpOrderFlow orderFlow=parseOrderFlowObject(msgVo.getOrderFlowJson());
 				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
-				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
-				if(req!=null){
-					logger.info("上传外单cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
-					
-					send(req,60000);
-					otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
+				if(orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
+					//推送轨迹
+					DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
+					if(req!=null){
+						logger.info("上传外单cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
+						
+						send(req,6000);
+						otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
+					}else{
+						otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
+					}
 				}else{
-					otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
+					//推送重置反馈
+					PjDoStatusRequest req=prepareResetStateRequest(msgVo,orderFlow);
+					if(req!=null){
+						logger.info("上传外单cwb={}重置反馈报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
+						sendResetState(req,6000);
+						otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
+					}else{
+						otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
+					}
 				}
 				
 			} catch (Exception e) {
@@ -154,16 +173,19 @@ public class OtherOrderTrackSendService {
 			req.setDelivery(deliveryTrack);
 		}
 		
-		//需要审核or不用审核???
-		if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
-			
+		if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.ChuKuSaoMiao.getValue()
+			&&ds==null&&cwbOrder.getFirstchangereasonid()!=0){
+			//中转出站
+			tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue());
+			setReason(req,cwbOrder.getFirstchangereasonid(),cwbOrder.getChangereasonid());
+		}else if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
 			if(ds==null){
 				throw new RuntimeException("归班反馈结果报文数据为空.");
 			}
 			
 			if(ds.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.PeiSongChengGong.getValue());
-				
+					
 				//以下需要检查配送成功与否??? 
 				//is it getReceivedfee???
 				//if(ds.getSign_typeid()==1){//已签收
@@ -173,62 +195,71 @@ public class OtherOrderTrackSendService {
 				//}
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenTuiChengGong.getValue());
-
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenHuanChengGong.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenHuanChengGong.getValue());
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.QuanBuTuiHuo.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.JuShou.getValue());
-				ExceptionTrack et=new ExceptionTrack ();
-				//et.setExceptionType(""+DeliveryStateEnum.QuanBuTuiHuo.getValue());
-				et.setExceptionReason(DeliveryStateEnum.QuanBuTuiHuo.getText()+":"+ds.getBackreason());
-				req.setException(et);
+				setReason(req,cwbOrder.getBackreasonid(),0);
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.BuFenTuiHuo.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.BuFenTuiHuo.getValue());
-				ExceptionTrack et=new ExceptionTrack ();
-				//et.setExceptionType(""+DeliveryStateEnum.BuFenTuiHuo.getValue());
-				et.setExceptionReason(DeliveryStateEnum.BuFenTuiHuo.getText()+":"+ds.getBackreason());
-				req.setException(et);
+				setReason(req,cwbOrder.getBackreasonid(),0);
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenJuTui.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenJuTui.getValue());
-				ExceptionTrack et=new ExceptionTrack ();
-				//et.setExceptionType(""+DeliveryStateEnum.ShangMenJuTui.getValue());
-				et.setExceptionReason(""+DeliveryStateEnum.ShangMenJuTui.getText());//??????
-				req.setException(et);
+				setReason(req,cwbOrder.getBackreasonid(),0);
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.HuoWuDiuShi.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.HuoWuDiuShi.getValue());
-				ExceptionTrack et=new ExceptionTrack ();
-				//et.setExceptionType(""+DeliveryStateEnum.HuoWuDiuShi.getValue());
-				et.setExceptionReason(""+DeliveryStateEnum.HuoWuDiuShi.getText());//??????
-				req.setException(et);
+				setReason(req,cwbOrder.getLosereasonid(),0);//todo
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.FenZhanZhiLiu.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.FenZhanZhiLiu.getValue());
-				ExceptionTrack et=new ExceptionTrack ();
-				//et.setExceptionType(""+DeliveryStateEnum.FenZhanZhiLiu.getValue());
-				et.setExceptionReason(DeliveryStateEnum.FenZhanZhiLiu.getText()+":"+ds.getLeavedreason());
-				req.setException(et);
+				setReason(req,cwbOrder.getFirstlevelid(),cwbOrder.getLeavedreasonid());
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.ZhiLiuZiDongLingHuo.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.FenZhanZhiLiu.getValue());//???
-				ExceptionTrack et=new ExceptionTrack ();
-				//et.setExceptionType(""+DeliveryStateEnum.ZhiLiuZiDongLingHuo.getValue());
-				et.setExceptionReason(DeliveryStateEnum.ZhiLiuZiDongLingHuo.getText()+":"+ds.getLeavedreason());
-				req.setException(et);
+				setReason(req,cwbOrder.getFirstlevelid(),cwbOrder.getLeavedreasonid());
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.DaiZhongZhuan.getValue()){
-				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue());
+				//tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue());
+				//待中转审核时不推送,中转出站时才推
+				return null;
 			}else{
 				return null;
 			}
 		}
-		
-		User operateUser=getDmpDAO.getUserById(orderFlow.getUserid());//
-		
-		if(cwbOrder.getInfactfare()!=null&&cwbOrder.getInfactfare().doubleValue()>0){
-			req.setActualFee(cwbOrder.getInfactfare().doubleValue());
-			/**
-			 *  需要根据dmp的支付方式映射成TPS的支付方式 updated by gordon.zhou 2016.5.3
-			 */
-			String newpaywayidStr = cwbOrder.getNewpaywayid();
-			try{
-				int newpaywayid = Integer.valueOf(newpaywayidStr);
+
+
+		if(ds!=null){
+			if(ds.getInfactfare()!=null&&ds.getInfactfare().doubleValue()>0){
+				//运费
+				req.setActualFee(ds.getInfactfare().doubleValue());
+			}
+			if(ds.getReceivedfee()!=null&&ds.getReceivedfee().doubleValue()>0){
+				//实收金额
+				req.setCodAmount(ds.getReceivedfee().doubleValue());
+			}
+			
+			if(ds.getReturnedfee()!=null&&ds.getReturnedfee().doubleValue()>0){
+				//实退金额
+				req.setReturnAmount(ds.getReturnedfee().doubleValue());
+			}
+			
+			if(ds.getReceivedfee()!=null&&ds.getReceivedfee().doubleValue()>0||
+				ds.getReturnedfee()!=null&&ds.getReturnedfee().doubleValue()>0||
+				ds.getCash()!=null&&ds.getCash().doubleValue()>0||
+				ds.getPos()!=null&&ds.getPos().doubleValue()>0||
+				ds.getCheckfee()!=null&&ds.getCheckfee().doubleValue()>0||
+				ds.getCodpos()!=null&&ds.getCodpos().doubleValue()>0||
+				ds.getOtherfee()!=null&&ds.getOtherfee().doubleValue()>0
+				){
+				
+				/**
+				 *  需要根据dmp的支付方式映射成TPS的支付方式 updated by gordon.zhou 2016.5.3
+				 */
+				String newpaywayidStr = cwbOrder.getNewpaywayid();
+				int newpaywayid =-1;
+				try{
+					newpaywayid = Integer.valueOf(newpaywayidStr);
+				}catch(Exception e){
+					throw new RuntimeException("解析归班反馈支付方式出错.newpaywayid="+newpaywayid+","+e.getMessage());
+				}
+					
 				if(newpaywayid == PaytypeEnum.Xianjin.getValue()){
 					req.setActualPayType(String.valueOf(0));
 				}
@@ -247,7 +278,6 @@ public class OtherOrderTrackSendService {
 				else{
 					req.setActualPayType(null);
 				}
-			}catch(Exception e){
 				
 			}
 		}
@@ -269,15 +299,71 @@ public class OtherOrderTrackSendService {
 			}
 		}
 		
-		//req.setException(null);//
+		User operateUser=getDmpDAO.getUserById(orderFlow.getUserid());//
+		
+
 		req.setNextOrg(nextOrg);//tps机构编码
 		req.setOperateOrg(operateOrg);//tps机构编码
 		req.setOperater(operateUser==null?null:operateUser.getRealname());//???
 		req.setOperateTime(orderFlow.getCredate());
 		req.setOperateType(tpsOperateType);
-		req.setReason(null);//???
 		req.setTransportNo(msgVo.getTpsno());
 		
+		return req;
+	}
+	
+	private void setReason(DoTrackFeedbackRequest req,long firstReasonid,long secondReasonid){
+		if(firstReasonid>0){
+			String reasonDesc=this.getDmpDAO.getReason(firstReasonid);
+			ExceptionTrack et=new ExceptionTrack ();
+			et.setExceptionReason(reasonDesc);
+			req.setException(et);
+			if(secondReasonid>0){
+				reasonDesc=this.getDmpDAO.getReason(secondReasonid);
+				req.setReason(reasonDesc);
+			}
+		}
+		
+	}
+	private PjDoStatusRequest prepareResetStateRequest(OtherOrderTrackVo msgVo,DmpOrderFlow orderFlow){
+		if(msgVo.getTpsno()==null){
+			throw new RuntimeException("TPS运单号为空..");
+		}
+		
+		if(orderFlow.getCwb()==null){
+			throw new RuntimeException("订单号为空..");
+		}
+
+		ApplyEditDeliverystate aeds=getDmpDAO.getApplyEditDeliverystate(orderFlow.getCwb());
+		if(aeds==null){
+			throw new RuntimeException("从dmp没有获取到重置反馈信息");
+		}
+		String operateOrg=null;
+		if(aeds.getApplybranchid()>0){
+			operateOrg=getTpsBranchCodeById(aeds.getApplybranchid());
+			if(operateOrg==null){
+				throw new RuntimeException("没找到此操作机构，branchid="+aeds.getApplybranchid());
+			}
+		}
+		
+		Date applyDate=null;
+		SimpleDateFormat sdf=new SimpleDateFormat(DATE_FORMAT);
+		try {
+			applyDate=sdf.parse(aeds.getApplytime());
+		} catch (Exception e) {
+			throw new RuntimeException("解析申请时间出错，aplytime="+aeds.getApplytime());
+		}
+		
+		User operateUser=getDmpDAO.getUserById(aeds.getApplyuserid());//
+		
+		PjDoStatusRequest req= new PjDoStatusRequest();
+		req.setTransportNo(msgVo.getTpsno());
+		req.setType(0);//tps type 0 是重置状态
+		req.setRemark(aeds.getEditreason());
+		req.setOperName(operateUser==null?null:operateUser.getRealname());
+		req.setOperOrgCode(operateOrg);
+		req.setOperTime(applyDate);
+
 		return req;
 	}
 	
@@ -295,11 +381,31 @@ public class OtherOrderTrackSendService {
 		return tpsBranchCode;
 	}
 	
+	//发送外单轨迹
 	private void send(DoTrackFeedbackRequest request,long timeout) throws OspException{
 		InvocationContext.Factory.getInstance().setTimeout(timeout);
 		PjDeliveryOrderService pjDeliveryOrderService = new PjDeliveryOrderServiceHelper.PjDeliveryOrderServiceClient();
 			
 		pjDeliveryOrderService.feedbackDoTrack(request);//
+	}
+	
+	//发送重置反馈
+	private void sendResetState(PjDoStatusRequest req,long timeout) throws OspException{
+		InvocationContext.Factory.getInstance().setTimeout(timeout);
+		PjDeliveryOrderService pjDeliveryOrderService = new PjDeliveryOrderServiceHelper.PjDeliveryOrderServiceClient();
+
+		List<PjDoStatusRequest> reqList=new ArrayList<PjDoStatusRequest>();
+		reqList.add(req);
+		List<PjDoStatusResponse> rspList=pjDeliveryOrderService.feedbackDoStatus(reqList);
+		if(rspList==null||rspList.size()<1){
+			throw new RuntimeException("TPS没返回响应");
+		}else{
+			PjDoStatusResponse rsp=rspList.get(0);
+			if(rsp.getResultCode()!=1){
+				throw new RuntimeException("TPS返回异常结果:"+rsp.getResultMsg());
+			}
+		}
+		
 	}
 	
 	private DmpOrderFlow parseOrderFlowObject(String json){
@@ -322,7 +428,7 @@ public class OtherOrderTrackSendService {
 
 	}
 	
-	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState){
+	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
 		try {
 	   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
 			if(pushCfg == null){
@@ -336,10 +442,14 @@ public class OtherOrderTrackSendService {
 			this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 
 			boolean isOther=false;
-			DmpCwbOrder cwbOrder=deliveryState.getCwbOrder();
+			DmpCwbOrder cwbOrder=(deliveryState==null)?null:deliveryState.getCwbOrder();
+			if(cwbOrder==null){
+				cwbOrder=co;
+			}
 			if(cwbOrder!=null){
-				//isOther=true; 
-				isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
+				if(cwbOrder.getCustomerid()>0){ 
+					isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
+				}
 			}
 			if(!isOther){
 				this.logger.info("不是外单，轨迹数据不作处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
@@ -347,7 +457,8 @@ public class OtherOrderTrackSendService {
 			}
 			
 			int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
-			if(tpsOperateType<0){
+			if(tpsOperateType<0
+					&&orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
 				this.logger.info("此轨迹不处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 				return ;
 			}
@@ -364,6 +475,7 @@ public class OtherOrderTrackSendService {
 			vo.setStatus(1);//
 			vo.setTrytime(0);
 			vo.setErrinfo("");
+			vo.setFlowordertype(orderFlow.getFlowordertype());
 
 			//为了性能，分站领货环节优先发送
 			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){

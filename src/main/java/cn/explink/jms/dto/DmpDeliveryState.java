@@ -38,6 +38,7 @@ public class DmpDeliveryState {
 	private String sign_man; // 签收人
 	private String sign_time; // 签收时间
 	private String sign_man_phone; //签收人（代签）手机
+	private BigDecimal infactfare = BigDecimal.ZERO;//实收运费
 
 	public String getSign_man_phone() {
 		return sign_man_phone;
@@ -503,6 +504,14 @@ public class DmpDeliveryState {
 
 	public void setCodpos(BigDecimal codpos) {
 		this.codpos = codpos;
+	}
+
+	public BigDecimal getInfactfare() {
+		return infactfare;
+	}
+
+	public void setInfactfare(BigDecimal infactfare) {
+		this.infactfare = infactfare;
 	}
 
 }

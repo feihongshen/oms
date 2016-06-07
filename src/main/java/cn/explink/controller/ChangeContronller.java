@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +20,8 @@ import cn.explink.service.FlowFromJMSService;
 @Controller
 @RequestMapping("/OMSChange")
 public class ChangeContronller {
-
+	private Logger logger = LoggerFactory.getLogger(ChangeContronller.class);
+	
 	@Autowired
 	FlowFromJMSService flowFromJMSService;
 	@Autowired
@@ -89,6 +92,7 @@ public class ChangeContronller {
 			return "{msg:\"00\"}";
 		} catch (Exception e) {
 			e.printStackTrace();
+			this.logger.error("editcwb error.",e);
 			return "{msg:\"50\"}";
 		}
 	}
