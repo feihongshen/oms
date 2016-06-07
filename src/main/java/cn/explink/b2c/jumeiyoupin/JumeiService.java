@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import cn.explink.b2c.tools.B2CDataDAO;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.FlowFromJMSB2cService;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.JointEntity;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.GetDmpDAO;
@@ -132,7 +133,7 @@ public class JumeiService {
 	}
 
 	public JuMeiYouPin_json getJumeiJson(String jsoncontent) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(jsoncontent, JuMeiYouPin_json.class);
+		return JacksonMapper.getInstance().readValue(jsoncontent, JuMeiYouPin_json.class);
 	}
 
 	/**

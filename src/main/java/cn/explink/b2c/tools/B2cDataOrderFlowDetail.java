@@ -62,7 +62,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("从[{0}]入库", getBranchById(orderFlow.getBranchid()).getBranchname(), operatorUser.getUsermobile());
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				Branch nextBranch = getBranchById(cwbOrderWithDeliveryState.getCwbOrder().getNextbranchid());
 				return MessageFormat.format("从[{0}]出库，下一站[{1}]，联系电话[{2}]", getBranchById(orderFlow.getBranchid()).getBranchname(), nextBranch.getBranchname(), operatorUser.getUsermobile());
 			}
@@ -85,7 +85,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("货物已到[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				User deliverUser = getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
 
 				String comment = orderFlow.getComment();
@@ -97,7 +97,7 @@ public class B2cDataOrderFlowDetail {
 
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				DmpDeliveryState deliverstate = cwbOrderWithDeliveryState.getDeliveryState();
 
 				return MessageFormat.format("货物已由[{0}]的派送员[{1}]反馈为[{2}],电话[{3}]", getBranchById(orderFlow.getBranchid()).getBranchname(), getUserById(deliverstate.getDeliveryid()).getRealname(),
@@ -120,7 +120,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("货物已由[{0}]退供货商成功", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiShenHe.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				DmpDeliveryState deliverstate = cwbOrderWithDeliveryState.getDeliveryState();
 				String exptMsg = "";
 				if (deliverstate.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue() || deliverstate.getDeliverystate() == DeliveryStateEnum.BuFenTuiHuo.getValue()
@@ -167,7 +167,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("从[{0}]入库", getBranchById(orderFlow.getBranchid()).getBranchname(), operatorUser.getUsermobile());
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				Branch nextBranch = getBranchById(cwbOrderWithDeliveryState.getCwbOrder().getNextbranchid());
 				return MessageFormat.format("从[{0}]出库，下一站[{1}]，联系电话[{2}]", getBranchById(orderFlow.getBranchid()).getBranchname(), nextBranch.getBranchname(), operatorUser.getUsermobile());
 			}
@@ -190,7 +190,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("货物已到[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				User deliverUser = getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
 
 				String comment = orderFlow.getComment();
@@ -202,7 +202,7 @@ public class B2cDataOrderFlowDetail {
 
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				DmpDeliveryState deliverstate = cwbOrderWithDeliveryState.getDeliveryState();
 
 				return MessageFormat.format("货物已由[{0}]的派送员[{1}]反馈为[{2}],电话[{3}]", getBranchById(orderFlow.getBranchid()).getBranchname(), getUserById(deliverstate.getDeliveryid()).getRealname(),
@@ -225,7 +225,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("货物已由[{0}]退供货商成功", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiShenHe.getValue()) {
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				DmpDeliveryState deliverstate = cwbOrderWithDeliveryState.getDeliveryState();
 				String exptMsg = "";
 				if (deliverstate.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue() || deliverstate.getDeliverystate() == DeliveryStateEnum.BuFenTuiHuo.getValue()
@@ -263,7 +263,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("已揽收[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
 			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.ChuKuSaoMiao.getValue()){
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				Branch nextBranch=getBranchById(cwbOrderWithDeliveryState.getCwbOrder().getNextbranchid());
 				return MessageFormat.format("离开[{0}]发往[{1}]", getBranchById(orderFlow.getBranchid()).getBranchname(),nextBranch.getBranchname());
 			}
@@ -285,7 +285,7 @@ public class B2cDataOrderFlowDetail {
 				return MessageFormat.format("到达[{0}]", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
 			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
 				
 				String comment = orderFlow.getComment();
@@ -296,7 +296,7 @@ public class B2cDataOrderFlowDetail {
 				}
 			}
 			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
-				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState=JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 				DmpDeliveryState deliverstate=cwbOrderWithDeliveryState.getDeliveryState();
 				if(deliverstate.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()
 					||deliverstate.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue()
@@ -442,7 +442,7 @@ public class B2cDataOrderFlowDetail {
 			try {
 				if(String.valueOf(CwbOrderTypeIdEnum.Peisong.getValue()).equals(cwbOrder.getCwbordertypeid())){
 					if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
-						CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+						CwbOrderWithDeliveryState cwbOrderWithDeliveryState=JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 						User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
 						String comment = orderFlow.getComment();
 						if(comment!=null&&!comment.isEmpty()&&comment.contains("正在派件")&&comment.contains("派件人")){
@@ -452,7 +452,7 @@ public class B2cDataOrderFlowDetail {
 						}
 					}
 					if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
-						CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+						CwbOrderWithDeliveryState cwbOrderWithDeliveryState=JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 						DmpDeliveryState deliverstate=cwbOrderWithDeliveryState.getDeliveryState();
 						User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
 						if(deliverstate.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()
@@ -475,7 +475,7 @@ public class B2cDataOrderFlowDetail {
 						}
 					}
 				}else if(String.valueOf(CwbOrderTypeIdEnum.Shangmentui.getValue()).equals(cwbOrder.getCwbordertypeid())){
-					CwbOrderWithDeliveryState cwbOrderWithDeliveryState=new ObjectMapper().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
+					CwbOrderWithDeliveryState cwbOrderWithDeliveryState=JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail().toString(), CwbOrderWithDeliveryState.class);
 					DmpDeliveryState deliverstate=cwbOrderWithDeliveryState.getDeliveryState();
 					User deliverUser=getUserById(cwbOrderWithDeliveryState.getDeliveryState().getDeliveryid());
 					if((orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue())&&(deliverstate.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue())){

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.ExptReason;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.User;
 import cn.explink.jms.dto.DmpCwbOrder;
@@ -48,7 +49,7 @@ public class BuildGxDxsenddata {
 		//操作人
 		User user = getDmpdao.getUserById(orderFlow.getUserid());
 		//小件员
-		User delivery = new ObjectMapper().readValue(getDmpdao.getDeliverById(cwbOrder.getDeliverid()),User.class);
+		User delivery = JacksonMapper.getInstance().readValue(getDmpdao.getDeliverById(cwbOrder.getDeliverid()),User.class);
 		OrderStatesList orderStates = new OrderStatesList();
 		List<OrderState> orderStatelist = new ArrayList<OrderState>();
 		OrderState orderState = new OrderState();

@@ -1,13 +1,17 @@
 package cn.explink.util;
 
 import java.io.IOException;
+
 import net.sf.json.JSONObject;
+
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import cn.explink.b2c.tools.B2cTools;
+import cn.explink.b2c.tools.JacksonMapper;
 
 /**
  * 对接常用处理
@@ -33,6 +37,6 @@ public class B2cUtil {
 	
 	//将json字符串反序列化为任一个对象 ====LX=====(首先定义好一个javabean) 
 	public <T> T getDataMethod(String jsoncontent,Class<T> cla) throws JsonParseException, JsonMappingException, IOException {
-		return (T) new ObjectMapper().readValue(jsoncontent,cla);
+		return (T) JacksonMapper.getInstance().readValue(jsoncontent,cla);
 	}
 }

@@ -199,7 +199,7 @@ public class WangjiuService {
 	// 获取tmall XML Note
 	public WangjiuXmlNote getSmileXMLNoteMethod(String jsoncontent) {
 		try {
-			return new ObjectMapper().readValue(jsoncontent, WangjiuXmlNote.class);
+			return JacksonMapper.getInstance().readValue(jsoncontent, WangjiuXmlNote.class);
 		} catch (Exception e) {
 			logger.error("获取SmileXMLNote异常！jsoncontent:" + jsoncontent + e);
 			return null;

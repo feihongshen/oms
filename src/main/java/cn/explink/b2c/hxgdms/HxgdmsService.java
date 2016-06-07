@@ -195,7 +195,7 @@ public class HxgdmsService {
 	// 获取tmall XML Note
 	public HxgdmsJsonNote getSmileXMLNoteMethod(String jsoncontent) {
 		try {
-			return new ObjectMapper().readValue(jsoncontent, HxgdmsJsonNote.class);
+			return JacksonMapper.getInstance().readValue(jsoncontent, HxgdmsJsonNote.class);
 		} catch (Exception e) {
 			logger.error("获取SmileXMLNote异常！jsoncontent:" + jsoncontent + e);
 			return null;

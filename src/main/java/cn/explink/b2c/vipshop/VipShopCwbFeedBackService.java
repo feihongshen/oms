@@ -115,12 +115,14 @@ public class VipShopCwbFeedBackService {
 			logger.error("OXO订单推送异常",e);
 		}
 
+		/**Commented by leoliao at 2016-05-24 改为使用独立定时器来重置干线回单物流状态反馈标识
 		String nowdateHours = DateTimeUtil.getNowTime("HH");
 		int hours = Integer.valueOf(nowdateHours);
 		if ((hours % 2) == 0) { // 每隔2的倍数来执行
 			this.updateVipShopByGanXianHuiDan(vipshop,"vipshop"); // 定时执行干线回单的脚本 唯品
 			this.updateVipShopByGanXianHuiDan(vipshop,"lefeng"); // 定时执行干线回单的脚本 乐蜂
 		}
+		*/
 
 		this.logger.info("=========VipShop状态反馈任务调度结束==========");
 		return calcCount;
@@ -930,17 +932,19 @@ public class VipShopCwbFeedBackService {
 			if("lefeng".equals(biaoshi)){
 				customeridStr = vipShop.getLefengCustomerid();
 			}
+			
+			this.logger.info("重置干线回单物流状态发送标识,customeridStr={}", customeridStr);
+			
 			String time = DateTimeUtil.getDateBefore(vipShop.getDaysno()==0?5:vipShop.getDaysno());
-			long resendCount =vipShop.getSelb2cnum()==0?300:vipShop.getSelb2cnum();
+			
 			String keyword = "干线回单"; // 根据关键词删除
-			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword,resendCount);
+			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword);
+			
 			String keyword2 = "状态发生时间";
-
-			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword2,resendCount);
+			this.b2cDataDAO.updateKeyWordByVipShop2(customeridStr, time, keyword2);
 
 		} catch (Exception e) {
 			this.logger.error("干线回单异常", e);
-
 		}
 	}
 
@@ -1202,6 +1206,32 @@ public class VipShopCwbFeedBackService {
 		}
 
 		return sub1.toString().replaceAll("null", "");
+	}
+	
+	/**
+	 * 重置干线回单物流状态发送标识为0，以便重推物流轨迹给TMS
+	 * @author leo01.liao
+	 * @param  vipshop_key
+	 */
+	public void resetGanXianHuiDan(int vipshop_key){
+		try{
+			VipShop vipshop = this.getVipShopSettingMethod(vipshop_key); // 获取配置信息
+			if (!this.b2ctools.isB2cOpen(vipshop_key)) {
+				this.logger.info("未开vipshop的对接!vipshop_key={}", vipshop_key);
+				return;
+			}
+			
+			this.logger.info("开始重置干线回单物流状态发送标识为0,vipshop_key={}", vipshop_key);
+			
+			//唯品会和乐蜂
+			this.updateVipShopByGanXianHuiDan(vipshop, "vipshop"); 
+			this.updateVipShopByGanXianHuiDan(vipshop, "lefeng");
+			
+			this.logger.info("结束重置干线回单物流状态发送标识为0,vipshop_key={}", vipshop_key);
+			
+		}catch(Exception ex){
+			this.logger.error("重置干线回单物流状态发送标识为0发送异常", ex);
+		}
 	}
 
 	public static void main(String[] args) {
