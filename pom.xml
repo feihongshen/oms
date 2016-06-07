@@ -397,7 +397,7 @@
 		  <groupId>com.pjbest</groupId>
 		  <artifactId>pjdeliveryorder-service-api</artifactId>
 		  <!-- <version>1.14.0_26</version> -->
-		  <version>1.17.1_15</version>
+		  <version>1.18.0_02</version>
 		</dependency>
 			   
 	    <dependency>
