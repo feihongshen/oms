@@ -309,6 +309,12 @@ public class TPOSendDoInfService {
 			String[] boxNos = cwbOrder.getTranscwb().split(",|，");
 			thirdPartyOrder2DORequestVo.setTotalBox(boxNos.length);
 			for(String boxNo : boxNos){
+				//Added by leoliao at 2016-06-08 解决箱号为空的问题
+				if(boxNo == null || boxNo.trim().equals("")){
+					continue;
+				}
+				//Added end
+				
 				ThirdPartyOrder2DORequestVo.Boxinfo boxInfo = new ThirdPartyOrder2DORequestVo.Boxinfo();
 				boxInfo.setBoxNo(boxNo);
 				boxinfos.add(boxInfo);
