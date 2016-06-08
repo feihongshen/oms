@@ -316,11 +316,13 @@ public class FlowFromJMSB2cService {
 				}
 			}
 
-			SystemInstall sendPOS_flag = this.getDmpDAO.getSystemInstallByName("sendPOS_flag") == null ? new SystemInstall() : this.getDmpDAO.getSystemInstallByName("sendPOS_flag");
+			SystemInstall sendPOS_flag = this.getDmpDAO.getSystemInstallByName("sendPOS_flag");
+			if(sendPOS_flag == null){
+				sendPOS_flag = new SystemInstall();
+			}
+			//SystemInstall sendPOS_flag = this.getDmpDAO.getSystemInstallByName("sendPOS_flag") == null ? new SystemInstall() : this.getDmpDAO.getSystemInstallByName("sendPOS_flag");
 			// 1现金和0款 2滞留和拒收 -1 无效
-			int posSendflag = Integer.valueOf(sendPOS_flag.getValue() == null ? "1" : sendPOS_flag.getValue()); // 增加获取
-																												// dmp
-																												// 开关表
+			int posSendflag = Integer.valueOf(sendPOS_flag.getValue() == null ? "1" : sendPOS_flag.getValue()); // 增加获取 dmp 开关表
 
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiShenHe.getValue()) { // pos支付，直接存储到对接表中
 				DmpDeliveryState ds = cwbOrderWithDeliveryState.getDeliveryState();
