@@ -358,7 +358,7 @@ public class OtherOrderTrackSendService {
 		
 		PjDoStatusRequest req= new PjDoStatusRequest();
 		req.setTransportNo(msgVo.getTpsno());
-		req.setType(0);//tps type 0 是重置状态
+		req.setType(6);//tps type 6 是重置状态
 		req.setRemark(aeds.getEditreason());
 		req.setOperName(operateUser==null?null:operateUser.getRealname());
 		req.setOperOrgCode(operateOrg);
