@@ -62,7 +62,7 @@ public class TPSDOService {
 					}catch(Exception e){
 						logger.error("buildPjDeliverOrderRequest failed. cwb={}",tPOSendDoInf.getCwb(), e);
 						try{
-							this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getCwb(), tPOSendDoInf.getCustcode(), null, 0, tPOSendDoInf.getTrytime() + 1, "build request fail:"+e.getMessage());
+							this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), null, 0, tPOSendDoInf.getTrytime() + 1, "build request fail:"+e.getMessage());
 						}catch(Exception ex){
 							logger.error("buildPjDeliverOrderRequest db failed. cwb={}",tPOSendDoInf.getCwb(), ex);
 						}
@@ -98,10 +98,10 @@ public class TPSDOService {
 							try{
 								if(resultCode == 1){
 									this.logger.info("推送外单数据给DO成功！cwb={}",response.getCustOrderNo());
-									this.tPOSendDoInfService.updateTPOSendDoInf(response.getCustOrderNo(), response.getCustCode(), response.getTransportNo(), 1, trytime + 1, "");
+									this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), response.getTransportNo(), 1, trytime + 1, "");
 								}else{
 									this.logger.info("推送外单数据给DO失败！cwb={},失败原因={}",response.getCustOrderNo(),response.getResultMsg());
-									this.tPOSendDoInfService.updateTPOSendDoInf(response.getCustOrderNo(), response.getCustCode(), response.getTransportNo(), 0, trytime + 1, response.getResultMsg());
+									this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), response.getTransportNo(), 0, trytime + 1, response.getResultMsg());
 								}
 							}catch(Exception e){
 								logger.error("更新外单接口表数据推送账单失败 cwb=" +(response == null ? "" :  response.getCustOrderNo()), e);
@@ -170,6 +170,7 @@ public class TPSDOService {
 		request.setJoinTime(requestVo.getJoinTime());
 		request.setOrderSource(requestVo.getOrderSource());
 		request.setOrderType(requestVo.getOrderType());
+		request.setOperateType(requestVo.getOperateType());
 		request.setPayment(requestVo.getPayment());
 		request.setPayType(requestVo.getPayType() + "");
 		request.setPickerTime(requestVo.getPickerTime());
@@ -181,6 +182,7 @@ public class TPSDOService {
 		request.setTransportNo(requestVo.getTransportNo());
 		request.setWarehouse(requestVo.getWarehouse());
 		request.setZipCode(requestVo.getZipCode());
+		request.setReturnCredit(requestVo.getReturnAmount() == null ? 0 : requestVo.getReturnAmount().doubleValue());
 		
 		if(requestVo.getBoxinfos() != null){
 			List<com.pjbest.deliveryorder.order.service.BoxInfoRequest> boxInfoRqList = new ArrayList<com.pjbest.deliveryorder.order.service.BoxInfoRequest>();

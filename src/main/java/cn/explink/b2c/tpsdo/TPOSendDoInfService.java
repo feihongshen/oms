@@ -22,6 +22,7 @@ import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DORequestVo;
+import cn.explink.b2c.tpsdo.bean.ThirdPartyOrderEditInfo;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.Branch;
@@ -31,6 +32,7 @@ import cn.explink.domain.User;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.enumutil.PaytypeEnum;
+import cn.explink.enumutil.TPOOperateTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpOrderFlow;
@@ -77,6 +79,11 @@ public class TPOSendDoInfService {
 			//是否是外单客户
 			boolean isTPCust  = this.isThirdPartyCustomer(customerid);
 			if(isTPCust){
+				TPOSendDoInf history = this.tPOSendDoInfDao.getTPOSendDoInfByCwbAndOpertype(orderFlow.getCwb(), TPOOperateTypeEnum.ADD);
+				if(history != null && StringUtils.isNotEmpty(history.getCwb())){
+					this.logger.info("外单cwb={}已存在外单推DO接口表（TPO_SEND_DO_INF）中", orderFlow.getCwb());
+					return;
+				}
 				this.logger.info("外单cwb={}加入外单推DO接口表（TPO_SEND_DO_INF）", orderFlow.getCwb());
 				ThirdPartyOrder2DORequestVo  thirdPartyOrder2DORequestVo = this.buildThirdPartyOrder2DORequestVo(cwbOrder, customer, pushCfg);
 				TPOSendDoInf tPOSendDoInf = this.buildTPOSendDoInf(cwbOrder,customer);
@@ -289,7 +296,8 @@ public class TPOSendDoInfService {
 			thirdPartyOrder2DORequestVo.setOrderSource(3); //快递订单
 		}else{
 			thirdPartyOrder2DORequestVo.setOrderSource(4);//外部订单
-		}		
+		}	
+		thirdPartyOrder2DORequestVo.setOperateType(new Integer(TPOOperateTypeEnum.ADD.getValue()));
 		//thirdPartyOrder2DORequestVo.setPayType(payType);
 		//thirdPartyOrder2DORequestVo.setPickerTime(pickerTime);
 		if(cwbOrder.getPaybackfee().compareTo(BigDecimal.ZERO) != 0){
@@ -327,8 +335,8 @@ public class TPOSendDoInfService {
 	 * @param remark
 	 */
 	@Transactional(propagation = Propagation.REQUIRES_NEW,isolation=Isolation.READ_COMMITTED)
-	public void updateTPOSendDoInf(String cwb, String custcode, String transportNo,int isSent,int trytime, String remark){
-		this.tPOSendDoInfDao.updateTPOSendDoInf(cwb, custcode, transportNo, isSent, trytime, remark);
+	public void updateTPOSendDoInf(long id, String transportNo,int isSent,int trytime, String remark){
+		this.tPOSendDoInfDao.updateTPOSendDoInf(id, transportNo, isSent, trytime, remark);
 	}
 	
 	
@@ -402,7 +410,7 @@ public class TPOSendDoInfService {
 			if(!isTPCust){
 				return "非外单客户订单："+cwbOrder.getCwb();
 			}
-			TPOSendDoInf history = this.tPOSendDoInfDao.getTPOSendDoInfByCwb(cwbOrder.getCwb());
+			TPOSendDoInf history = this.tPOSendDoInfDao.getTPOSendDoInfByCwbAndOpertype(cwbOrder.getCwb(), TPOOperateTypeEnum.ADD);
 			if(history != null && StringUtils.isNotEmpty(history.getCwb())){
 				return cwbOrder.getCwb();
 			}
@@ -572,6 +580,7 @@ public class TPOSendDoInfService {
 		}else{
 			thirdPartyOrder2DORequestVo.setOrderSource(4);//外部订单
 		}		
+		thirdPartyOrder2DORequestVo.setOperateType(new Integer(TPOOperateTypeEnum.ADD.getValue()));
 		//thirdPartyOrder2DORequestVo.setPayType(payType);
 		//thirdPartyOrder2DORequestVo.setPickerTime(pickerTime);
 		if(cwbOrder.getPaybackfee().compareTo(BigDecimal.ZERO) != 0){
@@ -600,4 +609,161 @@ public class TPOSendDoInfService {
 		return thirdPartyOrder2DORequestVo;
 	}
 	
+	/**
+	 * 根据订单号插入一条取消类型的 外单接口表记录
+	 * @param cwb
+	 */
+	public void addCancelTypeTPOSendDoInf(String cwb){
+		TPOSendDoInf tPOSendDoInf = this.tPOSendDoInfDao.getTPOSendDoInfByCwbAndOpertype(cwb, TPOOperateTypeEnum.ADD);
+		
+		if(tPOSendDoInf == null || StringUtils.isEmpty(tPOSendDoInf.getCwb())){
+			this.logger.info("未在外单接口表中找到 cwb={}的记录，认为不是外单，订单失效操作不进外单接口表",cwb);
+			return;
+		}
+			
+		tPOSendDoInf.setOperateType(TPOOperateTypeEnum.CANCEL.getValue());
+		tPOSendDoInf.setIsSent(0);
+		tPOSendDoInf.setTrytime(0);
+		ThirdPartyOrder2DORequestVo requestVo  = null;
+		try {
+			requestVo = JsonUtil.readValue(tPOSendDoInf.getReqObjJson(),ThirdPartyOrder2DORequestVo.class);
+			requestVo.setOperateType(new Integer(TPOOperateTypeEnum.CANCEL.getValue()));
+			requestVo.setTransportNo(tPOSendDoInf.getTransportno() == null ? "" : tPOSendDoInf.getTransportno());
+			String reqObjJson =  JsonUtil.translateToJson(requestVo);
+			tPOSendDoInf.setReqObjJson(reqObjJson);
+		} catch (Exception e) {
+			this.logger.error("取消操作类型外单推送DO请求参数json串，对象互转失败，cwb="+tPOSendDoInf.getCwb(), e);
+			return;
+		}
+		this.tPOSendDoInfDao.saveTPOSendDoInf(tPOSendDoInf);
+		//把操作类型是新增的那条记录 的state设为0
+		this.tPOSendDoInfDao.invalidateTPOSendDoInfById(tPOSendDoInf.getId());
+	}
+	
+	/**
+	 * 根据订单修改信息 插入一条修改类型的 外单接口表记录
+	 * @param editInfo
+	 */
+	public void addUpdateTypeTPOSendDoInf(ThirdPartyOrderEditInfo editInfo){
+		TPOSendDoInf tPOSendDoInf = this.tPOSendDoInfDao.getTPOSendDoInfByCwbAndOpertype(editInfo.getCwb(), TPOOperateTypeEnum.ADD);
+		if(tPOSendDoInf == null || StringUtils.isEmpty(tPOSendDoInf.getCwb())){
+			this.logger.info("未在外单接口表中找到 cwb={}的记录，认为不是外单，订单修改操作不进外单接口表",editInfo.getCwb());
+			return;
+		}
+		
+		tPOSendDoInf.setOperateType(TPOOperateTypeEnum.UPDATE.getValue());
+		tPOSendDoInf.setIsSent(0);
+		tPOSendDoInf.setTrytime(0);
+		ThirdPartyOrder2DORequestVo requestVo  = null;
+		try {
+			requestVo = JsonUtil.readValue(tPOSendDoInf.getReqObjJson(),ThirdPartyOrder2DORequestVo.class);
+			requestVo.setOperateType(new Integer(TPOOperateTypeEnum.UPDATE.getValue()));
+			requestVo.setTransportNo(tPOSendDoInf.getTransportno() == null ? "" : tPOSendDoInf.getTransportno());
+		} catch (Exception e) {
+			this.logger.error("修改操作类型外单推送DO请求参数json串转对象失败，cwb="+tPOSendDoInf.getCwb(), e);
+			return;
+		}
+		
+		//修改类型：2.修改金额3.修改支付方式4.修改订单类型5.修改订单信息（收件人信息，配送站点）
+		int editType = editInfo.getEditType();
+		switch (editType) {
+			case 2://修改金额
+				requestVo.setCodAmount(editInfo.getReceivablefee());
+				requestVo.setReturnAmount(editInfo.getPaybackfee());
+				if(editInfo.getReceivablefee().intValue() > 0){
+					 requestVo.setIsCod(1);//是否货到付款
+		        }else{
+		        	 requestVo.setIsCod(0);
+		        	 //如果非代收货款，支付方式设为空
+		        	 requestVo.setActualPayType(null);
+		        	 requestVo.setPayment("");
+		        }
+				break;
+				
+			case 3: //修改支付方式
+				int paywayid = editInfo.getNewpaywayid();
+				if(requestVo.getIsCod() == 0){
+					//非代收货款的，对于修改支付类型，不需要做任何事情
+				}
+				else if(paywayid == PaytypeEnum.Xianjin.getValue()){
+					requestVo.setActualPayType(0);
+					requestVo.setPayment(String.valueOf(0));
+				}
+				else if(paywayid == PaytypeEnum.Pos.getValue()){
+					requestVo.setActualPayType(1);
+					requestVo.setPayment(String.valueOf(1));
+				}
+				else if(paywayid == PaytypeEnum.CodPos.getValue()){
+					requestVo.setActualPayType(2);
+					requestVo.setPayment(String.valueOf(2));
+				}
+				else if(paywayid == PaytypeEnum.Zhipiao.getValue()){
+					requestVo.setActualPayType(13);
+					requestVo.setPayment(String.valueOf(13));
+				}
+				else if(paywayid == PaytypeEnum.Qita.getValue()){
+					requestVo.setActualPayType(14);
+					requestVo.setPayment(String.valueOf(14));
+				}
+				else{
+					requestVo.setActualPayType(null);
+					requestVo.setPayment("");
+				}
+				break;
+				
+			case 4://修改订单类型		
+				int cwbordertypeid = editInfo.getCwbordertypeid();	
+				if(cwbordertypeid == CwbOrderTypeIdEnum.Express.getValue()){
+					requestVo.setOrderType(1);
+				}else if(cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()){
+					requestVo.setOrderType(2);
+				} else if(cwbordertypeid == CwbOrderTypeIdEnum.Shangmenhuan.getValue()){
+					requestVo.setOrderType(4);
+				} else if(cwbordertypeid  == CwbOrderTypeIdEnum.Shangmentui.getValue()){
+					requestVo.setOrderType(3);
+				}
+				break;
+				
+			case 5://修改订单信息
+				requestVo.setCneeMobile(StringUtils.isBlank(editInfo.getConsigneemobile()) ? "**" : editInfo.getConsigneemobile());
+				requestVo.setCneeName(StringUtils.isBlank(editInfo.getConsigneename()) ? "**" : editInfo.getConsigneename());
+				requestVo.setCneeAddr(StringUtil.nullConvertToEmptyString(editInfo.getConsigneeaddress()));
+			
+				if(editInfo.getBranchid() > 0){
+					Branch branch = this.cacheBaseListener.getBranch(editInfo.getBranchid());
+					if (branch == null) {
+						this.logger.info("Branch对象在缓存中没有获取到，OMS外单业务请求dmp..cwb={},deliverybranchid={}", editInfo.getCwb(),editInfo.getBranchid());
+						branch = this.getDmpDAO.getNowBranch(editInfo.getBranchid());
+					}
+					requestVo.setDestOrg(branch.getTpsbranchcode());
+				}
+				//0：送货时间不限1：只工作日(双休日/节假日不用送)2：只双休日/节假日送货(工作日不用送)
+				if(editInfo.getCustomercommand() != null){
+					if(editInfo.getCustomercommand().contains("只工作日")){
+						requestVo.setCneePeriod(1);
+					}else if(editInfo.getCustomercommand().contains("工作日不用送")){
+						requestVo.setCneePeriod(2);
+					}else{
+						requestVo.setCneePeriod(0);
+					}
+				}else{
+					requestVo.setCneePeriod(0);
+				}
+				break;
+				
+			default:
+				break;
+		}
+	
+		try {
+			String reqObjJson =  JsonUtil.translateToJson(requestVo);
+			tPOSendDoInf.setReqObjJson(reqObjJson);
+		} catch (Exception e) {
+			this.logger.error("修改操作类型外单推送DO请求对象转json串失败，cwb="+tPOSendDoInf.getCwb(), e);
+			return;
+		}
+		this.tPOSendDoInfDao.saveTPOSendDoInf(tPOSendDoInf);
+	}
+	
+
 }

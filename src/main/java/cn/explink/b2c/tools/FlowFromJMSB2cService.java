@@ -208,7 +208,7 @@ public class FlowFromJMSB2cService {
 			this.AddExcuteFlowStatusMethod(orderFlow);
 			
 			//外单轨迹数据保存到临时表
-			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState);
+			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
 			
 			try {
 				// TODO jms异常写入监控表
@@ -298,7 +298,7 @@ public class FlowFromJMSB2cService {
 	 * @throws Exception
 	 */
 	private void AddExcuteFlowStatusMethod(DmpOrderFlow orderFlow) throws Exception {
-
+		
 		SystemInstall useAudit = this.getDmpDAO.getSystemInstallByName("useAudit");
 		if ((useAudit != null) && "no".equals(useAudit.getValue())) {// 不需要归班
 			this.AddExcuteFlowStatusMethodByNotAudit(orderFlow);

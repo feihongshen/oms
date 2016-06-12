@@ -22,6 +22,7 @@ import cn.explink.b2c.explink.code_down.EpaiApi;
 import cn.explink.b2c.maisike.Stores;
 import cn.explink.b2c.tools.ExptReason;
 import cn.explink.b2c.tools.JointEntity;
+import cn.explink.domain.ApplyEditDeliverystate;
 import cn.explink.domain.Branch;
 import cn.explink.domain.Common;
 import cn.explink.domain.CustomWareHouse;
@@ -1610,4 +1611,25 @@ public class GetDmpDAO {
 		}
 		return exptReason;
 	}
+	
+	/**
+	 * 获取重置反馈信息
+	 */
+	public ApplyEditDeliverystate getApplyEditDeliverystate(String cwb){
+		ApplyEditDeliverystate ds = null;
+			try {
+				String jointEntityStr = JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getApplyEditDeliverystate/"+ cwb , "", "POST").toString();
+				if(jointEntityStr != null ){
+					ds = new ApplyEditDeliverystate();
+					JSONObject json = JSONObject.fromObject(jointEntityStr);
+					ds.setApplyuserid((json.get("applyuserid") != null)? json.getLong("applyuserid") :0);
+					ds.setApplybranchid((json.get("applybranchid") != null)? json.getLong("applybranchid") :0);
+					ds.setApplytime((json.get("applytime") != null) && !"".equals(json.getString("applytime")) ? json.getString("applytime") : "");
+					ds.setEditreason((json.get("editreason") != null) && !"".equals(json.getString("editreason")) ? json.getString("editreason") : "");
+				}
+			} catch (Exception e) {
+				this.logger.error("获取重置反馈信息异常,cwb="+cwb,e);
+			}
+			return ds;
+		}
 }

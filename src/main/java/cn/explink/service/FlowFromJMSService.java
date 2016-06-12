@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tpsdo.TPOSendDoInfService;
+import cn.explink.b2c.tpsdo.bean.ThirdPartyOrderEditInfo;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.CwbOrderTailDao;
 import cn.explink.dao.CwbTiHuoDAO;
@@ -76,6 +78,7 @@ import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 import cn.explink.util.DateTimeUtil;
+import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 
 @Service
 public class FlowFromJMSService {
@@ -127,6 +130,8 @@ public class FlowFromJMSService {
 	CwbOrderTailDao cwbOrderTailDao;
 	@Autowired
 	ExpressSysMonitorDAO expressSysMonitorDAO;
+	@Autowired
+	OtherOrderTrackSendService otherOrderTrackSendService;
 
 	ObjectMapper objectMapper = JacksonMapper.getInstance();
 	ObjectReader dmpOrderFlowReader = objectMapper.reader(DmpOrderFlow.class);
@@ -136,6 +141,9 @@ public class FlowFromJMSService {
 
 	@Autowired
 	private MqExceptionDAO mqExceptionDAO;
+	
+	@Autowired
+	TPOSendDoInfService tPOSendDoInfService;
 	
 	private static final String MQ_FROM_URI_ORDER_FLOW = "jms:queue:VirtualTopicConsumers.oms1.orderFlow";
 	
@@ -220,6 +228,9 @@ public class FlowFromJMSService {
 				deleteCwbDAO.deleteKuDuiKu(cwb);
 				deleteCwbDAO.deleteTuiHuoChuZhan(cwb);
 				deleteCwbDAO.deleteZongheChaxun(cwb);
+				// 处理外单失效逻辑 add gordon.zhou 2016/5/26
+				tPOSendDoInfService.addCancelTypeTPOSendDoInf(cwb);
+				
 			}
 		} catch (Exception e) {
 			logger.info("--订单失效功能：，订单号：{}", cwb);
@@ -1716,6 +1727,8 @@ public class FlowFromJMSService {
 			long flowordertype = request.getParameter("flowordertype") == null ? 0 : Long.parseLong(request.getParameter("flowordertype").toString());
 			long currentbranchid = request.getParameter("currentbranchid") == null ? 0 : Long.parseLong(request.getParameter("currentbranchid").toString());
 			long deliverystate = request.getParameter("deliverystate") == null ? 0 : Long.parseLong(request.getParameter("deliverystate").toString());
+			long customerid = (request.getParameter("customerid") == null
+					||request.getParameter("customerid").trim().length()<1)? 0 : Long.parseLong(request.getParameter("customerid").toString());
 			// 订单表
 			cwbDAO.updateForChongZhiShenHe(cwb, nextbranchid, flowordertype, currentbranchid, deliverystate);
 			// 综合查询表
@@ -1726,8 +1739,23 @@ public class FlowFromJMSService {
 			deliveryZhiLiuDAO.deleteDeliveryZhiLiu(cwb);
 			// 妥投订单
 			deliverySuccessfulDAO.deleteDeliverySuccessful(cwb);
+			
+			//外单时把重置反馈状态推给TPS
+			if(customerid>0){
+				DmpCwbOrder cwbOrder=new DmpCwbOrder();
+				cwbOrder.setCustomerid(customerid);
+				//CwbOrderWithDeliveryState deliveryState=new CwbOrderWithDeliveryState();//json转bean有异常
+				//deliveryState.setCwbOrder(cwbOrder);
+				DmpOrderFlow orderFlow=new DmpOrderFlow();
+				orderFlow.setCwb(cwb);
+				orderFlow.setFlowordertype(FlowOrderTypeEnum.ChongZhiFanKui.getValue());
+				orderFlow.setCredate(new Timestamp(System.currentTimeMillis()));
+				otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,null,cwbOrder);
+			}else{
+				logger.info("外单时重置反馈状态不保存,cwb={}",cwb);
+			}
 		}
-		if (type == 2) {// 修改订单金额
+		else if (type == 2) {// 修改订单金额
 			BigDecimal receivablefee = new BigDecimal(request.getParameter("receivablefee") == null ? "0" : request.getParameter("receivablefee"));
 			BigDecimal paybackfee = new BigDecimal(request.getParameter("paybackfee") == null ? "0" : request.getParameter("paybackfee"));
 			// 订单表
@@ -1756,8 +1784,21 @@ public class FlowFromJMSService {
 			cwbTiHuoDAO.updateXiuGaiJinE(cwb, receivablefee, paybackfee);
 			// 库对库出库
 			kdkDeliveryChukuDAO.updateXiuGaiJinE(cwb, receivablefee, paybackfee);
+			
+			/**
+			 * 外单修改
+			 */
+			ThirdPartyOrderEditInfo editInfo = new ThirdPartyOrderEditInfo();
+			editInfo.setEditType((int)type);
+			editInfo.setCwb(cwb);
+			editInfo.setPaybackfee(paybackfee);
+			editInfo.setReceivablefee(receivablefee);
+			this.tPOSendDoInfService.addUpdateTypeTPOSendDoInf(editInfo);
+			
+			
+			
 		}
-		if (type == 3) {// 修改订单支付方式
+		else if (type == 3) {// 修改订单支付方式
 			int newpaywayid = request.getParameter("newpaywayid") == null ? 0 : Integer.parseInt(request.getParameter("newpaywayid").toString());
 			// 订单表
 			cwbDAO.updateXiuGaiZhiFuFangShi(cwb, newpaywayid);
@@ -1765,8 +1806,17 @@ public class FlowFromJMSService {
 			cwbOrderTailDao.updateXiuGaiZhiFuFangShi(cwb, newpaywayid);
 			// 妥投订单
 			deliverySuccessfulDAO.updateXiuGaiZhiFuFangShi(cwb, newpaywayid);
+			
+			/**
+			 * 外单修改
+			 */
+			ThirdPartyOrderEditInfo editInfo = new ThirdPartyOrderEditInfo();
+			editInfo.setEditType((int)type);
+			editInfo.setCwb(cwb);
+			editInfo.setNewpaywayid(newpaywayid);
+			this.tPOSendDoInfService.addUpdateTypeTPOSendDoInf(editInfo);
 		}
-		if (type == 4) {// 修改订单类型
+		else if (type == 4) {// 修改订单类型
 			int cwbordertypeid = request.getParameter("cwbordertypeid") == null ? 0 : Integer.parseInt(request.getParameter("cwbordertypeid").toString());
 			long deliverystate = request.getParameter("deliverystate") == null ? 0 : Long.parseLong(request.getParameter("deliverystate").toString());
 			// 订单表
@@ -1797,6 +1847,39 @@ public class FlowFromJMSService {
 			cwbTiHuoDAO.updateXiuGaiDingDanLeiXing(cwb, cwbordertypeid);
 			// 库对库出库
 			kdkDeliveryChukuDAO.updateXiuGaiDingDanLeiXing(cwb, cwbordertypeid);
+			
+			/**
+			 * 外单修改
+			 */
+			ThirdPartyOrderEditInfo editInfo = new ThirdPartyOrderEditInfo();
+			editInfo.setEditType((int)type);
+			editInfo.setCwb(cwb);
+			editInfo.setCwbordertypeid(cwbordertypeid);
+			this.tPOSendDoInfService.addUpdateTypeTPOSendDoInf(editInfo);
+		}
+		/**
+		 *  add gordon.zhou 2016/5/26 只处理外单的信息修改逻辑
+		 */
+		else if (type == 5) {// 修改订单信息时调用。客服管理-订单修改-订单信息修改
+			String consigneename = request.getParameter("consigneename");
+			String consigneemobile = request.getParameter("consigneemobile");
+			String consigneeaddress = request.getParameter("consigneeaddress");
+			String customercommand = request.getParameter("customercommand");
+			long branchid = request.getParameter("branchid") == null ? 0l : Long.parseLong(request.getParameter("branchid").toString());
+		
+			/**
+			 * 外单修改
+			 */
+			ThirdPartyOrderEditInfo editInfo = new ThirdPartyOrderEditInfo();
+			editInfo.setEditType((int)type);
+			editInfo.setCwb(cwb);
+			editInfo.setConsigneename(consigneename);
+			editInfo.setConsigneemobile(consigneemobile);
+			editInfo.setConsigneeaddress(consigneeaddress);
+			editInfo.setCustomercommand(customercommand);
+			editInfo.setBranchid(branchid);
+			this.tPOSendDoInfService.addUpdateTypeTPOSendDoInf(editInfo);
+		
 		}
 	}
 

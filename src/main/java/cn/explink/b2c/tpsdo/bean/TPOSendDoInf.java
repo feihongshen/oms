@@ -18,6 +18,8 @@ public class TPOSendDoInf {
 	private int isSent; //是否已发生成功0.未发送/不成功，1.已发送成功
 	private Date createTime; //创建时间
 	private Date updateTime; //更新时间
+	private int operateType; //操作类型: 0 新增，1 修改，-1 取消  
+	private int state; //是否失效。0.失效。1.有效  
 	public long getId() {
 		return id;
 	}
@@ -77,6 +79,18 @@ public class TPOSendDoInf {
 	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		this.state = state;
+	}
+	public int getOperateType() {
+		return operateType;
+	}
+	public void setOperateType(int operateType) {
+		this.operateType = operateType;
 	}
 	
 	

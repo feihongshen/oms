@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
+import cn.explink.enumutil.TPOOperateTypeEnum;
 
 @Component
 public class TPOSendDoInfDao {
@@ -34,13 +35,15 @@ public class TPOSendDoInfDao {
 			tPOSendDoInf.setTransportno(rs.getString("transportno"));
 			tPOSendDoInf.setTrytime(rs.getInt("trytime"));
 			tPOSendDoInf.setUpdateTime(rs.getDate("update_time"));
+			tPOSendDoInf.setState(rs.getInt("state"));
+			tPOSendDoInf.setOperateType(rs.getInt("operate_type"));
 			return tPOSendDoInf;
 		}
 
 	}
 	
 	public void saveTPOSendDoInf(final TPOSendDoInf tPOSendDoInf) {
-		String sql = "INSERT INTO tpo_send_do_inf(cwb,custcode,transportno,req_obj_json,remark,trytime,is_sent,create_time,update_time) VALUES (?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO tpo_send_do_inf(cwb,custcode,transportno,req_obj_json,remark,trytime,is_sent,create_time,update_time,operate_type) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		this.jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -53,6 +56,7 @@ public class TPOSendDoInfDao {
 				ps.setInt(7, tPOSendDoInf.getIsSent());
 				ps.setString(8, sdf.format(tPOSendDoInf.getCreateTime()));
 				ps.setString(9, sdf.format(tPOSendDoInf.getUpdateTime()));
+				ps.setInt(10, tPOSendDoInf.getOperateType());
 			}
 		});
 	}
@@ -74,9 +78,9 @@ public class TPOSendDoInfDao {
 	 * @param custcode
 	 * @param isSent
 	 */
-	public void updateTPOSendDoInf(String cwb, String custcode,String transportNo, int isSent,int trytime, String remark){
-		String sql = "update tpo_send_do_inf set transportno=?,is_sent=?,trytime=?,remark=? where cwb=? and custcode=?";
-		this.jdbcTemplate.update(sql, transportNo,isSent,trytime,remark,cwb,custcode);
+	public void updateTPOSendDoInf(long id, String transportNo, int isSent,int trytime, String remark){
+		String sql = "update tpo_send_do_inf set transportno=?,is_sent=?,trytime=?,remark=? where id=?";
+		this.jdbcTemplate.update(sql, transportNo, isSent, trytime, remark, id);
 	}
 	
 	/**
@@ -92,6 +96,31 @@ public class TPOSendDoInfDao {
 			return null;
 		}
 	}
+	
+	/**
+	 * 根据订单号，操作类型获取接口表中未失效的记录
+	 * @param cwb
+	 * @param operateType
+	 * @return
+	 */
+	public TPOSendDoInf getTPOSendDoInfByCwbAndOpertype(String cwb, TPOOperateTypeEnum operateType){
+		String sql = "select * from tpo_send_do_inf where cwb=? and operate_type=? and state=1 limit 0,1";
+		try{
+			return this.jdbcTemplate.queryForObject(sql, new TPOSendDoInfMapper(), cwb, operateType.getValue());
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	/**
+	 * 根据id 把state 值设为 0
+	 * @param id
+	 */
+	public void invalidateTPOSendDoInfById(long id){
+		String sql = "update tpo_send_do_inf set state=0 where id=?";
+		this.jdbcTemplate.update(sql, id);
+	}
+	
 	
 
 }
