@@ -63,6 +63,7 @@ public class ThirdPartyOrder2DORequestVo {
 	private String distributer; //快件员id派件员
 	private String sendCarrierCode; //派送承运商派送承运商, TMS 承运商编码
 	private Integer actualPayType; // 实际付款方式默认-1，0：现金1：pos 2：支付宝
+	private Integer operateType; ///是否失效。0.失效，如果订单在推DO成功之前被失效时取该值。1.有效  
 	
 	private List<OrderCargoInfo> details;
 	private List<Boxinfo> boxinfos;
@@ -398,6 +399,13 @@ public class ThirdPartyOrder2DORequestVo {
 	}
 	public void setBoxinfos(List<Boxinfo> boxinfos) {
 		this.boxinfos = boxinfos;
+	}
+
+	public Integer getOperateType() {
+		return operateType;
+	}
+	public void setOperateType(Integer operateType) {
+		this.operateType = operateType;
 	}
 
 

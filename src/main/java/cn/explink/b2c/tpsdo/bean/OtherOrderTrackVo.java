@@ -13,6 +13,7 @@ public class OtherOrderTrackVo {
 	private int trytime;
 	
 	private String tpsno;//tps运单号
+	private long flowordertype;
 	
 	public String getCwb() {
 		return cwb;
@@ -68,6 +69,12 @@ public class OtherOrderTrackVo {
 	}
 	public void setTrytime(int trytime) {
 		this.trytime = trytime;
+	}
+	public long getFlowordertype() {
+		return flowordertype;
+	}
+	public void setFlowordertype(long flowordertype) {
+		this.flowordertype = flowordertype;
 	}
 	
 	
