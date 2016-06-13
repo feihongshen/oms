@@ -7,8 +7,8 @@ import java.util.List;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
-import net.sf.json.util.JSONUtils;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -411,7 +411,8 @@ public class OtherOrderTrackSendService {
 	}
 	
 	private DmpOrderFlow parseOrderFlowObject(String json) throws Exception {
-		DmpOrderFlow orderFlow = JacksonMapper.getInstance().readValue(json, DmpOrderFlow.class);
+		ObjectMapper mapper = JacksonMapper.getInstance();
+		DmpOrderFlow orderFlow = mapper.readValue(json, DmpOrderFlow.class);
 		return orderFlow;
 	}
 	
