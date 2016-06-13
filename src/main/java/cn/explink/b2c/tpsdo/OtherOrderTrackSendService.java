@@ -5,23 +5,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.util.JSONUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderService;
-import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderServiceHelper;
-import com.pjbest.deliveryorder.bizservice.PjDoStatusRequest;
-import com.pjbest.deliveryorder.bizservice.PjDoStatusResponse;
-import com.pjbest.deliveryorder.service.DeliveryTrack;
-import com.pjbest.deliveryorder.service.DoTrackFeedbackRequest;
-import com.pjbest.deliveryorder.service.ExceptionTrack;
-import com.pjbest.deliveryorder.service.SignTrack;
-import com.vip.osp.core.context.InvocationContext;
-import com.vip.osp.core.exception.OspException;
-
 import cn.explink.b2c.tools.CacheBaseListener;
+import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.dao.GetDmpDAO;
@@ -35,9 +29,17 @@ import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.util.JSONUtils;
+
+import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderService;
+import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderServiceHelper;
+import com.pjbest.deliveryorder.bizservice.PjDoStatusRequest;
+import com.pjbest.deliveryorder.bizservice.PjDoStatusResponse;
+import com.pjbest.deliveryorder.service.DeliveryTrack;
+import com.pjbest.deliveryorder.service.DoTrackFeedbackRequest;
+import com.pjbest.deliveryorder.service.ExceptionTrack;
+import com.pjbest.deliveryorder.service.SignTrack;
+import com.vip.osp.core.context.InvocationContext;
+import com.vip.osp.core.exception.OspException;
 
 @Service
 public class OtherOrderTrackSendService {
@@ -408,24 +410,14 @@ public class OtherOrderTrackSendService {
 		
 	}
 	
-	private DmpOrderFlow parseOrderFlowObject(String json){
-		String[] formats={DATE_FORMAT};  
-		 JSONUtils.getMorpherRegistry().registerMorpher(new TimestampMorpher(formats));  
-		 
-		JSONObject jsonObj = JSONObject.fromObject(json);
-		DmpOrderFlow orderFlow=(DmpOrderFlow) JSONObject.toBean(jsonObj, DmpOrderFlow.class);
-		
+	private DmpOrderFlow parseOrderFlowObject(String json) throws Exception {
+		DmpOrderFlow orderFlow = JacksonMapper.getInstance().readValue(json, DmpOrderFlow.class);
 		return orderFlow;
 	}
 	
-	private CwbOrderWithDeliveryState parseDeliveryStateObject(String json){
-		String[] formats={DATE_FORMAT};  
-		 JSONUtils.getMorpherRegistry().registerMorpher(new TimestampMorpher(formats));  
-		 
-		JSONObject jsonObj = JSONObject.fromObject(json);
-		CwbOrderWithDeliveryState deliveryState=(CwbOrderWithDeliveryState) JSONObject.toBean(jsonObj, CwbOrderWithDeliveryState.class);
+	private CwbOrderWithDeliveryState parseDeliveryStateObject(String json) throws Exception{
+		CwbOrderWithDeliveryState deliveryState= JacksonMapper.getInstance().readValue(json, CwbOrderWithDeliveryState.class);
 		return deliveryState; 
-
 	}
 	
 	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
