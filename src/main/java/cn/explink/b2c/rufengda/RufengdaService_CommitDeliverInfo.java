@@ -52,13 +52,17 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 		}
 		long calcCount = 0;
 		for (B2cEnum enums : B2cEnum.values()) { // 遍历凡客enum，可能有多个枚举
-			if (enums.getMethod().contains("rufengda")) {
-				int rfd_key = enums.getKey();
-				CommitDeliverInfo(0, rfd_key); // 所有
-				if (!b2cTools.isB2cOpen(rfd_key)) {
-					logger.info("未开[如风达]状态反馈对接!rfd_key={}", rfd_key);
-					continue;
+			try {
+				if (enums.getMethod().contains("rufengda")) {
+					int rfd_key = enums.getKey();
+					if (!b2cTools.isB2cOpen(rfd_key)) {
+						logger.info("未开[如风达]状态反馈对接!rfd_key={}", rfd_key);
+						continue;
+					}
+					CommitDeliverInfo(0, rfd_key); // 所有
 				}
+			}catch(Exception e){
+				logger.error("[如风达]状态反馈对接失败：{}",enums.getKey(), e);
 			}
 		}
 		return calcCount;
@@ -93,73 +97,78 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 	 * @param rfd_key
 	 */
 	public long CommitDeliverInfo(int flowordertype, int rfd_key) {
-		long calcCount = 0;
-
-		try {
-			Rufengda rfd = super.getRufengdaSettingMethod(rfd_key);
-			WebServiceHandler wshande = new WebServiceHandler();
-			if (!b2cTools.isB2cOpen(rfd_key)) {
-				logger.info("未开[如风达]状态反馈对接!rfd_key={}", rfd_key);
-				return -1;
-			}
-			while (true) {
-				List<B2CData> datalist = b2CDataDAO.getDataListByFlowStatus(rfd.getCustomerid(), rfd.getMaxCount());
-				if (datalist == null || datalist.size() == 0) {
-					logger.info("当前没有推送给[如风达]的订单数据,flowordertype={},rfd_key={}", flowordertype, rfd_key);
-					return 0;
-				} else {
-					try {
-						for (B2CData data : datalist) {
-							DeliveryInfoSyn sendrfd = getDeliveryInfoSyn(data);
-							List<DeliveryInfoSyn> sendList = new ArrayList<DeliveryInfoSyn>();
-							sendList.add(sendrfd);
-							String deliverInfos = JacksonMapper.getInstance().writeValueAsString(sendList); // 转化为json对象
-							deliverInfos = deliverInfos.replaceAll("rps_", "");
-							String deliverInfosSign = "";
-							if (rfd.getIsopensignflag() == 1) {
-								deliverInfosSign = RSAUtils.sign(deliverInfos, rfd);
-							}
-							String sendResult = deliverInfos + "," + deliverInfosSign;
-							Object parms[] = { rfd.getLcId(), sendResult };
-							long startTime = System.currentTimeMillis();
-							logger.info("当前推送给如风达，开始：订单号-{}，id:{}", data.getCwb(), data.getB2cid());
-							String returnValue = (String) wshande.invokeWs(rfd.getWs_url(), "CommitDeliverInfo", parms);
-							String invokeReturn = returnValue.substring(0, returnValue.lastIndexOf(","));
-							long endtime = System.currentTimeMillis();
-							logger.info("当前推送给[如风达]flowordertype=[" + flowordertype + "]订单信息={},当前[如风达]返回 JSon={},json为空表示全部成功", sendResult, invokeReturn);
-							logger.info("当前推送给如风达，结束：订单号-{},id:" + data.getB2cid() + ",耗时：{}", data.getCwb(), endtime - startTime);
-							if (rfd.getIsopensignflag() == 1) {
-								// 数字签名验证
-								String crc = returnValue.substring(returnValue.lastIndexOf(",") + 1);
-								boolean signflag = RSAUtils.verify(invokeReturn, crc, rfd);
-								if (!signflag) {
-									logger.error("CommitDeliverInfo签名验证失败!");
-									return 0;
-								}
-							}
-							dealWithSendFlagUpdateById(invokeReturn, data.getB2cid()); // 修改配送结果
-						}
-					} catch (Exception e) {
-
-						String expt = "[如风达]状态反馈发生未知异,flowordertype=" + flowordertype;
-						try {
-							expt += ",datalist=[" + JacksonMapper.getInstance().writeValueAsString(datalist);
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-
-						logger.error("[如风达]状态反馈发生未知异,flowordertype=" + flowordertype + e.getMessage(), e);
-						return 0;
-					}
-				}
-				calcCount += datalist.size();
-			}
-		} catch (Exception e) {
-
+		Rufengda rfd = super.getRufengdaSettingMethod(rfd_key);
+		WebServiceHandler wshande = new WebServiceHandler();
+		if (!b2cTools.isB2cOpen(rfd_key)) {
+			logger.info("未开[如风达]状态反馈对接!rfd_key={}", rfd_key);
+			return 0;
 		}
+		int cntLoop = 30; // 取30批次数据。
+		List<B2CData> totalDatalist = b2CDataDAO.getDataListByFlowStatus(rfd.getCustomerid(), rfd.getMaxCount() * cntLoop);
+		if (totalDatalist == null || totalDatalist.size() == 0) {
+			logger.info("当前没有推送给[如风达]的订单数据,flowordertype={},rfd_key={}", flowordertype, rfd_key);
+			return 0;
+		}
+		List<B2CData> subList = null;
+		int total = totalDatalist.size();
+		int fromIndex = 0;
+		int toIndex = 0;
+		int k = 1;
+		while (true) {
+			fromIndex = (k - 1) * cntLoop;
+			if (fromIndex >= total) {
+				break;
+			}
+			toIndex = k * cntLoop;
+			if (toIndex > total) {
+				toIndex = total;
+			}
+			k++;
+			subList = totalDatalist.subList(fromIndex, toIndex);
 
-		return calcCount;
+			for (B2CData data : subList) {
+				try {
+					DeliveryInfoSyn sendrfd = getDeliveryInfoSyn(data);
+					List<DeliveryInfoSyn> sendList = new ArrayList<DeliveryInfoSyn>();
+					sendList.add(sendrfd);
+					String deliverInfos = JacksonMapper.getInstance().writeValueAsString(sendList); // 转化为json对象
+					deliverInfos = deliverInfos.replaceAll("rps_", "");
+					String deliverInfosSign = "";
+					if (rfd.getIsopensignflag() == 1) {
+						deliverInfosSign = RSAUtils.sign(deliverInfos, rfd);
+					}
+					String sendResult = deliverInfos + "," + deliverInfosSign;
+					Object parms[] = { rfd.getLcId(), sendResult };
+					long startTime = System.currentTimeMillis();
+					logger.info("当前推送给如风达，开始：订单号-{}，id:{}", data.getCwb(), data.getB2cid());
+					String returnValue = (String) wshande.invokeWs(rfd.getWs_url(), "CommitDeliverInfo", parms);
+					logger.info("当前如风达返回报文：订单号-{},内容：{}", data.getCwb(), returnValue);
+					String invokeReturn = returnValue.substring(0, returnValue.lastIndexOf(","));
+					long endtime = System.currentTimeMillis();
+					logger.info("当前推送给[如风达]flowordertype=[" + flowordertype + "]订单信息={},当前[如风达]返回 JSon={},json为空表示全部成功", sendResult, invokeReturn);
+					logger.info("当前推送给如风达，结束：订单号-{},id:" + data.getB2cid() + ",耗时：{}", data.getCwb(), endtime - startTime);
+					if (rfd.getIsopensignflag() == 1) {
+						// 数字签名验证
+						String crc = returnValue.substring(returnValue.lastIndexOf(",") + 1);
+						boolean signflag = RSAUtils.verify(invokeReturn, crc, rfd);
+						if (!signflag) {
+							logger.error("CommitDeliverInfo签名验证失败!");
+						}
+					}
+					dealWithSendFlagUpdateById(invokeReturn, data.getB2cid()); // 修改配送结果
+				} catch (Exception e) {
+					String expt = "[如风达]状态反馈发生未知异,flowordertype=" + flowordertype;
+					try {
+						expt += ",datalist=[" + JacksonMapper.getInstance().writeValueAsString(totalDatalist);
+					} catch (Exception e1) {
+						logger.error("totalDatalist序列化出错", e);
+					}
 
+					logger.error("[如风达]状态反馈发生未知异,flowordertype=" + flowordertype + e.getMessage(), e);
+				}
+			}
+		}
+		return total;
 	}
 
 	public long commitDeliverInfoAll(int flowordertype, int rfd_key, String posttime, int type) {
@@ -295,8 +304,6 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 				b2CDataDAO.updateTimebyId(b2cid, new SimpleDateFormat("MMddHHmmss").format(new Date()));
 			} catch (Exception e) {
 				b2CDataDAO.updateTimebyId(b2cid, "1");
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			// 发送给dmp
 			flowFromJMSB2cService.sendTodmp(b2cid + "");
