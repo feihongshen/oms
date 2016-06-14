@@ -143,7 +143,12 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 					logger.info("当前推送给如风达，开始：订单号-{}，id:{}", data.getCwb(), data.getB2cid());
 					String returnValue = (String) wshande.invokeWs(rfd.getWs_url(), "CommitDeliverInfo", parms);
 					logger.info("当前如风达返回报文：订单号-{},内容：{}", data.getCwb(), returnValue);
-					String invokeReturn = returnValue.substring(0, returnValue.lastIndexOf(","));
+					String invokeReturn = null;
+					if (returnValue.lastIndexOf(",") > -1) {
+						invokeReturn = returnValue.substring(0, returnValue.lastIndexOf(","));
+					} else {
+						invokeReturn = returnValue;
+					}
 					long endtime = System.currentTimeMillis();
 					logger.info("当前推送给[如风达]flowordertype=[" + flowordertype + "]订单信息={},当前[如风达]返回 JSon={},json为空表示全部成功", sendResult, invokeReturn);
 					logger.info("当前推送给如风达，结束：订单号-{},id:" + data.getB2cid() + ",耗时：{}", data.getCwb(), endtime - startTime);
@@ -163,7 +168,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 					} catch (Exception e1) {
 						logger.error("totalDatalist序列化出错", e);
 					}
-
+					b2CDataDAO.updateB2cIdSQLResponseStatus(data.getB2cid(), 2, e.getMessage());
 					logger.error("[如风达]状态反馈发生未知异,flowordertype=" + flowordertype + e.getMessage(), e);
 				}
 			}
@@ -293,7 +298,7 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 
 					if ("".equals(cwb.trim()) && "ERROR".equalsIgnoreCase(ErrorNO)) {
 						b2CDataDAO.updateB2cIdSQLResponseStatus(b2cid, 2, ErrorNO + ErrorMessage);
-						throw new RuntimeException("推送如风达发生未知异常," + ErrorMessage);
+						return;
 					}
 					b2CDataDAO.updateB2cIdSQLResponseStatus(b2cid, 2, ErrorNO + ErrorMessage);
 				}
