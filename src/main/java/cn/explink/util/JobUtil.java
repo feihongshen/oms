@@ -489,8 +489,7 @@ public class JobUtil {
 			long endtime = System.currentTimeMillis();
 			this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.GOME, endtime);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("国美定时器异常：", e);
 		}
 
 		this.getDiffB2cTimmer_Task();
@@ -562,8 +561,7 @@ public class JobUtil {
 			long endtime = System.currentTimeMillis();
 			this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.AMAZON, endtime);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("亚马逊定时器异常:", e);
 		}
 		this.logger.info("执行了亚马逊推送的定时器!");
 	}

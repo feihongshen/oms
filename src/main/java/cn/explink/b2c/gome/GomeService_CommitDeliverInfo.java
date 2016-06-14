@@ -51,61 +51,60 @@ public class GomeService_CommitDeliverInfo extends GuomeiService {
 	}
 
 	public long CommitDeliverInfo(int flowordertype) {
-		long calcCount = 0;
+		int total = 0;
 		try {
 			Gome gome = super.getGomeSettingMethod(B2cEnum.Gome.getKey());
 			if (!b2cTools.isB2cOpen(B2cEnum.Gome.getKey())) {
 				logger.info("未开[国美]状态反馈对接!");
-				return -1;
+				return 0;
 			}
-
+			int cntLoop = 30;
+			int cntSend = gome.getMaxCount();
+			List<B2CData> totalDataList = b2CDataDAO.getDataListByFlowStatus(flowordertype, gome.getCustomerid(), cntSend * cntLoop);
+			if (totalDataList == null || totalDataList.size() == 0) {
+				logger.info("当前没有推送给[国美]的订单数据,flowordertype={}", flowordertype);
+				return 0;
+			}
+			List<B2CData> subList = null;
+			total = totalDataList.size();
+			int fromIndex = 0;
+			int toIndex = 0;
+			int k = 1;
 			while (true) {
-				List<B2CData> datalist = b2CDataDAO.getDataListByFlowStatus(flowordertype, gome.getCustomerid(), gome.getMaxCount());
-				if (datalist == null || datalist.size() == 0) {
-					logger.info("当前没有推送给[国美]的订单数据,flowordertype={}", flowordertype);
-					return 0;
-				} else {
+				fromIndex = (k - 1) * cntSend;
+				if (fromIndex >= total) {
+					break;
+				}
+				toIndex = k * cntSend;
+				if (toIndex > total) {
+					toIndex = total;
+				}
+				k++;
+				subList = totalDataList.subList(fromIndex, toIndex);
+
+				for (B2CData b2cData : subList) {
 					try {
-						for (B2CData b2cData : datalist) {
-							DeliveryInfo deliveryInfo = JacksonMapper.getInstance().readValue(b2cData.getJsoncontent(), DeliveryInfo.class); // 构建DeliveryInfoSyn对象
-							String xml = getXml(deliveryInfo, gome);
-							String method = "setTntInformationsByXmlStr";
-							String pram = xml.replaceAll("null", "");
-							logger.info("当前推送给[国美]的订单数据,flowordertype={},pram：{}", flowordertype, pram);
-							Object o = WebServiceHandler.invokeWsByNameAndPassWord(gome.getTnt_url(), method, pram, gome.getUsername(), gome.getPassword());
-							logger.info("当前推送给[国美]flowordertype=[" + flowordertype + "]订单信息={},当前[国美]返回 xml={},xml为空表示全部成功", deliveryInfo.getOrderNumber(), o);
-							String returnValue = "";
-							if (o != null) {
-								returnValue = (String) o;
-							}
-							dealWithSendFlagUpdate(returnValue, flowordertype, b2cData.getB2cid()); // 修改配送结果
+						DeliveryInfo deliveryInfo = JacksonMapper.getInstance().readValue(b2cData.getJsoncontent(), DeliveryInfo.class); // 构建DeliveryInfoSyn对象
+						String xml = getXml(deliveryInfo, gome);
+						String method = "setTntInformationsByXmlStr";
+						String pram = xml.replaceAll("null", "");
+						logger.info("当前推送给[国美]的订单数据,flowordertype={},pram：{}", flowordertype, pram);
+						Object o = WebServiceHandler.invokeWsByNameAndPassWord(gome.getTnt_url(), method, pram, gome.getUsername(), gome.getPassword());
+						logger.info("当前推送给[国美]flowordertype=[" + flowordertype + "]订单信息={},当前[国美]返回 xml={},xml为空表示全部成功", deliveryInfo.getOrderNumber(), o);
+						String returnValue = "";
+						if (o != null) {
+							returnValue = (String) o;
 						}
-						calcCount += datalist.size();
-
+						dealWithSendFlagUpdate(returnValue, flowordertype, b2cData.getB2cid()); // 修改配送结果
 					} catch (Exception e) {
-
-						// String
-						// expt="[国美]状态反馈发生未知异,flowordertype="+flowordertype;
-						// try {
-						// expt += ",datalist=["+
-						// JacksonMapper.getObjectMapper().writeValueAsString(datalist);
-						// } catch (Exception e1) {
-						// e1.printStackTrace();
-						// }
-						// expt=ExceptionTrace.getExceptionTrace(e,expt);
-						// Mail.LoadingAndSendMessage(expt);
 						logger.error("[国美]状态反馈发生未知异,flowordertype=" + flowordertype + e.getMessage(), e);
-						return 0;
 					}
-
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("国美状态反馈异常,flowordertype:{}", flowordertype, e);
 		}
-		return calcCount;
-
+		return total;
 	}
 
 	public int sendByCwbs(String cwbs, long send_b2c_flag) {

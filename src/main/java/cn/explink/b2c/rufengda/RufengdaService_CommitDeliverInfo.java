@@ -104,7 +104,8 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 			return 0;
 		}
 		int cntLoop = 30; // 取30批次数据。
-		List<B2CData> totalDatalist = b2CDataDAO.getDataListByFlowStatus(rfd.getCustomerid(), rfd.getMaxCount() * cntLoop);
+		int cntSend = rfd.getMaxCount();
+		List<B2CData> totalDatalist = b2CDataDAO.getDataListByFlowStatus(rfd.getCustomerid(), cntSend * cntLoop);
 		if (totalDatalist == null || totalDatalist.size() == 0) {
 			logger.info("当前没有推送给[如风达]的订单数据,flowordertype={},rfd_key={}", flowordertype, rfd_key);
 			return 0;
@@ -115,11 +116,11 @@ public class RufengdaService_CommitDeliverInfo extends RufengdaService {
 		int toIndex = 0;
 		int k = 1;
 		while (true) {
-			fromIndex = (k - 1) * cntLoop;
+			fromIndex = (k - 1) * cntSend;
 			if (fromIndex >= total) {
 				break;
 			}
-			toIndex = k * cntLoop;
+			toIndex = k * cntSend;
 			if (toIndex > total) {
 				toIndex = total;
 			}
