@@ -46,6 +46,7 @@ import cn.explink.b2c.yihaodian.BulidYihaodianB2cData;
 import cn.explink.b2c.yixun.BulidYiXunB2cData;
 import cn.explink.b2c.yonghui.BuildYongHuiB2cData;
 import cn.explink.b2c.yonghuics.BulidYonghuiB2cData;
+import cn.explink.b2c.zhemeng.track.BulidZhemengTrackB2cData;
 import cn.explink.b2c.zhongliang.BuildZhongliangB2cData;
 
 @Service
@@ -142,8 +143,19 @@ public class BuildB2cDataMaster {
 	
 	@Autowired
 	BuildShenzhoushumaB2cData buildShenzhoushumaB2cData;
+	@Autowired
+	BulidZhemengTrackB2cData bulidZhemengTrackB2cData;
 	
 	
+	public BulidZhemengTrackB2cData getBulidZhemengTrackB2cData() {
+		return bulidZhemengTrackB2cData;
+	}
+
+	public void setBulidZhemengTrackB2cData(
+			BulidZhemengTrackB2cData bulidZhemengTrackB2cData) {
+		this.bulidZhemengTrackB2cData = bulidZhemengTrackB2cData;
+	}
+
 	public BuildShenzhoushumaB2cData getBuildShenzhoushumaB2cData() {
 		return buildShenzhoushumaB2cData;
 	}
