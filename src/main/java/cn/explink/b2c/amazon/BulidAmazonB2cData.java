@@ -55,7 +55,8 @@ public class BulidAmazonB2cData {
 
 	public void buildAmazonCod(DmpOrderFlow orderFlow, long flowOrdertype, DmpDeliveryState deliveryState, DmpCwbOrder cwbOrder) {
 		if ((flowOrdertype == FlowOrderTypeEnum.YiShenHe.getValue() && deliveryState != null && deliveryState.getBusinessfee().compareTo(BigDecimal.ZERO) > 0
-				&& deliveryState.getReturnedfee().compareTo(BigDecimal.ZERO) == 0 && deliveryState.getDeliverystate() != DeliveryStateEnum.FenZhanZhiLiu.getValue())
+				&& deliveryState.getReturnedfee().compareTo(BigDecimal.ZERO) == 0 && deliveryState.getDeliverystate() != DeliveryStateEnum.FenZhanZhiLiu.getValue()
+				&& deliveryState.getDeliverystate() != DeliveryStateEnum.DaiZhongZhuan.getValue())
 				|| (flowOrdertype == FlowOrderTypeEnum.ShouGongdiushi.getValue() && cwbOrder.getReceivablefee().compareTo(BigDecimal.ZERO) > 0)) {// 存储cod对接表
 			logger.info("满足cod存储，订单号：{}", orderFlow.getCwb());
 			saveCodData(orderFlow, flowOrdertype, deliveryState, cwbOrder);

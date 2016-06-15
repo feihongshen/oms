@@ -4,8 +4,10 @@ import java.lang.reflect.Method;
 import java.sql.Timestamp;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import cn.explink.enumutil.FlowOrderTypeEnum;
+import cn.explink.util.TimestampDeserializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DmpOrderFlow {
@@ -103,6 +105,7 @@ public class DmpOrderFlow {
 		return credate;
 	}
 
+	@JsonDeserialize(using=TimestampDeserializer.class)
 	public void setCredate(Timestamp credate) {
 		this.credate = credate;
 	}
