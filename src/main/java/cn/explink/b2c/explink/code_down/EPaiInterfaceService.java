@@ -18,6 +18,7 @@ import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.UserDAO;
 import cn.explink.domain.B2CData;
 import cn.explink.domain.Customer;
+import cn.explink.domain.User;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.enumutil.ReasonTypeEnum;
@@ -94,6 +95,14 @@ public class EPaiInterfaceService {
 			xmlnote.setOperatortime(DateTimeUtil.formatDate(orderFlow.getCredate()));
 			xmlnote.setFlowordertype(receivedStatus);
 
+			DmpDeliveryState dmpDeliveryStateBak = cwbOrderWithDeliveryState.getDeliveryState();
+			if(dmpDeliveryStateBak!=null){
+				long deliveryid=dmpDeliveryStateBak.getDeliveryid();
+				User user = getDmpdao.getUserById(deliveryid);
+				xmlnote.setDeliveryname(user.getRealname());
+				xmlnote.setDeliverymobile(user.getUsermobile());
+			}
+			
 			String deliverystate = "0";
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiShenHe.getValue()) {
 				DmpDeliveryState dmpDeliveryState = cwbOrderWithDeliveryState.getDeliveryState();

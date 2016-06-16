@@ -20,6 +20,25 @@ public class EPaiXMLNote {
 	private String payremark;
 	private String floworderdetail;// 操作详情描述
 	private String exptcode; // 异常码
+	private String deliverymobile;
+	private String deliveryname;
+
+	
+	public String getDeliverymobile() {
+		return deliverymobile;
+	}
+
+	public String getDeliveryname() {
+		return deliveryname;
+	}
+
+	public void setDeliverymobile(String deliverymobile) {
+		this.deliverymobile = deliverymobile;
+	}
+
+	public void setDeliveryname(String deliveryname) {
+		this.deliveryname = deliveryname;
+	}
 
 	public String getUserCode() {
 		return userCode;
