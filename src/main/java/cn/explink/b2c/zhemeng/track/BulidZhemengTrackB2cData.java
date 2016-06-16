@@ -16,6 +16,8 @@ import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.User;
+import cn.explink.enumutil.DeliveryStateEnum;
+import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
@@ -55,7 +57,28 @@ public class BulidZhemengTrackB2cData {
 		note.setOperator_date(DateTimeUtil.formatDate(orderFlow.getCredate()));
 		note.setStatus(flowStatus);
 		note.setScanstano(branch.getBranchname());
-		note.setCtrname(user.getRealname());
+		User deliveryUser = null;//小件员
+		note.setCtrname("");
+		if(flowOrdertype== FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()){//到件
+			Branch startBranch=getDmpdao.getNowBranch(cwbOrder.getStartbranchid());
+			note.setCtrname(startBranch.getBranchname());//到件时为上一站
+		}
+		if(flowOrdertype== FlowOrderTypeEnum.ChuKuSaoMiao.getValue()){//出货
+			Branch nextBranch=getDmpdao.getNowBranch(cwbOrder.getNextbranchid());
+			note.setCtrname(nextBranch.getBranchname());//出货为下一站
+		}
+		
+		if (flowOrdertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {//分站领货
+			deliveryUser = getDmpdao.getUserById(dmpDeliveryState.getDeliveryid());
+			note.setCtrname(deliveryUser.getRealname());//派件时派件员姓名
+		}
+		if (flowOrdertype == FlowOrderTypeEnum.YiShenHe.getValue()) {//已审核
+			if(dmpDeliveryState.getDeliverystate() == DeliveryStateEnum.PeiSongChengGong.getValue()
+					||dmpDeliveryState.getDeliverystate() == DeliveryStateEnum.QuanBuTuiHuo.getValue()){
+				String sign_man = dmpDeliveryState.getSign_man()==""?cwbOrder.getConsigneename():dmpDeliveryState.getSign_man();
+				note.setCtrname(sign_man);//签收为签收人姓名
+			}
+		}
 		note.setContent(orderFlowDetail.getDetail(orderFlow));
 		note.setRemark(cwbOrder.getCwb());
 		return objectMapper.writeValueAsString(note);
