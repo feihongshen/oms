@@ -21,6 +21,10 @@ public class TimestampDeserializer extends JsonDeserializer<Timestamp> {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String credate = jp.getText();
 		Timestamp timestamp = null;
+		if(credate.indexOf("-") == -1){
+			timestamp = new Timestamp(Long.parseLong(credate));
+			return timestamp;
+		}
 		try {
 			Date date = df.parse(credate);
 			timestamp = new Timestamp(date.getTime());
