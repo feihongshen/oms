@@ -328,6 +328,11 @@ public class B2cJsonService {
 					delivery_state, this.objectMapper);
 		}
 		
+		//哲盟_轨迹
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.ZheMeng_track.getKey()))) {
+			return this.buildB2cDataMaster.getBulidZhemengTrackB2cData().buildZhemengMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),delivery_state, 
+					cwbOrderWothDeliverystate.getDeliveryState(),this.objectMapper);
+		}
 		
 		return null;
 
