@@ -89,6 +89,7 @@
 							 <ref bean="mqExceptionHandler"/>
 							 <ref bean="doTime_resetGanXianHuiDan"/>
 							 <ref bean="shenzhoushuma"/>
+							 <ref bean="zhemengTrack"/>
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -1347,4 +1348,27 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
+	
+	<!--哲盟_轨迹状态反馈-->
+    <bean id="zhemengTrack" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="zhemengTrackBean" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="zhemengTrackBean" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getZhemengTrack_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	
 </beans>
