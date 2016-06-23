@@ -1,5 +1,7 @@
 package cn.explink.b2c.telecomsc;
 
+import java.math.BigDecimal;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +12,11 @@ import cn.explink.b2c.cwbsearch.B2cDatasearchService;
 import cn.explink.b2c.tools.B2cDataOrderFlowDetail;
 import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.BuildB2cDataMaster;
+import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.Customer;
+import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 
@@ -26,6 +30,8 @@ public class TelecomJsonService {
 	BuildB2cDataMaster buildB2cDataMaster;
 	@Autowired
 	B2cDatasearchService b2cDatasearchService;
+	@Autowired
+	CacheBaseListener cacheBaseListener;
 	private Logger logger = LoggerFactory.getLogger(TelecomJsonService.class);
 	private ObjectMapper objectMapper = JacksonMapper.getInstance();
 
@@ -43,7 +49,7 @@ public class TelecomJsonService {
 		long delivery_state = cwbOrderWothDeliverystate.getDeliveryState() == null ? 0 : cwbOrderWothDeliverystate.getDeliveryState().getDeliverystate(); // 反馈状态
 		// ObjectMapper objectMapper=JacksonMapper.getInstance();
 
-		Customer customer = getDmpdao.getCustomer(cwbOrderWothDeliverystate.getCwbOrder().getCustomerid());
+		Customer customer = cacheBaseListener.getCustomer(cwbOrderWothDeliverystate.getCwbOrder().getCustomerid());
 
 		if (customer == null) {
 			logger.error("获取customer对象为空，return，当前订单号=" + orderFlow.getCwb() + ",customerid=" + cwbOrderWothDeliverystate.getCwbOrder().getCustomerid() + ",flowOrdertype=" + flowOrdertype);
@@ -65,6 +71,15 @@ public class TelecomJsonService {
 		}
 		if(customer.getB2cEnum().equals(String.valueOf(B2cEnum.meilinkai.getKey()))){
 			return this.buildB2cDataMaster.getBuildMLKB2cData().buildMLKMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, objectMapper);
+		}
+		
+		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {//唯品会上门退订单反馈轨迹推送给tms
+			int flowordertype = (int)(cwbOrderWothDeliverystate.getCwbOrder().getFlowordertype());
+			BigDecimal pos = cwbOrderWothDeliverystate.getDeliveryState().getPos();
+			if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue() && (pos.compareTo(BigDecimal.ZERO) == 0)) {// 非POS订单反馈
+				return this.buildB2cDataMaster.getBulidVipShopB2cData().BuildVipShopMethod(customer.getB2cEnum(), orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),
+						cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
+			}
 		}
 		return null;
 
