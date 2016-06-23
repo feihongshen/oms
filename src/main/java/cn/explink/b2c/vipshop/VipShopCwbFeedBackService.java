@@ -85,6 +85,7 @@ public class VipShopCwbFeedBackService {
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.ChuKuSaoMiao.getValue()); // code：4-配送中(库房出库)
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()); // code：4-配送中(分站到货)
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.FenZhanLingHuo.getValue()); // code:4-配送中(分站投递)
+			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.YiFanKui.getValue()); // 已反馈
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.YiShenHe.getValue()); // 已审核
 			// -包括各种状态
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()); // 已审核
@@ -97,6 +98,7 @@ public class VipShopCwbFeedBackService {
 			// 揽退单
 			this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.DaoRuShuJu.getValue());
 			this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.FenZhanLingHuo.getValue());
+			this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.YiFanKui.getValue());
 			this.sendCwbStatus_To_VipShop_LanTui(vipshop, FlowOrderTypeEnum.YiShenHe.getValue());
 		} catch (Exception e) {
 			logger.error("揽退单推送异常",e);
@@ -878,6 +880,17 @@ public class VipShopCwbFeedBackService {
 			if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) && (delivery_state == DeliveryStateEnum.HuoWuDiuShi.getValue())) {
 				return VipShopFlowEnum.HuoWuDiuShi.getVipshop_state() + "";
 			}
+			if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue()) {//反馈推送tms 2016-06-22
+				if (delivery_state == DeliveryStateEnum.QuanBuTuiHuo.getValue()) {
+					return VipShopFlowEnum.JuShou.getVipshop_state() + "";
+				} else if (delivery_state == DeliveryStateEnum.BuFenTuiHuo.getValue()) {
+				    return VipShopFlowEnum.BuFenJuShou.getVipshop_state() + "";
+				} else if (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
+					return VipShopFlowEnum.FenZhanZhiLiu.getVipshop_state() + "";
+				} else if (delivery_state == DeliveryStateEnum.HuoWuDiuShi.getValue()) {
+					return VipShopFlowEnum.HuoWuDiuShi.getVipshop_state() + "";
+				}
+			}
 		} else if (cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue()) { // 上门退类型
 
 			if (flowordertype == FlowOrderTypeEnum.DaoRuShuJu.getValue()) {
@@ -886,6 +899,17 @@ public class VipShopCwbFeedBackService {
 			if (flowordertype == FlowOrderTypeEnum.FenZhanLingHuo.getValue()) {
 				return VipShopFlowEnum.FenZhanLingHuo_t.getVipshop_state() + "";
 			}
+			//反馈  2016-06-20
+			if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue()) {
+				if (delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue()) {
+					return VipShopFlowEnum.ShangMenTuiChengGong_t.getVipshop_state() + "";
+				} else if (delivery_state == DeliveryStateEnum.ShangMenJuTui.getValue()) {
+					return VipShopFlowEnum.ShengMenJuTui_t.getVipshop_state() + "";
+				} else if (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue()) {
+					return VipShopFlowEnum.FenZhanZhiLiu_t.getVipshop_state() + "";
+				}
+			}
+			//审核
 			if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) && (delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue())) {
 				return VipShopFlowEnum.ShangMenTuiChengGong_t.getVipshop_state() + "";
 			}
@@ -896,7 +920,6 @@ public class VipShopCwbFeedBackService {
 			if ((flowordertype == FlowOrderTypeEnum.YiShenHe.getValue()) && (delivery_state == DeliveryStateEnum.FenZhanZhiLiu.getValue())) {
 				return VipShopFlowEnum.FenZhanZhiLiu_t.getVipshop_state() + "";
 			}
-
 		}
 
 		return null;
