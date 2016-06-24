@@ -510,7 +510,7 @@ public class B2CDataDAO {
 	 * @param b2cids
 	 * @param respMap
 	 */
-	public void updateB2cIdSQLResponseStatus(long b2cids, int send_b2c_flag, String remark) throws Exception {
+	public void updateB2cIdSQLResponseStatus(long b2cids, int send_b2c_flag, String remark) {
 		String sql = " update express_send_b2c_data set  send_b2c_flag=?,remark=?,select_b2c_flag=select_b2c_flag+1 where  b2cid=? ";
 		this.jdbcTemplate.update(sql, send_b2c_flag, remark, b2cids);
 	}

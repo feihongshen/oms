@@ -45,10 +45,8 @@ public class ExpressSysMonitorDAO extends BasicJdbcTemplateDaoSupport<ExpressSys
 				save(expressSysMonitor);
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("异常信息：", e);
 		}
-
 	}
 
 	public String minutesBetween(ExpressSysMonitorEnum type) throws ParseException {
