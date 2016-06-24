@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -121,6 +123,23 @@ public class TPOSendDoInfDao {
 		this.jdbcTemplate.update(sql, id);
 	}
 	
+	
+	private final class cwbInfoMapper implements RowMapper<Map<String,String>> {
+		@Override
+		public Map<String,String> mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Map<String, String> cwbinfo = new HashMap<String, String>();
+			cwbinfo.put(rs.getString("cwb"), rs.getString("transportno"));
+			
+			
+			return cwbinfo;
+		}
+
+	}
+	
+	public List<Map<String,String>> getTpsTransCwbByCwbs(String cwbs) {
+		String sql = "select cwb,transportno from tpo_send_do_inf where cwb in ("+ cwbs+") ";
+		return this.jdbcTemplate.query(sql, new cwbInfoMapper());
+	}
 	
 
 }

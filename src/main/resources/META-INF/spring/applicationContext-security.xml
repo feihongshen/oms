@@ -79,6 +79,8 @@
         <intercept-url pattern="/thirdParty/**" access="permitAll" />
         <intercept-url pattern="/mqexception/**" access="permitAll" />
         <intercept-url pattern="/redis/**" access="permitAll" />
+        <intercept-url pattern="/tpsTransCwb/**" access="permitAll" />
+        
         
         <intercept-url pattern="/health_check.jsp" access="permitAll" />
         
