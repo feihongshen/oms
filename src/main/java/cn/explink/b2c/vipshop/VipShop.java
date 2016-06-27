@@ -27,6 +27,7 @@ public class VipShop {
 	private int daysno;//干线回单重发天数
 	private long selb2cnum;//货态重发次数
 	private String oxoState_URL;//获取OXO订单揽收状态URL
+	private int isTpsSendFlag;//是否订单下发接口
 	public int getDaysno() {
 		return daysno;
 	}
@@ -214,6 +215,14 @@ public class VipShop {
 
 	public void setOxoState_URL(String oxoState_URL) {
 		this.oxoState_URL = oxoState_URL;
+	}
+
+	public int getIsTpsSendFlag() {
+		return isTpsSendFlag;
+	}
+
+	public void setIsTpsSendFlag(int isTpsSendFlag) {
+		this.isTpsSendFlag = isTpsSendFlag;
 	}
 
 }
