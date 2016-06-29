@@ -158,7 +158,7 @@ public class FlowFromJMSB2cService {
 	 */
 	public void doSaveFlowB2cSend(String parm) throws Exception {
 		this.logger.info("进入b2c消息，开始：" + System.currentTimeMillis());
-		this.logger.debug("orderFlow send b2c 环节信息处理,{}", parm);
+		this.logger.info("orderFlow send b2c 环节信息处理,{}", parm);
 		try {
 			DmpOrderFlow orderFlow = this.dmpOrderFlowMapper.readValue(parm);
 			String floworderTypeMethod = orderFlow.getFlowordertypeMethod();
@@ -167,6 +167,7 @@ public class FlowFromJMSB2cService {
 				return;
 			}
 			
+			this.logger.info("b2c消息,cwb="+orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype());
 			
 			CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(orderFlow.getFloworderdetail(), CwbOrderWithDeliveryState.class);
 			
