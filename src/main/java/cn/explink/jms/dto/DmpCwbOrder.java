@@ -125,6 +125,7 @@ public class DmpCwbOrder {
 	
 	private long firstchangereasonid=0l;//待中转一级原因
 	private long changereasonid=0l;//待中转二级级原因
+	private String tpstranscwb;//tps运单号
 	
 	public int getMpsoptstate() {
 		return mpsoptstate;
@@ -987,6 +988,14 @@ public class DmpCwbOrder {
 
 	public void setChangereasonid(long changereasonid) {
 		this.changereasonid = changereasonid;
+	}
+
+	public String getTpstranscwb() {
+		return tpstranscwb;
+	}
+
+	public void setTpstranscwb(String tpstranscwb) {
+		this.tpstranscwb = tpstranscwb;
 	}
 
 }

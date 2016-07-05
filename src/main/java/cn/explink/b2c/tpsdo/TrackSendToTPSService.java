@@ -19,8 +19,9 @@ import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tpsdo.bean.OrderTraceToTPSCfg;
-import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
+import cn.explink.b2c.tpsdo.bean.OrderTrackToTPSVo;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
+import cn.explink.b2c.vipshop.VipShop;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.ApplyEditDeliverystate;
 import cn.explink.domain.Branch;
@@ -32,6 +33,7 @@ import cn.explink.jms.dto.CwbOrderWithDeliveryState;
 import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
+import cn.explink.util.StringUtil;
 
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderService;
 import com.pjbest.deliveryorder.bizservice.PjDeliveryOrderServiceHelper;
@@ -45,11 +47,11 @@ import com.vip.osp.core.context.InvocationContext;
 import com.vip.osp.core.exception.OspException;
 
 @Service
-public class OtherOrderTrackSendService {
+public class TrackSendToTPSService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
-	private OtherOrderTrackService otherOrderTrackService;
+	private OrderTrackToTPSDAO orderTrackToTPSDAO;
 	
 	@Autowired
 	private DmpTpsTrackMappingService dmpTpsTrackMappingService;
@@ -64,97 +66,91 @@ public class OtherOrderTrackSendService {
 	private CacheBaseListener cacheBaseListener;
 	@Autowired
 	private B2cTools b2ctools;
+	@Autowired
+	OtherOrderTrackService otherOrderTrackService;
 
 	private static final String DATE_FORMAT="yyyy-MM-dd HH:mm:ss";
 	
 	public void process() {
-	       this.logger.info("other order track job process start...");
-	       OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
-	       if(orderTraceToTPSCfg == null){
-				logger.info("未配置外单轨迹推送DO服务配置信息!无法保存外单轨迹数据到临时表...");
-				return;
-			}
-			if(orderTraceToTPSCfg.getTrackOpenFlag() != 1){
-				logger.info("未开启外单轨迹推送接口.");
-				return;
-			}
+	       this.logger.info("订单轨迹推送tps开始...");
 	       try { 
-		   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
-				if(pushCfg == null){
-					logger.info("未配置外单轨迹推送DO服务配置信息!无法推送外单轨迹数据...");
+	    	   OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
+		       if(orderTraceToTPSCfg == null){
+					logger.info("未配置tps订单下发轨迹推送DO服务配置信息!无法保存外单轨迹数据到临时表...");
 					return;
 				}
-				if(pushCfg.getTrackOpenFlag() != 1){
-					logger.info("未开启外单轨迹推送接口.");
-					return;
-				}
-		        //加载临时表数据
-	    	    int maxRetry=pushCfg.getTrackMaxTryTime();
-	    	   
-		        List<OtherOrderTrackVo> rowList= otherOrderTrackService.retrieveOtherOrderTrack(maxRetry,3000);
-		        //处理数据
-		        handleData(rowList);
+		        //是否需要轨迹回传客户
+		        String customeridsCfg = orderTraceToTPSCfg.getCustomerids();
+		        if(customeridsCfg!= null && !customeridsCfg.trim().equals("")){
+		        	//加载临时表数据
+			        List<OrderTrackToTPSVo> rowList=orderTrackToTPSDAO.getTrackListToSend(customeridsCfg,20,3000);
+			        //处理数据
+			        handleData(rowList);
+		        }else{
+		        	 logger.info("没有需要反馈轨迹的客户.");
+		        }
+		       
 	      } catch (Throwable ex) {
-	        logger.error("处理外单轨迹数据出错.",ex);
+	        logger.error("处理订单轨迹数据出错.",ex);
 	     } 
 	        
 	        //handleTimeoutData();
 	}
 	
-	private void handleData(List<OtherOrderTrackVo> msgVoList){
+	private void handleData(List<OrderTrackToTPSVo> msgVoList){
 		long cnt=0;
 		if(msgVoList!=null){
 			cnt=msgVoList.size();
 		}
-		logger.info("other customer order track normal msg num:"+cnt);
+		logger.info("推送订单轨迹给tps数量为："+cnt);
 		
 		if(cnt==0){
 			return;
 		}
 
-		for(OtherOrderTrackVo msgVo:msgVoList){
+		for(OrderTrackToTPSVo msgVo:msgVoList){
 			try {
 				DmpOrderFlow orderFlow=parseOrderFlowObject(msgVo.getOrderFlowJson());
-				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
+				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(orderFlow.getFloworderdetail());
 				if(orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
 					//推送轨迹
-					DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
+					DoTrackFeedbackRequest req=prepareRequest(orderWithState.getCwbOrder().getTpstranscwb(),orderFlow,orderWithState);
 					if(req!=null){
-						logger.info("上传外单cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
-						
+						logger.info("上传轨迹信息cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
 						send(req,6000);
-						otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
+						orderTrackToTPSDAO.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
 					}else{
-						otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
+						orderTrackToTPSDAO.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
 					}
 				}else{
 					//推送重置反馈
 					PjDoStatusRequest req=prepareResetStateRequest(msgVo,orderFlow);
 					if(req!=null){
-						logger.info("上传外单cwb={}重置反馈报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
+						logger.info("上传轨迹信息cwb={}重置反馈报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
 						sendResetState(req,6000);
-						otherOrderTrackService.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
+						orderTrackToTPSDAO.completedTrackMsg(2,"",msgVo.getCwb(),msgVo.getFloworderid());
 					}else{
-						otherOrderTrackService.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
+						//otherOrderTrackService.completedTrackMsg
+						orderTrackToTPSDAO.completedTrackMsg(4,"",msgVo.getCwb(),msgVo.getFloworderid());
 					}
 				}
 				
 			} catch (Exception e) {
-				logger.error("上传外单轨迹数据到TPS时出错.cwb="+msgVo.getCwb()+",floworderid="+msgVo.getFloworderid(),e);
-				
-				otherOrderTrackService.completedTrackMsg(3,"上传外单轨迹数据到TPS时出错."+e.getMessage(),msgVo.getCwb(),msgVo.getFloworderid());
+				logger.error("上传轨迹数据到TPS时出错.cwb="+msgVo.getCwb()+",floworderid="+msgVo.getFloworderid(),e);
+				orderTrackToTPSDAO.completedTrackMsg(3,"上传轨迹数据到TPS时出错."+e.getMessage(),msgVo.getCwb(),msgVo.getFloworderid());
 			}
 		}
 	}
 	
-	private DoTrackFeedbackRequest prepareRequest(OtherOrderTrackVo msgVo,DmpOrderFlow orderFlow,CwbOrderWithDeliveryState orderWithState){
+	@SuppressWarnings("null")
+	private DoTrackFeedbackRequest prepareRequest(String tpstranscwb,DmpOrderFlow orderFlow,CwbOrderWithDeliveryState orderWithState){
 		int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
 		
 		if(tpsOperateType<0){
 			return null;
 		}
 		
-		if(msgVo.getTpsno()==null){
+		if(tpstranscwb==null && tpstranscwb.trim()==""){
 			throw new RuntimeException("TPS运单号为空.");
 		}
 		
@@ -322,7 +318,7 @@ public class OtherOrderTrackSendService {
 		req.setOperater(operateUser==null?null:operateUser.getRealname());//???
 		req.setOperateTime(orderFlow.getCredate());
 		req.setOperateType(tpsOperateType);
-		req.setTransportNo(msgVo.getTpsno());
+		req.setTransportNo(tpstranscwb);
 		
 		return req;
 	}
@@ -340,8 +336,8 @@ public class OtherOrderTrackSendService {
 		}
 		
 	}
-	private PjDoStatusRequest prepareResetStateRequest(OtherOrderTrackVo msgVo,DmpOrderFlow orderFlow){
-		if(msgVo.getTpsno()==null){
+	private PjDoStatusRequest prepareResetStateRequest(OrderTrackToTPSVo msgVo,DmpOrderFlow orderFlow){
+		if(msgVo.getTpstranscwb()==null){
 			throw new RuntimeException("TPS运单号为空..");
 		}
 		
@@ -372,7 +368,7 @@ public class OtherOrderTrackSendService {
 		User operateUser=getDmpDAO.getUserById(aeds.getApplyuserid());//
 		
 		PjDoStatusRequest req= new PjDoStatusRequest();
-		req.setTransportNo(msgVo.getTpsno());
+		req.setTransportNo(msgVo.getTpstranscwb());
 		req.setType(6);//tps type 6 是重置状态
 		req.setRemark(aeds.getEditreason());
 		req.setOperName(operateUser==null?null:operateUser.getRealname());
@@ -434,25 +430,21 @@ public class OtherOrderTrackSendService {
 		return deliveryState; 
 	}
 	
-	public void saveOtherOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
+	public void saveOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
 		try {
-	   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
+	   		VipShop pushCfg = this.getVipshopCfg();
 			if(pushCfg == null){
-				logger.info("未配置外单轨迹推送DO服务配置信息!无法保存外单轨迹数据到临时表...");
-				return;
-			}
-			if(pushCfg.getTrackOpenFlag() != 1){
-				logger.info("未开启外单轨迹推送接口.");
+				logger.info("未配置TPS订单下发接口信息!无法保存轨迹数据到临时表...");
 				return;
 			}
 			this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 
-			boolean isOther=false;
+			//boolean isOther=false;
 			DmpCwbOrder cwbOrder=(deliveryState==null)?null:deliveryState.getCwbOrder();
 			if(cwbOrder==null){
 				cwbOrder=co;
 			}
-			if(cwbOrder!=null){
+			/*if(cwbOrder!=null){
 				if(cwbOrder.getCustomerid()>0){ 
 					isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
 				}
@@ -460,7 +452,7 @@ public class OtherOrderTrackSendService {
 			if(!isOther){
 				this.logger.info("不是外单，轨迹数据不作处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 				return;
-			}
+			}*/
 			
 			int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
 			if(tpsOperateType<0
@@ -470,18 +462,20 @@ public class OtherOrderTrackSendService {
 			}
 			
 			String orderFlowJson = bean2json(orderFlow);
-			String deliveryStateJson = bean2json(deliveryState);
+			//String deliveryStateJson = bean2json(deliveryState);
 		
-			OtherOrderTrackVo vo=new OtherOrderTrackVo();
+			OrderTrackToTPSVo vo=new OrderTrackToTPSVo();
 			vo.setCwb(orderFlow.getCwb());
 			vo.setFloworderid(orderFlow.getFloworderid());
 			vo.setOrderFlowJson(orderFlowJson);
-			vo.setDeliveryStateJson(deliveryStateJson);
+			vo.setTpstranscwb(deliveryState.getCwbOrder().getTpstranscwb());
+			//vo.setDeliveryStateJson(deliveryStateJson);
 			vo.setTracktime(orderFlow.getCredate());
 			vo.setStatus(1);//
 			vo.setTrytime(0);
 			vo.setErrinfo("");
 			vo.setFlowordertype(orderFlow.getFlowordertype());
+			vo.setCustomerid(deliveryState.getCwbOrder().getCustomerid());
 
 			//为了性能，分站领货环节优先发送
 			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
@@ -496,7 +490,7 @@ public class OtherOrderTrackSendService {
 				}
 			}
 			
-			this.otherOrderTrackService.saveOtherOrderTrack(vo);
+			this.orderTrackToTPSDAO.saveOrderTrack(vo);
 			
 		} catch (Exception e) {
 			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
@@ -507,20 +501,31 @@ public class OtherOrderTrackSendService {
 	private String sendFlowToTps(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState){
 		String result=null;
 		try {
-				String tpsno=otherOrderTrackService.getTpsTransportno(orderFlow.getCwb());
-				
-				OtherOrderTrackVo msgVo=new OtherOrderTrackVo();
-				msgVo.setTpsno(tpsno);
-				DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,deliveryState);
-				if(req!=null){
-					send(req,3000);
-					this.logger.info("发送领货成功,cwb="+orderFlow.getCwb());
+			    DmpCwbOrder cwbOrder = deliveryState.getCwbOrder();
+				String tpsno="";
+				boolean isOther = false;
+				if(cwbOrder!=null){
+					if(cwbOrder.getCustomerid()>0){ 
+						isOther=tPOSendDoInfService.isThirdPartyCustomer(cwbOrder.getCustomerid());
+					}
+				}
+				if(!isOther){
+					tpsno = cwbOrder.getTpstranscwb();
 				}else{
-					result="此外单轨迹环节忽略不处理";
+					tpsno = otherOrderTrackService.getTpsTransportno(orderFlow.getCwb());
+				}
+				if(!tpsno.isEmpty()){
+					DoTrackFeedbackRequest req=prepareRequest(tpsno,orderFlow,deliveryState);
+					if(req!=null){
+						send(req,3000);
+						this.logger.info("发送领货成功,cwb="+orderFlow.getCwb());
+					}else{
+						result="此订单轨迹环节忽略不处理";
+					}
 				}
 		} catch (Exception e) {
-			result="发送外单领货轨迹到TPS时出错.原因:"+e.getMessage();
-			this.logger.error("发送外单领货轨迹到TPS时出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
+			result="发送领货轨迹到TPS时出错.原因:"+e.getMessage();
+			this.logger.error("发送领货轨迹到TPS时出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
 		}
 		
 		return result;
@@ -568,9 +573,20 @@ public class OtherOrderTrackSendService {
 	}
 	
 	//获取配置信息
+	public VipShop getVipshopCfg() {
+		VipShop cfg = null;
+		String objectMethod = this.b2ctools.getObjectMethod(B2cEnum.TPS_MQ.getKey()).getJoint_property();
+		if (objectMethod != null) {
+			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
+			cfg = (VipShop) JSONObject.toBean(jsonObj, VipShop.class);
+		} 
+		return cfg;
+	}
+	
+	//获取配置信息
 	public OrderTraceToTPSCfg getOrderTraceToTPSCfg() {
 		OrderTraceToTPSCfg cfg = null;
-		String objectMethod = this.b2ctools.getObjectMethod(B2cEnum.ThirdPartyOrder_2_DO.getKey()).getJoint_property();
+		String objectMethod = this.b2ctools.getObjectMethod(B2cEnum.TPS_TraceFeedback.getKey()).getJoint_property();
 		if (objectMethod != null) {
 			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
 			cfg = (OrderTraceToTPSCfg) JSONObject.toBean(jsonObj, OrderTraceToTPSCfg.class);
