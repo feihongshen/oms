@@ -95,7 +95,9 @@ public enum B2cEnum {
 	VipShop_TPSAutomate(20227, "TPS自动化", "vipshop_tps_automate"),
 	Shenzhoushuma(20137,"神州数码","shenzhoushuma"),
 	ZheMeng_track(23001, "哲盟_轨迹", "zhemeng_track"),
-	TPS_MQ(22501, "tps订单下发接口", "tpsvipshop_mq")
+	TPS_MQ(22501, "tps订单下发接口", "tpsvipshop_mq"),
+	TPS_TraceFeedback(22601, "订单轨迹回传给tps接口", "tps_traceFeedback"),
+	TPS_MQExpress(22502, "tps快递单下发接口", "tpsvipshop_mqExpress")
 	; 
 	private int key;
 	private String text;

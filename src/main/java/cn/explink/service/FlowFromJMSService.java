@@ -529,6 +529,7 @@ public class FlowFromJMSService {
 		cwborder.setWeishuakareason(order.getWeishuakareason());
 		cwborder.setWeishuakareasonid(order.getWeishuakareasonid());
 		cwborder.setHistorybranchname(order.getHistorybranchname());
+		cwborder.setTpstranscwb(order.getTpstranscwb());
 		if (cwbDAO.getCwbByCwbCount(dmpOrderFlow.getCwb()) > 0) {
 			cwborder = setOrder(cwborder, deliveryState);
 			cwbDAO.updateCwbOrder(cwborder);

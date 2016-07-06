@@ -90,6 +90,8 @@
 							 <ref bean="doTime_resetGanXianHuiDan"/>
 							 <ref bean="shenzhoushuma"/>
 							 <ref bean="zhemengTrack"/>
+							 <ref bean="doTime_sendOrderTrackToTPS"/>
+							 
 			           </list>            
 	               </property>       
 	               <property name="dataSource" ref="dataSource"></property>
@@ -1370,5 +1372,27 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
+	
+	<!--推送轨迹给tps-->
+    <bean id="doTime_sendOrderTrackToTPS" class="cn.explink.util.DatabaseInitCronTriggerBean"
+        dependency-check="default">
+        <property name="jobDetail">
+            <ref bean="sendOrderTrackToTPS" />
+        </property>
+        <property name="cronExpression">
+            <value>0 */1 * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="sendOrderTrackToTPS" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+        dependency-check="default">
+        <property name="targetBean">
+            <value>updateEMS</value>
+        </property>
+        <property name="targetMethod">
+            <value>sendOrderTrackToTPS</value>
+        </property>
+        <property name="concurrent" value="false" />
+    </bean>
 	
 </beans>

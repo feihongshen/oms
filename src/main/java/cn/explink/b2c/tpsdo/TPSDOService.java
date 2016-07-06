@@ -14,17 +14,18 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pjbest.deliveryorder.bizservice.PjDeliverOrder4DMPRequest;
-import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPResponse;
-import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPServiceHelper.PjDeliveryOrder4DMPServiceClient;
-
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DORequestVo;
+import cn.explink.dao.CwbDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.util.JsonUtil;
+
+import com.pjbest.deliveryorder.bizservice.PjDeliverOrder4DMPRequest;
+import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPResponse;
+import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPServiceHelper.PjDeliveryOrder4DMPServiceClient;
 
 @Service
 public class TPSDOService {
@@ -39,6 +40,8 @@ public class TPSDOService {
 	TPOSendDoInfService tPOSendDoInfService;
 	@Autowired
 	private B2cTools b2ctools;
+	@Autowired
+	CwbDAO cwbDAO;
 	
 	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.READ_COMMITTED)
 	public void thirdPartyOrderSend2DO(){
@@ -99,6 +102,7 @@ public class TPSDOService {
 								if(resultCode == 1){
 									this.logger.info("推送外单数据给DO成功！cwb={}",response.getCustOrderNo());
 									this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), response.getTransportNo(), 1, trytime + 1, "");
+									this.cwbDAO.updateTpstranscwbByCwb(response.getCustOrderNo(),response.getTransportNo());
 								}else{
 									this.logger.info("推送外单数据给DO失败！cwb={},失败原因={}",response.getCustOrderNo(),response.getResultMsg());
 									this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), response.getTransportNo(), 0, trytime + 1, response.getResultMsg());

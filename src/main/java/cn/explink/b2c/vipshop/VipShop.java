@@ -225,6 +225,14 @@ public class VipShop {
 		this.oxoState_URL = oxoState_URL;
 	}
 
+	public int getIsTpsSendFlag() {
+		return isTpsSendFlag;
+	}
+
+	public void setIsTpsSendFlag(int isTpsSendFlag) {
+		this.isTpsSendFlag = isTpsSendFlag;
+	}
+
 	public int getIsGetPeisongFlag() {
 		return isGetPeisongFlag;
 	}
@@ -271,14 +279,6 @@ public class VipShop {
 
 	public void setIsAutoInterface(int isAutoInterface) {
 		this.isAutoInterface = isAutoInterface;
-	}
-
-	public int getIsTpsSendFlag() {
-		return isTpsSendFlag;
-	}
-
-	public void setIsTpsSendFlag(int isTpsSendFlag) {
-		this.isTpsSendFlag = isTpsSendFlag;
 	}
 
 }

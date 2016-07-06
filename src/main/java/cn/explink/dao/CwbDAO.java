@@ -2303,4 +2303,12 @@ public class CwbDAO {
 		jdbcTemplate.update("update express_ops_cwb_detail set cwbordertypeid=?,deliverystate=? where cwb=?", cwbordertypeid, deliverystate, cwb);
 
 	}
+	
+	
+	/**
+	 * 更新订单tps运单号字段
+	 */
+	public void updateTpstranscwbByCwb(String cwb, String tpstranscwb) {
+		jdbcTemplate.update("update express_ops_cwb_detail set tpstranscwb=? where cwb=?", tpstranscwb, cwb);
+	}
 }
