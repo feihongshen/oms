@@ -85,7 +85,7 @@ public class VipShopCwbFeedBackService {
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.ChuKuSaoMiao.getValue()); // code：4-配送中(库房出库)
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()); // code：4-配送中(分站到货)
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.FenZhanLingHuo.getValue()); // code:4-配送中(分站投递)
-			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.YiFanKui.getValue()); // 已反馈
+			//calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.YiFanKui.getValue()); // 已反馈
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.YiShenHe.getValue()); // 已审核
 			// -包括各种状态
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()); // 已审核
