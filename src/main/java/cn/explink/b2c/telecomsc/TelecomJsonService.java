@@ -76,8 +76,11 @@ public class TelecomJsonService {
 		
 		//唯品会上门退订单反馈上门退成功后即把轨迹推送给TMS（不需要在归班审核时才推给TMS）
 		DmpCwbOrder dmpCwbOrder = cwbOrderWothDeliverystate.getCwbOrder();
-		String cwbordertypeid = (dmpCwbOrder==null?"-1" : dmpCwbOrder.getCwbordertypeid());
 		String dmpCwb         = (dmpCwbOrder==null?"":dmpCwbOrder.getCwb());
+		String cwbordertypeid = (dmpCwbOrder==null?"-1" : dmpCwbOrder.getCwbordertypeid());
+		if(cwbordertypeid != null){
+			cwbordertypeid = cwbordertypeid.trim();
+		}
 		
 		try{
 			if (String.valueOf(CwbOrderTypeIdEnum.Shangmentui.getValue()).equals(cwbordertypeid) && 
