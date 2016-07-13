@@ -126,6 +126,7 @@ public class DmpCwbOrder {
 	private long firstchangereasonid=0l;//待中转一级原因
 	private long changereasonid=0l;//待中转二级级原因
 	private String tpstranscwb;//tps运单号
+	private long orderSource;//订单来源
 	
 	public int getMpsoptstate() {
 		return mpsoptstate;
@@ -996,6 +997,14 @@ public class DmpCwbOrder {
 
 	public void setTpstranscwb(String tpstranscwb) {
 		this.tpstranscwb = tpstranscwb;
+	}
+
+	public long getOrderSource() {
+		return orderSource;
+	}
+
+	public void setOrderSource(long orderSource) {
+		this.orderSource = orderSource;
 	}
 
 }
