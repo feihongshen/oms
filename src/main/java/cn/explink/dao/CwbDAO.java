@@ -414,9 +414,9 @@ public class CwbDAO {
 				+ " consigneeno, " + " consigneepostcode, " + " cwbremark, " + " transway, " + " cwbprovince, " + " cwbcity, " + " cwbcounty," + " receivablefee, " + " paybackfee, " + " shipperid, "
 				+ " cwbordertypeid, " + " consigneemobile," + " transcwb," + " destination," + " cwbdelivertypeid, " + " exceldeliver," + " excelbranch," + " excelimportuserid," + " state,"
 				+ " emaildateid," + " remark1," + " remark2," + " remark3," + " remark4," + " remark5," + "startbranchname," + " nextbranchname,carwarehousename,"
-				+ "customerwarehousename,paytype_old,paytype,targetcarwarehouse,targetcarwarehouseName,nowtime,multi_shipcwb,tuihuoid,zhongzhuanid,deliverybranchid,currentbranchid,firstleavedreasonid,shouldfare,infactfare) "
+				+ "customerwarehousename,paytype_old,paytype,targetcarwarehouse,targetcarwarehouseName,nowtime,multi_shipcwb,tuihuoid,zhongzhuanid,deliverybranchid,currentbranchid,firstleavedreasonid,shouldfare,infactfare,tpstranscwb,order_source) "
 				+ "values(?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?,?,?"
-				+ ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?)";
+				+ ",?,?,?,?,?,?,?,?,?,?" + ",?,?,?,?,?,?,?,?)";
 		jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -507,6 +507,8 @@ public class CwbDAO {
 				ps.setLong(84, co.getFirstleavedreasonid());
 				ps.setBigDecimal(85, co.getShouldfare());
 				ps.setBigDecimal(86, co.getInfactfare());
+				ps.setString(87, co.getTpstranscwb());
+				ps.setLong(88, co.getOrderSource());
 			}
 		});
 
@@ -2302,5 +2304,13 @@ public class CwbDAO {
 	public void updateXiuGaiDingDanLeiXing(String cwb, int cwbordertypeid, long deliverystate) {
 		jdbcTemplate.update("update express_ops_cwb_detail set cwbordertypeid=?,deliverystate=? where cwb=?", cwbordertypeid, deliverystate, cwb);
 
+	}
+	
+	
+	/**
+	 * 更新订单tps运单号字段
+	 */
+	public void updateTpstranscwbByCwb(String cwb, String tpstranscwb) {
+		jdbcTemplate.update("update express_ops_cwb_detail set tpstranscwb=? where cwb=?", tpstranscwb, cwb);
 	}
 }

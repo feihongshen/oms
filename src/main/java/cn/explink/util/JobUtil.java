@@ -65,6 +65,7 @@ import cn.explink.b2c.tools.RedisMapThreadImpl;
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
 import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPSDOService;
+import cn.explink.b2c.tpsdo.TrackSendToTPSService;
 import cn.explink.b2c.vipshop.VipShopCwbFeedBackService;
 import cn.explink.b2c.vipshop.mpspack.VipmpsFeedbackService;
 import cn.explink.b2c.wangjiu.WangjiuService;
@@ -244,6 +245,8 @@ public class JobUtil {
 	ShenzhoushumaService shenzhoushumaService;
 	@Autowired
 	ZhemengTrackService zhemengTrackService;
+	@Autowired
+	TrackSendToTPSService trackSendToTPSService;
 	
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
@@ -260,6 +263,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("vipmps",0);
 		JobUtil.threadMap.put("shenzhoushuma",0);
 		JobUtil.threadMap.put("zhemengTrack",0);
+		JobUtil.threadMap.put("orderTrackSendToTPS",0);
 	}
 
 	/**
@@ -275,6 +279,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("vipmps",0);
 		JobUtil.threadMap.put("shenzhoushuma",0);
 		JobUtil.threadMap.put("zhemengTrack",0);
+		JobUtil.threadMap.put("orderTrackSendToTPS",0);
 		this.logger.info("系统自动初始化定时器完成");
 	}
 
@@ -1291,6 +1296,28 @@ public class JobUtil {
 			JobUtil.threadMap.put("zhemengTrack", 0);
 		}
 		this.logger.info("执行了【哲盟_轨迹】定时器任务!");
+	}
+	
+	
+	/**
+	 * 订单轨迹定时任务方法调用
+	 */
+	public void sendOrderTrackToTPS(){
+		
+		if (JobUtil.threadMap.get("orderTrackSendToTPS") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出sendOrderTrackToTPS");
+			return;
+		}
+		JobUtil.threadMap.put("orderTrackSendToTPS", 1);
+		
+		try{
+			this.trackSendToTPSService.process();
+		}catch(Exception e){
+			this.logger.error("执行了订单轨迹推送给tps定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("orderTrackSendToTPS", 0);
+		}
+		this.logger.info("执行了【订单轨迹推送给tps】定时器任务!");
 	}
 
 }

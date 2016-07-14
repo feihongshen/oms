@@ -14,8 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.explink.b2c.tools.B2cEnum;
+import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tpsdo.bean.OrderTraceToTPSCfg;
 import cn.explink.b2c.tpsdo.bean.OtherOrderTrackVo;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.dao.GetDmpDAO;
@@ -59,13 +62,22 @@ public class OtherOrderTrackSendService {
 	
 	@Autowired
 	private CacheBaseListener cacheBaseListener;
+	@Autowired
+	private B2cTools b2ctools;
 
 	private static final String DATE_FORMAT="yyyy-MM-dd HH:mm:ss";
 	
 	public void process() {
 	       this.logger.info("other order track job process start...");
-	      
-	       
+	       OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
+	       if(orderTraceToTPSCfg == null){
+				logger.info("未配置外单轨迹推送DO服务配置信息!无法保存外单轨迹数据到临时表...");
+				return;
+			}
+			if(orderTraceToTPSCfg.getTrackOpenFlag() != 1){
+				logger.info("未开启外单轨迹推送接口.");
+				return;
+			}
 	       try { 
 		   		ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
 				if(pushCfg == null){
@@ -78,6 +90,7 @@ public class OtherOrderTrackSendService {
 				}
 		        //加载临时表数据
 	    	    int maxRetry=pushCfg.getTrackMaxTryTime();
+	    	   
 		        List<OtherOrderTrackVo> rowList= otherOrderTrackService.retrieveOtherOrderTrack(maxRetry,3000);
 		        //处理数据
 		        handleData(rowList);
@@ -552,5 +565,16 @@ public class OtherOrderTrackSendService {
 			int onum=otherOrderTrackService.housekeepOtherOrder(orderday);
 			logger.info("外单订单临时表数据清理了{}条.",onum);
 		}
+	}
+	
+	//获取配置信息
+	public OrderTraceToTPSCfg getOrderTraceToTPSCfg() {
+		OrderTraceToTPSCfg cfg = null;
+		String objectMethod = this.b2ctools.getObjectMethod(B2cEnum.ThirdPartyOrder_2_DO.getKey()).getJoint_property();
+		if (objectMethod != null) {
+			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
+			cfg = (OrderTraceToTPSCfg) JSONObject.toBean(jsonObj, OrderTraceToTPSCfg.class);
+		} 
+		return cfg;
 	}
 }

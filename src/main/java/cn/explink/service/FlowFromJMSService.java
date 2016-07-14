@@ -529,6 +529,9 @@ public class FlowFromJMSService {
 		cwborder.setWeishuakareason(order.getWeishuakareason());
 		cwborder.setWeishuakareasonid(order.getWeishuakareasonid());
 		cwborder.setHistorybranchname(order.getHistorybranchname());
+		cwborder.setTpstranscwb(order.getTpstranscwb());
+		//【修改】orderSource用于区分是否唯品会订单【周欢】2016-07-13
+		cwborder.setOrderSource(order.getOrderSource());
 		if (cwbDAO.getCwbByCwbCount(dmpOrderFlow.getCwb()) > 0) {
 			cwborder = setOrder(cwborder, deliveryState);
 			cwbDAO.updateCwbOrder(cwborder);

@@ -87,6 +87,8 @@ public class DmpTpsTrackMappingService {
 		//map.put(FlowOrderTypeEnum.ZiTiYanWu.getValue(),TPSFlowOrderTypeEnum..getValue());
 		map.put(FlowOrderTypeEnum.KuDuiKuChuKuSaoMiao.getValue(),TPSFlowOrderTypeEnum.outboundScan.getValue());
 		//map.put(FlowOrderTypeEnum.UpdatePickBranch.getValue(),TPSFlowOrderTypeEnum..getValue());
+		//【修改】针对唯品会的极速 退功能，增加回传反馈为上门退成功的订单轨迹给tps【周欢】2016-07-13
+		map.put(FlowOrderTypeEnum.YiFanKui.getValue(),TPSFlowOrderTypeEnum.signInScan.getValue());
 
 	}
 }

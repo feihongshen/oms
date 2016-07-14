@@ -248,6 +248,8 @@ public class CwbOrder {
 	// 2015-02-10新加字段
 	private long zhongzhuanreasonid;//中转id
 	private String zhongzhuanreason;//中转原因
+	private String tpstranscwb;//tps运单号
+	private long orderSource;//订单类型
 	
 	public long getZhongzhuanreasonid() {
 		return zhongzhuanreasonid;
@@ -1888,6 +1890,21 @@ public class CwbOrder {
 		this.infactfare = infactfare;
 	}
 
-	
+	public String getTpstranscwb() {
+		return tpstranscwb;
+	}
+
+	public void setTpstranscwb(String tpstranscwb) {
+		this.tpstranscwb = tpstranscwb;
+	}
+
+	public long getOrderSource() {
+		return orderSource;
+	}
+
+	public void setOrderSource(long orderSource) {
+		this.orderSource = orderSource;
+	}
+
 	
 }

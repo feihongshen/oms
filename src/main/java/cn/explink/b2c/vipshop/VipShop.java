@@ -225,6 +225,7 @@ public class VipShop {
 		this.oxoState_URL = oxoState_URL;
 	}
 
+
 	public int getIsGetPeisongFlag() {
 		return isGetPeisongFlag;
 	}
