@@ -1,7 +1,5 @@
 package cn.explink.b2c.telecomsc;
 
-import java.math.BigDecimal;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +14,11 @@ import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.Customer;
+import cn.explink.enumutil.CwbOrderTypeIdEnum;
+import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.jms.dto.CwbOrderWithDeliveryState;
+import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpOrderFlow;
 
 @Service
@@ -73,16 +74,30 @@ public class TelecomJsonService {
 			return this.buildB2cDataMaster.getBuildMLKB2cData().buildMLKMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, objectMapper);
 		}
 		
-		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {//唯品会上门退订单反馈轨迹推送给tms
-			int flowordertype = (int)(cwbOrderWothDeliverystate.getCwbOrder().getFlowordertype());
-			BigDecimal pos = cwbOrderWothDeliverystate.getDeliveryState().getPos();
-			if (flowordertype == FlowOrderTypeEnum.YiFanKui.getValue() && (pos.compareTo(BigDecimal.ZERO) == 0)) {// 非POS订单反馈
-				return this.buildB2cDataMaster.getBulidVipShopB2cData().BuildVipShopMethod(customer.getB2cEnum(), orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),
-						cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
-			}
+		//唯品会上门退订单反馈上门退成功后即把轨迹推送给TMS（不需要在归班审核时才推给TMS）
+		DmpCwbOrder dmpCwbOrder = cwbOrderWothDeliverystate.getCwbOrder();
+		String dmpCwb         = (dmpCwbOrder==null?"":dmpCwbOrder.getCwb());
+		String cwbordertypeid = (dmpCwbOrder==null?"-1" : dmpCwbOrder.getCwbordertypeid());
+		if(cwbordertypeid != null){
+			cwbordertypeid = cwbordertypeid.trim();
 		}
+		
+		try{
+			if (String.valueOf(CwbOrderTypeIdEnum.Shangmentui.getValue()).equals(cwbordertypeid) && 
+				delivery_state ==  DeliveryStateEnum.ShangMenTuiChengGong.getValue() &&
+				flowOrdertype == FlowOrderTypeEnum.YiFanKui.getValue() &&
+				customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
+				
+				logger.info("唯品会上门退订单(cwb={})反馈上门退成功后存到OMS express_send_b2c_data表:准备数据", dmpCwb);
+				
+				return this.buildB2cDataMaster.getBulidVipShopB2cData().BuildVipShopMethod(customer.getB2cEnum(), orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),
+							cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
+			}
+		}catch(Exception ex){
+			logger.error("唯品会上门退订单(cwb="+dmpCwb+")反馈上门退成功后存到OMS express_send_b2c_data表出错", ex);
+		}
+		
 		return null;
-
 	}
 
 	/**

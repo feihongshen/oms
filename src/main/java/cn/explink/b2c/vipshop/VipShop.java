@@ -282,4 +282,8 @@ public class VipShop {
 		this.isTpsSendFlag = isTpsSendFlag;
 	}
 
+
+
+
+
 }
