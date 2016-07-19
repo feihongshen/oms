@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrderEditInfo;
 import cn.explink.dao.CwbDAO;
@@ -78,7 +79,6 @@ import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 import cn.explink.util.DateTimeUtil;
-import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 
 @Service
 public class FlowFromJMSService {
@@ -337,10 +337,9 @@ public class FlowFromJMSService {
 	 *            是否存储flow表 1是存储，0是不存储，用于同步模块数据，不用同步flow表
 	 */
 	public void saveAll(String parm, int isSaveFlowAndState) {
-
 		logger.debug("orderFlow oms 环节信息处理,{}", parm);
+		
 		try {
-
 			DmpOrderFlow orderFlow = dmpOrderFlowReader.readValue(parm);
 			// if(orderFlowDAO.getOrderFlowById(orderFlow.getFloworderid())!=null){
 			// logger.warn("收到重复信息,id:{}",orderFlow.getFloworderid());
@@ -354,7 +353,9 @@ public class FlowFromJMSService {
 				return;
 			}
 
+			//创建或修改订单
 			saveFlowcreCwbOrder(orderFlow, dmpcwbOrder, deliveryState);
+			
 			if (isSaveFlowAndState == 1) {// 存储flow表
 				saveFlowcreOrderFlow(orderFlow, dmpcwbOrder);
 			}
@@ -421,7 +422,7 @@ public class FlowFromJMSService {
 
 	// SaveFlow用到的保存订单表
 	private void saveFlowcreCwbOrder(DmpOrderFlow dmpOrderFlow, DmpCwbOrder order, DmpDeliveryState deliveryState) {
-		logger.info("save orderDetail----------");
+		logger.info("FlowFromJMSService save orderDetail----cwb:{},flowordertype:{},crdate:{}------", dmpOrderFlow.getCwb(), dmpOrderFlow.getFlowordertype());
 		String emaildates = order.getEmaildate() != null && !"".equals(order.getEmaildate()) ? order.getEmaildate() : "";
 		CwbOrder cwborder = new CwbOrder();
 		cwborder.setCwb(dmpOrderFlow.getCwb());
@@ -530,16 +531,29 @@ public class FlowFromJMSService {
 		cwborder.setWeishuakareasonid(order.getWeishuakareasonid());
 		cwborder.setHistorybranchname(order.getHistorybranchname());
 		cwborder.setTpstranscwb(order.getTpstranscwb());
-		if (cwbDAO.getCwbByCwbCount(dmpOrderFlow.getCwb()) > 0) {
-			cwborder = setOrder(cwborder, deliveryState);
-			cwbDAO.updateCwbOrder(cwborder);
+		
+		//Modified by leoliao at 2016-07-19 判断解决MQ消费顺序导致订单表数据被前一操作覆盖的问题
+		CwbOrder cwbOrderFromDB = cwbDAO.getCwbByCwb(dmpOrderFlow.getCwb());
+		//if (cwbDAO.getCwbByCwbCount(dmpOrderFlow.getCwb()) > 0) {
+		if (cwbOrderFromDB != null) {
+			String credateFlow = DateTimeUtil.formatDate(dmpOrderFlow.getCredate(), "yyyy-MM-dd HH:mm:ss");
+			String nowtimeCwb  = cwbOrderFromDB.getNowtime(); //订单操作时间
+			
+			logger.info("FlowFromJMSService.saveFlowcreCwbOrder flow createtime:{},cwb nowtime:{}", credateFlow, nowtimeCwb);
+			
+			if(nowtimeCwb.compareTo(credateFlow) <= 0){
+				//订单的上一次操作时间在当前的操作时间之前更新订单表
+				cwborder = setOrder(cwborder, deliveryState);
+				cwbDAO.updateCwbOrder(cwborder);
+			}
 		} else {
 			cwbDAO.creCwbOrder(cwborder);
 		}
+		//Modified end
 	}
 
 	private void saveFlowcreOrderFlow(DmpOrderFlow orderFlow, DmpCwbOrder dmpCwbOrder) {
-		logger.info("RE: save FlowcreOrder");
+		logger.info("RE(cwb={},flowordertype={}): save FlowcreOrder", orderFlow.getCwb(), orderFlow.getFlowordertype());
 		OrderFlow of = new OrderFlow();
 		of.setFloworderid(orderFlow.getFloworderid());
 		of.setCwb(orderFlow.getCwb());

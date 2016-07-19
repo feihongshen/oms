@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -36,6 +38,8 @@ import cn.explink.vo.delivery.DeliveryRateTimeType;
 public class CwbOrderTailDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	private Logger logger = LoggerFactory.getLogger(CwbOrderTailDao.class);
 
 	private final class CwbOrderTailRowMapper implements RowMapper<CwbOrderTail> {
 
@@ -281,6 +285,9 @@ public class CwbOrderTailDao {
 		String sql = "SELECT * FROM commen_cwb_order_tail ";
 		sql = setWhereSql(sql, tail);
 		sql += "  limit " + (page - 1) * Page.ONE_PAGE_NUMBER + " ," + Page.ONE_PAGE_NUMBER;
+		
+		logger.info("综合查询(云) CwbOrderTailDao.getTailList sql:{}", sql);
+		
 		return jdbcTemplate.query(sql, new CwbOrderTailRowMapper());
 	}
 
@@ -289,6 +296,9 @@ public class CwbOrderTailDao {
 	public CwbOrderTail getTailSum(CwbOrderTail tail) {
 		String sql = "SELECT count(1) as id, sum(receivablefee) as receivablefee,sum(paybackfee) as paybackfee FROM commen_cwb_order_tail  ";
 		sql = setWhereSql(sql, tail);
+		
+		logger.info("综合查询(云) CwbOrderTailDao.getTailSum sql:{}", sql);
+		
 		return jdbcTemplate.queryForObject(sql, new TailSumMapper());
 	}
 

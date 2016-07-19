@@ -23,9 +23,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import com.pjbest.splitting.aspect.DataSource;
-import com.pjbest.splitting.routing.DatabaseType;
-
 import cn.explink.domain.CwbOrder;
 import cn.explink.domain.CwbOrderCopyForDmp;
 import cn.explink.domain.CwbOrderTail;
@@ -35,6 +32,9 @@ import cn.explink.util.DateDayUtil;
 import cn.explink.util.Page;
 import cn.explink.util.StreamingStatementCreator;
 import cn.explink.util.StringUtil;
+
+import com.pjbest.splitting.aspect.DataSource;
+import com.pjbest.splitting.routing.DatabaseType;
 
 @Component
 public class CwbDAO {
@@ -654,8 +654,8 @@ public class CwbDAO {
 				}
 			});
 		} catch (Exception e) {
+			logger.error("CwbDAO.updateCwbOrder出错(cwb="+(co==null?"":co.getCwb())+")", e);
 			e.printStackTrace();
-
 		}
 
 	}
@@ -2073,8 +2073,35 @@ public class CwbDAO {
 	 * @return
 	 */
 	public String getSQLExportZongHeChaXun(CwbOrderTail tail, long page) {
-
-		String sql = "SELECT de.*,ds.newpaywayid FROM `express_ops_cwb_detail` as de right join  commen_cwb_order_tail as  ds on de.cwb=ds.cwb where de.state=1 ";
+		//Modified by leoliao at 2016-07-15 改为从commen_cwb_order_tail表字段取数，没有才从express_ops_cwb_detail表取。
+		//String sql = "SELECT de.*,ds.newpaywayid FROM express_ops_cwb_detail as de right join  commen_cwb_order_tail as  ds on de.cwb=ds.cwb where de.state=1 ";
+		StringBuffer sbField = new StringBuffer(" ds.cwb, ds.emaildatetime as emaildate, ds.receivablefee, ds.paybackfee, ds.customerid, ds.cwbordertypeid, ");
+		sbField.append("ds.nextbranchid, ds.flowordertype, ds.branchid, ds.deliverystate, ds.gcaid, ds.deliverybranchid, ds.goods_type, ");		
+		sbField.append("ds.newpaywayid, ");		
+		sbField.append("de.consigneeno, de.consigneename, de.consigneeaddress, de.consigneepostcode, de.consigneephone, de.consigneemobile, de.shiptime, de.shipcwb, ");
+		sbField.append("de.cwbremark, de.serviceareaid, de.exceldeliver, de.excelbranch, de.customercommand, de.transcwb, de.excelimportuserid, de.destination, ");
+		sbField.append("de.transway, de.cwbprovince, de.cwbcity, de.cwbcounty, de.customerwarehouseid, de.cwbdelivertypeid, de.startbranchid, de.outwarehousegroupid, ");
+		sbField.append("de.backtocustomer_awb, de.cwbflowflag, de.carrealweight, de.cartype, de.carwarehouse, de.carsize, de.backcaramount, de.sendcarnum, de.backcarnum, ");
+		sbField.append("de.caramount, de.backcarname, de.sendcarname, de.deliverid, de.emailfinishflag, de.reacherrorflag, de.orderflowid, de.cwbreachbranchid, ");
+		sbField.append("de.cwbreachdeliverbranchid, de.podfeetoheadflag, de.podfeetoheadtime, de.podfeetoheadchecktime, de.podfeetoheadcheckflag, de.leavedreasonid, ");
+		sbField.append("de.firstleavedreasonid, de.deliversubscribeday, de.shipperid, de.state, de.multipbranchflag, de.multipdeliverflag, de.branchgroupid, de.delivername, ");
+		sbField.append("de.customername, de.branchname, de.commonname, de.newfollownotes, de.marksflag, de.marksflagmen, de.commonid, de.allfollownotes, de.primitivemoney, ");
+		sbField.append("de.marksflagtime, de.edittime, de.editman, de.signinman, de.signintime, de.returngoodsremark, de.commonnumber, de.auditstate, de.auditor, de.audittime, ");
+		sbField.append("de.editsignintime, de.floworderid, de.emaildateid, de.reserve, de.reserve1, de.instoreroomtime, de.remark1, de.remark2, de.remark3, de.remark4, de.remark5, ");
+		sbField.append("de.startbranchname, de.nextbranchname, de.outstoreroomtime, de.inSitetime, de.pickGoodstime, de.sendSuccesstime, de.gobacktime, de.nowtime, de.inhouse, ");
+		sbField.append("de.realweight, de.goodsremark, de.paytype, de.customerwarehousename, de.carwarehousename, de.goclasstime, de.leavedreasonStr, de.fdeliverid, de.fdelivername, ");
+		sbField.append("de.receivedfee, de.returnedfee, de.businessfee, de.cash, de.pos, de.posremark, de.mobilepodtime, de.checkfee, de.checkremark, de.receivedfeeuser, ");
+		sbField.append("de.statisticstate, de.createtime, de.otherfee, de.podremarkid, de.deliverstateremark, de.gobackid, de.payupbranchid, de.payupbranchname, de.podremarkStr, ");
+		sbField.append("de.receivedfeeuserName, de.payuprealname, de.youdanwuhuoBranchid, de.youhuowudanBranchid, de.tuotouTime, de.youjieguoTime, de.rukutuotouTime, ");
+		sbField.append("de.rukuyoujieguoTime, de.daozhantuotouTime, de.daozhanyoujieguoTime, de.auditEganstate, de.ispayUp, de.isQiankuan, de.ruku_dangdang_flag, de.chuku_dangdang_flag, ");
+		sbField.append("de.deliverystate_dangdang_flag, de.operatorName, de.backreasonid, de.backreason, de.expt_code, de.expt_msg, de.orderResultType, de.paytype_old, ");
+		sbField.append("de.exportBackType, de.exportType, de.targetcarwarehouse, de.targetcarwarehouseName, de.multi_shipcwb, de.tuihuoid, de.zhongzhuanid, de.currentbranchid, ");
+		sbField.append("de.resendtime, de.tuihuozhaninstoreroomtime, de.packagecode, de.weishuakareasonid, de.weishuakareason, de.losereasonid, de.losereason, ");
+		sbField.append("de.customerbrackhouseremark, de.tuihuochuzhantime, de.tuigonghuoshangchukutime, de.zhongzhuanrukutime, de.zhongzhuanzhanchukutime, de.historybranchname, ");
+		sbField.append("de.shouldfare, de.infactfare, de.tpstranscwb ");
+		
+		String sql = "SELECT " + sbField.toString() + " FROM express_ops_cwb_detail as de right join commen_cwb_order_tail as ds on de.cwb=ds.cwb where de.state=1 ";
+		//Modified end
 
 		if (tail.getBegintime() != null && tail.getCurquerytimecolumn() != null) {
 
@@ -2133,8 +2160,6 @@ public class CwbDAO {
 		}
 		
 		sql += " limit " + page * Page.EXCEL_PAGE_NUMBER + " ," + Page.EXCEL_PAGE_NUMBER;
-
-		System.out.println("sql:" + sql);
 
 		logger.info("综合查询统计离线导出sql:{}", sql);
 
