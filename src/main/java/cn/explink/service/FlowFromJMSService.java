@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.explink.b2c.tools.JacksonMapper;
+import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrderEditInfo;
 import cn.explink.dao.CwbDAO;
@@ -339,6 +340,7 @@ public class FlowFromJMSService {
 	public void saveAll(String parm, int isSaveFlowAndState) {
 
 		logger.debug("orderFlow oms 环节信息处理,{}", parm);
+		
 		try {
 
 			DmpOrderFlow orderFlow = dmpOrderFlowReader.readValue(parm);
@@ -354,7 +356,9 @@ public class FlowFromJMSService {
 				return;
 			}
 
+			//创建或修改订单
 			saveFlowcreCwbOrder(orderFlow, dmpcwbOrder, deliveryState);
+			
 			if (isSaveFlowAndState == 1) {// 存储flow表
 				saveFlowcreOrderFlow(orderFlow, dmpcwbOrder);
 			}
@@ -421,7 +425,7 @@ public class FlowFromJMSService {
 
 	// SaveFlow用到的保存订单表
 	private void saveFlowcreCwbOrder(DmpOrderFlow dmpOrderFlow, DmpCwbOrder order, DmpDeliveryState deliveryState) {
-		logger.info("save orderDetail----------");
+		logger.info("FlowFromJMSService save orderDetail----cwb:{},flowordertype:{},crdate:{}------", dmpOrderFlow.getCwb(), dmpOrderFlow.getFlowordertype());
 		String emaildates = order.getEmaildate() != null && !"".equals(order.getEmaildate()) ? order.getEmaildate() : "";
 		CwbOrder cwborder = new CwbOrder();
 		cwborder.setCwb(dmpOrderFlow.getCwb());
@@ -532,16 +536,29 @@ public class FlowFromJMSService {
 		cwborder.setTpstranscwb(order.getTpstranscwb());
 		//【修改】orderSource用于区分是否唯品会订单【周欢】2016-07-13
 		cwborder.setOrderSource(order.getOrderSource());
-		if (cwbDAO.getCwbByCwbCount(dmpOrderFlow.getCwb()) > 0) {
-			cwborder = setOrder(cwborder, deliveryState);
-			cwbDAO.updateCwbOrder(cwborder);
+		
+		//Modified by leoliao at 2016-07-19 判断解决MQ消费顺序导致订单表数据被前一操作覆盖的问题
+		CwbOrder cwbOrderFromDB = cwbDAO.getCwbByCwb(dmpOrderFlow.getCwb());
+		//if (cwbDAO.getCwbByCwbCount(dmpOrderFlow.getCwb()) > 0) {
+		if (cwbOrderFromDB != null) {
+			String credateFlow = DateTimeUtil.formatDate(dmpOrderFlow.getCredate(), "yyyy-MM-dd HH:mm:ss");
+			String nowtimeCwb  = cwbOrderFromDB.getNowtime(); //订单操作时间
+			
+			logger.info("FlowFromJMSService.saveFlowcreCwbOrder flow createtime:{},cwb nowtime:{}", credateFlow, nowtimeCwb);
+			
+			if(nowtimeCwb.compareTo(credateFlow) <= 0){
+				//订单的上一次操作时间在当前的操作时间之前更新订单表
+				cwborder = setOrder(cwborder, deliveryState);
+				cwbDAO.updateCwbOrder(cwborder);
+			}
 		} else {
 			cwbDAO.creCwbOrder(cwborder);
 		}
+		//Modified end
 	}
 
 	private void saveFlowcreOrderFlow(DmpOrderFlow orderFlow, DmpCwbOrder dmpCwbOrder) {
-		logger.info("RE: save FlowcreOrder");
+		logger.info("RE(cwb={},flowordertype={}): save FlowcreOrder", orderFlow.getCwb(), orderFlow.getFlowordertype());
 		OrderFlow of = new OrderFlow();
 		of.setFloworderid(orderFlow.getFloworderid());
 		of.setCwb(orderFlow.getCwb());
