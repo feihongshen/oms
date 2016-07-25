@@ -189,7 +189,8 @@ public class TrackSendToTPSService {
 			//中转出站
 			tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ZhongZhuanChuKuSaoMiao.getValue());
 			setReason(req,cwbOrder.getFirstchangereasonid(),cwbOrder.getChangereasonid());
-		}else if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()){
+		//edit by zhouhuan 急速退增加已反馈的状态给tps  2016-07-25
+		}else if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiShenHe.getValue()||orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiFanKui.getValue()){
 			if(ds==null){
 				throw new RuntimeException("归班反馈结果报文数据为空.");
 			}
@@ -534,7 +535,7 @@ public class TrackSendToTPSService {
 					DoTrackFeedbackRequest req=prepareRequest(tpsno,orderFlow,deliveryState);
 					if(req!=null){
 						send(req,3000);
-						this.logger.info("发送领货成功,cwb="+orderFlow.getCwb());
+						this.logger.info("发送反馈成功,cwb="+orderFlow.getCwb());
 					}else{
 						result="此订单轨迹环节忽略不处理";
 					}
