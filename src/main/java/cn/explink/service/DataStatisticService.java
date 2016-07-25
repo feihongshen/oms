@@ -1866,13 +1866,13 @@ public class DataStatisticService {
 		if (down.getModelid() == ModelEnum.KeHuFaHuoTongJi.getValue()) {// 客户发货统计
 			this.KeHuFaHuoTongJi(down);
 		}
-		if (down.getModelid() == ModelEnum.KeHuFaHuoHuiZong.getValue()) {// 客户发货统计
+		if (down.getModelid() == ModelEnum.KeHuFaHuoHuiZong.getValue()) {// 客户发货汇总
 			this.KeHuFaHuoHuiZong(down);
 		}
-		if (down.getModelid() == ModelEnum.ZongHeChaXun.getValue()) {// 客户发货统计
+		if (down.getModelid() == ModelEnum.ZongHeChaXun.getValue()) {// 综合查询
 			this.ZongHeChaXunExcel(down);
 		}
-		if (down.getModelid() == ModelEnum.DanliangChaxun.getValue()) {
+		if (down.getModelid() == ModelEnum.DanliangChaxun.getValue()) {// 单量查询
 			this.excelDanliangChaxun(down);
 		}
 
