@@ -83,7 +83,7 @@ public class TrackSendToTPSService {
 		        String customeridsCfg = orderTraceToTPSCfg.getCustomerids();
 		        if(customeridsCfg!= null && !customeridsCfg.trim().equals("")){
 		        	//加载临时表数据
-			        List<OrderTrackToTPSVo> rowList=orderTrackToTPSDAO.getTrackListToSend(customeridsCfg,20,3000);
+		        	List<OrderTrackToTPSVo> rowList=orderTrackToTPSDAO.getTrackListToSend(customeridsCfg,orderTraceToTPSCfg.getTrackMaxTryTime(),orderTraceToTPSCfg.getSendMaxCount());
 			        //处理数据
 			        handleData(rowList);
 		        }else{
@@ -512,9 +512,6 @@ public class TrackSendToTPSService {
 			}else{
 				this.orderTrackToTPSDAO.saveOrderTrack(vo);
 			}
-			
-			
-			
 		} catch (Exception e) {
 			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
 		}
@@ -540,6 +537,7 @@ public class TrackSendToTPSService {
 				if(!tpsno.isEmpty()){
 					DoTrackFeedbackRequest req=prepareRequest(tpsno,orderFlow,deliveryState);
 					if(req!=null){
+						logger.info("上传轨迹信息cwb={}轨迹报文：{}", orderFlow.getCwb(), com.alibaba.fastjson.JSONObject.toJSONString(req));
 						send(req,3000);
 						this.logger.info("发送反馈成功,cwb="+orderFlow.getCwb());
 					}else{
@@ -547,8 +545,8 @@ public class TrackSendToTPSService {
 					}
 				}
 		} catch (Exception e) {
-			result="发送领货轨迹到TPS时出错.原因:"+e.getMessage();
 			this.logger.error("发送领货轨迹到TPS时出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
+			result="发送领货轨迹到TPS时出错.原因:"+e.getMessage();
 		}
 		
 		return result;

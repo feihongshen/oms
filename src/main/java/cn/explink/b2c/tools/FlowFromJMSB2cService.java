@@ -216,6 +216,7 @@ public class FlowFromJMSB2cService {
 			if(cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb()!=null 
 					&&!cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb().isEmpty() 
 					&&Integer.parseInt(cwbOrderWithDeliveryState.getCwbOrder().getCwbordertypeid())!=6){
+				logger.info("轨迹存入tps轨迹推送接口表开始，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
 				trackSendToTPSService.saveOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
 				logger.info("轨迹存入tps轨迹推送接口表成功，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
 			}else{

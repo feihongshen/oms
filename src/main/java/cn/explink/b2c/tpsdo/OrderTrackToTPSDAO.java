@@ -82,7 +82,7 @@ public class OrderTrackToTPSDAO {
 	}
 
 	public List<OrderTrackToTPSVo> getTrackListToSend(String customerids,int maxTry, int size) {
-		String sql = "select * from express_ops_ordertrack_to_tps where status in (1,3) and customerid in ("+customerids+") "
+		String sql = "select * from express_ops_ordertrack_to_tps where customerid in ("+customerids+") and status in (1,3)  "
 				+ "and trytime<? and ifnull(tpstranscwb,'')<>'' order by tracktime limit ?";
 		List<OrderTrackToTPSVo> list = jdbcTemplate.query(sql, new OrderTrackToTPSVoMapper(), maxTry,size);
 		return list;
