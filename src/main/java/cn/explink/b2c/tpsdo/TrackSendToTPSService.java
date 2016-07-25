@@ -492,22 +492,28 @@ public class TrackSendToTPSService {
 			}
 			
 			//【修改】唯品会，极速退,归班反馈为上门退成功之后的订单轨迹信息立马推送给tps【周欢】2016-07-13
-			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiFanKui.getValue() 
-					&& deliveryState.getDeliveryState().getDeliverystate()==2 
-					&& deliveryState.getCwbOrder().getOrderSource()==2
-					&& deliveryState.getCwbOrder().getCwbordertypeid().equals("2")){
-				String sendTpsResult=sendFlowToTps(orderFlow, deliveryState);
-				if(sendTpsResult==null){
-					vo.setStatus(2);
-					vo.setTrytime(1);
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiFanKui.getValue()){
+				if(deliveryState.getDeliveryState().getDeliverystate()==2 
+						&& deliveryState.getCwbOrder().getOrderSource()==2
+						&& deliveryState.getCwbOrder().getCwbordertypeid().equals("2")){
+					String sendTpsResult=sendFlowToTps(orderFlow, deliveryState);
+					if(sendTpsResult==null){
+						vo.setStatus(2);
+						vo.setTrytime(1);
+					}else{
+						vo.setStatus(3);
+						vo.setTrytime(1);
+						vo.setErrinfo(sendTpsResult);
+					}
+					this.orderTrackToTPSDAO.saveOrderTrack(vo);
 				}else{
-					vo.setStatus(3);
-					vo.setTrytime(1);
-					vo.setErrinfo(sendTpsResult);
+					return;
 				}
+			}else{
+				this.orderTrackToTPSDAO.saveOrderTrack(vo);
 			}
 			
-			this.orderTrackToTPSDAO.saveOrderTrack(vo);
+			
 			
 		} catch (Exception e) {
 			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
