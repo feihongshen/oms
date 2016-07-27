@@ -2,6 +2,7 @@ package cn.explink.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import cn.explink.enumutil.BranchEnum;
 
@@ -54,6 +55,10 @@ public class Branch implements Serializable {
 	private String brancharea; // 区县
 	private String tpsbranchcode;//上传tps时所用的机构编码
 
+	private String updateUser;
+	
+	private Date updateTime;
+	
 
 	public String getBrancharea() {
 		return brancharea;
@@ -407,6 +412,22 @@ public class Branch implements Serializable {
 
 	public void setTpsbranchcode(String tpsbranchcode) {
 		this.tpsbranchcode = tpsbranchcode;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
 	}
 	
 	
