@@ -93,7 +93,7 @@ public class EpaiCoreService_Download {
 																				// 请求dmp，返回订单集合
 
 			logger.info("返回-上游DMP返回OrderListDto={}", responseJson);
-
+			// 这上if逻辑会有问题。responseJson 返回 的值会为[]
 			if (responseJson == null||responseJson.isEmpty()) {
 				String cwbs="";
 				for(WarehouseToCommen co:datalist){
