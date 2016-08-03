@@ -396,17 +396,17 @@ public class BulidVipShopB2cData {
 
 		List<OrderGoods> orderGoodslist = JacksonMapper.getInstance().readValue(goodDetails, new TypeReference<List<OrderGoods>>() {
 		});
-		// delete by jian_xie,2016-07-31,按pjd实际返回反馈，无需做揽退为0的兼容，会存在实际揽退跟反馈不一致，造成多返钱给会员。
-//		if (orderGoodslist != null && orderGoodslist.size() > 0) {
-//			for (OrderGoods good : orderGoodslist) {
-//				if (delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue()) {
-//					if (good.getShituicount() == 0 && good.getWeituicount() == 0) {
-//						good.setShituicount(Integer.valueOf(good.getGoods_num()));
-//					}
-//				}
-//
-//			}
-//		}
+		
+		if (orderGoodslist != null && orderGoodslist.size() > 0) {
+			for (OrderGoods good : orderGoodslist) {
+				if (delivery_state == DeliveryStateEnum.ShangMenTuiChengGong.getValue()) {
+					if (good.getShituicount() == 0 && good.getWeituicount() == 0) {
+						good.setShituicount(Integer.valueOf(good.getGoods_num()));
+					}
+				}
+
+			}
+		}
 		String details = JacksonMapper.getInstance().writeValueAsString(orderGoodslist);
 		return details;
 	}
