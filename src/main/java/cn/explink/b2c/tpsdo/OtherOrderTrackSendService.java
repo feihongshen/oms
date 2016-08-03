@@ -462,6 +462,13 @@ public class OtherOrderTrackSendService {
 				return;
 			}
 			
+			//Added by leoliao at 2016-08-03 归班反馈操作不保存在外单轨迹表
+			if(orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue()){
+				this.logger.info("归班反馈操作不保存到外单轨迹表,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				return;
+			}
+			//Added end
+			
 			int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
 			if(tpsOperateType<0
 					&&orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
