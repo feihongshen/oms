@@ -68,12 +68,13 @@ public class EpaiCoreService_Callback {
 			}
 
 			String cwbstrs = "";
+			logger.info("回调反馈执行cwbarrs为:{}", cwbarrs);
 			for (String cwb : cwbarrs.split(",")) {
 				cwbstrs += "'" + cwb + "',";
 			}
 
 			warehouseCommenDAO.updateCommenCwbListBycwbs(cwbstrs.length() > 0 ? cwbstrs.substring(0, cwbstrs.length() - 1) : "-1", DateTimeUtil.getNowTime());
-
+			logger.info("回调反馈执行更新stateTime成功{}", cwbstrs);
 			returnDto.setErrCode(EpaiExpEmum.Success.getErrCode());
 			returnDto.setErrMsg(EpaiExpEmum.Success.getErrMsg());
 
