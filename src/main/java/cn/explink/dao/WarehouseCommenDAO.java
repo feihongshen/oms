@@ -56,8 +56,13 @@ public class WarehouseCommenDAO {
 	}
 
 	public void updateWarehouseToCommen(long id, String cwb, long startbranchid, long nextbranchid, String commencode, String credate, long emaildateid) {
-		jdbcTemplate.update("update commen_cwb_order set cwb=?,startbranchid=?,nextbranchid=?,commencode=?,credate=?,emaildateid=?,statetime='' " + " where id=?  ", cwb, startbranchid, nextbranchid,
-				commencode, credate, emaildateid, id);
+		//Modified by leoliao at 2016-08-06 不修改statetime和credate字段值，因为DMP在出库或到货扫描后进行承运商出库确认操作，会发新建或更新数据到OMS
+		/*jdbcTemplate.update("update commen_cwb_order set cwb=?,startbranchid=?,nextbranchid=?,commencode=?,credate=?,emaildateid=?,statetime='' " + " where id=?  ", cwb, startbranchid, nextbranchid,
+				commencode, credate, emaildateid, id);*/
+		
+		jdbcTemplate.update("update commen_cwb_order set cwb=?,startbranchid=?,nextbranchid=?,commencode=?,emaildateid=? where id=? ", cwb, startbranchid, nextbranchid,
+				commencode, emaildateid, id);
+		//Modified end
 	}
 
 	public WarehouseToCommen getCountByid(long id) {
