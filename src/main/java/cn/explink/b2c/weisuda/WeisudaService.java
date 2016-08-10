@@ -44,12 +44,14 @@ import cn.explink.b2c.weisuda.xml.RootSMT;
 import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.MqExceptionDAO;
+import cn.explink.dao.OrderflowExceptionDAO;
 import cn.explink.dao.WeisudaDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.BranchWithOld;
 import cn.explink.domain.Customer;
 import cn.explink.domain.MqExceptionBuilder;
 import cn.explink.domain.MqExceptionBuilder.MessageSourceEnum;
+import cn.explink.domain.OrderflowException;
 import cn.explink.domain.SystemInstall;
 import cn.explink.domain.User;
 import cn.explink.enumutil.BranchEnum;
@@ -66,6 +68,8 @@ import cn.explink.util.DateTimeUtil;
 import cn.explink.util.JsonUtil;
 import cn.explink.util.RestHttpServiceHanlder;
 import cn.explink.util.MD5.MD5Util;
+
+import com.alibaba.fastjson.JSON;
 
 @Service
 public class WeisudaService {
@@ -87,6 +91,8 @@ public class WeisudaService {
 	WeiSuDaWaiDanService weiSuDaWaiDanService;
 	@Autowired
 	TPOSendDoInfService tPOSendDoInfService;
+	@Autowired
+	OrderflowExceptionDAO orderflowExceptionDAO;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -414,7 +420,7 @@ public class WeisudaService {
 			String cwb = cwbOrderWithDeliveryState.getCwbOrder().getCwb();
 			//boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
 			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
-				updateOrdersMethod(cwbOrderWithDeliveryState, weisuda, cwb);
+				updateOrdersMethod(orderFlow, cwbOrderWithDeliveryState, weisuda, cwb);
 				return; //如果是唯品会订单，签收信息修改通知品骏达后就不需要执行后面的代码了 added by zhouguoting 2016/03/16
 			} else {
 				this.logger.info("唯速达_04未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
@@ -429,7 +435,7 @@ public class WeisudaService {
 			}
 			boolean filterCustomerflag = tPOSendDoInfService.isThirdPartyCustomer(customerid);
 			if(filterCustomerflag){
-				updateOrdersMethod(cwbOrderWithDeliveryState, weisuda, cwb);
+				updateOrdersMethod(orderFlow, cwbOrderWithDeliveryState, weisuda, cwb);
 			}else{
 				this.logger.info("唯速达_04当前客户未设置为外单客户，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
 			}
@@ -450,7 +456,7 @@ public class WeisudaService {
 
 
 
-	private void updateOrdersMethod(CwbOrderWithDeliveryState cwbOrderWithDeliveryState, Weisuda weisuda, String cwb) {
+	private void updateOrdersMethod(DmpOrderFlow orderFlow, CwbOrderWithDeliveryState cwbOrderWithDeliveryState, Weisuda weisuda, String cwb) {
 		try {
 			WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);
 			if (weisudaCwb != null) {
@@ -540,6 +546,10 @@ public class WeisudaService {
 				else{
 					this.logger.info("唯速达_04包裹修改信息接口修改已取消，原因：下发品骏达接口表标示已签收！cwb={}", cwb);
 				}
+			}else{
+				//Added by leoliao at 2016-08-10 保存到异常表以便重发(可能由于MQ消费顺序问题导致weisuda接口表暂时没数据)
+				saveOrderinfoException(cwb, orderFlow);
+				//Added end
 			}
 		} catch (Exception e) {
 			this.weisudaDAO.updataWeisudaCwbIsqianshou(cwb, "2", "包裹签收信息修改_失败_异常！");
@@ -1018,7 +1028,13 @@ public class WeisudaService {
 								}
 
 							}
+						}else{
+							this.logger.info("唯速达_13上门退签收信息修改:订单已签收(cwb={})", cwb);
 						}
+					}else{
+						//Added by leoliao at 2016-08-10 保存到异常表以便重发(可能由于MQ消费顺序问题导致weisuda接口表暂时没数据)
+						saveOrderinfoException(cwb, orderFlow);
+						//Added end
 					}
 				} catch (Exception e) {
 					this.weisudaDAO.updataWeisudaCwbIsqianshou(cwb, "2", "上门退签收信息修改_失败_异常！");
@@ -1495,4 +1511,137 @@ public class WeisudaService {
 		String response = this.check(weisuda, "data", sbSend.toString(), WeisudsInterfaceEnum.getback_confirmAppOrders.getValue());
 		this.logger.info("[批量发送]唯速达_12APP上门退签收信息同步结果反馈接口 返回response={}", response);
 	}
+	
+	/**
+	 * 从OMS轨迹异常表重推归班反馈(签收信息)给PJD
+	 * @author leo01.liao
+	 */
+	public void resendDeliveryStateToPJD(){
+		List<OrderflowException> listOfException = this.orderflowExceptionDAO.getOrderflowException(20, 200);
+		if(listOfException == null || listOfException.isEmpty()){
+			this.logger.info("OMS轨迹异常表里没有需要重推的订单");
+			return;
+		}
+		
+		for(OrderflowException ofException : listOfException){
+			long   id  = 0;
+			String cwb = "";
+			int    sendResult = 1;
+			String remarks    = "";
+			
+			try{
+				id  = ofException.getId();
+				cwb = ofException.getCwb();
+				
+				DmpOrderFlow dmpOrderFlow = JSON.parseObject(ofException.getOrderflow(), DmpOrderFlow.class);
+				if(dmpOrderFlow == null){
+					remarks    = "订单(cwb="+cwb+")orderflow字段值转对象后为空";
+					sendResult = 2;
+					updateOrderinfoException(id, sendResult, remarks);
+					continue;
+				}
+				
+				CwbOrderWithDeliveryState cwbOrderWithDeliveryState = JacksonMapper.getInstance().readValue(dmpOrderFlow.getFloworderdetail(), CwbOrderWithDeliveryState.class);
+				if(cwbOrderWithDeliveryState == null){
+					remarks    = "订单(cwb="+cwb+")orderflow字段值的floworderdetail属性转对象后为空";
+					sendResult = 2;
+					updateOrderinfoException(id, sendResult, remarks);
+					continue;
+				}
+				
+				this.logger.info("进入执行OMS轨迹异常表重推归班反馈(签收信息)给PJD：cwb={},flowordertype={}", cwb, dmpOrderFlow.getFlowordertype());
+				
+				if (dmpOrderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue() && this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+					this.logger.info("OMS轨迹异常表重推归班反馈(签收信息)给PJD(cwb={})开始", cwb);
+					
+					this.updateOrders(cwbOrderWithDeliveryState, dmpOrderFlow);
+					this.getback_updateOrders(cwbOrderWithDeliveryState, dmpOrderFlow);
+					
+					this.logger.info("OMS轨迹异常表重推归班反馈(签收信息)给PJD(cwb={})完成", cwb);
+					
+					WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);
+					if(weisudaCwb != null){
+						remarks    = "OMS轨迹异常表重推归班反馈(签收信息)给PJD(cwb=" + cwb + ")完成" ;
+						sendResult = 1;
+					}else{
+						remarks    = "接口表express_b2cdata_weisuda没有订单(cwb=" + cwb + "),需重发!" ;
+						sendResult = 2;
+					}
+					
+					updateOrderinfoException(id, sendResult, remarks);
+				}
+			}catch(Exception ex){
+				remarks    = "OMS轨迹异常表重推归班反馈(签收信息)给PJD异常(cwb=" + cwb + ")：" + ex.getMessage();
+				sendResult = 2;
+				updateOrderinfoException(id, sendResult, remarks);
+				
+				this.logger.error("OMS轨迹异常表重推归班反馈(签收信息)给PJD异常:cwb=" + cwb, ex);
+			}
+		}
+		
+	}
+	
+	/**
+	 * 保存到异常表以便重发(可能由于MQ消费顺序问题导致weisuda接口表暂时没数据)
+	 * @author leo01.liao
+	 * @param cwb
+	 * @param dmpOrderFlow
+	 */
+	private void saveOrderinfoException(String cwb, DmpOrderFlow dmpOrderFlow){
+		try{
+			this.logger.info("唯速达签收信息修改:保存轨迹数据到异常表(cwb={})", cwb);
+			
+			//防重复处理
+			List<OrderflowException> listOfException = orderflowExceptionDAO.getOrderflowException(cwb);			
+			if(listOfException != null && !listOfException.isEmpty()){
+				boolean isExist = false;
+				for(OrderflowException ofEx : listOfException){
+					DmpOrderFlow dmpOf = JSON.parseObject(ofEx.getOrderflow(), DmpOrderFlow.class);
+					if(dmpOf == null){
+						continue;
+					}
+					
+					//if(dmpOf.getFlowordertype() == dmpOrderFlow.getFlowordertype()){
+					if(dmpOf.getFloworderid() == dmpOrderFlow.getFloworderid()){
+						isExist = true;
+						break;
+					}
+				}
+				
+				if(isExist){
+					this.logger.info("唯速达签收信息修改:轨迹数据在异常表(cwb={})已存在,不再重复保存!", cwb);
+					return;
+				}
+			}
+			
+			String strOrderflow = JSON.toJSONString(dmpOrderFlow);
+			
+			OrderflowException ofException = new OrderflowException();
+			ofException.setCwb(cwb);
+			ofException.setRemarks("接口表express_b2cdata_weisuda没有订单(cwb=" + cwb + "),需重发!");
+			ofException.setSendCount(0);
+			ofException.setSendResult(0);
+			ofException.setOrderflow(strOrderflow);							
+			orderflowExceptionDAO.create(ofException);
+			
+			this.logger.info("唯速达签收信息修改:保存轨迹数据到异常表(cwb={})成功", cwb);
+		}catch(Exception ex){
+			this.logger.error("唯速达签收信息修改:保存轨迹数据到异常表出错(cwb=" + cwb + ")", ex);
+		}
+	}
+	
+	/**
+	 * 修改发送记录
+	 * @param id
+	 * @param sendResult
+	 * @param remarks
+	 */
+	private void updateOrderinfoException(long id, int sendResult, String remarks){
+		try{
+			orderflowExceptionDAO.updateResult(id, sendResult, remarks);
+		}catch(Exception ex){
+			this.logger.error("修改OMS轨迹异常表出错(id=" + id + ")", ex);
+		}
+	}
+	
 }
