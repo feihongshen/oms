@@ -91,6 +91,7 @@
 							 <ref bean="shenzhoushuma"/>
 							 <ref bean="zhemengTrack"/>
 							 <ref bean="doTime_sendOrderTrackToTPS"/>
+							 <ref bean="doTime_resendDeliveryStateToPJD"/>
 							 
 			           </list>            
 	               </property>       
@@ -1391,6 +1392,29 @@
         </property>
         <property name="targetMethod">
             <value>sendOrderTrackToTPS</value>
+        </property>
+        <property name="concurrent" value="false" />
+    </bean>
+	
+	<!-- 从OMS轨迹异常表重推归班反馈(签收信息)给PJD -->	
+	<bean id="doTime_resendDeliveryStateToPJD" class="cn.explink.util.DatabaseInitCronTriggerBean"
+        dependency-check="default">
+        <property name="jobDetail">
+            <ref bean="resendDeliveryStateToPJD" />
+        </property>
+        <property name="cronExpression">
+            <value>0 */13 * * * ?</value>
+        </property>
+        <property name="description" value="从OMS轨迹异常表重推归班反馈(签收信息)给PJD"/>
+    </bean>
+
+    <bean id="resendDeliveryStateToPJD" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+        dependency-check="default">
+        <property name="targetBean">
+            <value>updateEMS</value>
+        </property>
+        <property name="targetMethod">
+            <value>resendDeliveryStateToPJD</value>
         </property>
         <property name="concurrent" value="false" />
     </bean>

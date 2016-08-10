@@ -264,6 +264,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("shenzhoushuma",0);
 		JobUtil.threadMap.put("zhemengTrack",0);
 		JobUtil.threadMap.put("orderTrackSendToTPS",0);
+		JobUtil.threadMap.put("resendDeliveryStateToPJD",0);
 	}
 
 	/**
@@ -280,6 +281,7 @@ public class JobUtil {
 		JobUtil.threadMap.put("shenzhoushuma",0);
 		JobUtil.threadMap.put("zhemengTrack",0);
 		JobUtil.threadMap.put("orderTrackSendToTPS",0);
+		JobUtil.threadMap.put("resendDeliveryStateToPJD",0);
 		this.logger.info("系统自动初始化定时器完成");
 	}
 
@@ -1318,6 +1320,27 @@ public class JobUtil {
 			JobUtil.threadMap.put("orderTrackSendToTPS", 0);
 		}
 		this.logger.info("执行了【订单轨迹推送给tps】定时器任务!");
+	}
+	
+	/**
+	 * 从OMS轨迹异常表重推归班反馈(签收信息)给PJD
+	 * @author leo01.liao
+	 */
+	public void resendDeliveryStateToPJD(){
+		if (JobUtil.threadMap.get("resendDeliveryStateToPJD") == 1) {
+			this.logger.warn("本地定时器没有执行完毕，跳出resendDeliveryStateToPJD");
+			return;
+		}
+		JobUtil.threadMap.put("resendDeliveryStateToPJD", 1);
+		
+		try{
+			this.weisudaService.resendDeliveryStateToPJD();
+		}catch(Exception e){
+			this.logger.error("从OMS轨迹异常表重推归班反馈(签收信息)给PJD定时器异常!异常原因:{}",e);
+		}finally {
+			JobUtil.threadMap.put("resendDeliveryStateToPJD", 0);
+		}
+		this.logger.info("执行了【从OMS轨迹异常表重推归班反馈(签收信息)给PJD】定时器任务!");
 	}
 
 }
