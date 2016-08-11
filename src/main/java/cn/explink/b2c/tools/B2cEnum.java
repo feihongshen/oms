@@ -80,6 +80,27 @@ public enum B2cEnum {
 	VipShop_cangku9(29001, "唯品会_仓库9", "vipshop_cangku9"),
 	VipShop_cangku10(29002, "唯品会_仓库10", "vipshop_cangku10"),
 	VipShop_cangku11(29003, "唯品会_仓库11", "vipshop_cangku11"),
+	
+	VipShop_cangku12(29004, "唯品会_仓库12", "vipshop_cangku12"),//添加20个接口----刘武强20160811
+	VipShop_cangku13(29005, "唯品会_仓库13", "vipshop_cangku13"),
+	VipShop_cangku14(29006, "唯品会_仓库14", "vipshop_cangku14"),
+	VipShop_cangku15(29007, "唯品会_仓库15", "vipshop_cangku15"),
+	VipShop_cangku16(29008, "唯品会_仓库16", "vipshop_cangku16"),
+	VipShop_cangku17(29009, "唯品会_仓库17", "vipshop_cangku17"),
+	VipShop_cangku18(29010, "唯品会_仓库18", "vipshop_cangku18"),
+	VipShop_cangku19(29011, "唯品会_仓库19", "vipshop_cangku19"),
+	VipShop_cangku20(29012, "唯品会_仓库20", "vipshop_cangku20"),
+	VipShop_cangku21(29013, "唯品会_仓库21", "vipshop_cangku21"),
+	VipShop_cangku22(29014, "唯品会_仓库22", "vipshop_cangku22"),
+	VipShop_cangku23(29015, "唯品会_仓库23", "vipshop_cangku23"),
+	VipShop_cangku24(29016, "唯品会_仓库24", "vipshop_cangku24"),
+	VipShop_cangku25(29017, "唯品会_仓库25", "vipshop_cangku25"),
+	VipShop_cangku26(29018, "唯品会_仓库26", "vipshop_cangku26"),
+	VipShop_cangku27(29019, "唯品会_仓库27", "vipshop_cangku27"),
+	VipShop_cangku28(29020, "唯品会_仓库28", "vipshop_cangku28"),
+	VipShop_cangku29(29021, "唯品会_仓库29", "vipshop_cangku29"),
+	VipShop_cangku30(29022, "唯品会_仓库30", "vipshop_cangku30"),
+	VipShop_cangku31(29023, "唯品会_仓库31", "vipshop_cangku31"),
 	/*------------------------注意！ 【29】开头的枚举约定为唯品会备用！-----------------------------------*/
 	
 	SuNing(20127,"苏宁易购","suning"),
