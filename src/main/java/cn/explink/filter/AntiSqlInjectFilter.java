@@ -111,7 +111,7 @@ public class AntiSqlInjectFilter extends HttpRequestWordFilter {
 			return content;
 		}
 		// 过滤information_schema
-		String tempContent = content.replace("'", "\\'").replaceAll("(?i)information_schema", "ＩＮＦＯＲＭＡＴＩＯＮ＿ＳＣＨＥＭＡ"); 
+		String tempContent = content.replaceAll("(?i)information_schema", "ＩＮＦＯＲＭＡＴＩＯＮ＿ＳＣＨＥＭＡ"); 
 		// 下面是正则替换
 		StringBuffer regxpSb = new StringBuffer();
 		// 过滤select from
