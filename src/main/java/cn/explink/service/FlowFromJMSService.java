@@ -27,6 +27,7 @@ import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrderEditInfo;
+import cn.explink.b2c.weisuda.WeisudaCwb;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.CwbOrderTailDao;
 import cn.explink.dao.CwbTiHuoDAO;
@@ -47,6 +48,7 @@ import cn.explink.dao.OrderFlowDAO;
 import cn.explink.dao.TuiHuoChuZhanDao;
 import cn.explink.dao.TuiHuoZhanRuKuDao;
 import cn.explink.dao.UpdateMessageDAO;
+import cn.explink.dao.WeisudaDAO;
 import cn.explink.dao.ZhongZhuanDAO;
 import cn.explink.domain.Branch;
 import cn.explink.domain.CwbOrder;
@@ -79,7 +81,6 @@ import cn.explink.jms.dto.DmpCwbOrder;
 import cn.explink.jms.dto.DmpDeliveryState;
 import cn.explink.jms.dto.DmpOrderFlow;
 import cn.explink.util.DateTimeUtil;
-import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 
 @Service
 public class FlowFromJMSService {
@@ -142,6 +143,9 @@ public class FlowFromJMSService {
 
 	@Autowired
 	private MqExceptionDAO mqExceptionDAO;
+	
+	@Autowired
+	WeisudaDAO weisudaDAO;
 	
 	@Autowired
 	TPOSendDoInfService tPOSendDoInfService;
@@ -1759,6 +1763,24 @@ public class FlowFromJMSService {
 			deliveryZhiLiuDAO.deleteDeliveryZhiLiu(cwb);
 			// 妥投订单
 			deliverySuccessfulDAO.deleteDeliverySuccessful(cwb);
+			
+			//Added by leoliao at 2016-08-16 重置反馈时在weisuda接口表新增记录(解决重置反馈后没有同步反馈结果给品骏达)
+			WeisudaCwb weisudaCwb = weisudaDAO.getWeisudaCwbByOrder(cwb);
+			if(weisudaCwb != null){
+				String currTm = DateTimeUtil.getNowTime();
+				weisudaCwb.setIstuisong("1");
+				weisudaCwb.setIsqianshou("0");
+				weisudaCwb.setBound_time(currTm);
+				weisudaCwb.setOperationTime(DateTimeUtil.getNowTime());
+				weisudaCwb.setRemark("重置反馈自动新增的记录");
+				
+				weisudaDAO.creWeisuda(weisudaCwb);
+				
+				logger.info("重置反馈往唯速达接口表新增订单(cwb={})完成", cwb);
+			}else{
+				logger.info("重置反馈时weisuda接口表不存在订单号为{}的订单", cwb);
+			}
+			//Added end
 			
 			//外单时把重置反馈状态推给TPS
 			if(customerid>0){

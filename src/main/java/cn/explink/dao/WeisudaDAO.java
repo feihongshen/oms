@@ -195,4 +195,28 @@ public class WeisudaDAO {
 			return null;
 		}
 	}
+	
+	/**
+	 * 新增发给唯速达的订单
+	 * @author leo01.liao
+	 * @param weisudaCwb
+	 */
+	public void creWeisuda(WeisudaCwb weisudaCwb) {
+		String sql = "INSERT INTO express_b2cdata_weisuda (cwb, cwbordertypeid, courier_code, bound_time, istuisong, isqianshou, remark, operationTime, waidanjson, ordertype, sendedcount) "+
+	                 " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
+		this.jdbcTemplate.update(sql, weisudaCwb.getCwb(), weisudaCwb.getCwbordertypeid(), weisudaCwb.getCourier_code(), weisudaCwb.getBound_time(), 
+									  weisudaCwb.getIstuisong(), weisudaCwb.getIsqianshou(), weisudaCwb.getRemark(), weisudaCwb.getOperationTime(), 
+									  weisudaCwb.getWaidanjson(), weisudaCwb.getOrdertype());
+	}
+	
+	/**
+	 * 修改签收标识
+	 * @author leo01.liao
+	 * @param id
+	 * @param isqianshou
+	 */
+	public void updateIsqianshou(String id, String isqianshou, String remark) {
+		this.jdbcTemplate.update("update express_b2cdata_weisuda set isqianshou=?, remark=? where id=? ", isqianshou, remark, Long.parseLong(id));
+	}
+	
 }

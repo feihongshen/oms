@@ -148,6 +148,11 @@ public class WeisudaService {
 			
 			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
 				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
+				
+				//Added by leoliao at 2016-08-16 领货时更新接口表最新一条记录为已反馈(解决重置反馈后没有同步反馈结果给品骏达)
+				this.updateIsqianshou(orderFlow.getCwb(), "1", "领货时更新为已反馈");
+				//Added end
+				
 				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
 				User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
 				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime,0);
@@ -192,6 +197,11 @@ public class WeisudaService {
 			boolean filterCustomerflag = tPOSendDoInfService.isThirdPartyCustomer(customerid);
 			if(filterCustomerflag){
 				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
+				
+				//Added by leoliao at 2016-08-16 领货时更新接口表最新一条记录为已反馈(解决重置反馈后没有同步反馈结果给品骏达)
+				this.updateIsqianshou(orderFlow.getCwb(), "1", "领货时更新为已反馈");
+				//Added end
+				
 				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
 				User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
 				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime, 1);
@@ -1641,6 +1651,25 @@ public class WeisudaService {
 			orderflowExceptionDAO.updateResult(id, sendResult, remarks);
 		}catch(Exception ex){
 			this.logger.error("修改OMS轨迹异常表出错(id=" + id + ")", ex);
+		}
+	}
+	
+	/**
+	 * 更新接口表最新一条记录为已反馈
+	 * @param cwb
+	 */
+	private void updateIsqianshou(String cwb, String isqianshou, String remark){
+		try{
+			WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);
+			if(weisudaCwb == null || "1".equals(weisudaCwb.getIsqianshou())){
+				this.logger.info("更新weisuda接口表最新一条记录为已反馈(cwb={}):为空或已反馈", cwb);
+				return;
+			}
+			
+			this.weisudaDAO.updateIsqianshou(weisudaCwb.getId(), isqianshou, weisudaCwb.getRemark() + "," + remark);
+			this.logger.info("更新weisuda接口表最新一条记录为已反馈(cwb={})完成", cwb);
+		}catch(Exception ex){
+			this.logger.error("更新weisuda接口表最新一条记录为已反馈(cwb="+cwb+")", ex);
 		}
 	}
 	
