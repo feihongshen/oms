@@ -81,7 +81,7 @@ public class B2cJsonService {
 			this.logger.error("获取customer对象为空，return，当前订单号=" + orderFlow.getCwb() + ",customerid=" + cwbOrderWothDeliverystate.getCwbOrder().getCustomerid() + ",flowOrdertype=" + flowOrdertype);
 			return null;
 		}
-		if ((customer != null) && (customer.getB2cEnum() == null)) {
+		if ((customer != null) && (customer.getB2cEnum() == null || "0".equals(customer.getB2cEnum()))) {
 			this.logger.warn("未设置对接，customername=" + customer.getCustomername() + ",cwb=" + orderFlow.getCwb());
 			return null;
 		}

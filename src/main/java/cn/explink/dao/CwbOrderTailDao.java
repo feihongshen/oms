@@ -258,7 +258,7 @@ public class CwbOrderTailDao {
 
 		} else {
 			jdbcTemplate.update("UPDATE `commen_cwb_order_tail` SET " + "`newpaywayid`=?,`branchid`=?,`deliverybranchid`=?,`nextbranchid`=?,`deliverystate`=?,"
-					+ "`cwbstate`=?,`gobackstate`=?,flowordertype=?"
+					+ "`cwbstate`=?,`gobackstate`=?,flowordertype=?, customerid=?"
 					+ (!timeName.equals("") ? "," + timeName + "='" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderFlow.getCredate()) + "'" : " ") + " " + " WHERE `cwb`=?",
 					new PreparedStatementSetter() {
 						@Override
@@ -272,7 +272,8 @@ public class CwbOrderTailDao {
 							ps.setLong(6, del.getCwbstate());
 							ps.setLong(7, deliverystate == null ? 0 : deliverystate.getGcaid());
 							ps.setLong(8, del.getFlowordertype());
-							ps.setString(9, del.getCwb());
+							ps.setLong(9, del.getCustomerid());// 修改客户
+							ps.setString(10, del.getCwb());
 						}
 					});
 		}
