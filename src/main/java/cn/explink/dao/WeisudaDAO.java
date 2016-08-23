@@ -41,6 +41,12 @@ public class WeisudaDAO {
 		this.jdbcTemplate.update("INSERT INTO express_b2cdata_weisuda (cwb,cwbordertypeid,courier_code,operationTime,waidanjson,ordertype)" + " VALUES(?,?,?,?,?,?)", weisudaCwb.getCwb(), weisudaCwb.getCwbordertypeid(),
 				weisudaCwb.getCourier_code(), weisudaCwb.getOperationTime(),weisudaCwb.getWaidanjson(),orderType);
 	}
+	
+	//add by zhouhuan 2016-08-23
+	public void insertTPSOrderToWeisuda(WeisudaCwb weisudaCwb,int orderType ) {
+		this.jdbcTemplate.update("INSERT INTO express_b2cdata_weisuda (cwb,cwbordertypeid,courier_code,operationTime,waidanjson,ordertype,istuisong)" + " VALUES(?,?,?,?,?,?,1)", weisudaCwb.getCwb(), weisudaCwb.getCwbordertypeid(),
+				weisudaCwb.getCourier_code(), weisudaCwb.getOperationTime(),weisudaCwb.getWaidanjson(),orderType);
+	}
 
 	public List<WeisudaCwb> getWeisudaCwb(String istuisong,int orderType) {
 		try {
