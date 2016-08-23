@@ -363,6 +363,12 @@ public class SubExcuteWeisudaTask implements Runnable{
 			}else {
 				this.logger.info("唯速达_02请求dmp唯速达信息异常{},cwb={}", result, orderId);
 				this.weisudaDAO.updataWeisudaCwbIsqianshou(orderId, "2", result);
+				
+				//Added by leoliao at 2016-08-23 品骏达要求特别处理：上门退外单反馈同步成功信息
+				if("处理唯速达反馈请求异常:上门退类型的订单,不允许反馈为配送成功".equals(result)){
+					listOrderIdSuccess.add(orderId);
+				}
+				//Added end
 			}
 		}
 		
