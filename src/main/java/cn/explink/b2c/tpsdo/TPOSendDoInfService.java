@@ -96,7 +96,9 @@ public class TPOSendDoInfService {
 				
 				this.tPOSendDoInfDao.saveTPOSendDoInf(tPOSendDoInf);
 				
-			}						
+			} else {
+				logger.info("外单cwb={}对应的客户还没有配置为外单客户", orderFlow.getCwb());
+			}
 				
 		}
 	}
