@@ -1,8 +1,17 @@
 package cn.explink.enumutil;
 
 public enum DeliveryStateEnum {
-	PeiSongChengGong(1, "配送成功"), ShangMenTuiChengGong(2, "上门退成功"), ShangMenHuanChengGong(3, "上门换成功"), QuanBuTuiHuo(4, "拒收"), BuFenTuiHuo(5, "部分拒收"), ShangMenJuTui(7, "上门拒退"), HuoWuDiuShi(8, "货物丢失"), FenZhanZhiLiu(
-			6, "分站滞留"), ZhiLiuZiDongLingHuo(9, "滞留自动领货"), WeiFanKui(0, "未反馈"), DaiZhongZhuan(10, "待中转");
+	PeiSongChengGong(1, "配送成功"), 
+	ShangMenTuiChengGong(2, "上门退成功"), 
+	ShangMenHuanChengGong(3, "上门换成功"), 
+	QuanBuTuiHuo(4, "投递失败"), // 拒收修改为投递失败 modify by vic.liang@pjbest.com 2016-08-31
+	BuFenTuiHuo(5, "部分拒收"), 
+	ShangMenJuTui(7, "上门拒退"), 
+	HuoWuDiuShi(8, "货物丢失"), 
+	FenZhanZhiLiu(6, "分站滞留"), 
+	ZhiLiuZiDongLingHuo(9, "滞留自动领货"), 
+	WeiFanKui(0, "未反馈"), 
+	DaiZhongZhuan(10, "待中转");
 
 	private int value;
 	private String text;
