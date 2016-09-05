@@ -2,7 +2,6 @@ package cn.explink.b2c.tools;
 
 import java.text.MessageFormat;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +138,12 @@ public class B2cDataOrderFlowDetail {
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) {
 				return MessageFormat.format("货物已从[{0}]进行中转站出库", getBranchById(orderFlow.getBranchid()).getBranchname());
 			}
+			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.BingEmsTrans.getValue()) {
+				String emsTrans = this.getdmpDao.getEmsTransByCwb(orderFlow.getCwb());
+				return MessageFormat.format("货物在[{0}]转运邮政，单号：[{1}]", getBranchById(orderFlow.getBranchid()).getBranchname(),emsTrans);
+			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 

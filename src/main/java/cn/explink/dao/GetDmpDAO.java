@@ -1632,4 +1632,20 @@ public class GetDmpDAO {
 			}
 			return ds;
 		}
+	
+    /**
+     * 获取绑定的邮政运单号
+     * @param cwb
+     * @return
+     */
+	public String getEmsTransByCwb (String cwb) {
+		String emsTrans ="";
+		try {
+			emsTrans= JSONReslutUtil.getResultMessage(ResourceBundleUtil.dmpUrl + "/OMSInterface/getEmsTransByCwb/"+ cwb , "", "POST").toString();
+		} catch (Exception e) {
+			emsTrans = "";
+			this.logger.error("获取绑定的邮政运单号异常,cwb="+cwb,e);
+		}
+		return emsTrans;
+	}
 }
