@@ -127,6 +127,8 @@ public class FlowFromJMSB2cService {
 			this.flowList.add(FlowOrderTypeEnum.BaoGuoweiDao.getMethod()); // 包裹未到（亚马逊对接使用）
 			this.flowList.add(FlowOrderTypeEnum.ZhongZhuanyanwu.getMethod()); // 中转延误（亚马逊对接使用）
 			this.flowList.add(FlowOrderTypeEnum.ShouGongdiushi.getMethod()); // 货物丢失（亚马逊对接使用）
+			
+			this.flowList.add(FlowOrderTypeEnum.BingEmsTrans.getMethod());// 转运邮政  add by vic.liang@pjbest.com 2016-09-05
 			this.camelContext.addRoutes(new RouteBuilder() {
 				@Override
 				public void configure() throws Exception {
