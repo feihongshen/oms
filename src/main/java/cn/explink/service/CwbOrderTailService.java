@@ -38,8 +38,7 @@ public class CwbOrderTailService {
 			logger.info("综合查询：cwb:" + orderFlow.getCwb() + "，flowordertype:" + flowordertype + "，timeName：" + timeName);
 			cwbOrderTaildao.saveOrUpdateOrderTail(orderFlow, dmpCwbOrder, deliverystate, timeName);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info("综合查询保存异常,cwb={}", orderFlow.getCwb(), e);
 		}
 	}
 

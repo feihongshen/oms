@@ -83,6 +83,7 @@ public class VipShopCwbFeedBackService {
 		try {
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.RuKu.getValue()); // code：4-配送中(库房入库)
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.ChuKuSaoMiao.getValue()); // code：4-配送中(库房出库)
+			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.BingEmsTrans.getValue()); //code:4 -配送中 转运邮政配送 add by vic.liang@pjbest.com 2016-09-05
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue()); // code：4-配送中(分站到货)
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.FenZhanLingHuo.getValue()); // code:4-配送中(分站投递)
 			//calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.YiFanKui.getValue()); // 已反馈
@@ -90,7 +91,6 @@ public class VipShopCwbFeedBackService {
 			// -包括各种状态
 			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.TuiHuoZhanRuKu.getValue()); // 已审核
 																												// -包括各种状态
-			calcCount += this.sendCwbStatus_To_VipShop(vipshop, FlowOrderTypeEnum.BingEmsTrans.getValue()); //转运邮政配送 add by vic.liang@pjbest.com 2016-09-05
 		} catch (Exception e) {
 			logger.error("配送单推送异常",e);
 		}
