@@ -18,7 +18,9 @@ public enum FlowOrderTypeEnum {
 	ZhongZhuanyanwu(51, "中转延误", "中转延误"), // 亚马逊对接使用
 	ShouGongdiushi(52, "货物丢失", "货物丢失"), ZiTiYanWu(53, "自提已超5天", "自提已超5天"), // 亚马逊对接使用
 	KuDuiKuChuKuSaoMiao(46, "库对库出库", "库对库出库"),UpdatePickBranch(63,"更新提货站","更新提货站"),
-	ChongZhiFanKui(64,"重置反馈","重置反馈");
+	ChongZhiFanKui(64,"重置反馈","重置反馈"),
+	//add by vic.liang@pjbest.com 2016-09-05
+	BingEmsTrans(65,"绑定邮政运单","绑定邮政运单");
 	private int value;
 	private String text;
 	private String method;
