@@ -433,11 +433,11 @@ public class TrackSendToTPSService {
 	
 	public void saveOrderTrack(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
 		try {
-	   		VipShop pushCfg = this.getVipshopCfg();
+	   		/*VipShop pushCfg = this.getVipshopCfg();
 			if(pushCfg == null){
 				logger.info("未配置TPS订单下发接口信息!无法保存轨迹数据到临时表...");
 				return;
-			}
+			}*/
 			this.logger.info("开始执行了外单轨迹TPS接口,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 
 			//boolean isOther=false;
