@@ -742,10 +742,9 @@ public class FlowFromJMSService {
 		if (orderFlow.getFlowordertype() != FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {
 			return;
 		}
-
-		Map<Long, Branch> branchNewMap = getBranchMap();
-		Branch startBranch = branchNewMap.get(dmpCwbOrder.getStartbranchid());
-		Branch nextBranch = branchNewMap.get(dmpCwbOrder.getNextbranchid());
+		//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912
+		Branch startBranch = getBranchById(dmpCwbOrder.getStartbranchid());
+		Branch nextBranch = getBranchById(dmpCwbOrder.getNextbranchid());
 		if (startBranch.getSitetype() != BranchEnum.KuFang.getValue() || nextBranch.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {// 是中转站的
 																																		// return
 			return;
@@ -844,8 +843,8 @@ public class FlowFromJMSService {
 		}
 		String cwb = dmpCwbOrder.getCwb();
 		List<DeliveryDaohuo> dList = deliveryDaohuoDAO.checkDeliveryDaohuo(cwb);// 是否存在记录
-		Map<Long, Branch> branchNewMap = getBranchMap();
-		Branch b = branchNewMap.get(dmpCwbOrder.getStartbranchid());
+		//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912
+		Branch b = getBranchById(dmpCwbOrder.getStartbranchid());
 		if (b != null && b.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {
 			zhongZhuanDAO.saveZhongZhuanInsiteByCwb(orderFlow.getBranchid(), new SimpleDateFormat("yyyy-HH-dd hh:MM:ss").format(orderFlow.getCredate()), dmpCwbOrder.getCwb());
 		}
@@ -1003,9 +1002,9 @@ public class FlowFromJMSService {
 		if (orderFlow.getFlowordertype() != FlowOrderTypeEnum.ChuKuSaoMiao.getValue() && orderFlow.getFlowordertype() != FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) {
 			return;
 		}
-		Map<Long, Branch> branchNewMap = getBranchMap();
-		Branch startBranch = branchNewMap.get(dmpCwbOrder.getStartbranchid());
-		Branch nextBranch = branchNewMap.get(dmpCwbOrder.getNextbranchid());
+		//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912
+		Branch startBranch = getBranchById(dmpCwbOrder.getStartbranchid());
+		Branch nextBranch = getBranchById(dmpCwbOrder.getNextbranchid());
 
 		if (!((orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) && startBranch != null && nextBranch != null && (startBranch.getSitetype() == BranchEnum.ZhongZhuan.getValue() || nextBranch
 				.getSitetype() == BranchEnum.ZhongZhuan.getValue()))) {// 中转站
@@ -1378,9 +1377,9 @@ public class FlowFromJMSService {
 		 */
 
 		try {
-			Map<Long, Branch> branchNewMap = getBranchMap();
-			Branch startbranch = branchNewMap.get(orderFlow.getBranchid());
-			Branch nextbranch = branchNewMap.get(dmpCwbOrder.getNextbranchid()) == null ? new Branch() : branchNewMap.get(dmpCwbOrder.getNextbranchid());
+			//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912
+			Branch startbranch = getBranchById(orderFlow.getBranchid());
+			Branch nextbranch = getBranchById(dmpCwbOrder.getNextbranchid()) == null ? new Branch() : getBranchById(dmpCwbOrder.getNextbranchid());
 			cwbOrderTailService.saveCwbOrderCurHandle(orderFlow, dmpCwbOrder, deliverystate, startbranch, nextbranch);
 			saveUpdateMessage(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderFlow.getCredate()), UpdateMessageMenuNameEnum.ZongHeChaXun.getText(),
 					UpdateMessageMenuNameEnum.ZongHeChaXun.getValue());
@@ -1394,9 +1393,8 @@ public class FlowFromJMSService {
 		String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderFlow.getCredate());
 		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.RuKu.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()
 				|| orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanRuKu.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanChuKuSaoMiao.getValue()) {// 中转站入库、出库
-																																																// 时间处理
-			Map<Long, Branch> branchNewMap = getBranchMap();
-			Branch b = branchNewMap.get(orderFlow.getBranchid());
+			//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912																																													// 时间处理
+			Branch b = getBranchById(orderFlow.getBranchid());
 			if (b != null && b.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {// 中转站
 				if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.RuKu.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ZhongZhuanZhanRuKu.getValue()) {
 					cwbDAO.updateFlowTime(cwb, time, "zhongzhuanrukutime");
@@ -1645,9 +1643,9 @@ public class FlowFromJMSService {
 		 */
 		if (functionid == 100) {
 			try {
-				Map<Long, Branch> branchNewMap = getBranchMap();
-				Branch startbranch = branchNewMap.get(orderFlow.getBranchid());
-				Branch nextbranch = branchNewMap.get(dmpCwbOrder.getNextbranchid()) == null ? new Branch() : branchNewMap.get(dmpCwbOrder.getNextbranchid());
+				//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912
+				Branch startbranch = getBranchById(orderFlow.getBranchid());
+				Branch nextbranch = getBranchById(dmpCwbOrder.getNextbranchid()) == null ? new Branch() : getBranchById(dmpCwbOrder.getNextbranchid());
 				cwbOrderTailService.saveCwbOrderCurHandle(orderFlow, dmpCwbOrder, deliverystate, startbranch, nextbranch);
 				saveUpdateMessage(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderFlow.getCredate()), UpdateMessageMenuNameEnum.ZongHeChaXun.getText(),
 						UpdateMessageMenuNameEnum.ZongHeChaXun.getValue());
@@ -1661,9 +1659,8 @@ public class FlowFromJMSService {
 			String cwb = orderFlow.getCwb();
 			String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(orderFlow.getCredate());
 			if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.RuKu.getValue() || orderFlow.getFlowordertype() == FlowOrderTypeEnum.ChuKuSaoMiao.getValue()) {// 中转站入库、出库
-																																									// 时间处理
-				Map<Long, Branch> branchNewMap = getBranchMap();
-				Branch b = branchNewMap.get(orderFlow.getBranchid());
+				//改变获取branch的方式，防止分布式情况下的服务器缓存缺失的情况--刘武强20160912																																				// 时间处理
+				Branch b = getBranchById(orderFlow.getBranchid());
 				if (b != null && b.getSitetype() == BranchEnum.ZhongZhuan.getValue()) {// 中转站
 					if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.RuKu.getValue()) {
 						cwbDAO.updateFlowTime(cwb, time, "zhongzhuanrukutime");
@@ -1922,7 +1919,26 @@ public class FlowFromJMSService {
 			editInfo.setBranchid(branchid);
 			this.tPOSendDoInfService.addUpdateTypeTPOSendDoInf(editInfo);
 		
+		}	
+	}
+	
+	/**
+	* @Title: getBranchById 
+	* @Description: TODO(这里用一句话描述这个方法的作用) 
+	* @param @param branchid
+	* @param @return    设定文件 
+	* @return Branch    返回类型 
+	* @throws 
+	* @date 2016年9月12日 下午8:30:27 
+	* @author 刘武强
+	 */
+	public Branch getBranchById(long branchid){
+		Branch branch = branchMap.get(branchid);//从缓存中找机构对象
+		if(branch == null ){//如果没有找到，那么更新缓存，然后再取一次
+			this.getBranchMap();
+			branch = branchMap.get(branchid);
 		}
+		return branch;
 	}
 
 }
