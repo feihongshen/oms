@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.explink.b2c.tools.CacheBaseListener;
+import cn.explink.b2c.tools.CacheBaseListenerImp;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
@@ -149,6 +151,9 @@ public class FlowFromJMSService {
 	
 	@Autowired
 	TPOSendDoInfService tPOSendDoInfService;
+	
+	@Autowired
+	private CacheBaseListener cacheBaseListener;
 	
 	private static final String MQ_FROM_URI_ORDER_FLOW = "jms:queue:VirtualTopicConsumers.oms1.orderFlow";
 	
@@ -1933,11 +1938,7 @@ public class FlowFromJMSService {
 	* @author 刘武强
 	 */
 	public Branch getBranchById(long branchid){
-		Branch branch = branchMap.get(branchid);//从缓存中找机构对象
-		if(branch == null ){//如果没有找到，那么更新缓存，然后再取一次
-			this.getBranchMap();
-			branch = branchMap.get(branchid);
-		}
+		Branch branch = this.cacheBaseListener.getBranch(branchid);
 		return branch;
 	}
 
