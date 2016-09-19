@@ -113,7 +113,7 @@ public class WeisudaService {
 			this.camelContext.addRoutes(new RouteBuilder() {
 				@Override
 				public void configure() throws Exception {
-
+					// 已经不使用mq来同步小件员跟站点机构
 					this.from("jms:queue:VirtualTopicConsumers.omsToWeisudaSyn.savezhandian?concurrentConsumers=1").to("bean:weisudaService?method=siteUpdate").routeId("weisuda_更新站点");
 					this.from(MQ_FROM_URI_DEL_ZHANDIAN + "?concurrentConsumers=5").to("bean:weisudaService?method=siteDel").routeId("weisuda_撤销站点");
 					this.from(MQ_FROM_URI_COURIER_UPDATE + "?concurrentConsumers=1").to("bean:weisudaService?method=courierUpdate").routeId("weisuda_更新快递员");
@@ -595,52 +595,52 @@ public class WeisudaService {
 	 * 站点更新接口
 	 */
 	public void siteUpdate(@Header("branch") String branch, @Header("MessageHeaderUUID") String messageHeaderUUID) {
-		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-			this.logger.info("唯速达_05未开启[唯速达]接口");
-			return;
-		}
-		try {
-			
-			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			BranchWithOld bch = JsonUtil.readValue(branch, BranchWithOld.class);
-			
-			String province=bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
-			String city=bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
-			String zone=bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
-			String newCode=bch.getTpsbranchcode()==null?"":bch.getTpsbranchcode();
-			String oldCode="";
-			if(weisuda.getChangeBranchcode()==1){
-				oldCode=""+bch.getBranchid();
-			}else{
-				oldCode=bch.getOldtpsbranchcode()==null?"":bch.getOldtpsbranchcode();
-				oldCode=oldCode.equals(newCode)?"":oldCode;//???
-			}
-			
-			String data = "<root>" 
-							+ "<item>" 
-								+ "<code>" + newCode+ "</code>" 
-								+ "<old_code>"+oldCode+"</old_code>" 
-								+ "<name>" + bch.getBranchname() + "</name>" 
-								+ "<province>"+ province + "</province>" 
-								+ "<city>" + city + "</city>" 
-								+ "<zone>" + zone + "</zone>" 
-								+ "<password></password>" 
-							+ "</item>"
-					+ "</root>";
-			this.logger.info("唯速达_05站点更新接口发送报文,userMessage={}", data);
-			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteUpdate.getValue());
-			this.logger.info("唯速达_05站点更新返回response={}", response);
-			
-		} catch (Exception e) {
-			this.logger.error("唯速达_05更新站点信息出错" + branch, e);
-			// 把未完成MQ插入到数据库中, start
-			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".siteUpdate")
-					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_SAVE_ZHANDIAN)
-					.buildMessageHeader("branch", branch)
-					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
-			// 把未完成MQ插入到数据库中, end
-		}
+//		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+//			this.logger.info("唯速达_05未开启[唯速达]接口");
+//			return;
+//		}
+//		try {
+//			
+//			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+//			BranchWithOld bch = JsonUtil.readValue(branch, BranchWithOld.class);
+//			
+//			String province=bch.getBranchprovince()==null||bch.getBranchprovince().isEmpty()?"***":bch.getBranchprovince();
+//			String city=bch.getBranchcity()==null||bch.getBranchcity().isEmpty()?"***":bch.getBranchcity();
+//			String zone=bch.getBrancharea()==null||bch.getBrancharea().isEmpty()?"***":bch.getBrancharea();
+//			String newCode=bch.getTpsbranchcode()==null?"":bch.getTpsbranchcode();
+//			String oldCode="";
+//			if(weisuda.getChangeBranchcode()==1){
+//				oldCode=""+bch.getBranchid();
+//			}else{
+//				oldCode=bch.getOldtpsbranchcode()==null?"":bch.getOldtpsbranchcode();
+//				oldCode=oldCode.equals(newCode)?"":oldCode;//???
+//			}
+//			
+//			String data = "<root>" 
+//							+ "<item>" 
+//								+ "<code>" + newCode+ "</code>" 
+//								+ "<old_code>"+oldCode+"</old_code>" 
+//								+ "<name>" + bch.getBranchname() + "</name>" 
+//								+ "<province>"+ province + "</province>" 
+//								+ "<city>" + city + "</city>" 
+//								+ "<zone>" + zone + "</zone>" 
+//								+ "<password></password>" 
+//							+ "</item>"
+//					+ "</root>";
+//			this.logger.info("唯速达_05站点更新接口发送报文,userMessage={}", data);
+//			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteUpdate.getValue());
+//			this.logger.info("唯速达_05站点更新返回response={}", response);
+//			
+//		} catch (Exception e) {
+//			this.logger.error("唯速达_05更新站点信息出错" + branch, e);
+//			// 把未完成MQ插入到数据库中, start
+//			//消费MQ异常表
+//			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".siteUpdate")
+//					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_SAVE_ZHANDIAN)
+//					.buildMessageHeader("branch", branch)
+//					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+//			// 把未完成MQ插入到数据库中, end
+//		}
 	}
 
 	/**
@@ -648,147 +648,147 @@ public class WeisudaService {
 	 */
 
 	public void siteDel(@Header("branchid") String branchid, @Header("MessageHeaderUUID") String messageHeaderUUID) {
-		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-			this.logger.info("未开启[唯速达]接口");
-			return;
-		}
-		try {
-			long bid=Long.parseLong(branchid);
-			Branch branch = this.getDmpDAO.getNowBranch(bid);
-			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" 
-							+ "<item>" 
-								+ "<del_code>" + branch.getTpsbranchcode() + "</del_code>" 
-								+ "<rec_code></rec_code>" 
-							+ "</item>"
-						+ "</root>";
-			this.logger.info("唯速达_06站点撤销接口发送报文,userMessage={}", data);
-			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteDel.getValue());
-			this.logger.info("唯速达_06站点撤销返回response={}", response);
-			
-		} catch (Exception e) {
-			this.logger.error("站点撤销信息出错" + branchid, e);
-			// 把未完成MQ插入到数据库中, start
-			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".iteDel")
-					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_DEL_ZHANDIAN)
-					.buildMessageHeader("branchid", branchid)
-					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
-			// 把未完成MQ插入到数据库中, end
-		}
+//		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+//			this.logger.info("未开启[唯速达]接口");
+//			return;
+//		}
+//		try {
+//			long bid=Long.parseLong(branchid);
+//			Branch branch = this.getDmpDAO.getNowBranch(bid);
+//			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+//			String data = "<root>" 
+//							+ "<item>" 
+//								+ "<del_code>" + branch.getTpsbranchcode() + "</del_code>" 
+//								+ "<rec_code></rec_code>" 
+//							+ "</item>"
+//						+ "</root>";
+//			this.logger.info("唯速达_06站点撤销接口发送报文,userMessage={}", data);
+//			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.siteDel.getValue());
+//			this.logger.info("唯速达_06站点撤销返回response={}", response);
+//			
+//		} catch (Exception e) {
+//			this.logger.error("站点撤销信息出错" + branchid, e);
+//			// 把未完成MQ插入到数据库中, start
+//			//消费MQ异常表
+//			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".iteDel")
+//					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_DEL_ZHANDIAN)
+//					.buildMessageHeader("branchid", branchid)
+//					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+//			// 把未完成MQ插入到数据库中, end
+//		}
 	}
 
 	/**
 	 * 快递员信息更新接口
 	 */
 	public void courierUpdate(@Header("user") String userFlag, @Body() String jsonUser, @Header("MessageHeaderUUID") String messageHeaderUUID) {
-		try {
-			if (userFlag == null) {
-				return;
-			}
-	
-			if (userFlag.contains("del")) {
-				this.doCarrierDel(jsonUser);
-				return;
-			}
-			if (!userFlag.contains("update")) {
-				return;
-			}
-	
-			if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-				this.logger.info("唯速达_07未开启[唯速达]接口");
-				return;
-			}
-		
-			User user = JsonUtil.readValue(jsonUser, User.class);
-			String oldusername = user.getOldusername() == null ? "" : user.getOldusername();
-			if (user.getUsername().equals(oldusername)) {
-				oldusername = "";
-			}
-			/*
-			 * String userMessage = "快递员OLDID=" + oldusername + " 快递员ID:" +
-			 * user.getUsername() + " 快递员姓名:" + user.getRealname() + " 快递员站点ID"
-			 * + user.getBranchid() + " 快递员手机号码:" + user.getUsermobile() +
-			 * " 快递员登陆密码:" + user.getPassword();
-			 */
-			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
-			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" 
-							+ "<item>" 
-								+ "<code>" + user.getUsername().toUpperCase() + "</code>" 
-								+ "<old_code>" + oldusername.toUpperCase() + "</old_code>" 
-								+ "<name>" + user.getRealname()+ "</name>" 
-								+ "<site_code>" + branch.getTpsbranchcode() + "</site_code>" 
-								+ "<mobile>" + user.getUsermobile() + "</mobile>"
-								+ "<password>" + user.getPassword() + "</password>"
-							+ "</item>"
-					+ "</root>";
-			this.logger.info("唯速达_07快递员更新接口发送报文,userMessage={}", data);
-			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.courierUpdate.getValue());
-			
-			this.logger.info("唯速达_07快递员更新接口返回response={}", response);
-			
-		} catch (Exception e) {
-			this.logger.error("唯速达_07快递员更新信息出错 ！jsonUser=" + jsonUser, e);
-			
-			// 把未完成MQ插入到数据库中, start
-			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".urierUpdate")
-					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_UPDATE)
-					.buildMessageHeader("user", userFlag).buildMessageBody(jsonUser)
-					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
-			// 把未完成MQ插入到数据库中, end
-		}
+//		try {
+//			if (userFlag == null) {
+//				return;
+//			}
+//	
+//			if (userFlag.contains("del")) {
+//				this.doCarrierDel(jsonUser);
+//				return;
+//			}
+//			if (!userFlag.contains("update")) {
+//				return;
+//			}
+//	
+//			if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+//				this.logger.info("唯速达_07未开启[唯速达]接口");
+//				return;
+//			}
+//		
+//			User user = JsonUtil.readValue(jsonUser, User.class);
+//			String oldusername = user.getOldusername() == null ? "" : user.getOldusername();
+//			if (user.getUsername().equals(oldusername)) {
+//				oldusername = "";
+//			}
+//			/*
+//			 * String userMessage = "快递员OLDID=" + oldusername + " 快递员ID:" +
+//			 * user.getUsername() + " 快递员姓名:" + user.getRealname() + " 快递员站点ID"
+//			 * + user.getBranchid() + " 快递员手机号码:" + user.getUsermobile() +
+//			 * " 快递员登陆密码:" + user.getPassword();
+//			 */
+//			Branch branch = this.getDmpDAO.getNowBranch(user.getBranchid());
+//			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+//			String data = "<root>" 
+//							+ "<item>" 
+//								+ "<code>" + user.getUsername().toUpperCase() + "</code>" 
+//								+ "<old_code>" + oldusername.toUpperCase() + "</old_code>" 
+//								+ "<name>" + user.getRealname()+ "</name>" 
+//								+ "<site_code>" + branch.getTpsbranchcode() + "</site_code>" 
+//								+ "<mobile>" + user.getUsermobile() + "</mobile>"
+//								+ "<password>" + user.getPassword() + "</password>"
+//							+ "</item>"
+//					+ "</root>";
+//			this.logger.info("唯速达_07快递员更新接口发送报文,userMessage={}", data);
+//			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.courierUpdate.getValue());
+//			
+//			this.logger.info("唯速达_07快递员更新接口返回response={}", response);
+//			
+//		} catch (Exception e) {
+//			this.logger.error("唯速达_07快递员更新信息出错 ！jsonUser=" + jsonUser, e);
+//			
+//			// 把未完成MQ插入到数据库中, start
+//			//消费MQ异常表
+//			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".urierUpdate")
+//					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_UPDATE)
+//					.buildMessageHeader("user", userFlag).buildMessageBody(jsonUser)
+//					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+//			// 把未完成MQ插入到数据库中, end
+//		}
 	}
 
 	/**
 	 * 快递员删除接口
 	 */
 	public void carrierDel(@Body() String jsonUser, @Header("MessageHeaderUUID") String messageHeaderUUID) {
-		try {
-			doCarrierDel(jsonUser);
-			
-		} catch (Exception e) {
-			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
-			
-			// 把未完成MQ插入到数据库中, start
-			//消费MQ异常表
-			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".rierDel")
-					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_DEL)
-					.buildMessageBody(jsonUser)
-					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
-			// 把未完成MQ插入到数据库中, end
-		}
+//		try {
+//			doCarrierDel(jsonUser);
+//			
+//		} catch (Exception e) {
+//			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
+//			
+//			// 把未完成MQ插入到数据库中, start
+//			//消费MQ异常表
+//			this.mqExceptionDAO.save(MqExceptionBuilder.getInstance().buildExceptionCode(this.getClass().getSimpleName() + ".rierDel")
+//					.buildExceptionInfo(e.toString()).buildTopic(MQ_FROM_URI_COURIER_DEL)
+//					.buildMessageBody(jsonUser)
+//					.buildMessageHeaderUUID(messageHeaderUUID).buildMessageSource(MessageSourceEnum.receiver.getIndex()).getMqException());
+//			// 把未完成MQ插入到数据库中, end
+//		}
 	}
 	
 	public void doCarrierDel(String jsonUser) throws Exception {
-		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
-			this.logger.info("唯速达_08未开启[唯速达]接口");
-			return;
-		}
-		try {
-			User user = JsonUtil.readValue(jsonUser, User.class);
-			/*
-			 * String userMessage = "被删除的快递员ID:" + user.getUserid() + " 快递员姓名:"
-			 * + user.getRealname() + " 快递员站点ID" + user.getBranchid() +
-			 * " 快递员手机号码:" + user.getUsermobile() + " 快递员登陆密码:" +
-			 * user.getPassword();
-			 */
-			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
-			String data = "<root>" 
-								+ "<item>" 
-									+ "<del_code>" + user.getUsername().toUpperCase() + "</del_code>" 
-								+ "</item>" 
-							+ "</root>";
-			this.logger.info("唯速达_08快递员删除接口发送报文,userMessage={}", data);
-			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.carrierDel.getValue());
-			
-			this.logger.info("唯速达_08快递员删除返回response={}", response);
-			
-		} catch (Exception e) {
-			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
-			throw e;
-		}
+//		if (!this.b2ctools.isB2cOpen(PosEnum.Weisuda.getKey())) {
+//			this.logger.info("唯速达_08未开启[唯速达]接口");
+//			return;
+//		}
+//		try {
+//			User user = JsonUtil.readValue(jsonUser, User.class);
+//			/*
+//			 * String userMessage = "被删除的快递员ID:" + user.getUserid() + " 快递员姓名:"
+//			 * + user.getRealname() + " 快递员站点ID" + user.getBranchid() +
+//			 * " 快递员手机号码:" + user.getUsermobile() + " 快递员登陆密码:" +
+//			 * user.getPassword();
+//			 */
+//			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
+//			String data = "<root>" 
+//								+ "<item>" 
+//									+ "<del_code>" + user.getUsername().toUpperCase() + "</del_code>" 
+//								+ "</item>" 
+//							+ "</root>";
+//			this.logger.info("唯速达_08快递员删除接口发送报文,userMessage={}", data);
+//			String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.carrierDel.getValue());
+//			
+//			this.logger.info("唯速达_08快递员删除返回response={}", response);
+//			
+//		} catch (Exception e) {
+//			this.logger.error("唯速达_08快递员删除信息出错 ！jsonUser=" + jsonUser, e);
+//			throw e;
+//		}
 	}
 
 	public void unboundOrders(CwbOrderWithDeliveryState cwbOrderWithDeliveryState, DmpOrderFlow orderFlow) {
