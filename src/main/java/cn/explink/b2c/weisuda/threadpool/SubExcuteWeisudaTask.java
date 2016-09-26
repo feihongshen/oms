@@ -213,7 +213,7 @@ public class SubExcuteWeisudaTask implements Runnable{
 		} else if ("16".equals(item.getPaymethod())) {
 			payremark = "通联pos支付";
 			paytype = PaytypeEnum.Pos.getValue();
-		} else if ("17".equals(item.getPaymethod())) {
+		} else if ("17".equals(item.getPaymethod()) || "21".equals(item.getPaymethod())) {
 			payremark = "唯宝支付";
 			paytype = PaytypeEnum.CodPos.getValue();
 		} else if ("18".equals(item.getPaymethod())) {
