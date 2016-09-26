@@ -174,7 +174,7 @@ public class SubExcuteWeisudaTask implements Runnable{
 		
 		/**Added by leoliao at 2016-04-01  添加新的支付方式
 		 * 品骏达现有支付方式：1-线上已支付，2-现金，3-POS支付，11-微信扫码，12-支付宝扫码，13-工行MPOS,14-快刷,
-		                      15-pos快刷支付,16-通联支付，17-唯宝支付，18-支付宝主动扫码
+		                      15-pos快刷支付,16-通联支付，17-唯宝支付，18-支付宝主动扫码, 21-唯宝支付
                      后期计划添加支付方式： 20-微信主动扫码,19-银商支付
            DMP支付方式：Xianjin(1, "现金"), Pos(2, "POS刷卡"), Zhipiao(3, "支票"), Qita(4, "其他"), CodPos(5, "COD扫码支付");
 		 */
@@ -213,7 +213,7 @@ public class SubExcuteWeisudaTask implements Runnable{
 		} else if ("16".equals(item.getPaymethod())) {
 			payremark = "通联pos支付";
 			paytype = PaytypeEnum.Pos.getValue();
-		} else if ("17".equals(item.getPaymethod())) {
+		} else if ("17".equals(item.getPaymethod()) || "21".equals(item.getPaymethod())) {
 			payremark = "唯宝支付";
 			paytype = PaytypeEnum.CodPos.getValue();
 		} else if ("18".equals(item.getPaymethod())) {
