@@ -114,7 +114,7 @@ public class B2cJsonService {
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Smile.getKey()))) {
 			return this.buildB2cDataMaster.getBulidSmileB2cData().BuildSmailMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state, this.objectMapper);
 		}
-		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.YiXun.getKey())) || (customer.getCustomername().indexOf("易迅") > -1)) {
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.YiXun.getKey()))) {
 
 			return this.buildB2cDataMaster.getBulidYiXunB2cData().BuildYiXunMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate, delivery_state, this.objectMapper);
 
@@ -132,7 +132,7 @@ public class B2cJsonService {
 					cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
 		}
 
-		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Gome.getKey())) || (customer.getCustomername().indexOf("国美") > -1)) {// 国美
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Gome.getKey()))) {// 国美
 
 			return this.buildB2cDataMaster.getBulidGomeB2cData().BuildGomeMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
 					delivery_state, this.objectMapper);
