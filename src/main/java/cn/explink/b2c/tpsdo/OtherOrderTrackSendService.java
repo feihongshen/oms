@@ -282,7 +282,7 @@ public class OtherOrderTrackSendService {
 					req.setActualPayType(String.valueOf(1));
 				}
 				else if(newpaywayid == PaytypeEnum.CodPos.getValue()){
-					req.setActualPayType(String.valueOf(2));
+					req.setActualPayType(String.valueOf(15));
 				}
 				else if(newpaywayid == PaytypeEnum.Zhipiao.getValue()){
 					req.setActualPayType(String.valueOf(13));

@@ -348,7 +348,7 @@ public class FlowFromJMSService {
 	 */
 	public void saveAll(String parm, int isSaveFlowAndState) {
 
-		logger.debug("orderFlow oms 环节信息处理,{}", parm);
+		logger.info("orderFlow oms 环节信息处理,{}", parm);
 		
 		try {
 
@@ -386,7 +386,7 @@ public class FlowFromJMSService {
 			// System.out.println("deliveryState:"+deliveryState.getDeliverystate());
 			logger.info("RE: orderFlow 处理结束。订单号:{},操作：{}", orderFlow.getCwb(), orderFlow.getFlowordertypeText());
 		} catch (Exception e5) {
-			e5.printStackTrace();
+			logger.error("RE:orderflow 处理异常 saveAll", e5);
 		}
 	}
 
