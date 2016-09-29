@@ -67,6 +67,10 @@ public class CoreContronller {
 					commonEmaildateDAO.updateCommonEmaildateJianCount(comm.getEmaildateid());// 原来的emaildateid
 																								// 数量减1
 				}
+				// 更改了站点 ，需要重新推下游 modify by jian_xie 2016-09-29
+				if(!comm.getCommencode().equals(commencode)){
+					warehouseCommenDAO.updateCommenCwbListById(id, "");
+				}
 			}
 			return "{msg:\"00\"}";
 		} catch (Exception e) {
