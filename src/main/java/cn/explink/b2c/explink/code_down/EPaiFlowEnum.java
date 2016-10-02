@@ -10,11 +10,12 @@ import cn.explink.enumutil.FlowOrderTypeEnum;
  */
 public enum EPaiFlowEnum {
 
-	KuFangRuKu(FlowOrderTypeEnum.RuKu.getValue(), "ACCEPT", "库房入库"), PaiSongZhong(FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "DELIVERING", "分站派送中"), Fankui(FlowOrderTypeEnum.YiFanKui.getValue(),
-			"FEEDBACK", "配送结果反馈"), BufenJuShou(FlowOrderTypeEnum.YiShenHe.getValue(), "VERIFY", "配送结果确认审核"),
-
+	KuFangRuKu(FlowOrderTypeEnum.RuKu.getValue(), "ACCEPT", "库房入库"), 
+	PaiSongZhong(FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "DELIVERING", "分站派送中"), 
+	Fankui(FlowOrderTypeEnum.YiFanKui.getValue(),"FEEDBACK", "配送结果反馈"), 
+	BufenJuShou(FlowOrderTypeEnum.YiShenHe.getValue(), "VERIFY", "配送结果确认审核"),
 	TuihuoChuZhan(FlowOrderTypeEnum.TuiHuoChuZhan.getValue(), "RET_OUT_BRANCH", "分站退货出站"),
-
+	FenZhanDaoHuoSaoMiao(FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao.getValue(), "SUB_STATION_GOODS", "分站到货扫描")
 	;
 	private long own_code; // 自己公司的code
 	private String request_code; // 请求的指令
