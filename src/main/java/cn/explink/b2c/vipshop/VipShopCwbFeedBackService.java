@@ -392,9 +392,10 @@ public class VipShopCwbFeedBackService {
 				}
 	
 				String order_status_info = note.getOrder_status_info();
-				if (!note.getOrder_status().equals("33")) {
-					order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
-				}
+				// modify by jian_xie 2016-10-02 tms 接收到的内容不完整。需要放开，如果发生下游字段过长，由下游处理。
+//				if (!note.getOrder_status().equals("33")) {
+//					order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
+//				}
 				
 				String sub2="";
 				if (note.getOrder_status().equals("33")) {
