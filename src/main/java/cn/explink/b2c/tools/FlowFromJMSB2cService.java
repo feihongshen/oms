@@ -196,7 +196,7 @@ public class FlowFromJMSB2cService {
 					cwbOrderWithDeliveryState.getDeliveryState().setPos(cwbOrderWithDeliveryState.getDeliveryState().getCodpos());
 					cwbOrderWithDeliveryState.getDeliveryState().setPosremark("POS反馈");
 				}
-				if ((cwbOrderWithDeliveryState.getCwbOrder() != null) && cwbOrderWithDeliveryState.getCwbOrder().getNewpaywayid().equals("5")) {
+				if ((cwbOrderWithDeliveryState.getCwbOrder() != null) && "5".equals(cwbOrderWithDeliveryState.getCwbOrder().getNewpaywayid())) {
 					cwbOrderWithDeliveryState.getCwbOrder().setNewpaywayid("2");
 				}
 			}
