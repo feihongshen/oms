@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +19,12 @@ import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tools.Mail;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.B2CData;
+import cn.explink.domain.SystemInstall;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.enumutil.DeliveryStateEnum;
 import cn.explink.enumutil.FlowOrderTypeEnum;
 import cn.explink.util.DateTimeUtil;
+import net.sf.json.JSONObject;
 
 @Service
 public class VipShopCwbFeedBackService {
@@ -41,6 +41,7 @@ public class VipShopCwbFeedBackService {
 	FlowFromJMSB2cService flowFromJMSB2cService;
 	@Autowired
 	GetDmpDAO getDmpdao;
+	
 
 	private Logger logger = LoggerFactory.getLogger(VipShopCwbFeedBackService.class);
 
@@ -392,10 +393,11 @@ public class VipShopCwbFeedBackService {
 				}
 	
 				String order_status_info = note.getOrder_status_info();
-				// modify by jian_xie 2016-10-02 tms 接收到的内容不完整。需要放开，如果发生下游字段过长，由下游处理。
-//				if (!note.getOrder_status().equals("33")) {
-//					order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
-//				}
+				if (!note.getOrder_status().equals("33")) {
+					// add by jian_xie 2016-10-12 添加反馈长度动态控制，减少代码变动
+					int length = getOrderStatusInfoLength();
+					order_status_info = note.getOrder_status_info().length() > length ? note.getOrder_status_info().substring(0, length) : note.getOrder_status_info();
+				}
 				
 				String sub2="";
 				if (note.getOrder_status().equals("33")) {
@@ -482,7 +484,9 @@ public class VipShopCwbFeedBackService {
 	
 					String order_status_info = note.getOrder_status_info();
 					if (!note.getOrder_status().equals("33")) {
-						order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
+						// add by jian_xie 2016-10-12 添加反馈长度动态控制，减少代码变动
+						int length = getOrderStatusInfoLength();
+						order_status_info = note.getOrder_status_info().length() > length ? note.getOrder_status_info().substring(0, length) : note.getOrder_status_info();
 					}
 	
 					sub1.append("<trace>");
@@ -1263,6 +1267,27 @@ public class VipShopCwbFeedBackService {
 		String xml = "132456<delivery_name>";
 		xml = xml.substring(0, xml.indexOf("<delivery_name>"));
 		System.out.println(xml);
+	}
+	
+	/**
+	 *  获取order_status_info 长度配置
+	 *  最短50，保留原因的逻辑
+	 * @return
+	 */
+	private int getOrderStatusInfoLength(){
+		int length = 50;
+		SystemInstall systemInstall = getDmpdao.getSystemInstallByName("OrderStatusInfoLength");
+		if(systemInstall == null){
+			return length;
+		} else {
+			try {
+				int lengthValue = Integer.parseInt(systemInstall.getValue());
+				length = lengthValue <= length ? length : lengthValue;
+			} catch (Exception e) {
+				this.logger.info("获取order_status_info 长度配置,值异常", e);
+			}
+		}		
+		return length;
 	}
 
 }
