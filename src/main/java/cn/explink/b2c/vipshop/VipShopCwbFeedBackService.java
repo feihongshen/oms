@@ -565,9 +565,7 @@ public class VipShopCwbFeedBackService {
 	
 						String order_status_info = note.getOrder_status_info();
 						if (!note.getOrder_status().equals("33")) {
-							// add by jian_xie 2016-10-12 添加反馈长度动态控制，减少代码变动
-							int length = getOrderStatusInfoLength();
-							order_status_info = note.getOrder_status_info().length() > length ? note.getOrder_status_info().substring(0, length) : note.getOrder_status_info();
+							order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
 						}
 	
 						sub1.append("<trace>");
@@ -729,9 +727,7 @@ public class VipShopCwbFeedBackService {
 	
 					String order_status_info = note.getOrder_status_info();
 					if (!note.getOrder_status().equals("33")) {
-						// add by jian_xie 2016-10-12 添加反馈长度动态控制，减少代码变动
-						int length = getOrderStatusInfoLength();
-						order_status_info = note.getOrder_status_info().length() > length ? note.getOrder_status_info().substring(0, length) : note.getOrder_status_info();
+						order_status_info = note.getOrder_status_info().length() > 50 ? note.getOrder_status_info().substring(0, 49) : note.getOrder_status_info();
 					}
 					
 					String sub2="";
