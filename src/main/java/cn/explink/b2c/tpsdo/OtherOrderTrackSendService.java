@@ -115,8 +115,8 @@ public class OtherOrderTrackSendService {
 		for(OtherOrderTrackVo msgVo:msgVoList){
 			try {
 				DmpOrderFlow orderFlow=parseOrderFlowObject(msgVo.getOrderFlowJson());
-				CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
 				if(orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
+					CwbOrderWithDeliveryState orderWithState=parseDeliveryStateObject(msgVo.getDeliveryStateJson());
 					//推送轨迹
 					DoTrackFeedbackRequest req=prepareRequest(msgVo,orderFlow,orderWithState);
 					if(req!=null){
