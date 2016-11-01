@@ -118,7 +118,8 @@ public enum B2cEnum {
 	ZheMeng_track(23001, "哲盟_轨迹", "zhemeng_track"),
 	TPS_MQ(22501, "tps订单下发接口", "tpsvipshop_mq"),
 	TPS_TraceFeedback(22601, "订单轨迹回传给tps接口", "tps_traceFeedback"),
-	TPS_MQExpress(22502, "tps快递单下发接口", "tpsvipshop_mqExpress")
+	TPS_MQExpress(22502, "tps快递单下发接口", "tpsvipshop_mqExpress"),
+	TPS_kuajinggou(22503, "跨境购订单下发接口", "kuajinggouvipshop_mq")
 	; 
 	private int key;
 	private String text;
