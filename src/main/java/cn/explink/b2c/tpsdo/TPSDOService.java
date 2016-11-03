@@ -28,6 +28,7 @@ import cn.explink.dao.CwbDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.SystemInstall;
 import cn.explink.enumutil.CwbOrderTypeIdEnum;
+import cn.explink.enumutil.TpsOrderTypeEnum;
 import cn.explink.util.JsonUtil;
 
 @Service
@@ -137,20 +138,20 @@ public class TPSDOService {
 		int orderType = pjDeliverOrder.getOrderType();
 		if(systemInstall == null){
 			//当没有配参数的时候，默认配送单推送
-			if(orderType == CwbOrderTypeIdEnum.Peisong.getValue()){
+			if(orderType == TpsOrderTypeEnum.Peisong.getValue()){
 				return true;
 			}
 		} else {
 			String value = systemInstall.getValue();
 			if(StringUtils.isEmpty(value)){
 				// 当参数的值为空的时候，默认配送单推送
-				if(orderType == CwbOrderTypeIdEnum.Peisong.getValue()){
+				if(orderType == TpsOrderTypeEnum.Peisong.getValue()){
 					return true;
 				}
 			} else {
 				String[] strTypes = value.split(",|，");
 				for(int i = 0, len = strTypes.length; i < len; i++){
-					if((1 + "").equals(strTypes[i])){
+					if((orderType + "").equals(strTypes[i])){
 						return true;
 					}
 				}
