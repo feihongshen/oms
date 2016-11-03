@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pjbest.deliveryorder.bizservice.PjDeliverOrder4DMPRequest;
+import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPResponse;
+import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPServiceHelper.PjDeliveryOrder4DMPServiceClient;
+
 import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tpsdo.bean.TPOSendDoInf;
@@ -21,11 +26,9 @@ import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DORequestVo;
 import cn.explink.dao.CwbDAO;
 import cn.explink.dao.GetDmpDAO;
+import cn.explink.domain.SystemInstall;
+import cn.explink.enumutil.CwbOrderTypeIdEnum;
 import cn.explink.util.JsonUtil;
-
-import com.pjbest.deliveryorder.bizservice.PjDeliverOrder4DMPRequest;
-import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPResponse;
-import com.pjbest.deliveryorder.bizservice.PjDeliveryOrder4DMPServiceHelper.PjDeliveryOrder4DMPServiceClient;
 
 @Service
 public class TPSDOService {
@@ -59,9 +62,9 @@ public class TPSDOService {
 			List<PjDeliverOrder4DMPRequest> doReqs =new  ArrayList<PjDeliverOrder4DMPRequest>();
 
 			for(TPOSendDoInf tPOSendDoInf : list){
-					PjDeliverOrder4DMPRequest PjDeliverOrder = null;
+					PjDeliverOrder4DMPRequest pjDeliverOrder = null;
 					try{
-						PjDeliverOrder = buildPjDeliverOrderRequest(tPOSendDoInf);
+						pjDeliverOrder = buildPjDeliverOrderRequest(tPOSendDoInf);
 					}catch(Exception e){
 						logger.error("buildPjDeliverOrderRequest failed. cwb={}",tPOSendDoInf.getCwb(), e);
 						try{
@@ -72,10 +75,16 @@ public class TPSDOService {
 						continue;
 					}
 					
-					if(PjDeliverOrder != null){
-						doReqs.clear();
-						doReqs.add(PjDeliverOrder);
+					if(pjDeliverOrder != null){
+						// 过滤不需要传给tps的订单，并处理成功 add by jian_xie 20161103
 						int trytime = tPOSendDoInf.getTrytime();
+						if(!isNeedToTps(pjDeliverOrder)){
+							tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), pjDeliverOrder.getTransportNo(), 1, trytime + 1, "该订单类型不需要发给tps");
+							logger.info("该订单类型不需要发给tps,订单号{}", pjDeliverOrder.getCustOrderNo());
+							continue;
+						}
+						doReqs.clear();
+						doReqs.add(pjDeliverOrder);
 						List<PjDeliveryOrder4DMPResponse>  pjDeliveryOrderList = null;
 						try{
 							this.logger.info("开始推送"+doReqs.size() + "条外单数据给DO服务...");
@@ -117,7 +126,40 @@ public class TPSDOService {
 		}
 	}
 	
-	
+	/**
+	 * 判断订单是否需要推tps
+	 * @author jian.xie
+	 * @param pjDeliverOrder
+	 * @return
+	 */
+	private boolean isNeedToTps(PjDeliverOrder4DMPRequest pjDeliverOrder) {
+		SystemInstall systemInstall = getDmpDAO.getSystemInstallByName("cwbOrderTypeIdNeedToTps");
+		int orderType = pjDeliverOrder.getOrderType();
+		if(systemInstall == null){
+			//当没有配参数的时候，默认配送单推送
+			if(orderType == CwbOrderTypeIdEnum.Peisong.getValue()){
+				return true;
+			}
+		} else {
+			String value = systemInstall.getValue();
+			if(StringUtils.isEmpty(value)){
+				// 当参数的值为空的时候，默认配送单推送
+				if(orderType == CwbOrderTypeIdEnum.Peisong.getValue()){
+					return true;
+				}
+			} else {
+				String[] strTypes = value.split(",|，");
+				for(int i = 0, len = strTypes.length; i < len; i++){
+					if((1 + "").equals(strTypes[i])){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+
 	/**
 	 * 
 	 * @param tPOSendDoInf
