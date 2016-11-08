@@ -311,6 +311,32 @@ public class FlowFromJMSService {
 		logger.info("进入flow消息，开始：" + start);
 		saveAll(parm, 1);
 		long end = System.currentTimeMillis();
+		// 临时注释 一段时间没有问题后，可以删除 2016-11-08 jian_xie
+//		try {
+//			// TODO jms异常写入监控表
+//			String optime = DateTimeUtil.getNowTime();
+//			ExpressSysMonitor monitor = expressSysMonitorDAO.getMaxOpt("JMSOMSFlow");
+//			// 系统上线第一次加载
+//			if (monitor == null) {
+//				ExpressSysMonitor newmonitor = new ExpressSysMonitor();
+//				newmonitor.setOptime(optime);
+//				newmonitor.setType("JMSOMSFlow");
+//				expressSysMonitorDAO.save(newmonitor);
+//			} else {
+//				// 后续加载 yyyy-MM-dd HH:m
+//				String preoptime = monitor.getOptime();
+//				if (!optime.substring(0, 15).equals(preoptime.substring(0, 15))) {
+//					ExpressSysMonitor newmonitor = new ExpressSysMonitor();
+//					newmonitor.setOptime(optime);
+//					newmonitor.setType("JMSOMSFlow");
+//					expressSysMonitorDAO.save(newmonitor);
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw e;
+//		}
+
 		logger.info("进入flow消息，结束：" + end + ",时差：" + (end - start));
 	}
 
