@@ -40,7 +40,7 @@ import cn.explink.util.MD5.MD5Util;
 public class SubExcuteWeisudaTask implements Runnable{
 	
 	
-	private Logger logger = LoggerFactory.getLogger(WeisudaExcutorService.class);
+	private Logger logger = LoggerFactory.getLogger(SubExcuteWeisudaTask.class);
 	
 	private WeisudaDAO weisudaDAO;
 	private Weisuda weisuda;

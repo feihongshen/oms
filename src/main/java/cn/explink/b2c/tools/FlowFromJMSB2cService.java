@@ -163,7 +163,8 @@ public class FlowFromJMSB2cService {
 	 * @throws Exception 
 	 */
 	public void doSaveFlowB2cSend(String parm) throws Exception {
-		this.logger.info("进入b2c消息，开始：" + System.currentTimeMillis());
+		long start = System.currentTimeMillis();
+		this.logger.info("进入b2c消息，开始：" + start);
 		this.logger.info("orderFlow send b2c 环节信息处理,{}", parm);
 		try {
 			DmpOrderFlow orderFlow = this.dmpOrderFlowMapper.readValue(parm);
@@ -228,34 +229,12 @@ public class FlowFromJMSB2cService {
 			//外单轨迹数据保存到临时表
 			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
 			
-			try {
-				// TODO jms异常写入监控表
-				String optime = DateTimeUtil.getNowTime();
-				ExpressSysMonitor monitor = this.expressSysMonitorDAO.getMaxOpt("JMSB2CFlow");
-				// 系统上线第一次加载
-				if (monitor == null) {
-					ExpressSysMonitor newmonitor = new ExpressSysMonitor();
-					newmonitor.setOptime(optime);
-					newmonitor.setType("JMSB2CFlow");
-					this.expressSysMonitorDAO.save(newmonitor);
-				} else {
-					// 后续加载 yyyy-MM-dd HH:m
-					String preoptime = monitor.getOptime();
-					if (!optime.substring(0, 15).equals(preoptime.substring(0, 15))) {
-						ExpressSysMonitor newmonitor = new ExpressSysMonitor();
-						newmonitor.setOptime(optime);
-						newmonitor.setType("JMSB2CFlow");
-						this.expressSysMonitorDAO.save(newmonitor);
-					}
-				}
-			} catch (Exception e5) {
-				this.logger.error("error while monitor orderflow", e5);
-			}
 		} catch (Exception e1) {
 			this.logger.error("error while handle orderflow", e1);
 			throw e1;
 		}
-		this.logger.info("进入b2c消息，结束：" + System.currentTimeMillis());
+		long end = System.currentTimeMillis();
+		this.logger.info("进入b2c消息，结束：" + end + "时差:" + (end - start));
 	}
 
 	
