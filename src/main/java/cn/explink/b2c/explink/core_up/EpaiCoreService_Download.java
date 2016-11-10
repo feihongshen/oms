@@ -173,9 +173,9 @@ public class EpaiCoreService_Download {
 					if (orderDto.getCwb().equals(toCommon.getCwb())) {
 						orderDto.setSendtime(toCommon.getCredate()); // 发货时间
 						orderDto.setOuttobranch(getBranch(toCommon.getStartbranchid()).getBranchname()); // 出库承运商站点
-						if(orderDto.getShouldfare().doubleValue()>0&&orderDto.getReceivablefee().doubleValue()<=0){
-							orderDto.setReceivablefee(orderDto.getShouldfare());
-						}
+//						if(orderDto.getShouldfare().doubleValue()>0&&orderDto.getReceivablefee().doubleValue()<=0){
+//							orderDto.setReceivablefee(orderDto.getShouldfare());
+//						}
 						
 					}
 				}
