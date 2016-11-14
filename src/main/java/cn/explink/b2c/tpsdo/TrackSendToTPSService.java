@@ -178,7 +178,7 @@ public class TrackSendToTPSService {
 			User user=getDmpDAO.getUserById(deliveryid);//
 			DeliveryTrack deliveryTrack=new DeliveryTrack();
 			deliveryTrack.setCourier(user==null?null:user.getRealname());
-			deliveryTrack.setCourierId(user==null||user.getUsername()==null?"":user.getUsername());//id or deliverManCode ???
+			deliveryTrack.setCourierId(user==null||user.getUsername()==null?"":user.getUsername().toUpperCase());//id or deliverManCode ???
 			deliveryTrack.setCourierTel(user==null?null:user.getUsermobile());//or mobile??? format ?
 			//deliveryTrack.setDestinationOrg(""+cwbOrder.getDeliverybranchid());
 			req.setDelivery(deliveryTrack);
