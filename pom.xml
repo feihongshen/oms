@@ -8,7 +8,7 @@
 	<version>0.1.0.BUILD-SNAPSHOT</version>
 	<name>oms</name>
 	<properties>
-		<java.version>1.6</java.version>
+		<java.version>1.7</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.6.2</slf4j.version>
 		<logback.version>1.0.4</logback.version>
