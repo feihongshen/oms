@@ -128,6 +128,10 @@ public class DmpCwbOrder {
 	private String tpstranscwb;//tps运单号
 	private long orderSource;//订单来源
 	
+	private int exchangeflag;//换货标志：0不是，1是
+	private String exchangecwb;//换货关联的配送订单号或上门退订单号
+	private String exchangetpstranscwb;//换货时揽退单的品骏运单号,因为推此运单号是通过pjd的配送单接口
+	
 	public int getMpsoptstate() {
 		return mpsoptstate;
 	}
@@ -1005,6 +1009,30 @@ public class DmpCwbOrder {
 
 	public void setOrderSource(long orderSource) {
 		this.orderSource = orderSource;
+	}
+
+	public int getExchangeflag() {
+		return exchangeflag;
+	}
+
+	public void setExchangeflag(int exchangeflag) {
+		this.exchangeflag = exchangeflag;
+	}
+
+	public String getExchangecwb() {
+		return exchangecwb;
+	}
+
+	public void setExchangecwb(String exchangecwb) {
+		this.exchangecwb = exchangecwb;
+	}
+
+	public String getExchangetpstranscwb() {
+		return exchangetpstranscwb;
+	}
+
+	public void setExchangetpstranscwb(String exchangetpstranscwb) {
+		this.exchangetpstranscwb = exchangetpstranscwb;
 	}
 
 }

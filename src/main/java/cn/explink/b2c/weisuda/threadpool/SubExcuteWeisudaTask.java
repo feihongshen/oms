@@ -152,6 +152,7 @@ public class SubExcuteWeisudaTask implements Runnable{
 				dto.setStrandedrReason(itemps.getDelay_reason());
 			}
 			dto.setConsignee(itemps.getConsignee());
+			dto.setExchangetpstranscwb(itemps.getTransport_no());
 		} else if (item.getClass().isInstance(itemsmt)) {// 如果是上门退订单
 			itemsmt = (Getback_Item) item;
 			if ("9".equals(status)) {

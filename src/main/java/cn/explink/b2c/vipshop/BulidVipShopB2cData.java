@@ -57,6 +57,10 @@ public class BulidVipShopB2cData {
 
 	public String BuildVipShopMethod(String b2cenum, DmpOrderFlow orderFlow, long flowOrdertype, DmpCwbOrder cwbOrder, DmpDeliveryState deliveryState, long delivery_state, ObjectMapper objectMapper)
 			throws IOException, JsonGenerationException, JsonMappingException {
+		if(cwbOrder.getExchangeflag()==1&&orderFlow.getFlowordertype()==FlowOrderTypeEnum.YiFanKui.getValue()){
+			logger.info("订单号：{} 唯品会上门业务的反馈操作不需要推给tms.", cwbOrder.getCwb());
+			return null;
+		}
 		
 		String sign_man = "";
 		String sign_man_phone = "";
