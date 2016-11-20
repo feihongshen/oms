@@ -480,8 +480,10 @@ public class WeisudaService {
 				customer = this.getDmpDAO.getCustomer(customerid);
 			}
 			String cwb = cwbOrderWithDeliveryState.getCwbOrder().getCwb();
+			
+			OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
 			//boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
-			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
+			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop")) || (orderTraceToTPSCfg!=null && isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid))) {
 				updateOrdersMethod(orderFlow, cwbOrderWithDeliveryState, weisuda, cwb);
 				return; //如果是唯品会订单，签收信息修改通知品骏达后就不需要执行后面的代码了 added by zhouguoting 2016/03/16
 			} else {
@@ -1003,7 +1005,8 @@ public class WeisudaService {
 			this.logger.info("唯速达_13进入唯速达对接cwb={}", orderFlow.getCwb());
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
 			Customer customer = this.getDmpDAO.getCustomer(customerid);
-			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))) {
+			OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
+			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))|| (orderTraceToTPSCfg!=null && isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid))) {
 				String cwb = cwbOrderWithDeliveryState.getCwbOrder().getCwb();
 				try {
 					WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);
