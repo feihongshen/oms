@@ -30,6 +30,7 @@ import cn.explink.b2c.tools.B2cTools;
 import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.tools.JacksonMapper;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
+import cn.explink.b2c.tpsdo.bean.OrderTraceToTPSCfg;
 import cn.explink.b2c.tpsdo.bean.ThirdPartyOrder2DOCfg;
 import cn.explink.b2c.weisuda.xml.GetUnVerifyOrders_back_Item;
 import cn.explink.b2c.weisuda.xml.Getback_Item;
@@ -185,12 +186,13 @@ public class WeisudaService {
 			} else {
 				this.logger.info("唯速达_01未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
 			}*/
-			
+			OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
 			/**
 			 * 修复外单无法同步品骏达签收信息给DMP问题
 			 */
 			ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
-			if(pushCfg == null || pushCfg.getOpenFlag() != 1){
+			if((pushCfg == null || pushCfg.getOpenFlag() != 1)
+					&& !(orderTraceToTPSCfg!=null && isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),cwbOrder.getCustomerid()))){
 				logger.info("未配置外单推送DO服务配置信息!无法保存外单数据到express_b2cdata_weisuda表");
 				return;
 			}
@@ -247,7 +249,33 @@ public class WeisudaService {
 		}
 	}
 
-
+	//获取配置信息
+	public OrderTraceToTPSCfg getOrderTraceToTPSCfg() {
+		OrderTraceToTPSCfg cfg = null;
+		String objectMethod = this.b2ctools.getObjectMethod(B2cEnum.TPS_TraceFeedback.getKey()).getJoint_property();
+		if (objectMethod != null) {
+			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
+			cfg = (OrderTraceToTPSCfg) JSONObject.toBean(jsonObj, OrderTraceToTPSCfg.class);
+		} 
+		return cfg;
+	}
+	
+	//判断客户id是否包含
+	private boolean isTraceToTpsCustomer(String customerids,long customerid){
+		String containCustomerid = customerid+"";
+		boolean flag = false;
+		if(customerids==null||customerids.isEmpty()){
+			return flag;
+		}
+		String[] ids = customerids.split(",|，");
+		//查看当前订单的客户是不是唯速达的外单客户
+		for(int i=0; i<ids.length;i++){
+			if(containCustomerid.equals(ids[i])){
+				flag = true;
+			}
+		}
+		return flag;
+	}
 
 	private boolean filterWandanCustomerId(long customerid, Weisuda weisuda) {
 		String customerids = weisuda.getCustomers();
