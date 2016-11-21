@@ -773,5 +773,45 @@ public class TPOSendDoInfService {
 		this.tPOSendDoInfDao.saveTPOSendDoInf(tPOSendDoInf);
 	}
 	
-
+	/**
+	 *  把pop外单导入的数据 插入到 TPO_SEND_DO_INF表，待定时器推送给TPS 的DO服务
+	 * @param cwbOrderWithDeliveryState
+	 * @param orderFlow
+	 */
+	public void insertPopOrderTo_TPO_SEND_DO_INF(CwbOrderWithDeliveryState cwbOrderWithDeliveryState, DmpOrderFlow orderFlow){
+		//pop手工导入外单数据 在 接单（导入数据环节）的时候就要推送给TPS 的DO服务
+		if (orderFlow.getFlowordertype() == FlowOrderTypeEnum.DaoRuShuJu.getValue()) {
+			
+			DmpCwbOrder cwbOrder = cwbOrderWithDeliveryState.getCwbOrder();
+			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
+			Customer customer = this.cacheBaseListener.getCustomer(customerid);
+			if (customer == null) {
+				this.logger.info("Customer对象在缓存中没有获取到，请求dmp..cwb={},customerid={}", orderFlow.getCwb(),customerid);
+				customer = this.getDmpDAO.getCustomer(customerid);
+			}
+				
+			//查询出唯速达所设置的客户
+			ThirdPartyOrder2DOCfg pushCfg = this.getThirdPartyOrder2DOCfg();
+			if(pushCfg == null || pushCfg.getOpenFlag() == 0){
+				this.logger.info("未获取到外单推送DO服务对接配置信息，外单cwb={}", orderFlow.getCwb());
+				return;
+			}
+			TPOSendDoInf history = this.tPOSendDoInfDao.getTPOSendDoInfByCwbAndOpertype(orderFlow.getCwb(), TPOOperateTypeEnum.ADD);
+			if(history != null && StringUtils.isNotEmpty(history.getCwb())){
+				this.logger.info("pop手工导入外单cwb={}已存在外单推DO接口表（TPO_SEND_DO_INF）中", orderFlow.getCwb());
+				return;
+			}
+			this.logger.info("pop手工导入外单cwb={}加入外单推DO接口表（TPO_SEND_DO_INF）", orderFlow.getCwb());
+			ThirdPartyOrder2DORequestVo  thirdPartyOrder2DORequestVo = this.buildThirdPartyOrder2DORequestVo(cwbOrder, customer, pushCfg);
+			TPOSendDoInf tPOSendDoInf = this.buildTPOSendDoInf(cwbOrder,customer);
+			try {
+				String reqObjJson =  JsonUtil.translateToJson(thirdPartyOrder2DORequestVo);
+				tPOSendDoInf.setReqObjJson(reqObjJson);
+			} catch (Exception e) {
+				logger.error("请求参数对象转JSON异常,cwb="+tPOSendDoInf.getCwb(), e); 
+			}
+			
+			this.tPOSendDoInfDao.saveTPOSendDoInf(tPOSendDoInf);
+		}
+	}
 }

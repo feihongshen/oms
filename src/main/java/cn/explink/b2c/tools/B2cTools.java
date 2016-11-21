@@ -2,6 +2,8 @@ package cn.explink.b2c.tools;
 
 import java.io.IOException;
 
+import net.sf.json.JSONObject;
+
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.explink.b2c.tpsdo.bean.OrderTraceToTPSCfg;
 import cn.explink.b2c.vipshop.VipShop;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.enumutil.DeliveryStateEnum;
@@ -107,5 +110,33 @@ public class B2cTools {
 		ExptReason exptReason=null;
 		exptReason=getdmpDAO.getExptCodeJointByB2cGztl(customerid, expt_code);
 		return exptReason == null ? new ExptReason() : exptReason;
+	}
+	
+	//获取pop轨迹配置信息
+	public OrderTraceToTPSCfg getOrderTraceToTPSCfg() {
+		OrderTraceToTPSCfg cfg = null;
+		String objectMethod = this.getObjectMethod(B2cEnum.TPS_TraceFeedback.getKey()).getJoint_property();
+		if (objectMethod != null) {
+			JSONObject jsonObj = JSONObject.fromObject(objectMethod);
+			cfg = (OrderTraceToTPSCfg) JSONObject.toBean(jsonObj, OrderTraceToTPSCfg.class);
+		} 
+		return cfg;
+	}
+	
+	//判断客户id是否包含
+	public boolean isTraceToTpsCustomer(String customerids,long customerid){
+		String containCustomerid = customerid+"";
+		boolean flag = false;
+		if(customerids==null||customerids.isEmpty()){
+			return flag;
+		}
+		String[] ids = customerids.split(",|，");
+		//查看当前订单的客户是不是唯速达的外单客户
+		for(int i=0; i<ids.length;i++){
+			if(containCustomerid.equals(ids[i])){
+				flag = true;
+			}
+		}
+		return flag;
 	}
 }

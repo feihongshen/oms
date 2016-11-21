@@ -31,6 +31,7 @@ import cn.explink.b2c.telecomsc.TelecomJsonService;
 import cn.explink.b2c.tpsdo.OtherOrderTrackSendService;
 import cn.explink.b2c.tpsdo.TPOSendDoInfService;
 import cn.explink.b2c.tpsdo.TrackSendToTPSService;
+import cn.explink.b2c.tpsdo.bean.OrderTraceToTPSCfg;
 import cn.explink.dao.ExpressSysMonitorDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.MqExceptionDAO;
@@ -86,6 +87,8 @@ public class FlowFromJMSB2cService {
 	
 	@Autowired
 	TrackSendToTPSService trackSendToTPSService;
+	@Autowired
+	B2cTools b2ctools;
 
 	private ObjectMapper objectMapper = JacksonMapper.getInstance();
 	private ObjectReader dmpOrderFlowMapper = this.objectMapper.reader(DmpOrderFlow.class);
@@ -216,12 +219,21 @@ public class FlowFromJMSB2cService {
 			this.AddExcuteFlowStatusMethod(orderFlow);
 			
 			// 将所有订单的轨迹信息存到轨迹接口表（推送给tps的轨迹）
-			if(cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb()!=null 
+			OrderTraceToTPSCfg orderTraceToTPSCfg = b2ctools.getOrderTraceToTPSCfg();
+			// 将所有订单的轨迹信息存到轨迹接口表（推送给tps的轨迹）
+			if((orderTraceToTPSCfg!=null && b2ctools.isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),cwbOrderWithDeliveryState.getCwbOrder().getCustomerid()))){
+	    	/*if(cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb()!=null 
 					&&!cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb().isEmpty() 
-					&&Integer.parseInt(cwbOrderWithDeliveryState.getCwbOrder().getCwbordertypeid())!=6){
-				logger.info("轨迹存入tps轨迹推送接口表开始，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
-				trackSendToTPSService.saveOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
-				logger.info("轨迹存入tps轨迹推送接口表成功，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
+					&&Integer.parseInt(cwbOrderWithDeliveryState.getCwbOrder().getCwbordertypeid())!=6){*/
+				if(cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb()!=null 
+						&&!cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb().isEmpty() 
+						&&Integer.parseInt(cwbOrderWithDeliveryState.getCwbOrder().getCwbordertypeid())!=6){
+					logger.info("轨迹存入tps轨迹推送接口表开始，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
+					trackSendToTPSService.saveOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
+					logger.info("轨迹存入tps轨迹推送接口表成功，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
+				}else{
+					tPOSendDoInfService.insertPopOrderTo_TPO_SEND_DO_INF(cwbOrderWithDeliveryState, orderFlow);
+				}
 			}else{
 				logger.info("快递类型的订单，以及没有tps运单号的订单的轨迹信息不存，tps轨迹推送接口表，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb());
 			}
