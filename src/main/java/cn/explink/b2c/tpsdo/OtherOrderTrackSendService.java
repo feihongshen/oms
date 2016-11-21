@@ -584,4 +584,54 @@ public class OtherOrderTrackSendService {
 		} 
 		return cfg;
 	}
+	
+	public void savePopOrderTrackToTpo(DmpOrderFlow orderFlow,CwbOrderWithDeliveryState deliveryState,DmpCwbOrder co){
+		try {
+			
+			if(orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue()){
+				this.logger.info("归班反馈操作不保存到外单轨迹表,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				return;
+			}
+			
+			int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
+			if(tpsOperateType<0
+					&&orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
+				this.logger.info("此轨迹不处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				return ;
+			}
+			
+			String orderFlowJson = bean2json(orderFlow);
+			String deliveryStateJson = bean2json(deliveryState);
+		
+			OtherOrderTrackVo vo=new OtherOrderTrackVo();
+			vo.setCwb(orderFlow.getCwb());
+			vo.setFloworderid(orderFlow.getFloworderid());
+			vo.setOrderFlowJson(orderFlowJson);
+			vo.setDeliveryStateJson(deliveryStateJson);
+			vo.setTracktime(orderFlow.getCredate());
+			vo.setStatus(1);//
+			vo.setTrytime(0);
+			vo.setErrinfo("");
+			vo.setFlowordertype(orderFlow.getFlowordertype());
+
+			//为了性能，分站领货环节优先发送
+			if(orderFlow.getFlowordertype()==FlowOrderTypeEnum.FenZhanLingHuo.getValue()){
+				String sendTpsResult=sendFlowToTps(orderFlow, deliveryState);
+				if(sendTpsResult==null){
+					vo.setStatus(2);
+					vo.setTrytime(1);
+				}else{
+					vo.setStatus(3);
+					vo.setTrytime(1);
+					vo.setErrinfo(sendTpsResult);
+				}
+			}
+			
+			this.otherOrderTrackService.saveOtherOrderTrack(vo);
+			
+		} catch (Exception e) {
+			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
+		}
+		
+	}
 }

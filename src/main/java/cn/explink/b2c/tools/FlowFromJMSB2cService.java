@@ -233,13 +233,16 @@ public class FlowFromJMSB2cService {
 					logger.info("轨迹存入tps轨迹推送接口表成功，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb()+"操作状态为："+orderFlow.getFlowordertype());
 				}else{
 					tPOSendDoInfService.insertPopOrderTo_TPO_SEND_DO_INF(cwbOrderWithDeliveryState, orderFlow);
+					otherOrderTrackSendService.savePopOrderTrackToTpo(orderFlow,cwbOrderWithDeliveryState,null);
 				}
 			}else{
 				logger.info("快递类型的订单，以及没有tps运单号的订单的轨迹信息不存，tps轨迹推送接口表，订单号为："+cwbOrderWithDeliveryState.getCwbOrder().getCwb());
 			}
 			
 			//外单轨迹数据保存到临时表
+			
 			otherOrderTrackSendService.saveOtherOrderTrack(orderFlow,cwbOrderWithDeliveryState,null);
+			
 			// 临时注释 一段时间没有问题后，可以删除  2016-11-08 jian_xie
 //			try {
 //				// TODO jms异常写入监控表
