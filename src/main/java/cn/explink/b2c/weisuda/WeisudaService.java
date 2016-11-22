@@ -192,12 +192,13 @@ public class WeisudaService {
 			 */
 			ThirdPartyOrder2DOCfg pushCfg = tPOSendDoInfService.getThirdPartyOrder2DOCfg();
 			if((pushCfg == null || pushCfg.getOpenFlag() != 1)
-					&& !(orderTraceToTPSCfg!=null && isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),cwbOrder.getCustomerid()))){
+					&& (orderTraceToTPSCfg==null || orderTraceToTPSCfg.getTrackOpenFlag() != 1)){
 				logger.info("未配置外单推送DO服务配置信息!无法保存外单数据到express_b2cdata_weisuda表");
 				return;
 			}
+			boolean isPopCustomer = (orderTraceToTPSCfg!=null && orderTraceToTPSCfg.getTrackOpenFlag()==1)?isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid):false;
 			boolean filterCustomerflag = tPOSendDoInfService.isThirdPartyCustomer(customerid);
-			if(filterCustomerflag){
+			if(filterCustomerflag || isPopCustomer){
 				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
 				
 				//Added by leoliao at 2016-08-16 领货时更新接口表最新一条记录为已反馈(解决重置反馈后没有同步反馈结果给品骏达)
@@ -483,7 +484,8 @@ public class WeisudaService {
 			
 			OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
 			//boolean filterCustomerflag = filterWandanCustomerId(customerid, weisuda);
-			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop")) || (orderTraceToTPSCfg!=null && isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid))) {
+			boolean isPopCustomer = (orderTraceToTPSCfg!=null && orderTraceToTPSCfg.getTrackOpenFlag()==1)?isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid):false;
+			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop")) || isPopCustomer) {
 				updateOrdersMethod(orderFlow, cwbOrderWithDeliveryState, weisuda, cwb);
 				return; //如果是唯品会订单，签收信息修改通知品骏达后就不需要执行后面的代码了 added by zhouguoting 2016/03/16
 			} else {
@@ -1006,7 +1008,8 @@ public class WeisudaService {
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
 			Customer customer = this.getDmpDAO.getCustomer(customerid);
 			OrderTraceToTPSCfg orderTraceToTPSCfg = this.getOrderTraceToTPSCfg();
-			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))|| (orderTraceToTPSCfg!=null && isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid))) {
+			boolean isPopCustomer = (orderTraceToTPSCfg!=null && orderTraceToTPSCfg.getTrackOpenFlag()==1)?isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),customerid):false;
+			if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "vipshop"))|| isPopCustomer) {
 				String cwb = cwbOrderWithDeliveryState.getCwbOrder().getCwb();
 				try {
 					WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);

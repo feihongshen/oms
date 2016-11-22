@@ -589,14 +589,14 @@ public class OtherOrderTrackSendService {
 		try {
 			
 			if(orderFlow.getFlowordertype() == FlowOrderTypeEnum.YiFanKui.getValue()){
-				this.logger.info("归班反馈操作不保存到外单轨迹表,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				this.logger.info("pop导入订单：归班反馈操作不保存到外单轨迹表,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 				return;
 			}
 			
 			int tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(orderFlow.getFlowordertype());
 			if(tpsOperateType<0
 					&&orderFlow.getFlowordertype()!=FlowOrderTypeEnum.ChongZhiFanKui.getValue()){
-				this.logger.info("此轨迹不处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
+				this.logger.info("pop导入订单：此轨迹不处理,cwb={},flowordertype={}", orderFlow.getCwb(), orderFlow.getFlowordertype());
 				return ;
 			}
 			
@@ -630,7 +630,7 @@ public class OtherOrderTrackSendService {
 			this.otherOrderTrackService.saveOtherOrderTrack(vo);
 			
 		} catch (Exception e) {
-			this.logger.error("保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
+			this.logger.error("pop导入订单：保存外单轨迹TPS数据出错.cwb="+ orderFlow.getCwb()+",flowordertype="+orderFlow.getFlowordertype(),e);
 		}
 		
 	}
