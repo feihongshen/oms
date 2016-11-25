@@ -226,29 +226,30 @@ public class WeisudaService {
 				this.logger.info("外单客户未设置对接，customername={},cwb={}", customer.getCustomername(), orderFlow.getCwb());
 			}
 			
-			if (cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb()!=null 
-					&&!cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb().isEmpty() 
-					&&Integer.parseInt(cwbOrderWithDeliveryState.getCwbOrder().getCwbordertypeid())!=6) {
-				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
-				
-				//Added by leoliao at 2016-08-16 领货时更新接口表最新一条记录为已反馈(解决重置反馈后没有同步反馈结果给品骏达)
-				this.updateIsqianshou(orderFlow.getCwb(), "1", "领货时更新为已反馈");
-				//Added end
-				
-				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
-				User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
-				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime,0);
-				if (weisudaCwbold == null) {
-					WeisudaCwb weisudaCwb = new WeisudaCwb();
-					weisudaCwb.setCwb(orderFlow.getCwb());
-					weisudaCwb.setCwbordertypeid(cwbordertypeid);
-					weisudaCwb.setCourier_code(deliverUser.getUsername());
-					weisudaCwb.setOperationTime(orderTime);
-					this.weisudaDAO.insertTPSOrderToWeisuda(weisudaCwb,0);
-					this.logger.info("唯速达_01获取唯速达数据插入成功cwb={}", weisudaCwb.getCwb());
-				}
-				return;
-			} 
+			// 
+//			if (cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb()!=null 
+//					&&!cwbOrderWithDeliveryState.getCwbOrder().getTpstranscwb().isEmpty() 
+//					&&Integer.parseInt(cwbOrderWithDeliveryState.getCwbOrder().getCwbordertypeid())!=6) {
+//				this.weisudaDAO.deleteWeisudaCwbNotuisong(orderFlow.getCwb(), "0");
+//				
+//				//Added by leoliao at 2016-08-16 领货时更新接口表最新一条记录为已反馈(解决重置反馈后没有同步反馈结果给品骏达)
+//				this.updateIsqianshou(orderFlow.getCwb(), "1", "领货时更新为已反馈");
+//				//Added end
+//				
+//				String orderTime = DateTimeUtil.formatDate(orderFlow.getCredate());
+//				User deliverUser = this.getDmpDAO.getUserById(cwbOrder.getDeliverid());
+//				WeisudaCwb weisudaCwbold = this.weisudaDAO.getWeisudaCwb(orderFlow.getCwb(), orderTime,0);
+//				if (weisudaCwbold == null) {
+//					WeisudaCwb weisudaCwb = new WeisudaCwb();
+//					weisudaCwb.setCwb(orderFlow.getCwb());
+//					weisudaCwb.setCwbordertypeid(cwbordertypeid);
+//					weisudaCwb.setCourier_code(deliverUser.getUsername());
+//					weisudaCwb.setOperationTime(orderTime);
+//					this.weisudaDAO.insertTPSOrderToWeisuda(weisudaCwb,0);
+//					this.logger.info("唯速达_01获取唯速达数据插入成功cwb={}", weisudaCwb.getCwb());
+//				}
+//				return;
+//			} 
 			
 		} else {
 			this.logger.info("唯速达_01不是所需要的订单类型，cwb={}", orderFlow.getCwb());
@@ -532,7 +533,8 @@ public class WeisudaService {
 		try {
 			WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);
 			if (weisudaCwb != null) {
-				if (weisudaCwb.getIsqianshou().equals("0")) {
+				// modify by jian_xie 只有有领货记录都同步给pjd 2016-11-25
+//				if (weisudaCwb.getIsqianshou().equals("0")) {
 					DmpCwbOrder cwbOrder = cwbOrderWithDeliveryState.getCwbOrder();
 					DmpDeliveryState deliveryState = cwbOrderWithDeliveryState.getDeliveryState();
 					String order_id = cwbOrder.getCwb();
@@ -615,10 +617,10 @@ public class WeisudaService {
 						}
 
 					}
-				}
-				else{
-					this.logger.info("唯速达_04包裹修改信息接口修改已取消，原因：下发品骏达接口表标示已签收！cwb={}", cwb);
-				}
+//				}
+//				else{
+//					this.logger.info("唯速达_04包裹修改信息接口修改已取消，原因：下发品骏达接口表标示已签收！cwb={}", cwb);
+//				}
 			}else{
 				//Added by leoliao at 2016-08-10 保存到异常表以便重发(可能由于MQ消费顺序问题导致weisuda接口表暂时没数据)
 				saveOrderinfoException(cwb, orderFlow);
@@ -1025,7 +1027,8 @@ public class WeisudaService {
 				try {
 					WeisudaCwb weisudaCwb = this.weisudaDAO.getWeisudaCwbByOrder(cwb);
 					if (weisudaCwb != null) {
-						if (weisudaCwb.getIsqianshou().equals("0")) {
+						// modify by jian_xie 每次反馈都同步pjd 2016-11-25
+//						if (weisudaCwb.getIsqianshou().equals("0")) {
 							DmpCwbOrder cwbOrder = cwbOrderWithDeliveryState.getCwbOrder();
 							DmpDeliveryState deliveryState = cwbOrderWithDeliveryState.getDeliveryState();
 							String order_id = cwbOrder.getCwb();
@@ -1107,9 +1110,9 @@ public class WeisudaService {
 								}
 
 							}
-						}else{
-							this.logger.info("唯速达_13上门退签收信息修改:订单已签收(cwb={})", cwb);
-						}
+//						}else{
+//							this.logger.info("唯速达_13上门退签收信息修改:订单已签收(cwb={})", cwb);
+//						}
 					}else{
 						//Added by leoliao at 2016-08-10 保存到异常表以便重发(可能由于MQ消费顺序问题导致weisuda接口表暂时没数据)
 						saveOrderinfoException(cwb, orderFlow);
