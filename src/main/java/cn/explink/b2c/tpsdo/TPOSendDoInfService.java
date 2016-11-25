@@ -602,6 +602,13 @@ public class TPOSendDoInfService {
 		thirdPartyOrder2DORequestVo.setTransportNo("");
 		thirdPartyOrder2DORequestVo.setWarehouse(StringUtil.nullConvertToEmptyString(cwbOrder.getCarwarehouse()));
 		thirdPartyOrder2DORequestVo.setZipCode(StringUtil.nullConvertToEmptyString(cwbOrder.getConsigneepostcode()));
+		if(cwbOrder.getPaymethod()!=0){
+			thirdPartyOrder2DORequestVo.setPayType(cwbOrder.getPaymethod());
+		}else if(cwbOrder.getPaymethod()==0 && cwbOrder.getShouldfare().compareTo(BigDecimal.ZERO)>0){
+			thirdPartyOrder2DORequestVo.setPayType(2);//到付
+		}else{
+			thirdPartyOrder2DORequestVo.setPayType(1);//现付
+		}
 				
 		if(StringUtils.isNotBlank(cwbOrder.getTranscwb())){
 			List<ThirdPartyOrder2DORequestVo.Boxinfo> boxinfos = new ArrayList<ThirdPartyOrder2DORequestVo.Boxinfo>();
@@ -614,6 +621,7 @@ public class TPOSendDoInfService {
 			}
 			thirdPartyOrder2DORequestVo.setBoxinfos(boxinfos);
 		}	
+		
 		return thirdPartyOrder2DORequestVo;
 	}
 	

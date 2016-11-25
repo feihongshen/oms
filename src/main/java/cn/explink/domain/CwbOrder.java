@@ -250,7 +250,19 @@ public class CwbOrder {
 	private String zhongzhuanreason;//中转原因
 	private String tpstranscwb;//tps运单号
 	private long orderSource;//订单类型
+	 /**
+     * 付款方式（1：现付，2：到付，0：月结） //3：第三方支付
+     */
+    private int paymethod;
 	
+	public int getPaymethod() {
+		return paymethod;
+	}
+
+	public void setPaymethod(int paymethod) {
+		this.paymethod = paymethod;
+	}
+
 	public long getZhongzhuanreasonid() {
 		return zhongzhuanreasonid;
 	}
