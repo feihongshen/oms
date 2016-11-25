@@ -139,6 +139,11 @@ public class WeisudaService {
 		DmpCwbOrder cwbOrder = cwbOrderWithDeliveryState.getCwbOrder();
 		int cwbordertypeid = Integer.parseInt(cwbOrder.getCwbordertypeid());
 		if ((cwbordertypeid == CwbOrderTypeIdEnum.Peisong.getValue()) || (cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue())|| (cwbordertypeid == CwbOrderTypeIdEnum.OXO.getValue())) {
+			//上门换业务里的上门退订单的领货不推给pjd
+			if(cwbordertypeid == CwbOrderTypeIdEnum.Shangmentui.getValue()&&cwbOrder.getExchangeflag()==1){
+				this.logger.info("唯速达_01上门换时的上门退领货不推pjd,cwb={}", cwbOrder.getCwb());
+				return;
+			}
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
 			
 			Customer customer = this.cacheBaseListener.getCustomer(customerid);
@@ -571,10 +576,11 @@ public class WeisudaService {
 					bound_time = (bound_times == null ? "" : (bound_times / 1000) + "");
 					String backreason = reason == null ? "" : reason;
 					delay_reason = delay_reason == null ? "" : delay_reason;
+					String transport_no=cwbOrder.getExchangetpstranscwb()==null?"":cwbOrder.getExchangetpstranscwb();
 					String data = "<root>" + "<item>" + "<order_id>" + order_id + "</order_id>" + "<order_status>" + order_status + "</order_status>" + "<carrier_code>"
 							+ weisudaCwb.getCourier_code().toUpperCase() + "</carrier_code>" + "<bound_time>" + bound_time + "</bound_time>" + "<consignee>" + consignee + "</consignee>"
 							+ "<opertime>" + opertime + "</opertime>" + "<reason>" + backreason + "</reason>" + "<delay_reason>" + delay_reason + "</delay_reason>" + "<memo>" + memo
-							+ "</memo>" + "<paymethod>" + paymethod + "</paymethod>" + "<pay_status>" + pay_status + "</pay_status>" + "</item>" + "</root>";
+							+ "</memo>" + "<paymethod>" + paymethod + "</paymethod>" + "<pay_status>" + pay_status + "</pay_status>" + "<transport_no>" + transport_no + "</transport_no>" + "</item>" + "</root>";
 					this.logger.info("唯速达_04包裹修改信息接口修改发送数据！data={}", data);
 					String response = this.check(weisuda, "data", data, WeisudsInterfaceEnum.updateOrders.getValue());
 					this.logger.info("唯速达_04包裹修改信息接口修改返回数据！response={}", response);
@@ -1004,6 +1010,10 @@ public class WeisudaService {
 				this.logger.info("唯速达_13未开启[唯速达]接口");
 				return;
 			}
+			if(cwbOrderWithDeliveryState.getCwbOrder().getExchangeflag()==1){
+				this.logger.info("唯速达_13上门换里揽退单反馈结果不推cwb={}",orderFlow.getCwb());
+				return;
+			}
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 			this.logger.info("唯速达_13进入唯速达对接cwb={}", orderFlow.getCwb());
 			long customerid = cwbOrderWithDeliveryState.getCwbOrder().getCustomerid();
@@ -1333,6 +1343,7 @@ public class WeisudaService {
 				dto.setStrandedrReason(itemps.getDelay_reason());
 			}
 			dto.setConsignee(itemps.getConsignee());
+			dto.setExchangetpstranscwb(itemps.getTransport_no());
 		} else if (item.getClass().isInstance(itemsmt)) {// 如果是上门退订单
 			itemsmt = (Getback_Item) item;
 			if ("9".equals(status)) {

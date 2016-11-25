@@ -7,6 +7,7 @@ public class GetUnVerifyOrders_back_Item extends Item {
 	private String reject_map;
 	private String delay_reason;
 	private String is_open;
+	private String transport_no;
 
 	@XmlElement(name = "consignee")
 	public String getConsignee() {
@@ -48,6 +49,15 @@ public class GetUnVerifyOrders_back_Item extends Item {
 	 */
 	public void setIs_open(String is_open) {
 		this.is_open = is_open;
+	}
+	
+	@XmlElement(name = "transport_no")
+	public String getTransport_no() {
+		return transport_no;
+	}
+
+	public void setTransport_no(String transport_no) {
+		this.transport_no = transport_no;
 	}
 
 }
