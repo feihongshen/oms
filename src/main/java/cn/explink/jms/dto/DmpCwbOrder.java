@@ -127,6 +127,18 @@ public class DmpCwbOrder {
 	private long changereasonid=0l;//待中转二级级原因
 	private String tpstranscwb;//tps运单号
 	private long orderSource;//订单来源
+	 /**
+     * 付款方式（1：现付，2：到付，0：月结） //3：第三方支付
+     */
+    private int paymethod;
+	
+	public int getPaymethod() {
+		return paymethod;
+	}
+
+	public void setPaymethod(int paymethod) {
+		this.paymethod = paymethod;
+	}
 	
 	public int getMpsoptstate() {
 		return mpsoptstate;
