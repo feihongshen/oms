@@ -94,6 +94,7 @@ public class TPSDOService {
 							this.logger.info("获得外单推DO响应数据" + (pjDeliveryOrderList == null ? 0 : pjDeliveryOrderList.size()) + "条，耗时" + (new Date().getTime() - beginTime) + "ms");
 							
 						}catch(Exception e){
+							tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), pjDeliverOrder.getTransportNo(), 1, trytime + 1, e.getMessage());
 						    this.logger.error("推送外单数据给DO服务失败！出现未知异常。",e);
 						}
 						
@@ -111,7 +112,7 @@ public class TPSDOService {
 							try{
 								if(resultCode == 1){
 									this.logger.info("推送外单数据给DO成功！cwb={}",response.getCustOrderNo());
-									this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), response.getTransportNo(), 1, trytime + 1, "");
+									this.tPOSendDoInfService.updateTPOSendDoInf(tPOSendDoInf.getId(), response.getTransportNo(), 1, trytime + 1, "成功");
 									this.cwbDAO.updateTpstranscwbByCwb(response.getCustOrderNo(),response.getTransportNo());
 								}else{
 									this.logger.info("推送外单数据给DO失败！cwb={},失败原因={}",response.getCustOrderNo(),response.getResultMsg());
