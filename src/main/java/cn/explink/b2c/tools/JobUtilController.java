@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.explink.b2c.tools.b2cmonitor.B2cSendMointorService;
+import cn.explink.b2c.tpsdo.TPSDOService;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.domain.SystemInstall;
 import cn.explink.util.JSONReslutUtil;
+import cn.explink.util.JobUtil;
 
 /**
  * 提供一个手动反馈给各个已对接的供货商订单状态，相当于定时器调用。 如果不想等待定时器自动反馈，可以使用此功能
@@ -40,6 +42,8 @@ public class JobUtilController {
 	GetDmpDAO getDmpDAO;
 	@Autowired
 	JobUtilService jobUtilService;
+	@Autowired
+	TPSDOService tPSDOService;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -1293,4 +1297,19 @@ public class JobUtilController {
 
 	}
 
+	/**
+	 * 推送外单数据给DO服务定时任务方法
+	 */
+	@RequestMapping("/sendThirdPartyOrder2DO_Task")
+	@ResponseBody
+	public void sendThirdPartyOrder2DO_Task(){
+		try{
+			tPSDOService.thirdPartyOrderSend2DO();
+		}catch(Exception e){
+			this.logger.error("执行推送外单数据给DO服务定时器异常!异常原因:{}",e);
+		}finally{
+			JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
+			this.logger.info("执行推送外单数据给DO服务定时器完毕！");
+		}
+	}
 }

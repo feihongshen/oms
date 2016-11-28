@@ -218,7 +218,7 @@ public class FlowFromJMSB2cService {
 			// 存入正常流程的状态信息
 			this.AddExcuteFlowStatusMethod(orderFlow);
 			
-			// 将所有订单的轨迹信息存到轨迹接口表（推送给tps的轨迹）
+			//POP订单和轨迹处理
 			OrderTraceToTPSCfg orderTraceToTPSCfg = b2ctools.getOrderTraceToTPSCfg();
 			// 将所有订单的轨迹信息存到轨迹接口表（推送给tps的轨迹）
 			if((orderTraceToTPSCfg!=null && b2ctools.isTraceToTpsCustomer(orderTraceToTPSCfg.getCustomerids(),cwbOrderWithDeliveryState.getCwbOrder().getCustomerid()))){
