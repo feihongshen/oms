@@ -910,11 +910,6 @@ public class JobUtil {
     
     public  void getWeisuda_Task() {
 		
-		if (JobUtil.threadMap.get("weisudaDeliveryBound") == 1) {
-			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryBound");
-			return;
-		}
-		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
 		String lockKey = getClass().getName() + "getWeisuda_Task";
 		try {
 			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
