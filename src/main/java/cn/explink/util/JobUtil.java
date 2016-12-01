@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.pjbest.util.dlock.IDistributedLock;
+import com.pjbest.util.dlock.impl.DistributedLock;
 
 import cn.explink.b2c.Wholeline.WholeLine;
 import cn.explink.b2c.Wholeline.WholeLineService;
@@ -252,7 +253,7 @@ public class JobUtil {
 	TrackSendToTPSService trackSendToTPSService;
 	
 	@Autowired
-    IDistributedLock  distributedLock;
+    DistributedLock  distributedLock;
 	
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
