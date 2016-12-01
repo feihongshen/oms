@@ -416,6 +416,15 @@
 		  <groupId>com.vip.hermes</groupId>
 		  <artifactId>hermes-core</artifactId>
 		  <version>1.2.4</version>
+		  
+		   <exclusions>
+		      	<exclusion>
+			    	<groupId>com.fasterxml.jackson.core</groupId>
+		  			<artifactId>jackson-annotations</artifactId>
+			   	</exclusion>
+			   
+			 </exclusions> 
+			 
 		</dependency>
 		
 		<dependency>
@@ -472,6 +481,15 @@
 			<artifactId>xstream</artifactId>
 			<version>1.4.5</version>
 		</dependency>
+		
+		
+		<dependency>
+		  <groupId>com.pjbest.util</groupId>
+		  <artifactId>dlock</artifactId>
+		  <version>1.0.1</version>
+		</dependency>
+		
+		
 	</dependencies>
 	<build>
 		<finalName>oms_pj</finalName>
