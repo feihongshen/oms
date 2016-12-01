@@ -198,16 +198,16 @@ public class OtherOrderTrackSendService {
 				throw new RuntimeException("归班反馈结果报文数据为空.");
 			}
 			
-			if(ds.getDeliverystate()==DeliveryStateEnum.PeiSongChengGong.getValue()){
-				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.PeiSongChengGong.getValue());
-					
-				//以下需要检查配送成功与否??? 
-				//is it getReceivedfee???
-				//if(ds.getSign_typeid()==1){//已签收
-					SignTrack signTrack=new SignTrack();
-					signTrack.setSignMan(ds.getSign_man());//本人或代签???????????
-					req.setSign(signTrack);
-				//}
+			if (ds.getDeliverystate() == DeliveryStateEnum.PeiSongChengGong.getValue()) {
+				tpsOperateType = dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.PeiSongChengGong.getValue());
+				SignTrack signTrack = new SignTrack();
+				// modify by jian_xie 2016-12-01
+				if (ds.getSign_man() != null && ds.getSign_man().length() > 32) {
+					signTrack.setSignMan(ds.getSign_man().substring(0, 32));
+				} else {
+					signTrack.setSignMan(ds.getSign_man());// 本人或代签???????????
+				}
+				req.setSign(signTrack);
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenTuiChengGong.getValue()){
 				tpsOperateType=dmpTpsTrackMappingService.getTpsOperateType(FlowOrderTypeEnum.ShangMenTuiChengGong.getValue());
 			}else if(ds.getDeliverystate()==DeliveryStateEnum.ShangMenHuanChengGong.getValue()){

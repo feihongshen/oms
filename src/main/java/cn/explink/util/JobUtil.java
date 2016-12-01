@@ -1,11 +1,14 @@
 package cn.explink.util;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.pjbest.util.dlock.IDistributedLock;
 
 import cn.explink.b2c.Wholeline.WholeLine;
 import cn.explink.b2c.Wholeline.WholeLineService;
@@ -248,6 +251,9 @@ public class JobUtil {
 	@Autowired
 	TrackSendToTPSService trackSendToTPSService;
 	
+	@Autowired
+    IDistributedLock  distributedLock;
+	
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
 
@@ -458,15 +464,34 @@ public class JobUtil {
 			this.logger.warn("未开启本地调用定时器功能yihaodian");
 			return;
 		}
-		this.rufengdaService_CommitDeliverInfo.CommitDeliverInfo_interface();
-		this.smileService.feedback_status(); // 思迈对接
-		for (B2cEnum enums : B2cEnum.values()) {
-			if (enums.getMethod().contains("yihaodian")) {
-				this.yihaodianService.YiHaoDianInterfaceInvoke(enums.getKey());
+		
+		String lockKey = getClass().getName() + "feedBackToRufengda_Task";
+		try {
+			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
+			if(!isAcquired){
+				logger.warn(lockKey + "正在执行，退出定时器");
+				return;
+			} else {
+				rufengdaService_CommitDeliverInfo.CommitDeliverInfo_interface();
+				smileService.feedback_status(); // 思迈对接
+				for (B2cEnum enums : B2cEnum.values()) {
+					if (enums.getMethod().contains("yihaodian")) {
+						yihaodianService.YiHaoDianInterfaceInvoke(enums.getKey());
+					}
+				}
+				long endtime = System.currentTimeMillis();
+				expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.FANKE, endtime);
+			}
+		}catch(Exception e){
+			logger.warn("执行feedBackToRufengda_Task任务出错", e);
+		}finally{
+			try{
+				distributedLock.unlock(lockKey);
+			}catch(Exception e){
+				logger.error(lockKey + "解锁失败", e);
 			}
 		}
-		long endtime = System.currentTimeMillis();
-		this.expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.FANKE, endtime);
+		
 		this.logger.info("执行了如风达反馈的定时器!");
 	}
 
@@ -890,15 +915,23 @@ public class JobUtil {
 			return;
 		}
 		JobUtil.threadMap.put("weisudaDeliveryBound", 1);
+		String lockKey = getClass().getName() + "getWeisuda_Task";
 		try {
-			// 只使用批量推送，delete by jian_xie
-//			this.weisudaService.boundDeliveryToApp(false); //首次单票
-			this.weisudaServiceExtends.boundsDeliveryToApp(false);//首次批量
-
+			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
+			if(!isAcquired){
+				logger.warn(lockKey + "正在执行,退出定时器");
+				return;
+			} else {
+				weisudaServiceExtends.boundsDeliveryToApp(false);
+			}
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达定时器异常!", e);
-		}finally{
-			JobUtil.threadMap.put("weisudaDeliveryBound", 0);
+		} finally {
+			try {
+				distributedLock.unlock(lockKey);
+			} catch (Exception e) {
+				logger.error(lockKey + "解锁失败", e);
+			}
 		}
 		this.logger.info("执行了推送唯速达快递单绑定达定时器!");
 	}
@@ -907,31 +940,32 @@ public class JobUtil {
 	 * 签收结果同步
 	 */
 	public void getWeisudaDeliveryResult_Task() {
-		
-		if (JobUtil.threadMap.get("weisudaDeliveryResult") == 1) {
-			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryResult");
-			return;
-		}
-		JobUtil.threadMap.put("weisudaDeliveryResult", 1);
+		String lockKey = getClass().getName() + "getWeisudaDeliveryResult_Task";
 		try {
-			//Commented by leoliao at 2016-04-01 全部统一使用批量同步方式
-			//this.weisudaService.getUnVerifyOrdersOfCount();
-			
-			long timeA = System.currentTimeMillis();			
-			this.weisudaService.getback_getAppOrdersCounts();
-			
-			long timeB = System.currentTimeMillis();			
-			this.logger.info("执行上门退订单签收信息同步耗时:{}秒", ((timeB - timeA) / 1000));
-			
-			this.weisudaServiceDeliveryResult.getDeliveryResult();
-			
-			long timeC = System.currentTimeMillis();			
-			this.logger.info("执行配送订单签收信息同步耗时:{}秒", ((timeC - timeB) / 1000));
+			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
+			if(!isAcquired){
+				logger.warn(lockKey + "正在执行,退出定时器");
+				return;
+			} else {
+				long timeA = System.currentTimeMillis();
+				this.weisudaService.getback_getAppOrdersCounts();
 
+				long timeB = System.currentTimeMillis();
+				this.logger.info("执行上门退订单签收信息同步耗时:{}秒", ((timeB - timeA) / 1000));
+
+				this.weisudaServiceDeliveryResult.getDeliveryResult();
+
+				long timeC = System.currentTimeMillis();
+				this.logger.info("执行配送订单签收信息同步耗时:{}秒", ((timeC - timeB) / 1000));
+			}
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达签收结果同步定时器异常!", e);
-		}finally{
-			JobUtil.threadMap.put("weisudaDeliveryResult", 0);
+		} finally {
+			try {
+				distributedLock.unlock(lockKey);
+			} catch (Exception e) {
+				logger.error(lockKey + "解锁失败", e);
+			}
 		}
 		this.logger.info("执行了推送唯速达签收结果同步定时器!");
 	}
