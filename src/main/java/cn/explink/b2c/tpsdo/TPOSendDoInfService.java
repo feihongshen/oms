@@ -154,6 +154,11 @@ public class TPOSendDoInfService {
 		tPOSendDoInf.setCustcode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));
 		tPOSendDoInf.setCwb(cwbOrder.getCwb());
 		tPOSendDoInf.setUpdateTime(new Date());
+		// 把外单号添加 add by jian_xie 2016-11-29
+		if(!StringUtils.isEmpty(cwbOrder.getTpstranscwb())){
+			tPOSendDoInf.setTransportno(cwbOrder.getTpstranscwb());
+			tPOSendDoInf.setIsSent(1);
+		}
 		return tPOSendDoInf;
 	}
 	
@@ -458,6 +463,11 @@ public class TPOSendDoInfService {
 		tPOSendDoInf.setCustcode(StringUtil.nullConvertToEmptyString(customer.getCustomercode()));
 		tPOSendDoInf.setCwb(cwbOrder.getCwb());
 		tPOSendDoInf.setUpdateTime(new Date());
+		// 把外单号添加 add by jian_xie 2016-11-29
+		if(!StringUtils.isEmpty(cwbOrder.getTpstranscwb())){
+			tPOSendDoInf.setTransportno(cwbOrder.getTpstranscwb());
+			tPOSendDoInf.setIsSent(1);
+		}
 		return tPOSendDoInf;
 	}
 	
