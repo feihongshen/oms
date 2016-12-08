@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.pjbest.util.dlock.IDistributedLock;
 import com.pjbest.util.dlock.impl.DistributedLock;
 
 import cn.explink.b2c.Wholeline.WholeLine;
@@ -897,7 +896,6 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 1);
 		try {
 			// 只使用批量推送，delete by jian_xie
-//			this.weisudaService.boundDeliveryToApp(true); //重推单票
 			this.weisudaServiceExtends.boundsDeliveryToApp(true);//重推批量
 
 		} catch (Exception e) {

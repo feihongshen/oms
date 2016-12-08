@@ -1,6 +1,7 @@
 package cn.explink.b2c.weisuda;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,9 +11,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import net.sf.json.JSONObject;
-
-import org.apache.camel.CamelContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,6 @@ import cn.explink.b2c.tools.CacheBaseListener;
 import cn.explink.b2c.weisuda.xml.ObjectUnMarchal;
 import cn.explink.b2c.weisuda.xml.bound.RespRootOrder;
 import cn.explink.b2c.weisuda.xml.bound.RespRootOrder.ErrorItem;
-import cn.explink.dao.BranchDAO;
 import cn.explink.dao.GetDmpDAO;
 import cn.explink.dao.WeisudaDAO;
 import cn.explink.domain.SystemInstall;
@@ -34,6 +31,7 @@ import cn.explink.enumutil.pos.PosEnum;
 import cn.explink.util.DateTimeUtil;
 import cn.explink.util.RestHttpServiceHanlder;
 import cn.explink.util.MD5.MD5Util;
+import net.sf.json.JSONObject;
 
 @Service
 public class WeisudaServiceExtends {
@@ -43,13 +41,13 @@ public class WeisudaServiceExtends {
 	GetDmpDAO getDmpDAO;
 	@Autowired
 	WeisudaDAO weisudaDAO;
-	@Autowired
-	private CamelContext camelContext;
-	@Autowired
-	private BranchDAO branchDAO;
+	
 	@Autowired
 	CacheBaseListener cacheBaseListener;
-
+	
+	@Autowired
+	GetDmpDAO getDmpdao;
+	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	
@@ -66,14 +64,37 @@ public class WeisudaServiceExtends {
 			this.logger.info("唯速达_01未开启[唯速达]接口");
 			return;
 		}
-		
-		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Peisong.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_01",isRepeat);
-		boundDeliveryAppMethod(CwbOrderTypeIdEnum.Shangmentui.getValue(),WeisudsInterfaceEnum.getback_boundOrders.getValue(),"唯速达_10",isRepeat);
-		boundDeliveryAppMethod(CwbOrderTypeIdEnum.OXO.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_10",isRepeat);
-
+		List<Integer> orderTypeList = getOrderTypeList();
+		for(int i = 0; i < orderTypeList.size(); i++){
+			int orderType = orderTypeList.get(i);
+			boundDeliveryAppMethod(CwbOrderTypeIdEnum.Peisong.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_01",isRepeat, orderType);
+			boundDeliveryAppMethod(CwbOrderTypeIdEnum.Shangmentui.getValue(),WeisudsInterfaceEnum.getback_boundOrders.getValue(),"唯速达_10",isRepeat, orderType);
+			boundDeliveryAppMethod(CwbOrderTypeIdEnum.OXO.getValue(),WeisudsInterfaceEnum.pushOrders.getValue(),"唯速达_10",isRepeat, orderType);
+		}
 	}
+	
+	/**
+	 * 返回绑定关系中需要推送的订单类型
+	 * @return
+	 */
+	public List<Integer> getOrderTypeList() {
+		// 需要推送的订单类型
+		SystemInstall systemInstall = getDmpdao.getSystemInstallByName("WeisudaOrderType");
+		List<Integer> orderTypeList = new ArrayList<Integer>();
+		if (systemInstall == null) {
+			orderTypeList.add(0);
+		} else {
+			String value = systemInstall.getValue();
+			String[] orderType = value.split(",");
+			for(int i = 0; i < orderType.length; i++){
+				orderTypeList.add(Integer.valueOf(orderType[i]));
+			}
+		}
+		return orderTypeList;
+	}
+	
 
-	private void boundDeliveryAppMethod(long cwbordertypeid,int urlFlag,String upflagString, boolean isRepeat ) {
+	private void boundDeliveryAppMethod(long cwbordertypeid,int urlFlag,String upflagString, boolean isRepeat, int ordertype ) {
 		try {
 			Weisuda weisuda = this.getWeisuda(PosEnum.Weisuda.getKey());
 
@@ -85,14 +106,13 @@ public class WeisudaServiceExtends {
 			List<WeisudaCwb> boundList = null;
 			if (!isRepeat) {
 				//Added by leoliao at 2016-05-04 加上过滤已签收的条件,即已签收的不再发小件员绑定关系给品骏达
-				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0, "0");
-				//boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), 0);
+				boundList = this.weisudaDAO.getBoundWeisudaCwbs("0", cwbordertypeid, (cntLoop * maxBounds), ordertype, "0");
 				if ((boundList == null) || (boundList.size() == 0)) {
 					this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
 					return;
 				}
 			} else {
-				boundList = this.weisudaDAO.getBoundWeisudaCwbsRepeat("2", cwbordertypeid, (cntLoop * maxBounds), 0);
+				boundList = this.weisudaDAO.getBoundWeisudaCwbsRepeat("2", cwbordertypeid, (cntLoop * maxBounds), ordertype);
 				if ((boundList == null) || (boundList.size() == 0)) {
 					this.logger.info("重推唯速达_01当前没有要推送0唯速达0的数据");
 					return;
@@ -119,27 +139,6 @@ public class WeisudaServiceExtends {
 				k++;
 			}
 			//Added end
-			
-			/**Commented by leoliao at 2016-03-08
-			int i = 0;
-			while (true) {
-				List<WeisudaCwb> boundList = this.weisudaDAO.getBoundWeisudaCwbs("0",cwbordertypeid,maxBounds,0);
-				i++;
-				if (i > 100) {
-					String warning = "查询0唯速达0状态反馈已经超过100次循环，可能存在程序未知异常,请及时查询并处理!";
-					this.logger.warn(warning);
-					return;
-				}
-
-				if ((boundList == null) || (boundList.size() == 0)) {
-					this.logger.info("唯速达_01当前没有要推送0唯速达0的数据");
-					return;
-				}
-				
-				this.DealWithBuildXMLAndSending(boundList, weisuda,urlFlag,upflagString);
-
-			}
-			*/
 
 		} catch (Exception e) {
 			String errorinfo = "唯速达_01发送0唯速达0状态反馈遇到不可预知的异常";
