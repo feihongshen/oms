@@ -93,4 +93,12 @@ public class OrderTrackToTPSDAO {
 		this.jdbcTemplate.update(sql, status,errorinfo,cwb,floworderid);
 	}
 	
+	public void updateTpoOtherOrderTrackByCwbs(String cwbs, boolean isAll) {
+		String sql = " update tpo_other_order_track set trytime=0, status = 1 where cwb in (" + cwbs + ") ";
+		if(!isAll){
+			sql += " and status = 3 ";
+		}
+		jdbcTemplate.update(sql);
+	}
+	
 }

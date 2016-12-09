@@ -1014,4 +1014,13 @@ public class B2CDataDAO {
 		}
 		this.jdbcTemplate.update(sql, customerids, time);
 	}
+	
+	public void updateOpsSendB2cDataByCwbs(String cwbs, boolean isAll){
+		String sql = " update express_send_b2c_data set send_b2c_flag=0 where cwb in (" + cwbs + ") ";
+		if(!isAll){
+			sql += " and send_b2c_flag=2";
+		}
+		jdbcTemplate.update(sql);
+	}
+	
 }

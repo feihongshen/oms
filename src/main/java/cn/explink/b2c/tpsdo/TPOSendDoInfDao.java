@@ -141,5 +141,12 @@ public class TPOSendDoInfDao {
 		return this.jdbcTemplate.query(sql, new cwbInfoMapper());
 	}
 	
+	public void updateTPOSendDoInfByCwbs(String cwbs, boolean isAll){
+		String sql = " update tpo_send_do_inf set trytime=0, is_sent=0 where cwb in (" + cwbs + ") ";
+		if(!isAll){
+			sql += " and is_sent=2";
+		}
+		jdbcTemplate.update(sql);
+	}
 
 }
