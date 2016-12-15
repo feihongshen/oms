@@ -90,7 +90,8 @@
 							 <ref bean="doTime_resetGanXianHuiDan"/>
 							 <ref bean="shenzhoushuma"/>
 							 <ref bean="zhemengTrack"/>
-							 <ref bean="doTime_sendOrderTrackToTPS"/>
+							 <!-- 推送轨迹给tps,需要注释 -->
+							<!--  <ref bean="doTime_sendOrderTrackToTPS"/> -->
 							 <ref bean="doTime_resendDeliveryStateToPJD"/>
 							 
 			           </list>            
