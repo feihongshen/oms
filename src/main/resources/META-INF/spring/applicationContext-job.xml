@@ -11,7 +11,7 @@
             http://www.springframework.org/schema/aop/spring-aop-2.5.xsd  
             http://www.springframework.org/schema/tx  
             http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-    
+
 	<bean id="scheduledTaskService" class="cn.explink.service.ScheduledTaskService">
 		<property name="cachedWorkers">
 			<map>
@@ -19,639 +19,702 @@
 			</map>
 		</property>
 	</bean>
-	
+
 	<!-- ===================================自动生成HTML定时器 开始========================================== -->
-	 <bean id="updateEMS" class="cn.explink.util.JobUtil">
-	 </bean>
-	 <bean id="schedulerFactory"  lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-	               <property name="triggers">        
-			           <list>		                  
-			              	 <ref bean="doTime4"/>	
-			              	 <ref bean="doTime5"/>
-			              	 <ref bean="doTime6"/>
-			              	 <ref bean="doTime7"/>
-			              	 <ref bean="doTime8"/>    
-			              	 <ref bean="doTime10"/>  
-			              	 <ref bean="doTime11"/>  
-			              	 <ref bean="doTime12"/>  
-			              	 <ref bean="doTime13"/>  			              	 
-			              	 <ref bean="doTime14"/> 
-			              	 <ref bean="doTime15"/>  
-			              	 <ref bean="doTime16"/>
-			              	 <ref bean="doTime17"/>
-			              	 <ref bean="doTime18"/>
-			              	 <ref bean="doTime19"/>
-			              	 <ref bean="doTime20"/>
-			              	 <ref bean="doTime21"/>
-			              	 <ref bean="doTime_epaiUp"/>
-			              	 <ref bean="doTime_epaiDown"/>
-			              	 <ref bean="doTime_outbranchMsk"/>
-			              	 <ref bean="dowholeLine_down"/> 
-			              	 <ref bean="doTransmigration_wholeline"/>
-			              	 <ref bean="doTime_getLiantong"/>
-			              	 <ref bean="doTime_getLetv"/>
-			              	 <ref bean="doTime_chinamobile"/>
-							 <ref bean="doTime_getMmb"/>
-							 <ref bean="doTime_letv"/>
-							 <ref bean="doTime_yonghuics"/>
-							 <ref bean="doTime_hxgdms"/>
-							 <ref bean="doTime_sfexpress"/>
-							 <ref bean="doTime_homegou"/>
-							 <ref bean="schedulerTimer" />
-							 <ref bean="doTime_wangjiu"/>
-							 <ref bean="doTime_lechong"/>
-							 <ref bean="doTime_homegobj"/>
-							 <ref bean="doTime_smiled"/>
-							 <ref bean="doTime_jiuye"/>
-							 <ref bean="doTime_sfxhm"/>
-							 <ref bean="doTime_weisuda"/>
-							 <ref bean="doTime_weisuda_resend" />
-							 <ref bean="doTime_weisudadelete"/>
-							 <ref bean="doTime_zhongliang"/>
-							 <ref bean="doTime_gztlOutbranch"/>
-							 <ref bean="doTime_gztl"/>
-							 <ref bean="doTime_weisudaDeliveryResult"/>
-							 <!-- <ref bean="doTime_sysInit"/>-->
-							 <ref bean="doTime_zhemeng"/>
-							 <ref bean="doTime_haoyigou"/>
-							 <ref bean="doTime_gxdx"/>
-							<!--  <ref bean="doTime_PJD"/> -->
-							 <ref bean="doTime_suning"/>
-							 <ref bean="doTime_marykay"></ref>
-							 <ref bean="doTime_moonbasa"/>
-							 <ref bean="doTime_feiniuwang" />
-							 <ref bean="doTime_huanqiugouwu" />
-							 <ref bean="doTime_yonghuihh" />	
-							 <ref bean="doTime_sendThirdPartyOrderToDO" />
-							 <ref bean="doTime_otherordertrack" />
-							 <ref bean="doTime_otherorderhousekeep" />
-							 <ref bean="doTime_vipmps" />
-							 <ref bean="mqExceptionHandler"/>
-							 <ref bean="doTime_resetGanXianHuiDan"/>
-							 <ref bean="shenzhoushuma"/>
-							 <ref bean="zhemengTrack"/>
-							 <!-- 推送轨迹给tps,需要注释 -->
-							<!--  <ref bean="doTime_sendOrderTrackToTPS"/> -->
-							 <ref bean="doTime_resendDeliveryStateToPJD"/>
-							 
-			           </list>            
-	               </property>       
-	               <property name="dataSource" ref="dataSource"></property>
-	               <property name="quartzProperties">
-					<props>
-						<prop key="org.quartz.scheduler.instanceName">TMS_INF_SCHEDULER</prop>
-						<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
-						<prop key="org.quartz.jobStore.misfireThreshold">300000</prop>
-						<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
-						<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
-						<prop key="org.quartz.jobStore.tablePrefix">INF_Q_</prop>
-						<prop key="org.quartz.jobStore.maxMisfiresToHandleAtATime">20</prop>
-						<prop key="org.quartz.jobStore.isClustered">true</prop>
-						<prop key="org.quartz.threadPool.threadCount">30</prop>
-						<prop key="org.quartz.plugin.triggHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin</prop>
-					</props>
-		            </property>  
-	  </bean>
-	  <bean id="doTime4" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getDangDangTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-           <property name="description" value="反馈订单物流状态给当当网"/>
-      </bean>
-     
-     <bean id="getDangDangTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-         <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>feedBackToDangDang_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime5" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="deleteSendB2cDataTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 0 02 * * ?</value>
-           </property>
-           <property name="description" value="删除某段时间(60天)之前推送B2C成功的数据的定时器"/>
-      </bean>
-     
-     <bean id="deleteSendB2cDataTask " class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-        <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>DeleteSendB2cDataForSuccess</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime6" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getTmallTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-           <property name="description" value="反馈订单物流状态给tmall"/>
-      </bean>
-     
-     <bean id="getTmallTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>feedBackToTmall_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime7" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getVipShopTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-           <property name="description" value="反馈vipshop订单物流状态给TMS"/>
-      </bean>
-     
-     <bean id="getVipShopTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>feedBackToVipShop_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime8" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getJuMeiTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-           <property name="description" value="反馈订单物流状态给聚美优品"/>
-      </bean>
-     
-     <bean id="getJuMeiTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      	<property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>feedBackToJumeiYoupin_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime10" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getRufengdaTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */5 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getRufengdaTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>feedBackToRufengda_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime11" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getYihaodianTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */30 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getYihaodianTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>feedBackToYihaodianAgain_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime12" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getGomeTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getGomeTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>gome_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
+	<bean id="updateEMS" class="cn.explink.util.JobUtil">
+	</bean>
+	<bean id="schedulerFactory" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="doTime4" />
+				<ref bean="doTime5" />
+				<ref bean="doTime6" />
+				<ref bean="doTime7" />
+				<ref bean="doTime8" />
+				<ref bean="doTime10" />
+				<ref bean="doTime11" />
+				<ref bean="doTime12" />
+				<ref bean="doTime13" />
+				<ref bean="doTime14" />
+				<ref bean="doTime15" />
+				<ref bean="doTime16" />
+				<ref bean="doTime17" />
+				<ref bean="doTime18" />
+				<ref bean="doTime19" />
+				<ref bean="doTime20" />
+				<ref bean="doTime21" />
+				<ref bean="doTime_epaiUp" />
+				<ref bean="doTime_epaiDown" />
+				<ref bean="doTime_outbranchMsk" />
+				<ref bean="dowholeLine_down" />
+				<ref bean="doTransmigration_wholeline" />
+				<ref bean="doTime_getLiantong" />
+				<ref bean="doTime_getLetv" />
+				<ref bean="doTime_chinamobile" />
+				<ref bean="doTime_getMmb" />
+				<ref bean="doTime_letv" />
+				<ref bean="doTime_yonghuics" />
+				<ref bean="doTime_hxgdms" />
+				<ref bean="doTime_sfexpress" />
+				<ref bean="doTime_homegou" />
+				<ref bean="schedulerTimer" />
+				<ref bean="doTime_wangjiu" />
+				<ref bean="doTime_lechong" />
+				<ref bean="doTime_homegobj" />
+				<ref bean="doTime_smiled" />
+				<ref bean="doTime_jiuye" />
+				<ref bean="doTime_sfxhm" />
+				<ref bean="doTime_weisuda" />
+				<ref bean="doTime_weisuda_resend" />
+				<ref bean="doTime_weisudadelete" />
+				<ref bean="doTime_zhongliang" />
+				<ref bean="doTime_gztlOutbranch" />
+				<ref bean="doTime_gztl" />
+				<ref bean="doTime_weisudaDeliveryResult" />
+				<!-- <ref bean="doTime_sysInit"/> -->
+				<ref bean="doTime_zhemeng" />
+				<ref bean="doTime_haoyigou" />
+				<ref bean="doTime_gxdx" />
+				<!-- <ref bean="doTime_PJD"/> -->
+				<ref bean="doTime_suning" />
+				<ref bean="doTime_marykay"></ref>
+				<ref bean="doTime_moonbasa" />
+				<ref bean="doTime_feiniuwang" />
+				<ref bean="doTime_huanqiugouwu" />
+				<ref bean="doTime_yonghuihh" />
+				<!-- 外单推送给TPS -->
+				<!-- <ref bean="doTime_sendThirdPartyOrderToDO" /> -->
+				<!-- 外单轨迹推送给TPS（品骏达外单轨迹定时任务） -->
+				<!-- <ref bean="doTime_otherordertrack" /> -->
+				<!-- 定时器会定时删除7天前或已发送给TPS的外单轨迹 -->
+				<!-- <ref bean="doTime_otherorderhousekeep" /> -->
+				<ref bean="doTime_vipmps" />
+				<ref bean="mqExceptionHandler" />
+				<ref bean="doTime_resetGanXianHuiDan" />
+				<ref bean="shenzhoushuma" />
+				<ref bean="zhemengTrack" />
+				<!-- 推送轨迹给tps,需要注释 -->
+				<!-- <ref bean="doTime_sendOrderTrackToTPS"/> -->
+				<ref bean="doTime_resendDeliveryStateToPJD" />
+
+			</list>
+		</property>
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="quartzProperties">
+			<props>
+				<prop key="org.quartz.scheduler.instanceName">TMS_INF_SCHEDULER</prop>
+				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+				<prop key="org.quartz.jobStore.misfireThreshold">300000</prop>
+				<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+				<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+				<prop key="org.quartz.jobStore.tablePrefix">INF_Q_</prop>
+				<prop key="org.quartz.jobStore.maxMisfiresToHandleAtATime">20</prop>
+				<prop key="org.quartz.jobStore.isClustered">true</prop>
+				<prop key="org.quartz.threadPool.threadCount">30</prop>
+				<prop key="org.quartz.plugin.triggHistory.class">org.quartz.plugins.history.LoggingJobHistoryPlugin
+				</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="doTime4" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getDangDangTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+		<property name="description" value="反馈订单物流状态给当当网" />
+	</bean>
+
+	<bean id="getDangDangTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>feedBackToDangDang_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime5" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="deleteSendB2cDataTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 02 * * ?</value>
+		</property>
+		<property name="description" value="删除某段时间(60天)之前推送B2C成功的数据的定时器" />
+	</bean>
+
+	<bean id="deleteSendB2cDataTask " class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>DeleteSendB2cDataForSuccess</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime6" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getTmallTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+		<property name="description" value="反馈订单物流状态给tmall" />
+	</bean>
+
+	<bean id="getTmallTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>feedBackToTmall_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime7" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getVipShopTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+		<property name="description" value="反馈vipshop订单物流状态给TMS" />
+	</bean>
+
+	<bean id="getVipShopTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>feedBackToVipShop_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime8" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getJuMeiTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+		<property name="description" value="反馈订单物流状态给聚美优品" />
+	</bean>
+
+	<bean id="getJuMeiTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>feedBackToJumeiYoupin_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime10" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getRufengdaTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getRufengdaTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>feedBackToRufengda_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime11" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getYihaodianTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */30 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getYihaodianTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>feedBackToYihaodianAgain_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime12" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getGomeTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getGomeTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>gome_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
 
 
-	  <bean id="doTime13" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getAmazonTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */20 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getAmazonTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>amazon_Task</value>
-         </property>
-         <property name="concurrent" value="false" /> 
-     </bean>     
-      <bean id="doTime14" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getAmazonCodTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */59 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getAmazonCodTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>amazon_Cod_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime15" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="downTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0/10 * * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="downTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>down_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime16" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="deleteFileTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 0 12 * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="deleteFileTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>deleteFile_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime17" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getMaikolinTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getMaikolinTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>maikolin_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime18" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getDpfossTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getDpfossTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>dpfoss_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime19" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getBenlaiTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */59 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getBenlaiTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>Benlai_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime20" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getjiuxianTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */59 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getjiuxianTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>Jiuxian_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime21" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getHappyGo" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getHappyGo" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getHappyGo_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime_epaiUp" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getEpaiFeedback_up_Task" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */5 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getEpaiFeedback_up_Task " class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>epaiFeedback_up_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-      <bean id="doTime_epaiDown" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getEpaiFeedback_down_Task" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */5 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getEpaiFeedback_down_Task" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>epaiFeedback_down_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime_outbranchMsk" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getOutBranchMsk" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getOutBranchMsk" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getOuttoBranchMsk_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="dowholeLine_down" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getWholeline" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getWholeline" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>wholeLine_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTransmigration_wholeline" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getTransmigration_wholeline" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getTransmigration_wholeline " class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>Transmigration_wholeline</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-      <bean id="doTime_getLiantong" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getLiantong" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getLiantong" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getLiantong_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-      <bean id="doTime_getMmb" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getMmb" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getMmb" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getMmb_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
+	<bean id="doTime13" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getAmazonTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */20 * * * ?</value>
+		</property>
+	</bean>
 
-	<bean id="doTime_getLetv" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getLetv" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getLetv" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getLetv_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
+	<bean id="getAmazonTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>amazon_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime14" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getAmazonCodTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */59 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getAmazonCodTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>amazon_Cod_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime15" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="downTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0/10 * * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="downTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>down_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime16" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="deleteFileTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 12 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="deleteFileTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>deleteFile_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime17" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getMaikolinTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getMaikolinTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>maikolin_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime18" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getDpfossTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getDpfossTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>dpfoss_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime19" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getBenlaiTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */59 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getBenlaiTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>Benlai_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime20" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getjiuxianTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */59 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getjiuxianTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>Jiuxian_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime21" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getHappyGo" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getHappyGo" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getHappyGo_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_epaiUp" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getEpaiFeedback_up_Task" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getEpaiFeedback_up_Task " class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>epaiFeedback_up_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
 
 
-   <bean id="doTime_chinamobile" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getChinamobile" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getChinamobile" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getChinamobile_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime_letv" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getLetv" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     
-       <bean id="doTime_yonghuics" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getYonghuics" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getYonghuics" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getYonghui_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-      <bean id="doTime_hxgdms" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getHxgdms" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getHxgdms" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getHxgdms_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     <bean id="schedulerTimer" class="org.springframework.scheduling.quartz.CronTriggerBean" dependency-check="default">
+	<bean id="doTime_epaiDown" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getEpaiFeedback_down_Task" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getEpaiFeedback_down_Task" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>epaiFeedback_down_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime_outbranchMsk" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getOutBranchMsk" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getOutBranchMsk" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getOuttoBranchMsk_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="dowholeLine_down" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getWholeline" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getWholeline" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>wholeLine_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTransmigration_wholeline" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getTransmigration_wholeline" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getTransmigration_wholeline " class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>Transmigration_wholeline</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime_getLiantong" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getLiantong" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getLiantong" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getLiantong_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+	<bean id="doTime_getMmb" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getMmb" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getMmb" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getMmb_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_getLetv" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getLetv" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getLetv" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getLetv_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+	<bean id="doTime_chinamobile" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getChinamobile" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getChinamobile" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getChinamobile_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_letv" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getLetv" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+
+	<bean id="doTime_yonghuics" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getYonghuics" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getYonghuics" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getYonghui_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_hxgdms" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getHxgdms" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getHxgdms" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getHxgdms_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="schedulerTimer" class="org.springframework.scheduling.quartz.CronTriggerBean"
+		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="quartzScheduledTask" />
 		</property>
@@ -660,208 +723,229 @@
 		</property>
 	</bean>
 
-	<bean id="quartzScheduledTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+	<bean id="quartzScheduledTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
 		<property name="targetBean" value="scheduledTaskService" />
 		<property name="targetMethod" value="processTasks" />
 		<property name="concurrent" value="false" />
 	</bean>
-     
-       <bean id="doTime_sfexpress" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getSfexpress" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getSfexpress" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getSfexpress_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-     
-      <bean id="doTime_homegou" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getHomegou" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getHomegou" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getHomeGou_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-      <bean id="doTime_wangjiu" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getWangjiu" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getWangjiu" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getWangjiu_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-     <bean id="doTime_lechong" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getLechong" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getLechong" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getLechong_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     <bean id="doTime_zhongliang" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getZhongliang" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getZhongliang" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getZhongliang_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-          <bean id="doTime_gztl" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getGztl" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getGztl" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getGztl_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-          <bean id="doTime_gztlOutbranch" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getGztlOutBranch" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getGztlOutBranch" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getOuttoBranchGztl_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-    
-     <bean id="doTime_weisuda" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getweisuda" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */5 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getweisuda" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getWeisuda_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     <bean id="doTime_weisuda_resend" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getweisudaresend" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */5 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getweisudaresend" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getWeisuda_TaskResend</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-    
-      <bean id="doTime_weisudaDeliveryResult" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getweisudaDeliveryResult" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */5 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getweisudaDeliveryResult" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getWeisudaDeliveryResult_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-     
-     
-     
-     <bean id="doTime_weisudadelete" class="cn.explink.util.DatabaseInitCronTriggerBean"
+
+	<bean id="doTime_sfexpress" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getSfexpress" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getSfexpress" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getSfexpress_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+
+	<bean id="doTime_homegou" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getHomegou" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getHomegou" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getHomeGou_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+	<bean id="doTime_wangjiu" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getWangjiu" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getWangjiu" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getWangjiu_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+	<bean id="doTime_lechong" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getLechong" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getLechong" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getLechong_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime_zhongliang" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getZhongliang" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getZhongliang" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getZhongliang_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime_gztl" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getGztl" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getGztl" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getGztl_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="doTime_gztlOutbranch" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getGztlOutBranch" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getGztlOutBranch" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getOuttoBranchGztl_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_weisuda" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getweisuda" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getweisuda" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getWeisuda_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_weisuda_resend" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getweisudaresend" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getweisudaresend" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getWeisuda_TaskResend</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_weisudaDeliveryResult" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getweisudaDeliveryResult" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getweisudaDeliveryResult" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getWeisudaDeliveryResult_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+
+
+
+	<bean id="doTime_weisudadelete" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getweisudadelete" />
@@ -881,67 +965,73 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-     
-      <bean id="doTime_homegobj" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getHomegobj" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getHomegobj" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getHomegobj_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     <bean id="doTime_smiled" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getSmiled" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getSmiled" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getSmiled_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     
-     
-      <bean id="doTime_sfxhm" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getSfxhm" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getSfxhm" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getSfxhm_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-    
-     <bean id="doTime_jiuye" class="cn.explink.util.DatabaseInitCronTriggerBean"
+
+	<bean id="doTime_homegobj" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getHomegobj" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getHomegobj" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getHomegobj_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_smiled" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getSmiled" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getSmiled" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getSmiled_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+
+
+	<bean id="doTime_sfxhm" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getSfxhm" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getSfxhm" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getSfxhm_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="doTime_jiuye" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getJiuye" />
@@ -959,30 +1049,17 @@
 			<value>getJiuYe_Task</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean> 
-	
-<!-- wangwei 2016-03-10 暂停手动初始化任务，避免订单重复	
-	  <bean id="doTime_sysInit" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getSystemInitTask" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */30 * * * ?</value>
-           </property>
-      </bean>
-     
-     <bean id="getSystemInitTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>updateBatcnitialThreadMap</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
--->
-     
-     	<bean id="doTime_zhemeng" class="cn.explink.util.DatabaseInitCronTriggerBean"
+	</bean>
+
+	<!-- wangwei 2016-03-10 暂停手动初始化任务，避免订单重复 <bean id="doTime_sysInit" class="cn.explink.util.DatabaseInitCronTriggerBean" 
+		dependency-check="default"> <property name="jobDetail"> <ref bean="getSystemInitTask" 
+		/> </property> <property name="cronExpression"> <value>0 */30 * * * ?</value> 
+		</property> </bean> <bean id="getSystemInitTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" 
+		dependency-check="default"> <property name="targetBean"> <value>updateEMS</value> 
+		</property> <property name="targetMethod"> <value>updateBatcnitialThreadMap</value> 
+		</property> <property name="concurrent" value="false" /> </bean> -->
+
+	<bean id="doTime_zhemeng" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getZhemeng" />
@@ -1002,7 +1079,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<!-- 好易购定时任务配置信息 --> 
+	<!-- 好易购定时任务配置信息 -->
 	<bean id="doTime_haoyigou" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
@@ -1022,8 +1099,8 @@
 			<value>hygtoFTP</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
-	   
+	</bean>
+
 	<bean id="doTime_gxdx" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
@@ -1043,30 +1120,17 @@
 			<value>gxDxFTP</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
-	<!-- 品骏达外单定时任务 -->
-	<!-- <bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
-		<property name="jobDetail">
-			<ref bean="pjd" />
-		</property>
-		<property name="cronExpression">
-			<value>0 */15 * * * ?</value>
-		</property>
 	</bean>
+	<!-- 品骏达外单定时任务 -->
+	<!-- <bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean" 
+		dependency-check="default"> <property name="jobDetail"> <ref bean="pjd" /> 
+		</property> <property name="cronExpression"> <value>0 */15 * * * ?</value> 
+		</property> </bean> <bean id="pjd" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" 
+		dependency-check="default"> <property name="targetBean"> <value>updateEMS</value> 
+		</property> <property name="targetMethod"> <value>sendCwbToPJD</value> </property> 
+		<property name="concurrent" value="false" /> </bean> -->
 
-	<bean id="pjd" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
-		<property name="targetBean">
-			<value>updateEMS</value>
-		</property>
-		<property name="targetMethod">
-			<value>sendCwbToPJD</value>
-		</property>
-		<property name="concurrent" value="false" />
-	</bean>   -->
-	
-	<!-- 【苏宁】定时任务配置信息 --> 
+	<!-- 【苏宁】定时任务配置信息 -->
 	<bean id="doTime_suning" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
@@ -1085,9 +1149,9 @@
 			<value>suNing_task</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
-	
-	<!-- 【玫琳凯】定时任务配置信息 --> 
+	</bean>
+
+	<!-- 【玫琳凯】定时任务配置信息 -->
 	<bean id="doTime_marykay" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
@@ -1106,9 +1170,9 @@
 			<value>mlk_task</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
-	
-	<!-- 【梦芭莎】定时任务配置信息 --> 
+	</bean>
+
+	<!-- 【梦芭莎】定时任务配置信息 -->
 	<bean id="doTime_moonbasa" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
@@ -1127,28 +1191,30 @@
 			<value>moonbasa_feedback</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
+	</bean>
 	<!-- 飞牛网（http） -->
-	 <bean id="doTime_feiniuwang" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="getfeiniuwang" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */15 * * * ?</value>
-           </property>
-      </bean>
-     <bean id="getfeiniuwang" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-     	<property name="targetBean">
-             <value>updateEMS</value>
-         </property>
-         <property name="targetMethod">
-             <value>getFNW_Task</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     <!-- 环球购物 -->
-     <bean id="doTime_huanqiugouwu" class="cn.explink.util.DatabaseInitCronTriggerBean"
+	<bean id="doTime_feiniuwang" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getfeiniuwang" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="getfeiniuwang" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getFNW_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<!-- 环球购物 -->
+	<bean id="doTime_huanqiugouwu" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getHuanqiugouwu" />
@@ -1190,18 +1256,18 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	
-	
-	<!--外单推送给DO服务定时任务开始--> 
+
+
+	<!--外单推送给DO服务定时任务开始 -->
 	<bean id="doTime_sendThirdPartyOrderToDO" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
-			<ref bean="thirdPartyOrderToDO"/>
+			<ref bean="thirdPartyOrderToDO" />
 		</property>
 		<property name="cronExpression">
 			<value>0 0/5 * * * ?</value>
 		</property>
-		<property name="description" value="外单推送DO服务定时任务"/>
+		<property name="description" value="外单推送DO服务定时任务" />
 	</bean>
 	<bean id="thirdPartyOrderToDO" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
 		dependency-check="default">
@@ -1212,9 +1278,9 @@
 			<value>sendThirdPartyOrder2DO_Task</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
-	<!--外单推送给DO服务定时任务结束--> 
-	
+	</bean>
+	<!--外单推送给DO服务定时任务结束 -->
+
 	<!-- 品骏达外单轨迹定时任务开始 -->
 	<bean id="doTime_otherordertrack" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
@@ -1235,9 +1301,9 @@
 			<value>sendOtherOrderTrackToPJD</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
-	<!-- 品骏达外单轨迹定时任务结束 --> 
-	
+	</bean>
+	<!-- 品骏达外单轨迹定时任务结束 -->
+
 	<!-- 品骏达外单及轨迹临时表清理定时任务开始 -->
 	<bean id="doTime_otherorderhousekeep" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
@@ -1258,11 +1324,11 @@
 			<value>housekeepOtherOrderAndTrack</value>
 		</property>
 		<property name="concurrent" value="false" />
-	</bean>  
+	</bean>
 	<!-- 品骏达外单及轨迹临时表清理定时任务结束 -->
-	
+
 	<!-- 唯品会集包项目 -->
-    <bean id="doTime_vipmps" class="cn.explink.util.DatabaseInitCronTriggerBean"
+	<bean id="doTime_vipmps" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getVipmps" />
@@ -1282,43 +1348,47 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-<!-- ===================================自动生成HTML定时器 结束========================================== -->
-    
-     <!-- MQ 异常处理 定时器   配置开始 --> 
-     <bean id="mqExceptionHandler" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
-           <property name="jobDetail">
-               <ref bean="mqExceptionHandlerBean" />
-           </property>
-             <property name="cronExpression">
-               <value>0 */10 * * * ?</value>
-           </property>
-     </bean>
-     
-     <bean id="mqExceptionHandlerBean" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
-      <property name="targetBean">
-             <value>mqExceptionHandlerService</value>
-         </property>
-         <property name="targetMethod">
-             <value>execute</value>
-         </property>
-         <property name="concurrent" value="false" />
-     </bean>
-     
-     <bean id="mqExceptionHandlerService" class="cn.explink.b2c.tools.MqExceptionHandlerUtil">
+	<!-- ===================================自动生成HTML定时器 结束========================================== -->
+
+	<!-- MQ 异常处理 定时器 配置开始 -->
+	<bean id="mqExceptionHandler" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="mqExceptionHandlerBean" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */10 * * * ?</value>
+		</property>
 	</bean>
-	
+
+	<bean id="mqExceptionHandlerBean" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>mqExceptionHandlerService</value>
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="mqExceptionHandlerService" class="cn.explink.b2c.tools.MqExceptionHandlerUtil">
+	</bean>
+
 	<!-- 重置干线回单物流状态发送标识为0 -->
-    <bean id="doTime_resetGanXianHuiDan" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+	<bean id="doTime_resetGanXianHuiDan" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="resetGanXianHuiDan" />
 		</property>
 		<property name="cronExpression">
 			<value>0 * */2 * * ?</value>
 		</property>
-		<property name="description" value="重置干线回单物流状态发送标识为0"/>
+		<property name="description" value="重置干线回单物流状态发送标识为0" />
 	</bean>
 
-	<bean id="resetGanXianHuiDan" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+	<bean id="resetGanXianHuiDan" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1327,12 +1397,12 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	
-	<!-- MQ 异常处理 定时器   配置结束--> 
-	
-	
-	<!--神州数码状态反馈-->
-    <bean id="shenzhoushuma" class="cn.explink.util.DatabaseInitCronTriggerBean"
+
+	<!-- MQ 异常处理 定时器 配置结束 -->
+
+
+	<!--神州数码状态反馈 -->
+	<bean id="shenzhoushuma" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="shenzhoushumaBean" />
@@ -1352,9 +1422,9 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	
-	<!--哲盟_轨迹状态反馈-->
-    <bean id="zhemengTrack" class="cn.explink.util.DatabaseInitCronTriggerBean"
+
+	<!--哲盟_轨迹状态反馈 -->
+	<bean id="zhemengTrack" class="cn.explink.util.DatabaseInitCronTriggerBean"
 		dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="zhemengTrackBean" />
@@ -1374,50 +1444,50 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	
-	<!--推送轨迹给tps-->
-    <bean id="doTime_sendOrderTrackToTPS" class="cn.explink.util.DatabaseInitCronTriggerBean"
-        dependency-check="default">
-        <property name="jobDetail">
-            <ref bean="sendOrderTrackToTPS" />
-        </property>
-        <property name="cronExpression">
-            <value>0 */1 * * * ?</value>
-        </property>
-    </bean>
 
-    <bean id="sendOrderTrackToTPS" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-        dependency-check="default">
-        <property name="targetBean">
-            <value>updateEMS</value>
-        </property>
-        <property name="targetMethod">
-            <value>sendOrderTrackToTPS</value>
-        </property>
-        <property name="concurrent" value="false" />
-    </bean>
-	
-	<!-- 从OMS轨迹异常表重推归班反馈(签收信息)给PJD -->	
+	<!--推送轨迹给tps -->
+	<bean id="doTime_sendOrderTrackToTPS" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="sendOrderTrackToTPS" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */1 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="sendOrderTrackToTPS" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>sendOrderTrackToTPS</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<!-- 从OMS轨迹异常表重推归班反馈(签收信息)给PJD -->
 	<bean id="doTime_resendDeliveryStateToPJD" class="cn.explink.util.DatabaseInitCronTriggerBean"
-        dependency-check="default">
-        <property name="jobDetail">
-            <ref bean="resendDeliveryStateToPJD" />
-        </property>
-        <property name="cronExpression">
-            <value>0 */13 * * * ?</value>
-        </property>
-        <property name="description" value="从OMS轨迹异常表重推归班反馈(签收信息)给PJD"/>
-    </bean>
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="resendDeliveryStateToPJD" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */13 * * * ?</value>
+		</property>
+		<property name="description" value="从OMS轨迹异常表重推归班反馈(签收信息)给PJD" />
+	</bean>
 
-    <bean id="resendDeliveryStateToPJD" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-        dependency-check="default">
-        <property name="targetBean">
-            <value>updateEMS</value>
-        </property>
-        <property name="targetMethod">
-            <value>resendDeliveryStateToPJD</value>
-        </property>
-        <property name="concurrent" value="false" />
-    </bean>
-	
+	<bean id="resendDeliveryStateToPJD" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>resendDeliveryStateToPJD</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+
 </beans>
