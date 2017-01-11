@@ -51,6 +51,7 @@ import cn.explink.b2c.maisike.MaisikeService_Send2LvBranch;
 import cn.explink.b2c.meilinkai.MLKService;
 import cn.explink.b2c.mmb.MmbService;
 import cn.explink.b2c.moonbasa.MoonbasaService;
+import cn.explink.b2c.mss.MssService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfexpress.SfexpressService_searchOrderStatus;
 import cn.explink.b2c.sfexpress.SfexpressService_sendOrder;
@@ -227,7 +228,7 @@ public class JobUtil {
 	@Autowired
 	GuangXinDidanXinService guangXinDidanXinService;
 	@Autowired
-	SuNingService suNingService; 
+	SuNingService suNingService;
 	@Autowired
 	MLKService mlkService;
 	@Autowired
@@ -250,10 +251,11 @@ public class JobUtil {
 	ZhemengTrackService zhemengTrackService;
 	@Autowired
 	TrackSendToTPSService trackSendToTPSService;
-	
 	@Autowired
-    DistributedLock  distributedLock;
-	
+	MssService mssService;
+	@Autowired
+	DistributedLock distributedLock;
+
 	public static RedisMap<String, Integer> threadMap;
 	static { // 静态初始化 以下变量,用于判断线程是否在执行
 
@@ -262,15 +264,15 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 0);
 		JobUtil.threadMap.put("weisudaDeliveryResult", 0);
 		JobUtil.threadMap.put("pjdwaidan", 0);
-		JobUtil.threadMap.put("suningCurrentinteger",0);
+		JobUtil.threadMap.put("suningCurrentinteger", 0);
 		JobUtil.threadMap.put("otherordertrack", 0);
 		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
 		JobUtil.threadMap.put("otherorderhousekeep", 0);
-		JobUtil.threadMap.put("vipmps",0);
-		JobUtil.threadMap.put("shenzhoushuma",0);
-		JobUtil.threadMap.put("zhemengTrack",0);
-		JobUtil.threadMap.put("orderTrackSendToTPS",0);
-		JobUtil.threadMap.put("resendDeliveryStateToPJD",0);
+		JobUtil.threadMap.put("vipmps", 0);
+		JobUtil.threadMap.put("shenzhoushuma", 0);
+		JobUtil.threadMap.put("zhemengTrack", 0);
+		JobUtil.threadMap.put("orderTrackSendToTPS", 0);
+		JobUtil.threadMap.put("resendDeliveryStateToPJD", 0);
 	}
 
 	/**
@@ -283,20 +285,14 @@ public class JobUtil {
 		JobUtil.threadMap.put("pjdwaidan", 0);
 		JobUtil.threadMap.put("otherordertrack", 0);
 		JobUtil.threadMap.put("otherorderhousekeep", 0);
-		JobUtil.threadMap.put("vipmps",0);
-		JobUtil.threadMap.put("shenzhoushuma",0);
-		JobUtil.threadMap.put("zhemengTrack",0);
-		JobUtil.threadMap.put("orderTrackSendToTPS",0);
-		JobUtil.threadMap.put("resendDeliveryStateToPJD",0);
+		JobUtil.threadMap.put("vipmps", 0);
+		JobUtil.threadMap.put("shenzhoushuma", 0);
+		JobUtil.threadMap.put("zhemengTrack", 0);
+		JobUtil.threadMap.put("orderTrackSendToTPS", 0);
+		JobUtil.threadMap.put("resendDeliveryStateToPJD", 0);
 		this.logger.info("系统自动初始化定时器完成");
 	}
 
-	
-	
-	
-	
-	
-	
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	long time = 2 * 60 * 60 * 1000;
 
@@ -453,8 +449,8 @@ public class JobUtil {
 	 */
 	/*
 	 * public void OMSSendDMP_MonitorJMS_Task(){
-	 * b2cSendMointorService.parseB2cMonitorData_timmer();
-	 * logger.info("执行了OMS Send DMP 推送的定时器!"); }
+	 * b2cSendMointorService.parseB2cMonitorData_timmer(); logger.info(
+	 * "执行了OMS Send DMP 推送的定时器!"); }
 	 */
 	/**
 	 * 执行如风达反馈的定时器
@@ -464,11 +460,11 @@ public class JobUtil {
 			this.logger.warn("未开启本地调用定时器功能yihaodian");
 			return;
 		}
-		
+
 		String lockKey = getClass().getName() + "feedBackToRufengda_Task";
 		try {
 			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
-			if(!isAcquired){
+			if (!isAcquired) {
 				logger.warn(lockKey + "正在执行，退出定时器");
 				return;
 			} else {
@@ -482,16 +478,16 @@ public class JobUtil {
 				long endtime = System.currentTimeMillis();
 				expressSysMonitorDAO.chooise(ExpressSysMonitorEnum.FANKE, endtime);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			logger.warn("执行feedBackToRufengda_Task任务出错", e);
-		}finally{
-			try{
+		} finally {
+			try {
 				distributedLock.unlock(lockKey);
-			}catch(Exception e){
+			} catch (Exception e) {
 				logger.error(lockKey + "解锁失败", e);
 			}
 		}
-		
+
 		this.logger.info("执行了如风达反馈的定时器!");
 	}
 
@@ -883,12 +879,11 @@ public class JobUtil {
 		this.logger.info("执行了推送家有购物北京定时器!");
 	}
 
-	
 	/**
 	 * 推送订单绑定小件员失败重推
 	 */
-    public void getWeisuda_TaskResend() {
-		
+	public void getWeisuda_TaskResend() {
+
 		if (JobUtil.threadMap.get("weisudaDeliveryBoundRepeat") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryBoundRepeat");
 			return;
@@ -896,23 +891,22 @@ public class JobUtil {
 		JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 1);
 		try {
 			// 只使用批量推送，delete by jian_xie
-			this.weisudaServiceExtends.boundsDeliveryToApp(true);//重推批量
+			this.weisudaServiceExtends.boundsDeliveryToApp(true);// 重推批量
 
 		} catch (Exception e) {
 			this.logger.error("执行了唯速达重推订单绑定小件员定时器异常!", e);
-		}finally{
+		} finally {
 			JobUtil.threadMap.put("weisudaDeliveryBoundRepeat", 0);
 		}
 		this.logger.info("执行了推送唯速达快递单绑定小件员失败重推定时器!");
 	}
-	
-    
-    public  void getWeisuda_Task() {
-		
+
+	public void getWeisuda_Task() {
+
 		String lockKey = getClass().getName() + "getWeisuda_Task";
 		try {
 			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
-			if(!isAcquired){
+			if (!isAcquired) {
 				logger.warn(lockKey + "正在执行,退出定时器");
 				return;
 			} else {
@@ -929,7 +923,7 @@ public class JobUtil {
 		}
 		this.logger.info("执行了推送唯速达快递单绑定达定时器!");
 	}
-	
+
 	/**
 	 * 签收结果同步
 	 */
@@ -937,7 +931,7 @@ public class JobUtil {
 		String lockKey = getClass().getName() + "getWeisudaDeliveryResult_Task";
 		try {
 			boolean isAcquired = distributedLock.tryLock(lockKey, 1, 60 * 120 * 1000, TimeUnit.MILLISECONDS);
-			if(!isAcquired){
+			if (!isAcquired) {
 				logger.warn(lockKey + "正在执行,退出定时器");
 				return;
 			} else {
@@ -963,8 +957,6 @@ public class JobUtil {
 		}
 		this.logger.info("执行了推送唯速达签收结果同步定时器!");
 	}
-	
-	
 
 	/**
 	 * 思迈下游
@@ -1037,6 +1029,7 @@ public class JobUtil {
 		}
 		this.logger.info("执行了0一级站出库外发广州通路订单0推送的定时器!");
 	}
+
 	public void getWeisudadelete_Task() {
 		try {
 
@@ -1047,7 +1040,7 @@ public class JobUtil {
 
 		this.logger.info("执行了唯速达删除过期信息定时器!");
 	}
-	
+
 	/**
 	 * 九曳
 	 */
@@ -1060,7 +1053,20 @@ public class JobUtil {
 
 		this.logger.info("执行了推送九曵定时器!");
 	}
-	
+
+	/**
+	 * 美食送
+	 */
+	public void getMss_Task() {
+		try {
+			this.mssService.feedback_status();
+		} catch (Exception e) {
+			this.logger.error("执行了美食送定时器异常!", e);
+		}
+
+		this.logger.info("执行了推送美食送定时器!");
+	}
+
 	public void getZhemeng_Task() {
 		try {
 			this.zhemengService.feedback_status();
@@ -1070,96 +1076,96 @@ public class JobUtil {
 
 		this.logger.info("执行了推送哲盟定时器!");
 	}
-	
+
 	/**
 	 * 好易购定时任务方法调用
 	 */
-	public void hygtoFTP(){
-		try{
+	public void hygtoFTP() {
+		try {
 			this.hygService.feedback_status();
-		}catch(Exception e){
-			this.logger.error("执行了好易购定时器异常!异常原因:{}",e);
+		} catch (Exception e) {
+			this.logger.error("执行了好易购定时器异常!异常原因:{}", e);
 		}
 		this.logger.info("执行了【好易购】定时器任务!");
 	}
+
 	/**
 	 * 广信电信定时任务方法调用
 	 */
-	public void gxDxFTP(){
-		try{
+	public void gxDxFTP() {
+		try {
 			this.guangXinDidanXinService.feedback_status();
-		}catch(Exception e){
-			this.logger.error("执行了广信电信定时器异常!异常原因:{}",e);
+		} catch (Exception e) {
+			this.logger.error("执行了广信电信定时器异常!异常原因:{}", e);
 		}
 		this.logger.info("执行了【广信电信】定时器任务!");
 	}
 
 	/**
-	 * 品骏达外单定时任务方法调用
-	 * 该方法已废弃 modified by zhouguoting 2015/3/15
+	 * 品骏达外单定时任务方法调用 该方法已废弃 modified by zhouguoting 2015/3/15
 	 */
 	@Deprecated
-	public void sendCwbToPJD(){
-		
+	public void sendCwbToPJD() {
+
 		if (JobUtil.threadMap.get("pjdwaidan") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出weisudaDeliveryResult");
 			return;
 		}
 		JobUtil.threadMap.put("pjdwaidan", 1);
-		
-		try{
+
+		try {
 			this.weiSuDaWaiDanService.sendCwb();
-		}catch(Exception e){
-			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}",e);
-		}finally {
+		} catch (Exception e) {
+			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("pjdwaidan", 0);
 		}
 		this.logger.info("执行了【品骏达外单】定时器任务!");
 	}
-	
+
 	/**
 	 * 【苏宁易购】数据回传
 	 */
-	
-	public void suNing_task(){
-		if(JobUtil.threadMap.get("suningCurrentinteger")==1){
-			return ;
+
+	public void suNing_task() {
+		if (JobUtil.threadMap.get("suningCurrentinteger") == 1) {
+			return;
 		}
-		JobUtil.threadMap.put("suningCurrentinteger",1);
-		try{
+		JobUtil.threadMap.put("suningCurrentinteger", 1);
+		try {
 			this.suNingService.feedback_status();
-			JobUtil.threadMap.put("suningCurrentinteger",0);
-		}catch(Exception e){
-			this.logger.error("执行了【苏宁易购】定时器异常!异常原因:{}",e);
+			JobUtil.threadMap.put("suningCurrentinteger", 0);
+		} catch (Exception e) {
+			this.logger.error("执行了【苏宁易购】定时器异常!异常原因:{}", e);
 		}
 		this.logger.info("执行了【苏宁易购】定时器任务!");
 	}
-	
+
 	/**
 	 * 【玫琳凯】数据回传
 	 */
-	
-	public void mlk_task(){
-		try{
+
+	public void mlk_task() {
+		try {
 			this.mlkService.feedback_status();
-		}catch(Exception e){
-			this.logger.error("执行了【玫琳凯】状态回传定时器异常,原因:{}",e);
+		} catch (Exception e) {
+			this.logger.error("执行了【玫琳凯】状态回传定时器异常,原因:{}", e);
 		}
 	}
-	
+
 	/**
 	 * 【梦芭莎】数据回传
 	 */
-	
-	public void moonbasa_feedback(){
-		try{
+
+	public void moonbasa_feedback() {
+		try {
 			this.moonbasaService.feedback_status();
-		}catch(Exception e){
-			this.logger.error("执行了【梦芭莎】状态回传定时器异常,原因:{}",e);
+		} catch (Exception e) {
+			this.logger.error("执行了【梦芭莎】状态回传定时器异常,原因:{}", e);
 		}
 		this.logger.info("执行了【梦芭莎】定时器任务!");
 	}
-	
+
 	/**
 	 * 飞牛网(http)货态回传定时任务
 	 */
@@ -1172,7 +1178,7 @@ public class JobUtil {
 		}
 		this.logger.info("执行了推送飞牛网(http)定时器!");
 	}
-	
+
 	/**
 	 * 永辉超市推送接口定时器
 	 */
@@ -1184,188 +1190,192 @@ public class JobUtil {
 			this.logger.error("执行永辉超市的定时器异常!", e);
 		}
 	}
-	
+
 	/**
 	 * 推送外单数据给DO服务定时任务方法
 	 */
-	public void sendThirdPartyOrder2DO_Task(){
-		if(JobUtil.threadMap.get("thirdPartyOrderSend2DO") == 1){
+	public void sendThirdPartyOrder2DO_Task() {
+		if (JobUtil.threadMap.get("thirdPartyOrderSend2DO") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出sendThirdPartyOrder2DO_Task");
 			return;
 		}
 		this.logger.info("执行推送外单数据给DO服务定时器...");
 		JobUtil.threadMap.put("thirdPartyOrderSend2DO", 1);
-		try{
+		try {
 			tPSDOService.thirdPartyOrderSend2DO();
-		}catch(Exception e){
-			this.logger.error("执行推送外单数据给DO服务定时器异常!异常原因:{}",e);
-		}finally{
+		} catch (Exception e) {
+			this.logger.error("执行推送外单数据给DO服务定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("thirdPartyOrderSend2DO", 0);
 			this.logger.info("执行推送外单数据给DO服务定时器完毕！");
 		}
 	}
-	
+
 	/**
 	 * 品骏达外单轨迹定时任务方法调用
 	 */
-	public void sendOtherOrderTrackToPJD(){
-		
+	public void sendOtherOrderTrackToPJD() {
+
 		if (JobUtil.threadMap.get("otherordertrack") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出sendOtherOrderTrackToPJD");
 			return;
 		}
 		JobUtil.threadMap.put("otherordertrack", 1);
-		
-		try{
+
+		try {
 			this.otherOrderTrackSendService.process();
-		}catch(Exception e){
-			this.logger.error("执行了品骏达外单轨迹定时器异常!异常原因:{}",e);
-		}finally {
+		} catch (Exception e) {
+			this.logger.error("执行了品骏达外单轨迹定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("otherordertrack", 0);
 		}
 		this.logger.info("执行了【品骏达外单轨迹】定时器任务!");
 	}
-	
+
 	/**
 	 * 品骏达外单临时表数据清理定时任务方法调用
 	 */
-	public void housekeepOtherOrderAndTrack(){
-		
+	public void housekeepOtherOrderAndTrack() {
+
 		if (JobUtil.threadMap.get("otherorderhousekeep") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出housekeepOtherOrderAndTrack");
 			return;
 		}
 		JobUtil.threadMap.put("otherorderhousekeep", 1);
-		
-		try{
+
+		try {
 			this.otherOrderTrackSendService.housekeepOtherOrder();
-		}catch(Exception e){
-			this.logger.error("执行了品骏达外单临时表数据清理定时器异常!异常原因:{}",e);
-		}finally {
+		} catch (Exception e) {
+			this.logger.error("执行了品骏达外单临时表数据清理定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("otherorderhousekeep", 0);
 		}
 		this.logger.info("执行了【品骏达外单临时表数据清理】定时器任务!");
 	}
+
 	/**
 	 * 唯品会集包项目开发
 	 */
-	public void getVipmps_Task(){
-		
+	public void getVipmps_Task() {
+
 		if (JobUtil.threadMap.get("vipmps") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出vipmps");
 			return;
 		}
 		JobUtil.threadMap.put("vipmps", 1);
-		
-		try{
+
+		try {
 			for (B2cEnum enums : B2cEnum.values()) {
 				if (enums.getMethod().contains("vipshop")) {
 					this.vipmpsFeedbackService.feedback_status(enums.getKey());
 				}
 			}
-		}catch(Exception e){
-			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}",e);
-		}finally {
+		} catch (Exception e) {
+			this.logger.error("执行了品骏达外单定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("vipmps", 0);
 		}
 		this.logger.info("执行了唯品会集包定时器任务!");
 	}
-	
+
 	/**
 	 * 重置干线回单物流状态发送标识为0，以便重推物流轨迹给TMS
+	 * 
 	 * @author leo01.liao
 	 * @return void
 	 */
-	public void resetGanXianHuiDan(){
-		try{
+	public void resetGanXianHuiDan() {
+		try {
 			for (B2cEnum enums : B2cEnum.values()) {
 				if (enums.getMethod().contains("vipshop")) {
 					this.vipshopService.resetGanXianHuiDan(enums.getKey());
 				}
-			}			
-		}catch(Exception ex){
+			}
+		} catch (Exception ex) {
 			this.logger.error("执行重置干线回单物流状态发送标识为0定时器异常", ex);
 		}
 	}
-	
+
 	/**
 	 * 神州数码状态反馈
 	 */
-	public void getShenZhouShuMa_Task(){
+	public void getShenZhouShuMa_Task() {
 		if (JobUtil.threadMap.get("shenzhoushuma") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出shenzhoushuma");
 			return;
 		}
 		JobUtil.threadMap.put("shenzhoushuma", 1);
-		
-		try{
-			this.shenzhoushumaService.feedback_status();;
-		}catch(Exception e){
-			this.logger.error("执行了神州数码状态反馈定时器异常!异常原因:{}",e);
-		}finally {
+
+		try {
+			this.shenzhoushumaService.feedback_status();
+			;
+		} catch (Exception e) {
+			this.logger.error("执行了神州数码状态反馈定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("shenzhoushuma", 0);
 		}
 		this.logger.info("执行了【神州数码状态反馈】定时器任务!");
 	}
-	
+
 	/**
 	 * 哲盟_轨迹状态反馈
 	 */
-	public void getZhemengTrack_Task(){
+	public void getZhemengTrack_Task() {
 		if (JobUtil.threadMap.get("zhemengTrack") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出zhemengTrack");
 			return;
 		}
 		JobUtil.threadMap.put("zhemengTrack", 1);
-		
-		try{
-			this.zhemengTrackService.feedback_status();;
-		}catch(Exception e){
-			this.logger.error("执行了【哲盟_轨迹】状态反馈定时器异常!异常原因:{}",e);
-		}finally {
+
+		try {
+			this.zhemengTrackService.feedback_status();
+			;
+		} catch (Exception e) {
+			this.logger.error("执行了【哲盟_轨迹】状态反馈定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("zhemengTrack", 0);
 		}
 		this.logger.info("执行了【哲盟_轨迹】定时器任务!");
 	}
-	
-	
+
 	/**
 	 * 订单轨迹定时任务方法调用
 	 */
-	public void sendOrderTrackToTPS(){
-		
+	public void sendOrderTrackToTPS() {
+
 		if (JobUtil.threadMap.get("orderTrackSendToTPS") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出sendOrderTrackToTPS");
 			return;
 		}
 		JobUtil.threadMap.put("orderTrackSendToTPS", 1);
-		
-		try{
+
+		try {
 			this.trackSendToTPSService.process();
-		}catch(Exception e){
-			this.logger.error("执行了订单轨迹推送给tps定时器异常!异常原因:{}",e);
-		}finally {
+		} catch (Exception e) {
+			this.logger.error("执行了订单轨迹推送给tps定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("orderTrackSendToTPS", 0);
 		}
 		this.logger.info("执行了【订单轨迹推送给tps】定时器任务!");
 	}
-	
+
 	/**
 	 * 从OMS轨迹异常表重推归班反馈(签收信息)给PJD
+	 * 
 	 * @author leo01.liao
 	 */
-	public void resendDeliveryStateToPJD(){
+	public void resendDeliveryStateToPJD() {
 		if (JobUtil.threadMap.get("resendDeliveryStateToPJD") == 1) {
 			this.logger.warn("本地定时器没有执行完毕，跳出resendDeliveryStateToPJD");
 			return;
 		}
 		JobUtil.threadMap.put("resendDeliveryStateToPJD", 1);
-		
-		try{
+
+		try {
 			this.weisudaService.resendDeliveryStateToPJD();
-		}catch(Exception e){
-			this.logger.error("从OMS轨迹异常表重推归班反馈(签收信息)给PJD定时器异常!异常原因:{}",e);
-		}finally {
+		} catch (Exception e) {
+			this.logger.error("从OMS轨迹异常表重推归班反馈(签收信息)给PJD定时器异常!异常原因:{}", e);
+		} finally {
 			JobUtil.threadMap.put("resendDeliveryStateToPJD", 0);
 		}
 		this.logger.info("执行了【从OMS轨迹异常表重推归班反馈(签收信息)给PJD】定时器任务!");

@@ -45,6 +45,7 @@ import cn.explink.b2c.liantong.LiantongService;
 import cn.explink.b2c.maikolin.MaikolinService;
 import cn.explink.b2c.meilinkai.MLKService;
 import cn.explink.b2c.mmb.MmbService;
+import cn.explink.b2c.mss.MssService;
 import cn.explink.b2c.rufengda.RufengdaService_CommitDeliverInfo;
 import cn.explink.b2c.sfxhm.SfxhmService;
 import cn.explink.b2c.smile.SmileService;
@@ -187,7 +188,11 @@ public class HandFeedBackController {
 	YHServices YongHuiServices;
 	@Autowired
 	VipmpsFeedbackService vipmpsFeedbackService;
-	
+	/**
+	 * 
+	 */
+	@Autowired
+	MssService mssService;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -202,7 +207,6 @@ public class HandFeedBackController {
 		this.cacheBaseListener.initAll();
 		jobUtil.updateBatcnitialThreadMap();
 		this.logger.info("dmp供货商设置表发生改变，重新加载成功");
-		
 
 		return "SUCCESS";
 
@@ -368,10 +372,10 @@ public class HandFeedBackController {
 		this.coreService.selectOMStemp_feedback();
 		return "OMS环形对接手动反馈成功";
 	}
-	
+
 	/**
-	 * 环形oms请求dmp 
-	 *多线程
+	 * 环形oms请求dmp 多线程
+	 * 
 	 * @return
 	 */
 	@RequestMapping("/hx_thread_hander")
@@ -501,70 +505,74 @@ public class HandFeedBackController {
 		this.gztlService.feedback_status();
 		return "手动执行反馈广州通路成功";
 	}
-	
+
 	@RequestMapping("/jiuye_test")
-	public @ResponseBody String jiuye_test(HttpServletRequest request){
+	public @ResponseBody String jiuye_test(HttpServletRequest request) {
 		jiuyeService.feedback_status();
 		return "手动执行反馈九曳货态反馈完成";
 	}
-	
+
 	@RequestMapping("/intoFTP")
-	public @ResponseBody String intoFTP_test(HttpServletRequest request){
+	public @ResponseBody String intoFTP_test(HttpServletRequest request) {
 		this.hygService.feedback_status();
 		return "手动执行【好易购】反馈完成";
 	}
-	
+
 	@RequestMapping("/gxdx")
-	public @ResponseBody String requestGxDx(HttpServletRequest request){
+	public @ResponseBody String requestGxDx(HttpServletRequest request) {
 		this.guangXinDidanXinService.feedback_status();
 		return "手动执行【广信电信】北京完成";
 	}
 
 	@RequestMapping("/feiniuwang_test")
-	public @ResponseBody String feiniuwang_test(HttpServletRequest request){
+	public @ResponseBody String feiniuwang_test(HttpServletRequest request) {
 		this.fnwService.feedback_status();
 		return "手动推送飞牛网(http)成功";
 	}
-	
+
 	@RequestMapping("/suning_test")
-	public @ResponseBody String suningfeedback(){
+	public @ResponseBody String suningfeedback() {
 		this.suNingService.feedback_status();
 		return "手动执行【苏宁易购】货态反馈完成";
 	}
-	
+
 	@RequestMapping("/marykay_test")
-	public @ResponseBody String marykayfeedback(){
-		try{
+	public @ResponseBody String marykayfeedback() {
+		try {
 			this.mlkService.feedback_status();
-		}catch(Exception e){
-			this.logger.error("【玫琳凯】数据对接反馈异常,原因:{}",e);
-			return "手动执行【玫琳凯】货态反馈异常,原因:"+e.getMessage();
+		} catch (Exception e) {
+			this.logger.error("【玫琳凯】数据对接反馈异常,原因:{}", e);
+			return "手动执行【玫琳凯】货态反馈异常,原因:" + e.getMessage();
 		}
 		return "手动执行【玫琳凯】货态反馈完成";
 	}
 
 	@RequestMapping("/huanqiugou_test")
-	public @ResponseBody String huanqiugou_test(HttpServletRequest request){
+	public @ResponseBody String huanqiugou_test(HttpServletRequest request) {
 		huanqiugouService.feedback_status();
 		return "手动推送环球购物成功";
 	}
-	
+
 	@RequestMapping("/orderflow")
-	public @ResponseBody
-	String timmer() {
+	public @ResponseBody String timmer() {
 		this.YongHuiServices.feedback_status();
 		return "【永辉超市】手动状态回转";
 	}
-	
+
 	@RequestMapping("/vipmps_test")
-	public @ResponseBody String vipmsp_test(HttpServletRequest request){
+	public @ResponseBody String vipmsp_test(HttpServletRequest request) {
 		for (B2cEnum enums : B2cEnum.values()) {
 			if (enums.getMethod().contains("vipshop")) {
 				vipmpsFeedbackService.feedback_status(enums.getKey());
 			}
 		}
-		
+
 		return "手动推送唯品会集包状态完成";
 	}
-	
+
+	public String mssTimmer() {
+		this.mssService.feedback_status();
+		return "手动推送美食送成功";
+	}
+
 }

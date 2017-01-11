@@ -30,6 +30,7 @@ import cn.explink.b2c.letv.BuildLetvB2cData;
 import cn.explink.b2c.liantong.BulidLiantongB2cData;
 import cn.explink.b2c.meilinkai.BuildMLKB2cData;
 import cn.explink.b2c.mmb.BuildmmbB2cData;
+import cn.explink.b2c.mss.BuildMSSB2cData;
 import cn.explink.b2c.rufengda.BulidRufengdaB2cData;
 import cn.explink.b2c.sfxhm.BuildSfxhmB2cData;
 import cn.explink.b2c.shenzhoushuma.BuildShenzhoushumaB2cData;
@@ -125,7 +126,7 @@ public class BuildB2cDataMaster {
 
 	@Autowired
 	BuildHomegobjB2cData buildHomegobjB2cData;
-	
+
 	@Autowired
 	BuildJiuyeB2cData buildJiuyeB2cData;
 	@Autowired
@@ -140,33 +141,36 @@ public class BuildB2cDataMaster {
 	BuildMLKB2cData buildMLKB2cData;
 	@Autowired
 	BuildYongHuiB2cData buildYongHuiB2cData;
-	
+
 	@Autowired
 	BuildShenzhoushumaB2cData buildShenzhoushumaB2cData;
 	@Autowired
 	BulidZhemengTrackB2cData bulidZhemengTrackB2cData;
-	
-	
-	public BulidZhemengTrackB2cData getBulidZhemengTrackB2cData() {
-		return bulidZhemengTrackB2cData;
+	@Autowired
+	BuildMSSB2cData buildMSSB2cData;
+
+	public BuildMSSB2cData getBuildMSSB2cData() {
+		return this.buildMSSB2cData;
 	}
 
-	public void setBulidZhemengTrackB2cData(
-			BulidZhemengTrackB2cData bulidZhemengTrackB2cData) {
+	public BulidZhemengTrackB2cData getBulidZhemengTrackB2cData() {
+		return this.bulidZhemengTrackB2cData;
+	}
+
+	public void setBulidZhemengTrackB2cData(BulidZhemengTrackB2cData bulidZhemengTrackB2cData) {
 		this.bulidZhemengTrackB2cData = bulidZhemengTrackB2cData;
 	}
 
 	public BuildShenzhoushumaB2cData getBuildShenzhoushumaB2cData() {
-		return buildShenzhoushumaB2cData;
+		return this.buildShenzhoushumaB2cData;
 	}
 
-	public void setBuildShenzhoushumaB2cData(
-			BuildShenzhoushumaB2cData buildShenzhoushumaB2cData) {
+	public void setBuildShenzhoushumaB2cData(BuildShenzhoushumaB2cData buildShenzhoushumaB2cData) {
 		this.buildShenzhoushumaB2cData = buildShenzhoushumaB2cData;
 	}
 
 	public BuildYongHuiB2cData getBuildYongHuiB2cData() {
-		return buildYongHuiB2cData;
+		return this.buildYongHuiB2cData;
 	}
 
 	public void setBuildYongHuiB2cData(BuildYongHuiB2cData buildYongHuiB2cData) {
@@ -174,7 +178,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildMLKB2cData getBuildMLKB2cData() {
-		return buildMLKB2cData;
+		return this.buildMLKB2cData;
 	}
 
 	public void setBuildMLKB2cData(BuildMLKB2cData buildMLKB2cData) {
@@ -186,11 +190,11 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildFeiNiuWangData getBuildFeiNiuWangData() {
-		return buildFeiNiuWangData;
+		return this.buildFeiNiuWangData;
 	}
 
 	public BuildSuNingB2cData getBuildSuNingB2cData() {
-		return buildSuNingB2cData;
+		return this.buildSuNingB2cData;
 	}
 
 	public void setBuildSuNingB2cData(BuildSuNingB2cData buildSuNingB2cData) {
@@ -198,7 +202,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildGxDxsenddata getBuildGxDxsenddata() {
-		return buildGxDxsenddata;
+		return this.buildGxDxsenddata;
 	}
 
 	public void setBuildGxDxsenddata(BuildGxDxsenddata buildGxDxsenddata) {
@@ -206,7 +210,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildHYGsenddata getBuildHYGsenddata() {
-		return buildHYGsenddata;
+		return this.buildHYGsenddata;
 	}
 
 	public void setBuildHYGsenddata(BuildHYGsenddata buildHYGsenddata) {
@@ -214,7 +218,7 @@ public class BuildB2cDataMaster {
 	}
 
 	public BuildJiuyeB2cData getBuildJiuyeB2cData() {
-		return buildJiuyeB2cData;
+		return this.buildJiuyeB2cData;
 	}
 
 	public void setBuildJiuyeB2cData(BuildJiuyeB2cData buildJiuyeB2cData) {

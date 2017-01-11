@@ -81,7 +81,7 @@ public class B2cJsonService {
 			this.logger.error("获取customer对象为空，return，当前订单号=" + orderFlow.getCwb() + ",customerid=" + cwbOrderWothDeliverystate.getCwbOrder().getCustomerid() + ",flowOrdertype=" + flowOrdertype);
 			return null;
 		}
-		if ((customer != null) && (customer.getB2cEnum() == null || "0".equals(customer.getB2cEnum()) || "".equals(customer.getB2cEnum()))) {
+		if ((customer != null) && ((customer.getB2cEnum() == null) || "0".equals(customer.getB2cEnum()) || "".equals(customer.getB2cEnum()))) {
 			this.logger.warn("未设置对接，customername=" + customer.getCustomername() + ",cwb=" + orderFlow.getCwb());
 			return null;
 		}
@@ -103,10 +103,17 @@ public class B2cJsonService {
 					cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
 
 		}
-		/*if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian.getKey())) || customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian_beijing.getKey()))) {
-			return this.buildB2cDataMaster.getBulidYihaodianB2cData().BuildYihaodianMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate, delivery_state, customer.getB2cEnum(),
-					this.objectMapper);
-		}*/
+		/*
+		 * if
+		 * (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian.getKey
+		 * ())) ||
+		 * customer.getB2cEnum().equals(String.valueOf(B2cEnum.Yihaodian_beijing
+		 * .getKey()))) { return
+		 * this.buildB2cDataMaster.getBulidYihaodianB2cData().
+		 * BuildYihaodianMethod(orderFlow, flowOrdertype,
+		 * cwbOrderWothDeliverystate, delivery_state, customer.getB2cEnum(),
+		 * this.objectMapper); }
+		 */
 		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "yihaodian"))) {
 			return this.buildB2cDataMaster.getBulidYihaodianB2cData().BuildYihaodianMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate, delivery_state, customer.getB2cEnum(),
 					this.objectMapper);
@@ -203,9 +210,9 @@ public class B2cJsonService {
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Moonbasa.getKey()))) {
 
 			this.b2cDatasearchService.buildB2cData(cwbOrderWothDeliverystate, orderFlow, flowOrdertype, delivery_state, customer);
-			//2016-5-6 从D3服务器（用Gztl这个枚举）迁移到梦芭莎独立反馈接口，而JSON生成器仍用GZTL的
+			// 2016-5-6 从D3服务器（用Gztl这个枚举）迁移到梦芭莎独立反馈接口，而JSON生成器仍用GZTL的
 			return this.buildB2cDataMaster.getBuildGztlB2cData().buildGztlMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
-					cwbOrderWothDeliverystate.getDeliveryState(), customer,this.objectMapper);
+					cwbOrderWothDeliverystate.getDeliveryState(), customer, this.objectMapper);
 		}
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Liantong.getKey()))) {
 
@@ -271,12 +278,12 @@ public class B2cJsonService {
 			return this.buildB2cDataMaster.getBuildLeChongB2cData().buildLeChongMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Feiniuwang.getKey()))) {
 			return this.buildB2cDataMaster.getBuildFeiNiuWangData().buildFNWMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(this.getB2cEnumKeys(customer, "zhongliang"))) {
 			return this.buildB2cDataMaster.getBuildZhongliangB2cData().buildZhongliangMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
@@ -293,47 +300,51 @@ public class B2cJsonService {
 		}
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Guangzhoutonglu.getKey()))) {
 			return this.buildB2cDataMaster.getBuildGztlB2cData().buildGztlMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
-					cwbOrderWothDeliverystate.getDeliveryState(), customer,this.objectMapper);
+					cwbOrderWothDeliverystate.getDeliveryState(), customer, this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.JiuYe1.getKey()))) {
 			return this.buildB2cDataMaster.getBuildJiuyeB2cData().buildJiuYeMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
 					delivery_state, this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.HaoYiGou.getKey()))) {
-		
-			return this.buildB2cDataMaster.getBuildHYGsenddata().buildSendData(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), 
+
+			return this.buildB2cDataMaster.getBuildHYGsenddata().buildSendData(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
 					delivery_state, this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.GuangXinDianXin.getKey()))) {
-			return this.buildB2cDataMaster.getBuildGxDxsenddata().buildGxDxsenddata(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), 
+			return this.buildB2cDataMaster.getBuildGxDxsenddata().buildGxDxsenddata(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
 					delivery_state, this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.SuNing.getKey()))) {
-			return this.buildB2cDataMaster.getBuildSuNingB2cData().buildSuNingMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), 
+			return this.buildB2cDataMaster.getBuildSuNingB2cData().buildSuNingMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(),
 					delivery_state, this.objectMapper);
 		}
-		
+
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.YongHui.getKey()))) {
 			return this.buildB2cDataMaster.getBuildYongHuiB2cData().buildYongHuiMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
-		
-		//神州数码
+
+		// 神州数码
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Shenzhoushuma.getKey()))) {
-			return this.buildB2cDataMaster.getBuildShenzhoushumaB2cData().buildShenzhoushumaMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), 
-					delivery_state, this.objectMapper);
+			return this.buildB2cDataMaster.getBuildShenzhoushumaB2cData().buildShenzhoushumaMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),
+					cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
 		}
-		
-		//哲盟_轨迹
+
+		// 哲盟_轨迹
 		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.ZheMeng_track.getKey()))) {
-			return this.buildB2cDataMaster.getBulidZhemengTrackB2cData().buildZhemengMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),delivery_state, 
-					cwbOrderWothDeliverystate.getDeliveryState(),this.objectMapper);
+			return this.buildB2cDataMaster.getBulidZhemengTrackB2cData().buildZhemengMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
+					cwbOrderWothDeliverystate.getDeliveryState(), this.objectMapper);
 		}
-		
+
+		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.MSS.getKey()))) {
+			return this.buildB2cDataMaster.getBuildMSSB2cData().buildShenzhoushumaMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(),
+					cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, this.objectMapper);
+		}
 		return null;
 
 	}

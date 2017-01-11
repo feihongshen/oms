@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans   
             http://www.springframework.org/schema/beans/spring-beans-2.5.xsd  
             http://www.springframework.org/schema/context  
@@ -97,6 +97,7 @@
 				<!-- 推送轨迹给tps,需要注释 -->
 				<!-- <ref bean="doTime_sendOrderTrackToTPS"/> -->
 				<ref bean="doTime_resendDeliveryStateToPJD" />
+				<ref bean="doTime_mssTask" />
 
 			</list>
 		</property>
@@ -117,8 +118,7 @@
 			</props>
 		</property>
 	</bean>
-	<bean id="doTime4" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime4" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getDangDangTask" />
 		</property>
@@ -139,8 +139,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime5" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime5" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="deleteSendB2cDataTask" />
 		</property>
@@ -160,8 +159,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime6" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime6" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getTmallTask" />
 		</property>
@@ -181,8 +179,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime7" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime7" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getVipShopTask" />
 		</property>
@@ -202,8 +199,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime8" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime8" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getJuMeiTask" />
 		</property>
@@ -223,8 +219,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime10" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime10" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getRufengdaTask" />
 		</property>
@@ -243,8 +238,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime11" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime11" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getYihaodianTask" />
 		</property>
@@ -263,8 +257,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime12" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime12" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getGomeTask" />
 		</property>
@@ -285,8 +278,7 @@
 	</bean>
 
 
-	<bean id="doTime13" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime13" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getAmazonTask" />
 		</property>
@@ -305,8 +297,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime14" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime14" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getAmazonCodTask" />
 		</property>
@@ -325,8 +316,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime15" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime15" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="downTask" />
 		</property>
@@ -335,8 +325,7 @@
 		</property>
 	</bean>
 
-	<bean id="downTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="downTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -345,8 +334,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime16" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime16" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="deleteFileTask" />
 		</property>
@@ -366,8 +354,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime17" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime17" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getMaikolinTask" />
 		</property>
@@ -387,8 +374,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime18" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime18" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getDpfossTask" />
 		</property>
@@ -408,8 +394,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime19" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime19" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getBenlaiTask" />
 		</property>
@@ -428,8 +413,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime20" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime20" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getjiuxianTask" />
 		</property>
@@ -449,8 +433,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime21" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime21" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getHappyGo" />
 		</property>
@@ -470,8 +453,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime_epaiUp" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_epaiUp" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getEpaiFeedback_up_Task" />
 		</property>
@@ -596,8 +578,7 @@
 	</bean>
 
 
-	<bean id="doTime_getMmb" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_getMmb" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getMmb" />
 		</property>
@@ -606,8 +587,7 @@
 		</property>
 	</bean>
 
-	<bean id="getMmb" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="getMmb" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -627,8 +607,7 @@
 		</property>
 	</bean>
 
-	<bean id="getLetv" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="getLetv" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -660,8 +639,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime_letv" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_letv" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getLetv" />
 		</property>
@@ -692,8 +670,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime_hxgdms" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_hxgdms" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getHxgdms" />
 		</property>
@@ -837,8 +814,7 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="doTime_gztl" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_gztl" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getGztl" />
 		</property>
@@ -847,8 +823,7 @@
 		</property>
 	</bean>
 
-	<bean id="getGztl" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="getGztl" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -987,8 +962,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime_smiled" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_smiled" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getSmiled" />
 		</property>
@@ -1010,8 +984,7 @@
 
 
 
-	<bean id="doTime_sfxhm" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_sfxhm" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getSfxhm" />
 		</property>
@@ -1020,8 +993,7 @@
 		</property>
 	</bean>
 
-	<bean id="getSfxhm" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="getSfxhm" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1031,8 +1003,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime_jiuye" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_jiuye" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getJiuye" />
 		</property>
@@ -1040,8 +1011,7 @@
 			<value>0 */15 * * * ?</value>
 		</property>
 	</bean>
-	<bean id="getJiuye" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="getJiuye" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1050,13 +1020,30 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
-
+	<!--美食送开始 -->
+	<bean id="doTime_mssTask" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getMss" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */15 * * * ?</value>
+		</property>
+	</bean>
+	<bean id="getMss" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
+		<property name="targetBean">
+			<value>updateEMS</value>
+		</property>
+		<property name="targetMethod">
+			<value>getMss_Task</value>
+		</property>
+		<property name="concurrent" value="false" />
+	</bean>
+	<!-- 美食送结束 -->
 	<!-- wangwei 2016-03-10 暂停手动初始化任务，避免订单重复 <bean id="doTime_sysInit" class="cn.explink.util.DatabaseInitCronTriggerBean" 
-		dependency-check="default"> <property name="jobDetail"> <ref bean="getSystemInitTask" 
-		/> </property> <property name="cronExpression"> <value>0 */30 * * * ?</value> 
-		</property> </bean> <bean id="getSystemInitTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" 
-		dependency-check="default"> <property name="targetBean"> <value>updateEMS</value> 
-		</property> <property name="targetMethod"> <value>updateBatcnitialThreadMap</value> 
+		dependency-check="default"> <property name="jobDetail"> <ref bean="getSystemInitTask" /> </property> 
+		<property name="cronExpression"> <value>0 */30 * * * ?</value> </property> </bean> <bean id="getSystemInitTask" 
+		class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default"> <property name="targetBean"> 
+		<value>updateEMS</value> </property> <property name="targetMethod"> <value>updateBatcnitialThreadMap</value> 
 		</property> <property name="concurrent" value="false" /> </bean> -->
 
 	<bean id="doTime_zhemeng" class="cn.explink.util.DatabaseInitCronTriggerBean"
@@ -1090,8 +1077,7 @@
 		</property>
 	</bean>
 
-	<bean id="haoyigou" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="haoyigou" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1101,8 +1087,7 @@
 		<property name="concurrent" value="false" />
 	</bean>
 
-	<bean id="doTime_gxdx" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_gxdx" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="gxdx" />
 		</property>
@@ -1111,8 +1096,7 @@
 		</property>
 	</bean>
 
-	<bean id="gxdx" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="gxdx" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1122,17 +1106,15 @@
 		<property name="concurrent" value="false" />
 	</bean>
 	<!-- 品骏达外单定时任务 -->
-	<!-- <bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean" 
-		dependency-check="default"> <property name="jobDetail"> <ref bean="pjd" /> 
-		</property> <property name="cronExpression"> <value>0 */15 * * * ?</value> 
-		</property> </bean> <bean id="pjd" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" 
-		dependency-check="default"> <property name="targetBean"> <value>updateEMS</value> 
-		</property> <property name="targetMethod"> <value>sendCwbToPJD</value> </property> 
-		<property name="concurrent" value="false" /> </bean> -->
+	<!-- <bean id="doTime_PJD" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default"> 
+		<property name="jobDetail"> <ref bean="pjd" /> </property> <property name="cronExpression"> <value>0 
+		*/15 * * * ?</value> </property> </bean> <bean id="pjd" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" 
+		dependency-check="default"> <property name="targetBean"> <value>updateEMS</value> </property> <property 
+		name="targetMethod"> <value>sendCwbToPJD</value> </property> <property name="concurrent" value="false" 
+		/> </bean> -->
 
 	<!-- 【苏宁】定时任务配置信息 -->
-	<bean id="doTime_suning" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_suning" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="suning" />
 		</property>
@@ -1140,8 +1122,7 @@
 			<value>0 */15 * * * ?</value>
 		</property>
 	</bean>
-	<bean id="suning" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="suning" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1161,8 +1142,7 @@
 			<value>0 */15 * * * ?</value>
 		</property>
 	</bean>
-	<bean id="marykay" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="marykay" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1182,8 +1162,7 @@
 			<value>0 */15 * * * ?</value>
 		</property>
 	</bean>
-	<bean id="moonbasa" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
-		dependency-check="default">
+	<bean id="moonbasa" class="cn.explink.util.BeanInvokingJobDetailFactoryBean" dependency-check="default">
 		<property name="targetBean">
 			<value>updateEMS</value>
 		</property>
@@ -1328,8 +1307,7 @@
 	<!-- 品骏达外单及轨迹临时表清理定时任务结束 -->
 
 	<!-- 唯品会集包项目 -->
-	<bean id="doTime_vipmps" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="doTime_vipmps" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="getVipmps" />
 		</property>
@@ -1402,8 +1380,7 @@
 
 
 	<!--神州数码状态反馈 -->
-	<bean id="shenzhoushuma" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="shenzhoushuma" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="shenzhoushumaBean" />
 		</property>
@@ -1424,8 +1401,7 @@
 	</bean>
 
 	<!--哲盟_轨迹状态反馈 -->
-	<bean id="zhemengTrack" class="cn.explink.util.DatabaseInitCronTriggerBean"
-		dependency-check="default">
+	<bean id="zhemengTrack" class="cn.explink.util.DatabaseInitCronTriggerBean" dependency-check="default">
 		<property name="jobDetail">
 			<ref bean="zhemengTrackBean" />
 		</property>
