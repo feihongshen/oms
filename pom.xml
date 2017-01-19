@@ -27,7 +27,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring-maven-release</id>
-			<name>Spring Maven Release Repository</name>
+			<name>Spring Maven R`ease Repository</name>
 			<url>http://maven.springframework.org/release</url>
 		</pluginRepository>
 		<pluginRepository>
@@ -394,10 +394,19 @@
 		<!-- 品骏达外单jar -->
 		
 		<dependency>
-		  <groupId>com.pjbest</groupId>
-		  <artifactId>pjdeliveryorder-service-api</artifactId>
-		  <!-- <version>1.14.0_26</version> -->
-		  <version>1.18.0_02</version>
+			<groupId>com.pjbest</groupId>
+			<artifactId>pjdeliveryorder-service-api</artifactId>
+			<version>1.18.0_02</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.el-api</artifactId>
+					<groupId>javax.el</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 			   
 	    <dependency>

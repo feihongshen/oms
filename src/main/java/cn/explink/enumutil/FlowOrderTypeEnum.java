@@ -20,7 +20,16 @@ public enum FlowOrderTypeEnum {
 	KuDuiKuChuKuSaoMiao(46, "库对库出库", "库对库出库"),UpdatePickBranch(63,"更新提货站","更新提货站"),
 	ChongZhiFanKui(64,"重置反馈","重置反馈"),
 	//add by vic.liang@pjbest.com 2016-09-05
-	BingEmsTrans(65,"绑定邮政运单","绑定邮政运单");
+	BingEmsTrans(65,"绑定邮政运单","绑定邮政运单"),
+	
+	
+	/**
+	 * 快递的 四个状态
+	 */
+	YunDanLuRu(1000,"运单录入","yundanluru"),
+	LanJianRuZhan(1001,"揽件入站","lanjianruzhan"),
+	LanJianChuZhan(1002,"揽件出站","lanjianchuzhan"),
+	LanJianQueRen(1003,"揽件确认","lanjianqueren");
 	private int value;
 	private String text;
 	private String method;
