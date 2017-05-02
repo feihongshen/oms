@@ -73,7 +73,14 @@ public class TelecomJsonService {
 		if(customer.getB2cEnum().equals(String.valueOf(B2cEnum.meilinkai.getKey()))){
 			return this.buildB2cDataMaster.getBuildMLKB2cData().buildMLKMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), cwbOrderWothDeliverystate.getDeliveryState(), delivery_state, objectMapper);
 		}
-		
+		 if(customer.getB2cEnum().equals(String.valueOf(B2cEnum.Liantong.getKey()))){
+        	  this.buildB2cDataMaster.getBulidLiantongB2cData().buildB2cData(cwbOrderWothDeliverystate, orderFlow, cwbOrderWothDeliverystate.getCwbOrder(), flowOrdertype, delivery_state,
+					customer);
+        }
+        if(customer.getB2cEnum().equals(String.valueOf(B2cEnum.LianTongOrderCenter.getKey()))){
+        	 this.buildB2cDataMaster.getBulidLianTongOrderCenterB2cData().buildB2cData(cwbOrderWothDeliverystate, orderFlow, cwbOrderWothDeliverystate.getCwbOrder(), flowOrdertype, delivery_state,
+					customer);
+        }
 		//唯品会上门退订单反馈上门退成功后即把轨迹推送给TMS（不需要在归班审核时才推给TMS）
 		DmpCwbOrder dmpCwbOrder = cwbOrderWothDeliverystate.getCwbOrder();
 		String dmpCwb         = (dmpCwbOrder==null?"":dmpCwbOrder.getCwb());

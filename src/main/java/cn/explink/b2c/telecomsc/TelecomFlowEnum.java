@@ -7,7 +7,7 @@ public enum TelecomFlowEnum {
 	RuKu("01", FlowOrderTypeEnum.RuKu.getValue(), "库房入库", 0), KuFangChuku("03", FlowOrderTypeEnum.ChuKuSaoMiao.getValue(), "库房出库", 0), FenZhanDaoHuo("04", FlowOrderTypeEnum.FenZhanDaoHuoSaoMiao
 			.getValue(), "分站到货", 0), ZhanDianChuku("07", FlowOrderTypeEnum.FenZhanLingHuo.getValue(), "分站投递", 0),
 
-	ChengGong("0801", FlowOrderTypeEnum.YiFanKui.getValue(), "配送成功", 1), JuShou("0802", FlowOrderTypeEnum.YiFanKui.getValue(), "全部退货", 1),
+	ChengGong("08", FlowOrderTypeEnum.YiFanKui.getValue(), "配送成功", 1), JuShou("0802", FlowOrderTypeEnum.YiFanKui.getValue(), "全部退货", 1),
 
 	ChengGong_shenhe("08", FlowOrderTypeEnum.YiShenHe.getValue(), "配送成功-审核", 1), JuShou_shenhe("080200", FlowOrderTypeEnum.YiShenHe.getValue(), "全部退货-审核", 1),
 

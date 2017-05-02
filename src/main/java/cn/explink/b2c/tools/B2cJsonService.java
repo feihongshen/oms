@@ -214,11 +214,11 @@ public class B2cJsonService {
 			return this.buildB2cDataMaster.getBuildGztlB2cData().buildGztlMethod(orderFlow, flowOrdertype, cwbOrderWothDeliverystate.getCwbOrder(), delivery_state,
 					cwbOrderWothDeliverystate.getDeliveryState(), customer, this.objectMapper);
 		}
-		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Liantong.getKey()))) {
-
-			return this.buildB2cDataMaster.getBulidLiantongB2cData().buildB2cData(cwbOrderWothDeliverystate, orderFlow, cwbOrderWothDeliverystate.getCwbOrder(), flowOrdertype, delivery_state,
-					customer);
-		}
+//		if (customer.getB2cEnum().equals(String.valueOf(B2cEnum.Liantong.getKey()))) {
+//
+//			return this.buildB2cDataMaster.getBulidLiantongB2cData().buildB2cData(cwbOrderWothDeliverystate, orderFlow, cwbOrderWothDeliverystate.getCwbOrder(), flowOrdertype, delivery_state,
+//					customer);
+//		}
 		// if(customer.getB2cEnum().equals(String.valueOf(B2cEnum.Wanxiang.getKey()))){
 		// buildB2cDataMaster.getBuildWanxiangB2cData().BuildWanXiangMethod(orderFlow,
 		// flowOrdertype,cwbOrderWothDeliverystate.getCwbOrder(),cwbOrderWothDeliverystate.getDeliveryState(),delivery_state,objectMapper);

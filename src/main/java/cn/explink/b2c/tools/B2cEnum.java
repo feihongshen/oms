@@ -84,6 +84,7 @@ public enum B2cEnum {
 	/*------------------------注意！ 【29】开头的枚举约定为唯品会备用！-----------------------------------*/
 
 	SuNing(20127, "苏宁易购", "suning"),
+	LianTongOrderCenter(22566,"联通订单中心","LianTongOrderCenter"),
 
 	Yihaodian_bakup1(20130, "一号店_备用1", "yihaodian_bakup1"), Yihaodian_bakup2(20131, "一号店_备用2", "yihaodian_bakup2"), Yihaodian_bakup3(20132, "一号店_备用3", "yihaodian_bakup3"), meilinkai(20135, "玫琳凯",
 			"meilinkai"), HuanQiuGou(20136, "环球购物", "huanqiugouwu"), Zhongliang_bak1(21001, "中粮(我买网)_备用1", "zhongliang_bak1"), Zhongliang_bak2(21002, "中粮(我买网)_备用2",

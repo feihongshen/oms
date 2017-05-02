@@ -28,6 +28,7 @@ import cn.explink.b2c.lechong.BuildLeChongB2cData;
 import cn.explink.b2c.lefeng.BuildLefengB2cData;
 import cn.explink.b2c.letv.BuildLetvB2cData;
 import cn.explink.b2c.liantong.BulidLiantongB2cData;
+import cn.explink.b2c.liantongordercenter.BulidLianTongOrderCenterB2cData;
 import cn.explink.b2c.meilinkai.BuildMLKB2cData;
 import cn.explink.b2c.mmb.BuildmmbB2cData;
 import cn.explink.b2c.mss.BuildMSSB2cData;
@@ -148,6 +149,8 @@ public class BuildB2cDataMaster {
 	BulidZhemengTrackB2cData bulidZhemengTrackB2cData;
 	@Autowired
 	BuildMSSB2cData buildMSSB2cData;
+	@Autowired
+	private BulidLianTongOrderCenterB2cData  bulidLianTongOrderCenterB2cData;
 
 	public BuildMSSB2cData getBuildMSSB2cData() {
 		return this.buildMSSB2cData;
@@ -564,5 +567,14 @@ public class BuildB2cDataMaster {
 	public void setBuildLeChongB2cData(BuildLeChongB2cData buildLeChongB2cData) {
 		this.buildLeChongB2cData = buildLeChongB2cData;
 	}
+
+	public BulidLianTongOrderCenterB2cData getBulidLianTongOrderCenterB2cData() {
+		return bulidLianTongOrderCenterB2cData;
+	}
+
+	public void setBulidLianTongOrderCenterB2cData(BulidLianTongOrderCenterB2cData bulidLianTongOrderCenterB2cData) {
+		this.bulidLianTongOrderCenterB2cData = bulidLianTongOrderCenterB2cData;
+	}
+	
 
 }
