@@ -98,6 +98,7 @@
 				<!-- <ref bean="doTime_sendOrderTrackToTPS"/> -->
 				<ref bean="doTime_resendDeliveryStateToPJD" />
 				<ref bean="doTime_mssTask" />
+				<ref bean="doTime_liantongOrderCenter" />
 
 			</list>
 		</property>
@@ -1465,5 +1466,26 @@
 		</property>
 		<property name="concurrent" value="false" />
 	</bean>
+	<!--liantongOrderCenter start  -->
+	<bean id="doTime_liantongOrderCenter" class="cn.explink.util.DatabaseInitCronTriggerBean"
+		dependency-check="default">
+		<property name="jobDetail">
+			<ref bean="getLiantongOrderCenterTask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="getLiantongOrderCenterTask" class="cn.explink.util.BeanInvokingJobDetailFactoryBean"
+		dependency-check="default">
+		<property name="targetBean">
+			<value>excuteTimmer</value>
+		</property>
+		<property name="targetMethod">
+			<value>getLiantongOrderCenterTask</value>
+		</property>
+	</bean>
+	<!--liantongOrderCenter end  -->
 
 </beans>

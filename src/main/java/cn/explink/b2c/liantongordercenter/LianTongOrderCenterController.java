@@ -15,7 +15,7 @@ import cn.explink.b2c.tools.B2cEnum;
 import cn.explink.b2c.tools.B2cTools;
 
 @Controller
-@RequestMapping("/liantongsc")
+@RequestMapping("/liantongOrderCenter")
 public class LianTongOrderCenterController {
 	private Logger logger = LoggerFactory.getLogger(LianTongOrderCenterController.class);
 	@Autowired

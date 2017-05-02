@@ -46,6 +46,7 @@ import cn.explink.b2c.lechong.LechongService;
 import cn.explink.b2c.lefeng.LefengService;
 import cn.explink.b2c.letv.LetvService;
 import cn.explink.b2c.liantong.LiantongService;
+import cn.explink.b2c.liantongordercenter.LianTongOrderCenterService;
 import cn.explink.b2c.maikolin.MaikolinService;
 import cn.explink.b2c.maisike.MaisikeService_Send2LvBranch;
 import cn.explink.b2c.meilinkai.MLKService;
@@ -186,6 +187,8 @@ public class JobUtil {
 	YonghuiService yonghuiService;
 	@Autowired
 	HxgdmsService hxgdmsService;
+	@Autowired
+	LianTongOrderCenterService lianTongOrderCenterService;
 
 	@Autowired
 	SfexpressService_sendOrder sfexpressService_sendOrder;
@@ -1380,5 +1383,17 @@ public class JobUtil {
 		}
 		this.logger.info("执行了【从OMS轨迹异常表重推归班反馈(签收信息)给PJD】定时器任务!");
 	}
+	/**
+	 * 联通订单中心接口
+	 */
+	public void getLiantongOrderCenterTask() {
 
+		try {
+			this.lianTongOrderCenterService.feedback_status();
+		} catch (Exception e) {
+
+			this.logger.error("执行了联通订单中心的定时器异常!", e);
+		}
+		this.logger.info("执行了联通订单中心定时器!");
+	}
 }

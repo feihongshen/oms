@@ -42,6 +42,7 @@ import cn.explink.b2c.lechong.LechongService;
 import cn.explink.b2c.lefeng.LefengService;
 import cn.explink.b2c.letv.LetvService;
 import cn.explink.b2c.liantong.LiantongService;
+import cn.explink.b2c.liantongordercenter.LianTongOrderCenterService;
 import cn.explink.b2c.maikolin.MaikolinService;
 import cn.explink.b2c.meilinkai.MLKService;
 import cn.explink.b2c.mmb.MmbService;
@@ -188,6 +189,8 @@ public class HandFeedBackController {
 	YHServices YongHuiServices;
 	@Autowired
 	VipmpsFeedbackService vipmpsFeedbackService;
+	@Autowired
+	private LianTongOrderCenterService lianTongOrderCenterService;
 	/**
 	 * 
 	 */
@@ -575,4 +578,13 @@ public class HandFeedBackController {
 		return "手动推送美食送成功";
 	}
 
+	/**
+	 * 推送联通订单中心
+	 */
+	@RequestMapping("/liantongOrderCenter")
+	public @ResponseBody String liantongsc_hander(HttpServletRequest request) {
+
+		this.lianTongOrderCenterService.feedback_status();
+		return "SUCCESS";
+	}
 }
